@@ -24,7 +24,7 @@
             </div>
           </div>
         </div>
-        <!-- Navbar items -->
+        <!-- Navbar items
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
             <a class="nav-link nav-link-icon" routerLinkActive="active" [routerLink]="['/register']">
@@ -32,7 +32,7 @@
               <span class="nav-link-inner--text">Registro</span>
             </a>
           </li>
-        </ul>
+        </ul> -->
       </div>
     </div>
   </nav>
@@ -125,5 +125,38 @@
     </div>
   </div>
 </footer>
-  
-  
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">¡Ayudenos a saber que quiere administrar!</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label for="sitema">Sistemas</label>
+          <select [(ngModel)]="sistema_elegido"  ng-init="sistema_elegido = { nombre: sistema[0].sistema}" name="sistema_elegido" type="text" class="form-control" (change)="mostrarEmpresas()" id="sitema">
+            <option *ngFor="let sistema of sistemas" value="{{sistema.id}}">{{sistema.sistema}}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-12">
+          <label for="empresa">Empresas</label>
+          <select [disabled]="disabled_empresa" [(ngModel)]="empresa_elegido" name="empresa_elegido" type="text" class="form-control" (change)="mostrarClientes()" id="empresa">
+            <option *ngFor="let empresa of empresas" value="{{empresa.id}}">{{empresa.empresa}}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-12">
+          <label for="cliente">Clientes</label>
+          <select [disabled]="disabled_cliente" [(ngModel)]="cliente_elegido" name="cliente_elegido" type="text" class="form-control" id="cliente">
+            <option *ngFor="let cliente of clientes" value="cliente.id">{{cliente.cliente}}</option>
+          </select>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="entrar()">Continuar</button>
+  </div>
+</ng-template>

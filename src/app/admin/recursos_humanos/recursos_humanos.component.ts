@@ -4,6 +4,7 @@ import swal from'sweetalert2';
 import { LocalidadService } from 'src/app/services/localidad/localidad.service';
 import { COLOR } from 'src/config/config';
 import { EmpleadoService } from 'src/app/services/Empleado/empleado.service';
+import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Empleado } from 'src/app/models/empleado';
 import { Direccion } from 'src/app/models/Direccion';
@@ -38,13 +39,14 @@ export class RecursosHumanosComponent implements OnInit {
     public cp_service: LocalidadService,
     private router: ActivatedRoute,
     private routers : Router,
-    private empleados: EmpleadoService
+    private empleados: EmpleadoService,
+    private usuario: UsuarioService
   ) { }
 
   ngOnInit(): void {
-    if(this.empleados.obtenerToken() == ""){
-      this.routers.navigateByUrl("/login");
-    }
+    // if(this.usuario.obtenerToken() == ""){
+    //   this.routers.navigateByUrl("/login");
+    // }
     this.router.paramMap.subscribe((params : ParamMap) => {
       let valor = parseInt(params.get("id")+"");
       this.pintarDatos(valor);

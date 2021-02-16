@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { SERVER_CP } from 'src/config/config';
 import { Empleado } from 'src/app/models/empleado';
 import { Direccion} from 'src/app/models/Direccion';
-import { CookieService } from "ngx-cookie-service";
 
 @Injectable({
   providedIn: 'root'
@@ -162,7 +161,7 @@ export class EmpleadoService {
   ]
   direccion : Direccion = new Direccion(0,"","","","","","","","","","");
   empleado : Empleado = new Empleado(0,"","","","","","","",0,"","","","","","",this.direccion);
-  constructor(private cookies: CookieService) { }
+  constructor() { }
   getEmpleados(){
     return this.Empleados;
   }
@@ -206,24 +205,5 @@ export class EmpleadoService {
       }
     }
     return this.empleado;
-  }
-  login(usuario : String, password : String){
-    let empleados = this.getEmpleados();
-    for(let i=0;i<empleados.length;i++){
-      if(empleados[i].nombre == usuario && empleados[i].apellido_paterno == password){
-        this.guardarToken("12345678910");
-        return true;
-      }
-    }
-    return false;
-  }
-  obtenerToken(){
-    return this.cookies.get("token");
-  }
-  guardarToken(token: String){
-    this.cookies.set("token",token+"");
-  }
-  logout(){
-    this.cookies.delete("token");
   }
 }

@@ -5,6 +5,7 @@ import { EmpleadoService } from 'src/app/services/Empleado/empleado.service';
 import {AutocompleteLibModule} from 'angular-ng-autocomplete';
 import { Observable } from 'rxjs';
 import { Empleado } from 'src/app/models/empleado';
+import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 
 @Component({
   selector: 'app-header',
@@ -13,10 +14,13 @@ import { Empleado } from 'src/app/models/empleado';
 })
 export class HeaderComponent implements OnInit {
   public color = COLOR;
+  public nombre = window.sessionStorage.getItem("info_user");
+  public url_foto = window.sessionStorage.getItem("foto_user");
   keyword = 'nombre';
   data = new Array;
   constructor(private router: Router,
-    public empleado: EmpleadoService) {
+    public empleado: EmpleadoService,
+    public usuario: UsuarioService) {
       this.getEmpleadoService();
      }
 
@@ -44,7 +48,13 @@ export class HeaderComponent implements OnInit {
     this.router.navigateByUrl("recursos_humanos/"+event.id);
   }
   cerrarSesion(){
-    this.empleado.logout();
+    this.usuario.logout();
+    window.localStorage.removeItem("sistema");
+    window.localStorage.removeItem("empresa");
+    window.localStorage.removeItem("cliente");
+    window.localStorage.removeItem("nombre");
+    window.localStorage.removeItem("user");
+    window.localStorage.removeItem("foto_user");
     this.router.navigateByUrl("login");
   }
 }
