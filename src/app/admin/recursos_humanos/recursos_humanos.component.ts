@@ -44,9 +44,9 @@ export class RecursosHumanosComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // if(this.usuario.obtenerToken() == ""){
-    //   this.routers.navigateByUrl("/login");
-    // }
+    if(this.usuario.obtenerToken() == ""){
+      this.routers.navigateByUrl("/login");
+    }
     this.router.paramMap.subscribe((params : ParamMap) => {
       let valor = parseInt(params.get("id")+"");
       this.pintarDatos(valor);

@@ -90,21 +90,29 @@ export class LoginComponent implements OnInit {
                 this.openModal();
                 this.disabled_empresa = false;
               }else{                        //tiene solo una empresa 
-                window.sessionStorage["id_empresa"] = objeto.data[0].id;
+                this.empresas = [{
+                  "empresa" : objeto.data[0].empresa,
+                  "id" : objeto.data[0].id
+                }];
+                this.empresa_elegido = resp.data.info_usuario.sistemas[0].id;
+                window.sessionStorage["empresa"] = objeto.data[0].id;
                 this.cliente.obtenerClientes(parseInt(objeto.data[0].id))
                 .subscribe( (respuesta: any) => {
-                  if(respuesta.data.length > 1){
+                  console.log(respuesta);
+                  if(respuesta.data.length > 1){    //Tiene muchos clientes
                     for(let i=0; i<respuesta.data.length; i++){
-                      this.empresas.push({
-                        "cliente" : respuesta.data[i].empresa,
+                      this.clientes.push({
+                        "cliente" : respuesta.data[i].cliente,
                         "id" : respuesta.data[i].id
                       });
                     }
                     this.openModal();
-                  }else{
+                    this.disabled_cliente = false;
+                  }else{                    //Solo un cliente
                     window.sessionStorage["cliente"] = respuesta.data[0].id
                     Swal.fire("Buen trabajo","Te has logueado con éxito","success");
                     this.router.navigateByUrl("dashboard");
+                    console.log(this.sistema_elegido+"/"+this.empresa_elegido+"/"+this.cliente_elegido);
                   }
                 });
               }
@@ -120,10 +128,7 @@ export class LoginComponent implements OnInit {
     }
   }
   openModal() {
-    this.modal = this.modalService.open(this.contenidoDelModal,{ centered : true, backdropClass : 'light-blue-backdrop'})
-    this.modal.result.then((e: any) => {
-      console.log("dialogo cerrado");
-    });
+    this.modal = this.modalService.open(this.contenidoDelModal,{ centered : true, backdropClass : 'light-blue-backdrop'});
   }
   closeModal(){
     this.modal.close();

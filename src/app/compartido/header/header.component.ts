@@ -14,7 +14,7 @@ import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 })
 export class HeaderComponent implements OnInit {
   public color = COLOR;
-  public nombre = window.sessionStorage.getItem("info_user");
+  public nombre = window.sessionStorage.getItem("nombre");
   public url_foto = window.sessionStorage.getItem("foto_user");
   keyword = 'nombre';
   data = new Array;
