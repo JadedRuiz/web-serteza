@@ -150,7 +150,7 @@
         <div class="form-group col-md-12">
           <label for="cliente">Clientes</label>
           <select [disabled]="disabled_cliente" [(ngModel)]="cliente_elegido" name="cliente_elegido" type="text" class="form-control" id="cliente">
-            <option *ngFor="let cliente of clientes" value="cliente.id">{{cliente.cliente}}</option>
+            <option *ngFor="let cliente of clientes" value="{{cliente.id}}">{{cliente.cliente}}</option>
           </select>
         </div>
       </div>

@@ -31,7 +31,7 @@ export class SidebarComponent implements OnInit {
     if(window.sessionStorage.getItem("sistema") == "1"){
       this.menuItems = [
         { path: '/dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-primary', id:"dashboard_header"},
-        { path: '/recursos_humanos', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header"}
+        { path: '/catalogo_candidato', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header"}
       ];
       this.subMenuItems = [
         {

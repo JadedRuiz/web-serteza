@@ -159,7 +159,7 @@ export class EmpleadoService {
       }]
     }
   ]
-  direccion : Direccion = new Direccion(0,"","","","","","","","","","");
+  direccion : Direccion = new Direccion(0,0,"","","","","","","","","","");
   empleado : Empleado = new Empleado(0,"","","","","","","",0,"","","","","","",this.direccion);
   constructor() { }
   getEmpleados(){
@@ -171,6 +171,7 @@ export class EmpleadoService {
     for(let i=0; i<this.Empleados.length;i++){
       if(this.Empleados[i].numero_empleado == numero_empleado){
         direccion_nueva = new Direccion(
+          0,
           this.Empleados[i].direccion[0].calle,
           this.Empleados[i].direccion[0].num_exterior,
           this.Empleados[i].direccion[0].num_interior,

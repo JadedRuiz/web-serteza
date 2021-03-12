@@ -71,7 +71,7 @@
                 <div class="form-row">
                   <div class="form-group col-md-3">
                     <label for="num_seguro">Número de seguro (IMSS)</label>
-                    <input [(ngModel)]="empleado.numero_seguro" name="numero_seguro" type="text" class="form-control" id="num_seguro" placeholder="Ingrese el número de afiliación del seguro social">
+                    <input [(ngModel)]="empleado.numero_social" name="numero_seguro" type="text" class="form-control" id="num_seguro" placeholder="Ingrese el número de afiliación del seguro social">
                   </div>
                   <div class="form-group col-md-3">
                     <label for="fecha_nacimiento">Fecha de nacimiento</label>
@@ -115,18 +115,18 @@
                   </div>
                   <div class="form-group col-md-2">
                     <label for="num_ext">Número ext.</label>
-                    <input [(ngModel)]="empleado.direccion.num_exterior" name="num_exterior" type="text" class="form-control" id="num_ext" placeholder="">
+                    <input [(ngModel)]="empleado.direccion.numero_exterior" name="num_exterior" type="text" class="form-control" id="num_ext" placeholder="">
                   </div>
                   <div class="form-group col-md-2">
                     <label for="num_int">Número int.</label>
-                    <input [(ngModel)]="empleado.direccion.num_interior" name="num_interior" type="text" class="form-control" id="num_int" placeholder="">
+                    <input [(ngModel)]="empleado.direccion.numero_interior" name="num_interior" type="text" class="form-control" id="num_int" placeholder="">
                   </div>
                   <div class="form-group col-md-3">
                     <label for="cruzamientos_form">Cruzamientos</label>
                     <div class="form-inline form-row align-items-center" id="cruzamientos_form">
-                      <input [(ngModel)]="empleado.direccion.cruzamiento_ext" name="cruzamiento_ext" type="number" class="form-control col-5" id="cruzamientos_int" placeholder="">
+                      <input [(ngModel)]="empleado.direccion.cruzamiento_uno" name="cruzamiento_ext" type="number" class="form-control col-5" id="cruzamientos_int" placeholder="">
                       <p class="text-center col-2"> y </p>
-                      <input [(ngModel)]="empleado.direccion.cruzamiento_int" name="cruzamiento_int" type="number" class="form-control col-5" id="cruzamientos_ext" placeholder="">
+                      <input [(ngModel)]="empleado.direccion.cruzamiento_dos" name="cruzamiento_int" type="number" class="form-control col-5" id="cruzamientos_ext" placeholder="">
                     </div>
                   </div>
                   <div class="form-group col-md-3">
@@ -166,8 +166,15 @@
               </form>
             </div>
           </div>
-          <button type="submit" form="form_empleado" (click)="guardar(form_empleado)" class="btn btn-success">Guardar</button>
-          <a href="#" class="btn btn-warning" routerLink="/recursos_humanos">Limpiar</a>
+          <div id="guardar">
+            <button type="submit" form="form_empleado" (click)="guardar(form_empleado)" class="btn btn-success">Guardar</button>
+            <a class="btn btn-warning" (click)="limpiar()">Limpiar</a>
+          </div>
+          <div id="actualizar" style="display: none;">
+            <a class="btn btn-info" (click)="actualizar()">Actualizar</a>
+            <a class="btn btn-danger" (click)="eliminarCandidato()">Borrar</a>
+            <a href="#" class="btn btn-warning" routerLink="/catalogo_candidato">Limpiar</a>
+          </div>
         </div>
       </div>
     </div>

@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { COLOR } from 'src/config/config';
 import { Router } from '@angular/router';
 import { EmpleadoService } from 'src/app/services/Empleado/empleado.service';
+import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
 import {AutocompleteLibModule} from 'angular-ng-autocomplete';
 import { Observable } from 'rxjs';
 import { Empleado } from 'src/app/models/empleado';
+import { Candidato } from 'src/app/models/Candidato';
 import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 
 @Component({
@@ -16,36 +18,53 @@ export class HeaderComponent implements OnInit {
   public color = COLOR;
   public nombre = window.sessionStorage.getItem("nombre");
   public url_foto = window.sessionStorage.getItem("foto_user");
+  public band = false;
   keyword = 'nombre';
   data = new Array;
   constructor(private router: Router,
     public empleado: EmpleadoService,
-    public usuario: UsuarioService) {
-      this.getEmpleadoService();
+    public usuario: UsuarioService,
+    public candidato: CandidatoService
+    ) {
+      
      }
 
   ngOnInit(): void {
   }
-  getEmpleadoService(){
-    let empleados = this.empleado.getEmpleados();
-    for(let i=0;i<empleados.length;i++){
-      this.data.push({
-        "nombre" : empleados[i].nombre,
-        "id" : empleados[i].numero_empleado
+  autocomplete(){
+    if(this.router.url.toString().includes("recursos_humanos")){
+      // this.getEmpleadoService();
+    }
+    if(this.router.url.toString().includes("catalogo_candidato")){
+      let arreglo = new Array();
+      let id = parseInt(window.sessionStorage.getItem("cliente")+"");
+      this.candidato.obtenerCandidatosPorIdCliente(id)
+      .subscribe( (object : any) => {
+        if(object.ok){
+          for(let i=0;i<object.data.length;i++){
+            arreglo.push({
+              "nombre" : object.data[i].nombre,
+              "id" : object.data[i].id
+            });
+          }
+          this.data = arreglo;
+        }else{
+          this.data = [];
+        }
       });
     }
-  }
-  autocomplete(event: any){
-    if(this.router.url.toString().includes("recursos_humanos")){
-      let empleados = this.empleado.getEmpleados();
-      //console.log(event.target.value);
-      //console.log(empleados);
+    if(this.router.url.toString().includes("catalogo_cliente")){
+      this.data = [];
     }
-    
   }
   selectEvent(event : any){
     // location.href = "recursos_humanos/"+event.id;
-    this.router.navigateByUrl("recursos_humanos/"+event.id);
+    if(this.router.url.toString().includes("recursos_humanos")){
+      // this.getEmpleadoService();
+    }
+    if(this.router.url.toString().includes("catalogo_candidato")){
+      this.router.navigateByUrl("/catalogo_candidato/"+event.id);
+    }
   }
   cerrarSesion(){
     this.usuario.logout();

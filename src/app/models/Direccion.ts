@@ -1,10 +1,11 @@
 export class Direccion {
     constructor(
+        public id_direccion : number,
         public calle : number,
-        public num_exterior : String,
-        public num_interior : String,
-        public cruzamiento_ext : String,
-        public cruzamiento_int : String,
+        public numero_exterior : String,
+        public numero_interior : String,
+        public cruzamiento_uno : String,
+        public cruzamiento_dos : String,
         public codigo_postal : String,
         public colonia : String,
         public localidad : String,

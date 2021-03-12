@@ -17,7 +17,7 @@ import { Direccion } from 'src/app/models/Direccion';
 export class CatalogoClienteComponent implements OnInit {
 
   public color = COLOR;
-  direccion : Direccion = new Direccion(0,"","","","","","","","","","");
+  direccion : Direccion = new Direccion(0,0,"","","","","","","","","","");
   empleado : Empleado = new Empleado(0,"","","","","","","",0,"","","","","","",this.direccion);
   tabs = [
     {

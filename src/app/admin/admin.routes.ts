@@ -13,6 +13,7 @@ const routes: Routes = [
             { path : "dashboard", component : DashboardComponent},
             { path : "catalogo_candidato", component : CatalogoCandidatosComponent},
             { path : "catalogo_cliente", component : CatalogoClienteComponent},
+            { path : "catalogo_candidato/:id", component : CatalogoCandidatosComponent},
             { path: '', redirectTo: '/login', pathMatch: 'full'}
         ]
 

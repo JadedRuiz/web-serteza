@@ -14,6 +14,7 @@
                 placeholder="Escriba el nombre del empleado"
                 notFoundText="No se han encontrado resultados"
                 (selected)="selectEvent($event)"
+                (inputFocused) = "autocomplete()"
                 >                                 
               </ng-autocomplete>
               

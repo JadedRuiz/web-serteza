@@ -29,4 +29,26 @@ export class CandidatoService {
         return throwError(err);
       }));
   }
+  actualizarCandidato(candidato : Candidato){
+    let url = SERVER_API+"candidato/actualizarCandidato";
+    return this.http.post( url, candidato )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        return throwError(err);
+      }));
+  }
+  obtenerCandidatosPorIdCliente(id : any){
+    let url = SERVER_API+"candidato/obtenerCandidatosPorIdCliente/"+id;
+    return this.http.get(url);
+  }
+  obtenerCandidatoPorId(id : any){
+    let url = SERVER_API+"candidato/obtenerCandidatoPorId/"+id;
+    return this.http.get(url);
+  }
+  eliminarCandidato(id : any){
+    let url = SERVER_API+"candidato/eliminarCandidato/"+id;
+    return this.http.get(url);
+  }
 }

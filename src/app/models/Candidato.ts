@@ -1,4 +1,5 @@
 import { Direccion } from 'src/app/models/Direccion';
+import { Fotografia } from 'src/app/models/Fotografia';
 export class Candidato {
     constructor(
         public id : number, 
@@ -9,7 +10,7 @@ export class Candidato {
         public nombre : String, 
         public rfc : String, 
         public curp : String, 
-        public numero_seguro : String, 
+        public numero_social : String, 
         public fecha_nacimiento : String,
         public lugar_nacimiento : String,
         public edad : number, 
@@ -19,7 +20,8 @@ export class Candidato {
         public telefono_tres : number, 
         public descripcion : String, 
         public cat_usuario_id : number,
-        public direccion : Direccion
+        public direccion : Direccion,
+        public fotografia : Fotografia
     ){}
     
 }

@@ -109,7 +109,7 @@ export class LoginComponent implements OnInit {
                     this.openModal();
                     this.disabled_cliente = false;
                   }else{                    //Solo un cliente
-                    window.sessionStorage["cliente"] = respuesta.data[0].id
+                    window.sessionStorage["cliente"] = respuesta.data[0].id;
                     Swal.fire("Buen trabajo","Te has logueado con éxito","success");
                     this.router.navigateByUrl("dashboard");
                     console.log(this.sistema_elegido+"/"+this.empresa_elegido+"/"+this.cliente_elegido);
