@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, Router } from '@angular/router';
-import { RecursosHumanosComponent } from './recursos_humanos/recursos_humanos.component';
 import { AdminComponent } from './admin.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { CatalogoCandidatosComponent } from './recursos_humanos/catalogos/catalogo_candidato/cat_candidatos.component';
+import { CatalogoClienteComponent } from './recursos_humanos/catalogos/catalogo_cliente/cat_cliente.component';
 
 const routes: Routes = [
     {
         path : '',
         component : AdminComponent,
         children : [
-            { path : "recursos_humanos", component : RecursosHumanosComponent},
-            { path : "recursos_humanos/:id", component : RecursosHumanosComponent},
             { path : "dashboard", component : DashboardComponent},
-
+            { path : "catalogo_candidato", component : CatalogoCandidatosComponent},
+            { path : "catalogo_cliente", component : CatalogoClienteComponent},
             { path: '', redirectTo: '/login', pathMatch: 'full'}
         ]
 

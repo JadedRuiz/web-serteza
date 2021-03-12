@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, NgForm, Validators} from '@angular/forms';
+import { NgForm } from '@angular/forms';
 import swal from'sweetalert2';
 import { LocalidadService } from 'src/app/services/localidad/localidad.service';
 import { COLOR } from 'src/config/config';
@@ -10,11 +10,11 @@ import { Empleado } from 'src/app/models/empleado';
 import { Direccion } from 'src/app/models/Direccion';
 
 @Component({
-  selector: 'app-recursos-humanos',
-  templateUrl: './recursos_humanos.component.html',
-  styleUrls: ['./recursos_humanos.component.css']
+  selector: 'app-candidatos',
+  templateUrl: './cat_cliente.component.html',
+  styleUrls: ['./cat_cliente.component.css']
 })
-export class RecursosHumanosComponent implements OnInit {
+export class CatalogoClienteComponent implements OnInit {
 
   public color = COLOR;
   direccion : Direccion = new Direccion(0,"","","","","","","","","","");

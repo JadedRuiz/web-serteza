@@ -76,15 +76,26 @@
             </div>
           </div>
         </div>
-        <!-- Navigation -->
+        <!-- Menu -->
         <ul class="navbar-nav">
-            <li *ngFor="let menuItem of menuItems" class="{{menuItem.class}} nav-item">
+            <li *ngFor="let menuItem of menuItems" [attr.data-target]="'#' + menuItem.id" class="nav-item" data-toggle="collapse"  aria-expanded="true" aria-controls="collapseOne">
                 <a routerLinkActive="active" [routerLink]="[menuItem.path]" class="nav-link">
                     <i class="ni {{menuItem.icon}}"></i>
                     {{menuItem.title}}
                 </a>
             </li>
         </ul>
+        <!-- SubMenus -->
+        <div *ngFor="let cabecera of subMenuItems" class="collapse" id="{{cabecera.id}}">
+          <ul class="navbar-nav">
+            <li *ngFor="let submenu of cabecera.submenu" class="nav-item">
+                <a routerLinkActive="active" [routerLink]="[submenu.path]" class="nav-link">
+                    <i class="ni {{submenu.icon}}"></i>
+                    {{submenu.title}}
+                </a>
+            </li>
+          </ul>
+        </div>
         <!-- Divider -->
         <hr class="my-3">
         <!-- Heading -->
