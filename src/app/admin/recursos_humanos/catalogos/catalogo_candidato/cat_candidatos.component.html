@@ -34,17 +34,17 @@
                       </div>
                       <div class="form-group col-md-4">
                         <label for="apellido_paterno">Apellido paterno</label>
-                        <input [(ngModel)]="empleado.apellido_paterno" name="apellido_paterno" type="text" class="form-control" id="apellido_paterno" placeholder="Ingrese el primer apellido" required>
+                        <input [(ngModel)]="empleado.apellido_paterno" name="apellido_paterno" type="text" class="form-control" id="apellido_paterno" placeholder="Ingrese el primer apellido" required style="text-transform: uppercase;">
                       </div>
                       <div class="form-group col-md-4">
                         <label for="apellido_materno">Apellido materno</label>
-                        <input [(ngModel)]="empleado.apellido_materno" name="apellido_materno" type="text" class="form-control" id="apellido_materno" placeholder="Ingrese el segundo apellido" required>
+                        <input [(ngModel)]="empleado.apellido_materno" name="apellido_materno" type="text" class="form-control" id="apellido_materno" placeholder="Ingrese el segundo apellido" required style="text-transform: uppercase;">
                       </div>
                     </div>
                     <div class="row">
                       <div class="form-group col-md-4">
                         <label for="nombre_empleado">Nombre(s)</label>
-                        <input [(ngModel)]="empleado.nombre" name="nombre" class="form-control" id="nombre_empleado" placeholder="Ingrese el nombre" required>
+                        <input [(ngModel)]="empleado.nombre" name="nombre" class="form-control" id="nombre_empleado" placeholder="Ingrese el nombre" required style="text-transform: uppercase;">
                       </div>
                       <div class="form-group col-md-4">
                         <label for="rfc_empleado">RFC</label>
@@ -58,16 +58,6 @@
                     </div>
                   </div>
                 </div>
-                <!-- <div class="form-row">
-                  
-                  
-                  
-                  
-                </div>
-                <div class="form-row"> -->
-                  
-                  
-                <!-- </div> -->
                 <div class="form-row">
                   <div class="form-group col-md-3">
                     <label for="num_seguro">Número de seguro (IMSS)</label>
@@ -105,6 +95,15 @@
                   <textarea [(ngModel)]="empleado.descripcion" name="descripcion" class="form-control" rows="5" id="desc_empleado" name="desc_empleado"></textarea>
                 </div>
               </form>
+              <div id="guardar">
+                <button type="submit" form="form_empleado" (click)="guardar(form_empleado)" class="btn btn-success">Guardar</button>
+                <a class="btn btn-warning" (click)="limpiar()">Limpiar</a>
+              </div>
+              <div id="actualizar" style="display: none;">
+                <a class="btn btn-info" (click)="actualizar()">Actualizar</a>
+                <a class="btn btn-danger" (click)="eliminarCandidato()">Borrar</a>
+                <a href="#" class="btn btn-warning" routerLink="/catalogo_candidato">Limpiar</a>
+              </div>
             </div>
             <div class="tab-pane" id="direccion" role="tabpanel">
               <form #form_direccion="ngForm" ngNativeValidate id="form_direccion">
@@ -165,15 +164,6 @@
                 </div> 
               </form>
             </div>
-          </div>
-          <div id="guardar">
-            <button type="submit" form="form_empleado" (click)="guardar(form_empleado)" class="btn btn-success">Guardar</button>
-            <a class="btn btn-warning" (click)="limpiar()">Limpiar</a>
-          </div>
-          <div id="actualizar" style="display: none;">
-            <a class="btn btn-info" (click)="actualizar()">Actualizar</a>
-            <a class="btn btn-danger" (click)="eliminarCandidato()">Borrar</a>
-            <a href="#" class="btn btn-warning" routerLink="/catalogo_candidato">Limpiar</a>
           </div>
         </div>
       </div>

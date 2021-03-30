@@ -5,6 +5,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { HeaderComponent } from './header/header.component';
 import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -14,7 +15,9 @@ import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
     CommonModule,
     RouterModule,
     AutocompleteLibModule,
-    NgbModule
+    NgbModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports : [
     HeaderComponent,

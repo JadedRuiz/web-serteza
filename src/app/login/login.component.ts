@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit {
           this.empresa_elegido = "";
 
           window.sessionStorage["foto_user"] = resp.data.info_usuario.url_foto;
-          window.sessionStorage["user"] = resp.data.info_usuario.usuraio;
+          window.sessionStorage["user"] = resp.data.info_usuario.id;
           window.sessionStorage["nombre"] = resp.data.info_usuario.nombre;
           this.usuario_service.guardarToken(resp.data.token_acesso.token);
 
@@ -96,6 +96,7 @@ export class LoginComponent implements OnInit {
                 }];
                 this.empresa_elegido = resp.data.info_usuario.sistemas[0].id;
                 window.sessionStorage["empresa"] = objeto.data[0].id;
+                window.sessionStorage["empresa_fotografia"] = objeto.data[0].fotografia[0].fotografia;
                 this.cliente.obtenerClientes(parseInt(objeto.data[0].id))
                 .subscribe( (respuesta: any) => {
                   console.log(respuesta);
@@ -111,7 +112,7 @@ export class LoginComponent implements OnInit {
                   }else{                    //Solo un cliente
                     window.sessionStorage["cliente"] = respuesta.data[0].id;
                     Swal.fire("Buen trabajo","Te has logueado con éxito","success");
-                    this.router.navigateByUrl("dashboard");
+                    this.redirigirPrincipal();
                     console.log(this.sistema_elegido+"/"+this.empresa_elegido+"/"+this.cliente_elegido);
                   }
                 });
@@ -184,9 +185,23 @@ export class LoginComponent implements OnInit {
       window.sessionStorage["empresa"] = this.empresa_elegido;
       window.sessionStorage["cliente"] = this.cliente_elegido;
       this.closeModal();
-      this.router.navigate(["dashboard"]);
+      this.redirigirPrincipal();
     }else{
       Swal.fire("Advertencia","Primero seleccione el sistema, empresa y cliente que desea administrar","warning");
+    }
+  }
+  redirigirPrincipal(){
+    if(this.sistema_elegido == "1"){
+      this.router.navigate(["dashboard"]);
+    }
+    if(this.sistema_elegido == "2"){
+      this.router.navigate(["dashboard"]);
+    }
+    if(this.sistema_elegido == "3"){
+      this.router.navigate(["dashboard"]);
+    }
+    if(this.sistema_elegido == "4"){
+      this.router.navigate(["catalogo_candidato"]);
     }
   }
 }

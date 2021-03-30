@@ -1,0 +1,120 @@
+<div class="header {{color}} pb-5 pt-5 pt-md-8">
+</div>
+<div class="container-fluid mt--5">
+  <div class="row">
+    <div class="col">
+      <div class="card border-info">
+        <div class="card-body">
+          <ul class="nav nav-tabs profile-tab">
+            <li class="nav-item" *ngFor="let tab of tabs"
+            ><a class="nav-link {{tab.clase}}" data-toggle="tab" href="{{tab.id_tab}}" role="tab"
+            >{{tab.title}}</a>
+            </li>
+          </ul>
+          <div class="tab-content mt-4">
+            <div class="tab-pane active" id="empresa" role="tabpanel">
+              <form #form_empresa="ngForm" ngNativeValidate id="form_empresa">
+                <div class="form-row">
+                  <div class="form-group col-md-3">
+                    <img (click)="subirImagen()" id="imagen_perfil" class="img-fluid rounded" [src]="foto_user" style="width:260px;height:120px;cursor: pointer;">
+                    <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen()">
+                  </div>
+                  <div class="col-9">
+                    <div class="row">
+                      <div class="form-group col-md-5">
+                        <label for="empresa">Nombre de la empresa</label>
+                        <input [(ngModel)]="empresa.empresa" name="empresa" type="text" class="form-control" id="empresa" required style="text-transform: uppercase;">
+                      </div>
+                      <div class="form-group col-md-4">
+                        <label for="razon_social">Razón social</label>
+                        <input [(ngModel)]="empresa.razon_social" name="razon_social" type="text" class="form-control" id="razon_social" required style="text-transform: uppercase;">
+                      </div>
+                      <div class="form-group col-md-3">
+                        <label for="rfc_empresa">RFC</label>
+                        <input [(ngModel)]="empresa.rfc" name="rfc_empresa" type="text" class="form-control" id="rfc_empresa" required>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="form-group col-md-12"> 
+                        <label for="desc_vivienda">Descripción de la empresa</label>
+                        <textarea [(ngModel)]="empresa.descripcion" name="num_interior" class="form-control" rows="5" id="desc_empresa" name="desc_empresa"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              <div id="guardar">
+                <button type="submit" form="form_empresa"  class="btn btn-success" (click)="guardar(form_empresa)">Guardar</button>
+                <a class="btn btn-warning" (click)="limpiar()">Limpiar</a>
+              </div>
+              <div id="actualizar" style="display: none;">
+                <a class="btn btn-info" (click)="actualizar()">Actualizar</a>
+                <a class="btn btn-danger" (click)="bajaEmpresa()">Borrar</a>
+                <a href="#" class="btn btn-warning" routerLink="/catalogo_empresa">Limpiar</a>
+              </div>
+            </div>
+            <div class="tab-pane" id="direccion" role="tabpanel">
+              <form #form_direccion="ngForm" ngNativeValidate id="form_direccion">
+                <div class="form-row">
+                  <div class="form-group col-md-1">
+                    <label for="calle">Calle</label>
+                    <input [(ngModel)]="empresa.direccion.calle" name="calle" type="number" class="form-control" id="calle" required>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="num_ext">Número ext.</label>
+                    <input [(ngModel)]="empresa.direccion.numero_exterior" name="num_exterior" type="text" class="form-control" id="num_ext" placeholder="">
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="num_int">Número int.</label>
+                    <input [(ngModel)]="empresa.direccion.numero_interior" name="num_interior" type="text" class="form-control" id="num_int" placeholder="">
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="cruzamientos_form">Cruzamientos</label>
+                    <div class="form-inline form-row align-items-center" id="cruzamientos_form">
+                      <input [(ngModel)]="empresa.direccion.cruzamiento_uno" name="cruzamiento_ext" type="number" class="form-control col-5" id="cruzamientos_int" placeholder="">
+                      <p class="text-center col-2"> y </p>
+                      <input [(ngModel)]="empresa.direccion.cruzamiento_dos" name="cruzamiento_int" type="number" class="form-control col-5" id="cruzamientos_ext" placeholder="">
+                    </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="codigo_postal">Código postal</label>
+                    <div class="input-group mb-3">
+                      <input [(ngModel)]="empresa.direccion.codigo_postal" name="codigo_postal" id="codigo_postal" type="number" class="form-control" aria-describedby="icono">
+                      <div class="input-group-append">
+                        <span class="input-group-text" id="icono" style="cursor:pointer;" (click)="getDatos()"><i class="ni ni-fat-add"></i></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-3">
+                    <label for="colonia">Colonia</label>
+                    <select [(ngModel)]="empresa.direccion.colonia" name="colonia" type="text" class="form-control" (change)="modificarMunicipio()" id="colonia" placeholder="">
+                      <option *ngFor="let colonia of colonias">{{colonia}}</option>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="localidad">Localidad</label>
+                    <input [(ngModel)]="empresa.direccion.localidad" name="localidad" type="text" class="form-control" id="localidad" placeholder="">
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="municipio">Municipio</label>
+                    <input [(ngModel)]="empresa.direccion.municipio" name="municipio" type="text" class="form-control" id="municipio">
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="estado">Estado</label>
+                    <input [(ngModel)]="empresa.direccion.estado" name="estado" type="text" class="form-control" id="estado">
+                  </div>
+                </div>
+                <div class="form-group"> 
+                  <label for="desc_vivienda">Descripción de la vivienda</label>
+                  <textarea [(ngModel)]="empresa.direccion.descripcion" name="num_interior" class="form-control" rows="5" id="desc_vivienda" name="desc_vivienda"></textarea>
+                </div> 
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

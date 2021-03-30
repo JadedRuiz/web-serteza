@@ -31,12 +31,12 @@ export class CatalogoCandidatosComponent implements OnInit {
   empleado : Candidato = new Candidato(0,this.cliente_id,0,"","","","","","","","",0,"",0,0,0,"",this.usuario_id,this.direccion,this.fotografia);
   tabs = [
     {
-      title : "Empleados",
+      title : "Empleado",
       id_tab : "#empleado",
       clase : "active"
     },
     {
-      title : "Direcciones",
+      title : "Dirección",
       id_tab : "#direccion",
       clase : ""
     }
@@ -141,7 +141,7 @@ export class CatalogoCandidatosComponent implements OnInit {
       //Almacenar la fotografia
       this.fotografia.docB64 = this.docB64;
       this.fotografia.nombre = "foto_user";
-      this.empleado.cat_clientes_id = parseInt(window.sessionStorage.getItem('cliente')+"");
+      this.empleado.cat_clientes_id = this.cliente_id;
       this.candidato.altaCandidato(this.empleado)
       .subscribe( (objeto : any ) => {
         if(objeto.ok){

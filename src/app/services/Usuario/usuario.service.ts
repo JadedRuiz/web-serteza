@@ -29,7 +29,7 @@ export class UsuarioService {
   }
 
   obtenerEmpresas(sistema_id : number){
-    let url = SERVER_API+"empresa/obtenerEmpresas/"+sistema_id+"/"+this.obtenerToken();
+    let url = SERVER_API+"empresa/obtenerEmpresas/"+sistema_id;
     return this.http.get(url);
   }
   obtenerToken(){
