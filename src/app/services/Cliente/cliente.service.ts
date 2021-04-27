@@ -17,8 +17,15 @@ export class ClienteService {
     private usuario_service: UsuarioService
     ) { }
 
-  obtenerClientes(sistema_empresa_id : number){
-    let url = SERVER_API+"cliente/obtenerClientes/"+sistema_empresa_id;
+  obtenerClientes( json : any ){
+    let url = SERVER_API+"cliente/obtenerClientes";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
     return this.http.get(url);
   }
   obtenerClientesPorId(id : number){

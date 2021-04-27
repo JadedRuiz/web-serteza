@@ -4,11 +4,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { RegistroComponent } from './login/registro.component';
-import { AdminModule } from './admin/admin.module';
+import { SistemaAdminModule } from './sistema_admin/sistema-admin.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
+import { SistemaReclutamientoModule } from './sistema_reclutamiento/sistema-reclutamiento.module';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { CookieService } from 'ngx-cookie-service';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    AdminModule,
+    SistemaAdminModule,
+    SistemaReclutamientoModule,
     NgbModule,
     FormsModule,
     ReactiveFormsModule,

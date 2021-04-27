@@ -126,22 +126,24 @@
   </div>
 </footer>
 <ng-template #content let-c="close" let-d="dismiss">
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">¡Ayudenos a saber que quiere administrar!</h4>
-    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
+  <div class="modal-header justify-content-center">
+    <h4 class="modal-title" id="modal-basic-title">¿Que sistema desea administrar?</h4>
   </div>
   <div class="modal-body">
     <form>
       <div class="form-row">
         <div class="form-group col-md-12">
-          <label for="sitema">Sistemas</label>
+          <div class="list-group">
+            <a *ngFor="let sistema of sistemas" style="cursor: pointer;" (click)="eleccion(sistema.id)" class="list-group-item list-group-item-action" aria-current="true">
+              {{sistema.sistema}}
+            </a>
+          </div>
+          <!-- <label for="sitema">Sistemas</label>
           <select [(ngModel)]="sistema_elegido"  ng-init="sistema_elegido = { nombre: sistema[0].sistema}" name="sistema_elegido" type="text" class="form-control" (change)="mostrarEmpresas()" id="sitema">
-            <option *ngFor="let sistema of sistemas" value="{{sistema.id}}">{{sistema.sistema}}</option>
-          </select>
+            <option *ngFor="let sistema of sistemas" value="{{sistema.id}}"></option>
+          </select> -->
         </div>
-        <div class="form-group col-md-12">
+        <!-- <div class="form-group col-md-12">
           <label for="empresa">Empresas</label>
           <select [disabled]="disabled_empresa" [(ngModel)]="empresa_elegido" name="empresa_elegido" type="text" class="form-control" (change)="mostrarClientes()" id="empresa">
             <option *ngFor="let empresa of empresas" value="{{empresa.id}}">{{empresa.empresa}}</option>
@@ -152,11 +154,11 @@
           <select [disabled]="disabled_cliente" [(ngModel)]="cliente_elegido" name="cliente_elegido" type="text" class="form-control" id="cliente">
             <option *ngFor="let cliente of clientes" value="{{cliente.id}}">{{cliente.cliente}}</option>
           </select>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-success" (click)="entrar()">Continuar</button>
+  <div class="modal-footer justify-content-center">
+    <button type="button" class="btn btn-warning" aria-label="Close" (click)="d('Cross click')">Cancelar</button>
   </div>
 </ng-template>
