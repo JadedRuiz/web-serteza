@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
 import { LocalidadService } from 'src/app/services/localidad/localidad.service';
 import { COLOR } from 'src/config/config';
-import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 import { Cliente } from 'src/app/models/Cliente';
 import { Direccion } from 'src/app/models/Direccion';
 import { ClienteService } from 'src/app/services/Cliente/cliente.service';
@@ -11,11 +9,12 @@ import Swal from 'sweetalert2';
 import * as jQuery from 'jquery';
 
 @Component({
-  selector: 'app-candidatos',
-  templateUrl: './cat_cliente.component.html',
-  styleUrls: ['./cat_cliente.component.css']
+  selector: 'app-catalogo-empresa',
+  templateUrl: './catalogo_empresa.component.html',
+  styleUrls: ['./catalogo_empresa.component.css']
 })
-export class CatalogoClienteComponent implements OnInit {
+export class CatalogoEmpresaComponent implements OnInit {
+
   //Variables globales
   public color = COLOR;
   public direccion : Direccion = new Direccion(0,0,"","","","","","","","","","");
@@ -46,15 +45,13 @@ export class CatalogoClienteComponent implements OnInit {
   colonias = [
     "Primero ingresa el Codigo Postal"
   ];
-
-  constructor( 
+  constructor(
     private modalService: NgbModal,
     public cp_service: LocalidadService,
     private cliente_service: ClienteService
   ) { }
 
   ngOnInit(): void {
-    this.mostrarClientes();
   }
   mostrarClientes(){
     let json = {

@@ -66,7 +66,8 @@ export class SidebarComponent implements OnInit {
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
         submenu : [
-          {path: '/catalogo_candidato', title: 'Asignar permisos a usuario', icon: 'ni-badge text-yellow'},
+          {path: '/usuario_permisos', title: 'Asignar permisos a usuario', icon: 'ni-badge text-yellow'},
+          {path: '/empresa_permisos', title: 'Asignar permisos a empresa', icon: 'ni-ui-04 text-yellow'},
         ]
       },
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: false, tipo : ""}
