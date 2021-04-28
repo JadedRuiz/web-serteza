@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { SistemaAdminComponent } from './sistema-admin.component';
 import { CatalogoUsuarioComponent } from './catalogo_usuario/catalogo_usuario.component';
 import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.component';
+import { ProcedimientoUsuarioComponent } from './procedimiento_usuario/procedimiento_usuario.component';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.co
     SistemaAdminComponent,
     CatalogoClienteComponent,
     CatalogoUsuarioComponent,
-    CatalogoEmpresaComponent
+    CatalogoEmpresaComponent,
+    ProcedimientoUsuarioComponent
   ],
   imports: [
     CommonModule,

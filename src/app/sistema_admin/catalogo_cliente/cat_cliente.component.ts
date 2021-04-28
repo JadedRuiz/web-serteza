@@ -235,19 +235,8 @@ export class CatalogoClienteComponent implements OnInit {
           this.activo = false;
         }
         //Funcionalidad de modal
-        jQuery("#password").attr("disabled","true");
         jQuery("#guardar").hide();
         jQuery("#editar").show();
-        //Se llenan los sistemas
-        this.sistemas_seleccionados = [];
-        for(let i=0;i<object.data[0].sistemas.length; i++){
-          this.sistemas_seleccionados.push(object.data[0].sistemas[i].id_sistema);
-          for(let o=0; o<this.sistemas.length;o++){
-            if(this.sistemas[o].id_sistema == object.data[0].sistemas[i].id_sistema){
-              this.sistemas[o].active = "active";
-            }
-          }
-        }
       }else{
         Swal.fire("Ha ocurrido un error",object.message,"error");
       }

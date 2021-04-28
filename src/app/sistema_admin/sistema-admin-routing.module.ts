@@ -4,6 +4,7 @@ import { CatalogoClienteComponent } from './catalogo_cliente/cat_cliente.compone
 import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.component';
 import { CatalogoUsuarioComponent } from './catalogo_usuario/catalogo_usuario.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ProcedimientoUsuarioComponent } from './procedimiento_usuario/procedimiento_usuario.component';
 import { SistemaAdminComponent } from './sistema-admin.component';
 
 const routes: Routes = [
@@ -15,6 +16,7 @@ const routes: Routes = [
         { path : "catalogo_cliente", component : CatalogoClienteComponent},
         { path : "catalogo_empresa", component : CatalogoEmpresaComponent},
         { path : "catalogo_usuario", component : CatalogoUsuarioComponent},
+        { path : "procedimiento_usuario", component : ProcedimientoUsuarioComponent},
         { path: '', redirectTo: '/login', pathMatch: 'full'}
     ]
   }

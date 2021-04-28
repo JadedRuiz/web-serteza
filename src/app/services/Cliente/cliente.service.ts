@@ -32,6 +32,10 @@ export class ClienteService {
     let url = SERVER_API+"cliente/obtenerClientesPorId/"+id;
     return this.http.get(url);
   }
+  obtenerClientePorIdUsuario(id : any){
+    let url = SERVER_API+"cliente/obtenerClientePorIdUsuario/"+id;
+    return this.http.get(url);
+  }
   altaCliente(cliente : Cliente){
     let url = SERVER_API+"cliente/altaCliente";
     return this.http.post( url, cliente )
@@ -45,6 +49,16 @@ export class ClienteService {
   actualizarCliente(cliente : Cliente){
     let url = SERVER_API+"cliente/actualizarCliente";
     return this.http.post( url, cliente )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        return throwError(err);
+      }));
+  }
+  asignarClienteAUsuario(json : any){
+    let url = SERVER_API+"cliente/asignarClienteAUsuario";
+    return this.http.post( url, json )
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {

@@ -17,11 +17,18 @@ export class EmpresaService {
         private usuario_service: UsuarioService
         ) { }
 
-    obtenerEmpresas(sistema_id : number){
-        let url = SERVER_API+"empresa/obtenerEmpresas/"+sistema_id;
-        return this.http.get(url);
+    obtenerEmpresas( json : any ){
+      let url = SERVER_API+"empresa/obtenerEmpresas";
+      return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+        return throwError(err);
+      }));
+      return this.http.get(url);
     }
-    obtenerEmpresaPorId(id : number){
+    obtenerEmpresaPorId(id : any){
         let url = SERVER_API+"empresa/obtenerEmpresaPorId/"+id;
         return this.http.get(url)
         .pipe(map( (resp: any) => {
@@ -31,9 +38,29 @@ export class EmpresaService {
             return throwError(err);
           }));
     }
+    obtenerEmpresaPorIdUsuario(id : any){
+      let url = SERVER_API+"empresa/obtenerEmpresaPorIdUsuario/"+id;
+      return this.http.get(url)
+      .pipe(map( (resp: any) => {
+          return resp;
+        }), catchError(err => {
+          Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+          return throwError(err);
+        }));
+  }
     altaEmpresa(empresa : Empresa){
       let url = SERVER_API+"empresa/altaEmpresa";
       return this.http.post( url, empresa )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        return throwError(err);
+      }));
+    }
+    asignarEmpresaAUsuario(json : any){
+      let url = SERVER_API+"empresa/asignarEmpresaAUsuario";
+      return this.http.post( url, json )
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
