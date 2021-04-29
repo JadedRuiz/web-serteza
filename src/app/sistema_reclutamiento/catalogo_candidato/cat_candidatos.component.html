@@ -1,137 +1,255 @@
-<div class="header {{color}} pb-5 pt-5 pt-md-8">
-  <div class="container-fluid">
-  </div>
+<div class="header {{color}} pb-5 pt-5 pt-md-7">
 </div>
 <div class="container-fluid mt--5">
   <div class="row">
     <div class="col">
       <div class="card border-info">
+        <div class="card-header">
+           CATÁLOGO DE CANDIDATOS
+        </div>
         <div class="card-body">
-          <ul class="nav nav-tabs profile-tab">
-            <li class="nav-item" *ngFor="let tab of tabs"
-            ><a class="nav-link {{tab.clase}}" data-toggle="tab" href="{{tab.id_tab}}" role="tab"
-            >{{tab.title}}</a>
-            </li>
-          </ul>
-          <div class="tab-content mt-2">
-            <div class="tab-pane active" id="empleado" role="tabpanel">
-              <div class="row">
-                <div class="col-12">
-                  <span class="badge {{estatus_color}} text-white float-right">Estatus : {{status}}</span>
-                </div>
-              </div>
-              <form #form_empleado="ngForm" ngNativeValidate id="form_empleado">
-                <div class="form-row">
-                  <div class="form-group col-md-2">
-                    <img (click)="subirImagen()" id="imagen_perfil" class="img-fluid rounded" [src]="foto_user" style="width:160px;height:180px;cursor: pointer;">
-                    <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen()">
-                  </div>
-                  <div class="col-10">
-                    <div class="row">
-                      <div class="form-group col-md-3">
-                        <label for="num_empleado">Numero de empleado</label>
-                        <input [(ngModel)]="empleado.id" name="id" type="number" class="form-control" id="num_empleado" disabled>
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label for="apellido_paterno">Apellido paterno</label>
-                        <input [(ngModel)]="empleado.apellido_paterno" name="apellido_paterno" type="text" class="form-control" id="apellido_paterno" placeholder="Ingrese el primer apellido" required style="text-transform: uppercase;">
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label for="apellido_materno">Apellido materno</label>
-                        <input [(ngModel)]="empleado.apellido_materno" name="apellido_materno" type="text" class="form-control" id="apellido_materno" placeholder="Ingrese el segundo apellido" required style="text-transform: uppercase;">
-                      </div>
+            <div class="row mb-2">
+                <div class="col-lg-4 col-sm-12 mb-2">
+                    <div class="buscador">
+                        <input [(ngModel)]="palabra" type="search" placeholder="Buscar">
+                        <a title="Buscar" (click)="busqueda()"><i class="fas fa-search"></i></a>
                     </div>
-                    <div class="row">
-                      <div class="form-group col-md-4">
-                        <label for="nombre_empleado">Nombre(s)</label>
-                        <input [(ngModel)]="empleado.nombre" name="nombre" class="form-control" id="nombre_empleado" placeholder="Ingrese el nombre" required style="text-transform: uppercase;">
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label for="rfc_empleado">RFC</label>
-                        <input [(ngModel)]="empleado.rfc" name="rfc" style="text-transform:uppercase;" type="text" class="form-control" id="rfc_empleado" placeholder="RFC"
-                        required>
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label for="curp_empleado">CURP</label>
-                        <input [(ngModel)]="empleado.curp" name="curp" style="text-transform:uppercase;" type="text" class="form-control" id="curp_empleado" placeholder="CURP" required>
-                      </div>
-                    </div>
-                  </div>
                 </div>
-                <div class="form-row">
-                  <div class="form-group col-md-3">
-                    <label for="num_seguro">Número de seguro (IMSS)</label>
-                    <input [(ngModel)]="empleado.numero_social" name="numero_seguro" type="text" class="form-control" id="num_seguro" placeholder="Ingrese el número de afiliación del seguro social">
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="fecha_nacimiento">Fecha de nacimiento</label>
-                    <input [(ngModel)]="empleado.fecha_nacimiento" name="fecha_nacimiento" (change)="generarEdad()" type="date" class="form-control" id="fecha_nacimiento">
-                  </div>
-                  <div class="form-group col-md-1">
-                    <label for="edad_empleado">Edad</label>
-                    <input [(ngModel)]="empleado.edad" name="edad" type="number" class="form-control" id="edad_empleado">
-                  </div>
-                  <div class="form-group col-md-5">
-                    <label for="correo_empleado">Correo electrónico</label>
-                    <input [(ngModel)]="empleado.correo" name="correo" type="email" class="form-control" id="correo_empleado" placeholder="Ingrese el correo">
-                  </div>
+                <div class="col-lg-4 col-sm-12">
+                    <p style="display: inline-block;" class="my-0 py-0 mr-2">Filtro :</p> 
+                    <select [(ngModel)]="status" name="status" id="status" class="form-control" style="display: inline-block;width: 150px;" (change)="filtroStatus()">
+                        <option value="2">Todos</option>
+                        <option value="1">En reclutamiento</option>
+                        <option value="0">Activos</option>
+                        <option value="0">De baja</option>
+                        <option value="0">Suspendidos</option>
+                    </select>
                 </div>
-                <div class="form-row">
-                  <div class="form-group col-md-4">
-                    <label for="tel_1">Telefono(s)</label>
-                    <input [(ngModel)]="empleado.telefono" name="telefono" type="number" class="form-control" id="tel_1" placeholder="Ingrese el número">
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="tel_2">&nbsp;</label>
-                    <input [(ngModel)]="empleado.telefono_dos" name="telefono_dos" type="number" class="form-control" id="tel_2" placeholder="Ingrese el número">
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="tel_3">&nbsp;</label>
-                    <input [(ngModel)]="empleado.telefono_tres" name="telefono_tres" type="number" class="form-control" id="tel_3" placeholder="Ingrese el número">
-                  </div>
+                <div class="col-lg-4 col-sm-12" style="text-align: end;">
+                    <a class="btn btn-info" (click)="guardar()" title="Nuevo empresa"><img src="./assets/iconos/agregar.svg" style="width: 24px;"></a>
                 </div>
-                <div class="form-group"> 
-                  <label for="desc_empleado">Descripción de puestos que puede ocupar</label>
-                  <textarea [(ngModel)]="empleado.descripcion" name="descripcion" class="form-control" rows="5" id="desc_empleado" name="desc_empleado"></textarea>
-                </div>
-              </form>
-              <div id="guardar">
-                <button type="submit" form="form_empleado" (click)="guardar(form_empleado)" class="btn btn-success">Guardar</button>
-                <a class="btn btn-warning" (click)="limpiar()">Limpiar</a>
-              </div>
-              <div id="actualizar" style="display: none;">
-                <a class="btn btn-info" (click)="actualizar()">Actualizar</a>
-                <a class="btn btn-danger" (click)="eliminarCandidato()">Borrar</a>
-                <a href="#" class="btn btn-warning" routerLink="/catalogo_candidato">Limpiar</a>
-              </div>
             </div>
-            <div class="tab-pane" id="direccion" role="tabpanel">
-              <form #form_direccion="ngForm" ngNativeValidate id="form_direccion">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Folio</th>
+                            <th scope="col">Nombre del candidato</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="band; else pintaVacio" class="">
+                        <tr *ngFor="let candidato of candidatos">
+                            <td colspan="1" style="vertical-align: middle;">{{candidato.folio}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{candidato.nombre}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{candidato.status}}</td>
+                            <td colspan="1" style="width: 20%;">
+                                <a title="Editar" (click)="editar(candidato.folio)" style="cursor: pointer;" class="btn btn-primary"><img src="./assets/iconos/edit.svg" style="width: 24px;"></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <ng-template #pintaVacio>
+                        <tbody>
+                            <tr>
+                                <td colspan="4" class="text-center">No existen candidatos</td>
+                            </tr>
+                        </tbody>
+                    </ng-template>
+                    <tbody></tbody>
+                </table>
+                <div class="filtros container mt-3">
+                    <div class="row">
+                        <div class="col-lg-4 col-sm-12"></div>
+                        <div class="col-lg-4 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
+                            <nav *ngIf="mostrar_pagination" aria-label="Page navigation example">
+                                <ul class="pagination">
+                                  <li class="page-item" *ngIf="previous">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                      <span aria-hidden="true">&laquo;</span>
+                                      <span class="sr-only">Previous</span>
+                                    </a>
+                                  </li>
+                                  <li *ngFor="let pagina of paginas" class="page-item {{pagina.active}}" (click)="irPagina(pagina.valor_pagina)"><a class="page-link" style="cursor: pointer;">{{pagina.numero}}</a></li>
+                                  <li class="page-item" *ngIf="next">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                      <span aria-hidden="true">&raquo;</span>
+                                      <span class="sr-only">Next</span>
+                                    </a>
+                                  </li>
+                                </ul>
+                              </nav>
+                        </div>
+                        <div class="col-lg-4 col-sm-12" style="text-align: end;">
+                            <p class="mr-2" style="display: inline-block;">Candidatos :</p>
+                            <select [(ngModel)]="taken" (change)="mostrarCandidatos()" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
+    <div class="modal-header">
+        <h2 class="modal-title" id="tituloModal">Nuevo candidato</h2>
+    </div>
+    <div class="modal-body">
+        <div class="form-row col-12 mb-2" style="display: flex;justify-content: flex-end;">
+          <select class="form-control" style="width: 200px;">
+              <option default>En reclutamiento</option>
+              <option value="1">Activo</option>
+              <option value="2">Baja</option>
+              <option value="3">Suspendido</option>
+          </select>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12">
+              <ul class="nav nav-tabs profile-tab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" data-toggle="tab" href="#empresa_tab" role="tab" aria-selected="true">Datos de la empresa</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link " data-toggle="tab" href="#direccion_tab" role="tab" aria-selected="false">Dirección</a>
+                </li>
+              </ul>
+            </div>
+            <div class="tab-content col-12" id="myTabContent">
+                <div class="tab-pane active col-12" id="empresa_tab" role="tabpanel">
+                    <div class="container col-12">
+                        <div class="row">
+                            <div class="col-lg-2 col-sm-12">
+                                <div class="form-group rounded" style="max-width:190px;height:200px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;overflow: hidden;">
+                                    <img (click)="subirImagen()" id="imagen_perfil" class="img-fluid" [src]="foto_user">
+                                    <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
+                                </div>
+                            </div>
+                            <div class="col-lg-10 col-sm-12">
+                                <div class="row">
+                                    <div class="col-lg-3 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="apellido_paterno">Apellido paterno *</label>
+                                            <input [(ngModel)]="candidato.apellido_paterno" name="apellido_paterno" type="text" class="form-control" id="apellido_paterno">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-12">
+                                      <div class="form-group">
+                                          <label for="apellido_materno">Apellido materno *</label>
+                                          <input [(ngModel)]="candidato.apellido_materno" name="apellido_materno" type="text" class="form-control" id="apellido_materno">
+                                      </div>
+                                    </div>
+                                    <div class="col-6">
+                                      <div class="form-group">
+                                          <label for="nombre">Nombres *</label>
+                                          <input [(ngModel)]="candidato.nombre" name="nombre" type="text" class="form-control" id="nombre">
+                                      </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-lg-4 col-sm-12">
+                                    <div class="form-group">
+                                      <label for="curp">CURP</label>
+                                      <input [(ngModel)]="candidato.curp" name="rfc" type="text" class="form-control" id="curp">
+                                    </div>
+                                  </div>
+                                  <div class="col-lg-4 col-sm-12">
+                                    <div class="form-group">
+                                      <label for="rfc">RFC</label>
+                                      <input [(ngModel)]="candidato.rfc" name="rfc" type="text" class="form-control" id="rfc">
+                                    </div>
+                                  </div>
+                                  <div class="col-lg-4" col-sm-12>
+                                    <div class="form-group">
+                                      <label for="numero_social">Número de seguro social</label>
+                                      <input [(ngModel)]="candidato.numero_social" name="numero_social" type="text" class="form-control" id="numero_social">
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                          
+                        </div>
+                        <div class="row">
+                          <div class="col-lg-4 col-sm-12">
+                            <div class="form-group">
+                              <label for="fecha_nacimiento">Fecha de nacimiento</label>
+                              <input [(ngModel)]="candidato.fecha_nacimiento" name="fecha_nacimiento" type="date" class="form-control" id="fecha_nacimiento">
+                            </div>
+                          </div>
+                          <div class="col-lg-2 col-sm-12">
+                            <div class="form-group">
+                              <label for="edad">Edad</label>
+                              <input [(ngModel)]="candidato.edad" name="edad" type="text" class="form-control" id="edad">
+                            </div>
+                          </div>
+                          <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="correo">Correo</label>
+                                <input [(ngModel)]="candidato.correo" name="correo" type="text" class="form-control" id="correo">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="form-group col-lg-4 col-sm-12">
+                            <label for="tel_1">Telefono(s)</label>
+                            <input [(ngModel)]="candidato.telefono" name="telefono" type="number" class="form-control" id="tel_1" placeholder="Ingrese el número">
+                          </div>
+                          <div class="form-group col-lg-4 col-sm-12">
+                            <label for="tel_2">&nbsp;</label>
+                            <input [(ngModel)]="candidato.telefono_dos" name="telefono_dos" type="number" class="form-control" id="tel_2" placeholder="Ingrese el número">
+                          </div>
+                          <div class="form-group col-lg-4 col-sm-12">
+                            <label for="tel_3">&nbsp;</label>
+                            <input [(ngModel)]="candidato.telefono_tres" name="telefono_tres" type="number" class="form-control" id="tel_3" placeholder="Ingrese el número">
+                          </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group"> 
+                                    <label for="desc_cempresa">Descripción de la empresa</label>
+                                    <textarea [(ngModel)]="candidato.descripcion" name="desc_cempresa" class="form-control" rows="5" id="desc_cempresa"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+              </div>
+              <div class="tab-pane col-12" id="direccion_tab" role="tabpanel">
                 <div class="form-row">
                   <div class="form-group col-md-1">
                     <label for="calle">Calle</label>
-                    <input [(ngModel)]="empleado.direccion.calle" name="calle" type="number" class="form-control" id="calle" required>
+                    <input [(ngModel)]="candidato.direccion.calle" name="calle" type="number" class="form-control" id="calle" required>
                   </div>
                   <div class="form-group col-md-2">
                     <label for="num_ext">Número ext.</label>
-                    <input [(ngModel)]="empleado.direccion.numero_exterior" name="num_exterior" type="text" class="form-control" id="num_ext" placeholder="">
+                    <input [(ngModel)]="candidato.direccion.numero_exterior" name="num_exterior" type="text" class="form-control" id="num_ext" placeholder="">
                   </div>
                   <div class="form-group col-md-2">
                     <label for="num_int">Número int.</label>
-                    <input [(ngModel)]="empleado.direccion.numero_interior" name="num_interior" type="text" class="form-control" id="num_int" placeholder="">
+                    <input [(ngModel)]="candidato.direccion.numero_interior" name="num_interior" type="text" class="form-control" id="num_int" placeholder="">
                   </div>
                   <div class="form-group col-md-3">
                     <label for="cruzamientos_form">Cruzamientos</label>
                     <div class="form-inline form-row align-items-center" id="cruzamientos_form">
-                      <input [(ngModel)]="empleado.direccion.cruzamiento_uno" name="cruzamiento_ext" type="number" class="form-control col-5" id="cruzamientos_int" placeholder="">
+                      <input [(ngModel)]="candidato.direccion.cruzamiento_uno" name="cruzamiento_ext" type="number" class="form-control col-5" id="cruzamientos_int" placeholder="">
                       <p class="text-center col-2"> y </p>
-                      <input [(ngModel)]="empleado.direccion.cruzamiento_dos" name="cruzamiento_int" type="number" class="form-control col-5" id="cruzamientos_ext" placeholder="">
+                      <input [(ngModel)]="candidato.direccion.cruzamiento_dos" name="cruzamiento_int" type="number" class="form-control col-5" id="cruzamientos_ext" placeholder="">
                     </div>
                   </div>
                   <div class="form-group col-md-3">
                     <label for="codigo_postal">Código postal</label>
                     <div class="input-group mb-3">
-                      <input [(ngModel)]="empleado.direccion.codigo_postal" name="codigo_postal" id="codigo_postal" type="number" class="form-control" aria-describedby="icono">
+                      <input [(ngModel)]="candidato.direccion.codigo_postal" name="codigo_postal" id="codigo_postal" type="number" class="form-control" aria-describedby="icono">
                       <div class="input-group-append">
                         <span class="input-group-text" id="icono" style="cursor:pointer;" (click)="getDatos()"><i class="ni ni-fat-add"></i></span>
                       </div>
@@ -141,32 +259,39 @@
                 <div class="form-row">
                   <div class="form-group col-md-3">
                     <label for="colonia">Colonia</label>
-                    <select [(ngModel)]="empleado.direccion.colonia" name="colonia" type="text" class="form-control" (change)="modificarMunicipio()" id="colonia" placeholder="">
+                    <select [(ngModel)]="candidato.direccion.colonia" name="colonia" type="text" class="form-control" (change)="modificarMunicipio()" id="colonia" placeholder="">
                       <option *ngFor="let colonia of colonias">{{colonia}}</option>
                     </select>
                   </div>
                   <div class="form-group col-md-3">
                     <label for="localidad">Localidad</label>
-                    <input [(ngModel)]="empleado.direccion.localidad" name="localidad" type="text" class="form-control" id="localidad" placeholder="">
+                    <input [(ngModel)]="candidato.direccion.localidad" name="localidad" type="text" class="form-control" id="localidad" placeholder="">
                   </div>
                   <div class="form-group col-md-3">
                     <label for="municipio">Municipio</label>
-                    <input [(ngModel)]="empleado.direccion.municipio" name="municipio" type="text" class="form-control" id="municipio">
+                    <input [(ngModel)]="candidato.direccion.municipio" name="municipio" type="text" class="form-control" id="municipio">
                   </div>
                   <div class="form-group col-md-3">
                     <label for="estado">Estado</label>
-                    <input [(ngModel)]="empleado.direccion.estado" name="estado" type="text" class="form-control" id="estado">
+                    <input [(ngModel)]="candidato.direccion.estado" name="estado" type="text" class="form-control" id="estado">
                   </div>
                 </div>
-                <div class="form-group"> 
-                  <label for="desc_vivienda">Descripción de la vivienda</label>
-                  <textarea [(ngModel)]="empleado.direccion.descripcion" name="num_interior" class="form-control" rows="5" id="desc_vivienda" name="desc_vivienda"></textarea>
-                </div> 
-              </form>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group"> 
+                            <label for="desc_dir_empresa">Descripción</label>
+                            <textarea [(ngModel)]="candidato.direccion.descripcion" name="desc_dir_empresa" class="form-control" rows="5" id="desc_dir_empresa"></textarea>
+                        </div>
+                    </div>
+                </div>
+              </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
-</div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="btn btn-success" (click)="altaCandidato()" id="guardar">Guardar</button>
+        <!-- <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button> -->
+    </div>
+</ng-template>
+  

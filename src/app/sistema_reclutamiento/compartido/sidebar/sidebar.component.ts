@@ -27,6 +27,7 @@ export class SidebarComponent implements OnInit {
   public subMenuItems = Array();
   public isCollapsed = true;
   public foto_empresa : any //
+  public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
 
   constructor(
     private router: Router,
@@ -35,7 +36,9 @@ export class SidebarComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private cliente_service : ClienteService,
     private modalService: NgbModal
-    ) {}
+    ) {
+      this.foto_empresa = "./assets/img/defaults/imagen-no-disponible.png";
+    }
 
   ngOnInit() {
     this.pintarMenu();
@@ -59,12 +62,12 @@ export class SidebarComponent implements OnInit {
       { path: '/dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : [
-          {path: 'candidato', title: 'Mis candidatos', icon: 'ni-badge text-orange'},
+          {path: 'catalogo_candidato', title: 'Mis candidatos', icon: 'ni-badge text-orange'},
         ]
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
         submenu : [
-          {path: '/catalogo_candidato', title: 'Asignar permisos a usuario', icon: 'ni-badge text-yellow'},
+          {path: 'catalogo_candidato', title: 'Solicitudes de contratación', icon: 'ni-folder-17 text-yellow'},
         ]
       },
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: false, tipo : ""}
@@ -74,43 +77,31 @@ export class SidebarComponent implements OnInit {
     //AQUI SE RECUPERAN LOS CLIENTES DEL USUARIO LOGUEADO
     this.clientes = [];
     if(window.sessionStorage.getItem("cliente") == null){
-      let id_sistema_usuario = window.sessionStorage.getItem("sistema");
-      this.cliente_service.obtenerClientes(parseInt(id_sistema_usuario+""))
+      this.cliente_service.obtenerClientePorIdUsuario(this.usuario_logueado)
       .subscribe( (object : any) => {
-        console.log(object);
         if(object.ok){
           if(object.data.length > 1){
             this.clientes.push(object.data);
             this.openModal();
           }else{
-            if(object.data[0].empresa_relacionada_id != ""){
-              window.sessionStorage["empresa"] = object.data[0].empresa_relacionada_id;
-              window.sessionStorage["foto_empresa"] = object.data[0].fografia_empresa_id;
-              this.mostrarLogo();
-            }
             window.sessionStorage["cliente"] = object.data[0].id;
           }
         }
       });
     }
   }
-  eleccion(id_cliente : any, id_empresa : any, id_fotografia : any){
-    if(id_empresa =! ""){
-      window.sessionStorage["empresa"] = id_empresa;
-      window.sessionStorage["foto_empresa"] = id_fotografia;
-      this.mostrarLogo();
-    }
+  eleccion(id_cliente : any){
     window.sessionStorage["cliente"] = id_cliente;
     this.closeModal();
   }
   cerrarSesion(){
     this.usuario.logout();
-    window.localStorage.removeItem("sistema");
-    window.localStorage.removeItem("empresa");
-    window.localStorage.removeItem("cliente");
-    window.localStorage.removeItem("nombre");
-    window.localStorage.removeItem("user");
-    window.localStorage.removeItem("foto_user");
+    window.sessionStorage.removeItem("sistema");
+    window.sessionStorage.removeItem("empresa");
+    window.sessionStorage.removeItem("cliente");
+    window.sessionStorage.removeItem("nombre");
+    window.sessionStorage.removeItem("user");
+    window.sessionStorage.removeItem("foto_user");
     this.router.navigateByUrl("login");
   }
   openModal() {

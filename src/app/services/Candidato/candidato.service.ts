@@ -15,9 +15,15 @@ export class CandidatoService {
     public http: HttpClient
   ) { }
 
-  obtenerDatos(){
-    let url = SERVER_API+"candidato/obtenerDatos";
-    return this.http.get(url);
+  obtenerCandidatos(json : any){
+    let url = SERVER_API+"candidato/obtenerCandidatos";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        return throwError(err);
+      }));
   }
   altaCandidato(candidato : Candidato){
     let url = SERVER_API+"candidato/altaCandidato";

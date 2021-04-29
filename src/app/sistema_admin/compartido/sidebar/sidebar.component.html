@@ -86,25 +86,4 @@
       </div>
     </div>
   </nav>
-  <ng-template #content let-c="close" let-d="dismiss">
-    <div class="modal-header justify-content-center">
-      <h4 class="modal-title" id="modal-basic-title">¿Que cliente desea utilizar?</h4>
-    </div>
-    <div class="modal-body">
-      <form>
-        <div class="form-row">
-          <div class="form-group col-md-12">
-            <div class="list-group">
-              <a *ngFor="let cliente of clientes[0]" (click)="eleccion(cliente.id,cliente.empresa_relacionada_id,cliente.fografia_empresa_id)" style="cursor: pointer;" class="list-group-item list-group-item-action" aria-current="true">
-                {{cliente.cliente}}
-              </a>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-    <div class="modal-footer justify-content-center">
-      <button type="button" class="btn btn-warning" aria-label="Close" (click)="d('Cross click')">Cancelar</button>
-    </div>
-  </ng-template>
   

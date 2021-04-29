@@ -82,4 +82,14 @@ export class EmpresaService {
       let url = SERVER_API+"empresa/bajaEmpresa/"+id;
       return this.http.get(url);
     }
+    eliminarLiga(json : any){
+      let url = SERVER_API+"empresa/elimiminarLiga";
+      return this.http.post( url, json )
+        .pipe(map( (resp: any) => {
+          return resp;
+        }), catchError(err => {
+          Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+          return throwError(err);
+        }));
+    }
 }

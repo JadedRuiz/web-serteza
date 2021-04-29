@@ -267,7 +267,6 @@ export class ProcedimientoUsuarioComponent implements OnInit {
       }
     }
     if(this.tipo_modal == 2){
-      console.log(this.clietes_seleccionados);
       if(this.clietes_seleccionados.length == 0){
         Swal.fire("Ha ocurrido un error","Primero selecciona los clientes a agreagarle al usuario","error");
       }else{
@@ -286,5 +285,31 @@ export class ProcedimientoUsuarioComponent implements OnInit {
         });
       }
     }
+  }
+  eliminarLigaCliente(id_cliente : any){
+    let json = {
+      id_cliente : id_cliente,
+      id_usuario : this.id_seleccionado,
+      usuario_creacion : this.usuario_creacion
+    };
+    this.cliente_service.eliminarLiga(json)
+    .subscribe( (object : any) =>{
+      if(object.ok){
+        this.mostrarClientePorIdUsuario(this.id_seleccionado);
+      }
+    })
+  }
+  eliminarLigaEmpresa(id_empresa : any){
+    let json = {
+      id_empresa : id_empresa,
+      id_usuario : this.id_seleccionado,
+      usuario_creacion : this.usuario_creacion
+    };
+    this.empresa_service.eliminarLiga(json)
+    .subscribe( (object : any) =>{
+      if(object.ok){
+        this.mostrarEmpresasPorUsuario(this.id_seleccionado);
+      }
+    });
   }
 }

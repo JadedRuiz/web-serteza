@@ -4,12 +4,14 @@ import swal from'sweetalert2';
 import { LocalidadService } from 'src/app/services/localidad/localidad.service';
 import { COLOR } from 'src/config/config';
 import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
-import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Candidato } from 'src/app/models/Candidato';
 import { Direccion } from 'src/app/models/Direccion';
 import { Fotografia } from 'src/app/models/Fotografia';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
+import Swal from 'sweetalert2';
+import * as jQuery from 'jquery';
 
 @Component({
   selector: 'app-candidatos-original',
@@ -18,113 +20,178 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class CatalogoCandidatosComponent implements OnInit {
 
+  //Variables globales
   public color = COLOR;
-  public estatus_color = "bg-dark";
-  public status = "default";
+  public direccion : Direccion = new Direccion(0,0,"","","","","","","","","","");
+  public fotografia = new Fotografia(0,"","","");
+  public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
+  public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
+  public candidato = new Candidato(0,this.id_cliente,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia); 
+  public candidatos : any;
+  public band = true;
+  public modal : any;
+  public estatus_color = "";
+  @ViewChild('content', {static: false}) contenidoDelModal : any;
+  public activo = true;
   public foto_user : any;
   public docB64 = "";
-  @ViewChild('file_input', {read: ElementRef}) foto : any;
-  direccion : Direccion = new Direccion(0,0,"","","","","","","","","","");
-  fotografia : Fotografia = new Fotografia(0,"","","");
-  cliente_id = parseInt(window.sessionStorage.getItem("cliente")+"");
-  usuario_id = parseInt(window.sessionStorage.getItem("cliente")+"")
-  empleado : Candidato = new Candidato(0,this.cliente_id,0,"","","","","","","","",0,"",0,0,0,"",this.usuario_id,this.direccion,this.fotografia);
-  tabs = [
-    {
-      title : "Empleado",
-      id_tab : "#empleado",
-      clase : "active"
-    },
-    {
-      title : "Dirección",
-      id_tab : "#direccion",
-      clase : ""
-    }
-  ];
+  //Filtros
+  public taken = 5; //Registros por default
+  public status = 2; //Status default
+  public palabra = "";
+  //Paginacion
+  public total_registros = 0;
+  public mostrar_pagination = false;
+  public paginas_a_mostrar = 5;
+  public paginas : any;
+  public pagina_actual = 0;
+  public limite_inferior = 0;
+  public limite_superior = this.paginas_a_mostrar;
+  public next = false;
+  public previous = false;
+  
   colonias = [
     "Primero ingresa el Codigo Postal"
   ];
 
+  @ViewChild('file_input', {read: ElementRef}) foto : any;
+
   constructor( 
     public cp_service: LocalidadService,
-    private router: ActivatedRoute,
-    private routers : Router,
-    private candidato: CandidatoService,
-    private usuario: UsuarioService,
-    private sanitizer: DomSanitizer
-  ) { }
-
-  ngOnInit(): void {
-    this.foto_user = "../../../../../assets/img/defaults/usuario_por_defecto.svg";
-    if(this.usuario.obtenerToken() == ""){
-      this.routers.navigateByUrl("/login");
-    }
-    this.router.paramMap.subscribe((params : ParamMap) => {
-      let valor = parseInt(params.get("id")+"");
-      this.pintarDatos(valor);
-    });
-  }
-
-  pintarDatos(valor : number){
-  // let valor = parseInt(this.router.snapshot.paramMap.get("id")+"");
-   if(valor >0){
-     this.candidato.obtenerCandidatoPorId(valor)
-     .subscribe( (object : any) => {
-      if(object.ok){
-        for(let i=0;i<object.data.length;i++){
-          if(object.data[i].fotografia != ""){
-            this.mostrarImagen(object.data[i].fotografia,object.data[i].extension);
-          }
-          this.fotografia.id_fotografia = object.data[i].cat_fotografia_id;
-          this.cambiarEstatus(object.data[i].estatus);
-          this.empleado.id = object.data[i].id;
-          this.empleado.nombre = object.data[i].nombre;
-          this.empleado.apellido_materno = object.data[i].apellido_materno;
-          this.empleado.apellido_paterno = object.data[i].apellido_paterno;
-          this.empleado.rfc = object.data[i].rfc;
-          this.empleado.curp = object.data[i].curp;
-          this.empleado.fecha_nacimiento = object.data[i].fecha_nacimiento;
-          this.empleado.numero_social = object.data[i].numero_seguro;
-          this.empleado.telefono = object.data[i].telefono;
-          this.empleado.telefono_dos = object.data[i].telefono_dos;
-          this.empleado.telefono_tres = object.data[i].telefono_tres;
-          this.empleado.correo = object.data[i].correo;
-          this.empleado.descripcion = object.data[i].descripcion;
-          this.empleado.direccion.id_direccion = parseInt(object.data[i].id_direccion);
-          this.direccion.calle = object.data[i].calle;
-          this.direccion.numero_exterior = object.data[i].numero_exterior;
-          this.direccion.numero_interior = object.data[i].numero_interior;
-          this.direccion.cruzamiento_uno = object.data[i].cruzamiento_uno;
-          this.direccion.cruzamiento_dos = object.data[i].cruzamiento_dos;
-          this.direccion.codigo_postal = object.data[i].codigo_postal;
-          this.colonias = [];
-          this.colonias.push(object.data[i].colonia);
-          this.direccion.localidad = object.data[i].localidad;
-          this.direccion.municipio = object.data[i].municipio;
-          this.direccion.estado = object.data[i].estado;
-          this.direccion.descripcion = object.data[i].descripcion_direccion;
-          this.accionContenedorActualizar(true);
-          this.accionContenedorGuardar(false);
-        }
-      }else{
-        swal.fire("Ha ocurrido un error","No se ha podido mostrar el candidato","error");
-      }
-    });
+    private candidato_service: CandidatoService,
+    private sanitizer: DomSanitizer,
+    private modalService: NgbModal,
+  ) {
+    this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
    }
 
+  ngOnInit(): void {
+    this.mostrarCandidatos();
   }
+
+  mostrarCandidatos(){
+    let json = {
+      palabra : this.palabra,
+      taken : this.taken,
+      status : this.status,
+      pagina : this.pagina_actual,
+      id_cliente : this.id_cliente
+    };
+    this.candidatos = [];
+    this.candidato_service.obtenerCandidatos(json)
+    .subscribe( (object : any) =>{
+        if(object.ok){
+          //Mostrar si los registros son mayores a los registros que se muestran
+          this.total_registros = object.data.total;
+          if(this.total_registros > this.taken){
+            this.mostrar_pagination = true;
+            this.paginar();
+          }else{
+            this.mostrar_pagination = false;
+          }
+          //Mostrar usuarios
+          this.band = true;
+          //LLenar los usuarios en la tabla
+          for(let i =0; i<object.data.registros.length; i++){
+            let nombre = object.data.registros[i].nombre;
+            let apellidos = object.data.registros[i].apellido_paterno + " " + object.data.registros[i].apellido_materno;
+            this.candidatos.push({
+              "folio" : object.data.registros[i].id_candidato,
+              "nombre" : apellidos + " " + nombre,
+              "status" : object.data.registros[i].status
+            });
+          }
+        }else{
+          this.band = false;
+        }
+    });
+  }
+  altaCandidato(){
+    let band = true;
+    if(this.candidato.apellido_paterno == "" || this.candidato.apellido_materno == "" || this.candidato.nombre == ""){
+      Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
+    }else{
+      if(
+        this.direccion.calle == 0 && this.direccion.codigo_postal == "" &&
+        this.direccion.colonia == "" && this.direccion.cruzamiento_dos == "" &&
+        this.direccion.cruzamiento_uno == "" && this.direccion.descripcion ==  "" &&
+        this.direccion.estado == "" && this.direccion.localidad == "" &&
+        this.direccion.municipio == "" && this.direccion.numero_exterior == ""
+        && this.direccion.numero_interior == ""
+        ){
+          Swal.fire({
+            title: '¿Estas seguro de agregar una empresa sin ningun dato de dirección?',
+            text: "El empresa se registrará sin domicilio, pero puedes actulizar su información en cualquier momento",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, estoy seguro',
+            cancelButtonText : "Cancelar"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              band = true;
+            }else{
+              band = false;
+            }
+          });
+      }else{
+        if(band){
+          if(this.fotografia.docB64 == ""){
+            Swal.fire({
+              title: '¿Estas seguro de agregar al candidato sin ningun foto?',
+              text: "El candidato se registrará sin foto, pero puedes actulizar su información en cualquier momento",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Si, estoy seguro',
+              cancelButtonText : "Cancelar"
+            }).then((result) => {
+              if (result.isConfirmed) {
+                band = true;
+              }else{
+                band = false;
+              }
+            });
+          }else{
+            if(band){
+              this.candidato_service.altaCandidato(this.candidato)
+              .subscribe( (object) =>{
+                if(object.ok){
+                  this.limpiarCampos();
+                  this.mostrarCandidatos();
+                  Swal.fire("Buen trabajo","La empresa se ha dado de alta correctamente","success");
+                  this.cerrarModal();
+                }else{
+                  Swal.fire("Ha ocurrido un error",object.message,"error");
+                }
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  limpiarCampos(){
+    this.direccion  = new Direccion(0,0,"","","","","","","","","","");
+    this.fotografia = new Fotografia(0,"","",""); 
+    this.candidato = new Candidato(0,this.id_cliente,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia);
+  }
+
   generarEdad(){
-    let convertAge = new Date(this.empleado.fecha_nacimiento+"");
+    let convertAge = new Date(this.candidato.fecha_nacimiento+"");
     const timeDiff = Math.abs(Date.now() - convertAge.getTime());
     let edad = Math.floor((timeDiff / (1000 * 3600 * 24))/365);
-    this.empleado.edad = edad;
+    this.candidato.edad = edad;
   }
   getDatos(){
-    this.cp_service.getDirrecion(this.empleado.direccion.codigo_postal)
+    this.cp_service.getDirrecion(this.candidato.direccion.codigo_postal)
     .subscribe( (data: any) => {
       if(data.length > 0){
-        this.empleado.direccion.estado = data[0].response.estado;
-        this.empleado.direccion.municipio = data[0].response.municipio;
+        this.candidato.direccion.estado = data[0].response.estado;
+        this.candidato.direccion.municipio = data[0].response.municipio;
         this.colonias = [];
         for(let i=0;i<data.length;i++){
           this.colonias.push(data[i].response.asentamiento);
@@ -135,81 +202,7 @@ export class CatalogoCandidatosComponent implements OnInit {
       swal.fire('Ha ocurrido un error','No se han encontrado resultados', 'warning');
     });
   }
-  guardar(form_empleado : NgForm){
-    if( form_empleado.invalid){
-    }else{
-      //Almacenar la fotografia
-      this.fotografia.docB64 = this.docB64;
-      this.fotografia.nombre = "foto_user";
-      this.empleado.cat_clientes_id = this.cliente_id;
-      this.candidato.altaCandidato(this.empleado)
-      .subscribe( (objeto : any ) => {
-        if(objeto.ok){
-          swal.fire("Buen trabajo",objeto.message,"success");
-        }else{
-          swal.fire("Ha ocurrido un error",objeto.message,"error");
-        }
-      });
-    }
-  }
-  actualizar(){
-    swal.fire({
-      title: '¿Estas seguro?',
-      text: "El candidato se actualizará",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, deseo actualizarlo',
-      cancelButtonText : "Cancelar"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.candidato.actualizarCandidato(this.empleado)
-        .subscribe( (objeto : any ) => {
-          if(objeto.ok){
-            swal.fire("Buen trabajo",objeto.message,"success");
-          }else{
-            swal.fire("Ha ocurrido un error",objeto.message,"error");
-          }
-        });
-      }
-    })
-  }
-  modificarMunicipio(){
-    let colonia = this.empleado.direccion.colonia;
-    this.cp_service.getDirrecion(this.empleado.direccion.codigo_postal)
-    .subscribe( (data: any) => {
-      if(data.length > 0){
-        for(let i=0;i<data.length;i++){
-          if(data[i].response.asentamiento == colonia){
-            this.empleado.direccion.estado = data[i].response.estado;
-            this.empleado.direccion.municipio = data[i].response.municipio;
-          }
-        }
-      }
-    });
-  }
-  autocomplete(){
-    swal.fire("autocomplete","cambio","success");
-  }
-  subirImagen(){
-      document.getElementById("foto_user")?.click();
-  }
-  cambiarImagen(){
-    let archivos = this.foto.nativeElement.files;
-    let extension = archivos[0].name.split(".")[1];
-    this.fotografia.extension = extension;
-    if(extension == "jpg" || extension == "png"){
-      this.convertirImagenAB64(archivos[0]).then( respuesta => {
-        let img = "data:image/"+extension+";base64, "+respuesta;
-        this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
-        this.docB64 = respuesta+"";
-        this.fotografia.docB64 = respuesta+"";
-      });
-    }else{
-      swal.fire("Ha ocurrido un error","Tipo de imagen no permitida","error");
-    }
-  }
+
   mostrarImagen(docB64 : any, extension : any){
     let img = "data:image/"+extension+";base64, "+docB64;
     this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
@@ -217,6 +210,27 @@ export class CatalogoCandidatosComponent implements OnInit {
     this.fotografia.docB64 = docB64;
     this.fotografia.extension = extension;
   }
+
+  accionContenedorGuardar(band : any){
+    let contenedor_actualizar = document.getElementById("guardar");
+    if(band == true){
+      contenedor_actualizar?.setAttribute("style","display:inline;");
+    }else{
+      contenedor_actualizar?.setAttribute("style","display:none;");
+    }
+  }
+
+  cambiarEstatus(estatus : any){
+    this.status = estatus;
+    if(estatus == "En reclutamiento"){
+      this.estatus_color = "bg-success";
+    }
+  }
+
+  subirImagen(){
+    document.getElementById("foto_user")?.click();
+  }
+
   convertirImagenAB64(fileInput : any){
     return new Promise(function(resolve, reject) {
       let b64 = "";
@@ -228,57 +242,110 @@ export class CatalogoCandidatosComponent implements OnInit {
       };
     });
   }
-  limpiar(){
-    this.direccion = new Direccion(0,0,"","","","","","","","","","");
-    this.fotografia = new Fotografia(0,"","","");
-    this.empleado = new Candidato(0,this.cliente_id,0,"","","","","","","","",0,"",0,0,0,"",this.usuario_id,this.direccion,this.fotografia);
-    this.foto_user = "../../../../../assets/img/defaults/usuario_por_defecto.svg";
+
+  cambiarImagen(event: any){
+    if (event.target.files && event.target.files[0]) {
+      let archivos = event.target.files[0];
+      let extension = archivos.name.split(".")[1];
+      this.fotografia.extension = extension;
+      if(extension == "jpg" || extension == "png"){
+        this.convertirImagenAB64(archivos).then( respuesta => {
+          let img = "data:image/"+extension+";base64, "+respuesta;
+          this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
+          this.docB64 = respuesta+"";
+          this.fotografia.docB64 = respuesta+"";
+          this.fotografia.extension = extension;
+        });
+      }else{
+        Swal.fire("Ha ocurrido un error","Tipo de imagen no permitida","error");
+      }
+    }
   }
-  accionContenedorActualizar(band : any){
-    let contenedor_actualizar = document.getElementById("actualizar");
-    if(band == true){
-      contenedor_actualizar?.setAttribute("style","display:inline;");
+
+  openModal() {
+    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop'});
+  }
+
+  cerrarModal(){
+    this.modal.close();
+  }
+
+  paginar(){
+    this.paginas = [];
+    let paginas_a_pintar = parseInt(this.total_registros+"")%parseInt(this.taken+"");
+    if(paginas_a_pintar == 0){
+      paginas_a_pintar = (parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+"");
     }else{
-      contenedor_actualizar?.setAttribute("style","display:none;");
+      paginas_a_pintar = ((parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+""))+1;
+    }
+    //Pintamos las flechas
+    if(paginas_a_pintar > this.paginas_a_mostrar){
+      this.next = true;
+    }
+    if(this.pagina_actual == paginas_a_pintar){
+      this.next = false;
+    }
+    if(this.pagina_actual > this.paginas_a_mostrar){
+      this.previous = true;
+    }
+    if(this.pagina_actual == 0){
+      this.previous = false;
+    }
+    //Pintamos las paginas
+    for(let i =0;i<this.paginas_a_mostrar;i++){
+      let pagina_inicial = this.limite_inferior;
+      if(i<paginas_a_pintar){
+        if(this.pagina_actual == pagina_inicial+i){
+          this.paginas.push({
+            numero : (pagina_inicial+i)+1,
+            valor_pagina : pagina_inicial+i,
+            active : "active"
+          });
+        }else{
+          this.paginas.push({
+            numero : (pagina_inicial+i)+1,
+            valor_pagina : pagina_inicial+i,
+            active : ""
+          });
+        }
+      }
     }
   }
-  accionContenedorGuardar(band : any){
-    let contenedor_actualizar = document.getElementById("guardar");
-    if(band == true){
-      contenedor_actualizar?.setAttribute("style","display:inline;");
-    }else{
-      contenedor_actualizar?.setAttribute("style","display:none;");
-    }
+
+  editar(folio : any){
   }
-  cambiarEstatus(estatus : any){
-    this.status = estatus;
-    if(estatus == "En reclutamiento"){
-      this.estatus_color = "bg-success";
-    }
+
+  guardar(){
+    this.openModal();
   }
-  eliminarCandidato(){
-    swal.fire({
-      title: '¿Estas seguro que deseas eliminar este candidato?',
-      text: "Una vez eliminado, ya no podrás recuperarlo",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, estoy seguro.',
-      cancelButtonText : "Cancelar"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.candidato.eliminarCandidato(this.empleado.id)
-        .subscribe ( (objecto : any) => {
-          if(objecto.ok){
-            swal.fire(
-              'Deleted!',
-              'Your file has been deleted.',
-              'success'
-            );
-            this.routers.navigateByUrl("catalogo_candidato");
+
+  irPagina(pagina : any){
+    this.pagina_actual = pagina;
+    // this.mostrarEmpresas();
+  }
+
+  filtroStatus(){
+    this.pagina_actual = 0;
+    this.limite_inferior = 0;
+    // this.mostrarEmpresas();
+  }
+
+  busqueda(){
+    this.pagina_actual = 0;
+    this.limite_inferior = 0;
+    // this.mostrarEmpresas();
+  }
+  modificarMunicipio(){
+    let colonia = this.candidato.direccion.colonia;
+    this.cp_service.getDirrecion(this.candidato.direccion.codigo_postal)
+    .subscribe( (data: any) => {
+      if(data.length > 0){
+        for(let i=0;i<data.length;i++){
+          if(data[i].response.asentamiento == colonia){
+            this.candidato.direccion.estado = data[i].response.estado;
+            this.candidato.direccion.municipio = data[i].response.municipio;
           }
-      });
+        }
       }
     });
   }

@@ -127,7 +127,7 @@
                         <div class="row">
                             <div class="col-lg-5 col-sm-12">
                                 <div class="form-group rounded" style="max-width:280px;height:175px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;">
-                                    <img (click)="subirImagen()" id="imagen_perfil" class="img-fluid" [src]="foto_user" >
+                                    <img (click)="subirImagen()" id="imagen_perfil" class="img-fluid" [src]="foto_user">
                                     <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
                                 </div>
                             </div>

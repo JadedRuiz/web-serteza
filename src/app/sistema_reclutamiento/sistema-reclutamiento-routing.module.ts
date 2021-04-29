@@ -10,8 +10,8 @@ const routes: Routes = [
     component : SistemaReclutamientoComponent,
     children : [
         { path : "dashboard",component : DashboardComponent},
-        { path : "candidato", component : CatalogoCandidatosComponent},
-        // { path : "catalogo_candidato/:id", component : CatalogoCandidatosComponent},
+        { path : "catalogo_candidato", component : CatalogoCandidatosComponent},
+        { path : "solicitudes", component : CatalogoCandidatosComponent}
         // { path : "catalogo_empresa", component : CatalogoEmpresaComponent},
         // { path : "catalogo_empresa/:id", component : CatalogoEmpresaComponent},
         // { path : "catalogo_cliente", component : CatalogoClienteComponent},

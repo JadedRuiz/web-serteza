@@ -43,7 +43,7 @@
                                                 </div>
                                                 <ul class="list-group" style="text-align: start;">
                                                     <li *ngFor="let empresa of empresas_configuradas" class="list-group-item" style="cursor: pointer;">{{empresa.nombre}}
-                                                    <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning float-right"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a>
+                                                    <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning float-right" (click)="eliminarLigaEmpresa(empresa.folio)"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -59,7 +59,7 @@
                                                 </div>
                                                 <ul class="list-group" style="text-align: start;">
                                                     <li *ngFor="let cliente of clietes_configurados"  class="list-group-item" style="cursor: pointer;">{{cliente.nombre}}
-                                                    <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning float-right"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a>
+                                                    <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning float-right" (click)="eliminarLigaCliente(cliente.folio)"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a>
                                                     </li>
                                                 </ul>
                                             </div>

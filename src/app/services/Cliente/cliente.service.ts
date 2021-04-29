@@ -70,4 +70,14 @@ export class ClienteService {
     let url = SERVER_API+"cliente/eliminarCliente/"+id;
     return this.http.get(url);
   }
+  eliminarLiga(json : any){
+    let url = SERVER_API+"cliente/elimiminarLiga";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        return throwError(err);
+      }));
+  }
 }
