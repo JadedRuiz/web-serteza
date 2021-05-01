@@ -171,6 +171,7 @@ export class CatalogoEmpresaComponent implements OnInit {
       }
     }
   }
+
   modificarUsuario(){
     let band = true;
     if(this.empresa.empresa == "" || this.empresa.rfc == "" || this.empresa.razon_social == ""){
@@ -241,11 +242,13 @@ export class CatalogoEmpresaComponent implements OnInit {
       }
     }
   }
+  
   guardar(){
     this.openModal();
     jQuery("#editar").hide();
     jQuery("#guardar").show();
   }
+
   editar(folio : any){
     this.empresa_service.obtenerEmpresaPorId(folio)
     .subscribe( (object : any) => {
@@ -273,12 +276,9 @@ export class CatalogoEmpresaComponent implements OnInit {
         this.empresa.usuario_creacion = this.usuario_creacion;
         this.fotografia.id_fotografia = object.data[0].id_fotografia;
         if(object.data[0].fotografia != ""){
-          let img = "data:image/"+object.data[0].extension+";base64, "+object.data[0].fotografia;
-          this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
-          this.docB64 = object.data[0].fotografia+"";
-          this.fotografia.docB64 = object.data[0].fotografia+"";
-          this.fotografia.extension = object.data[0].extension;
-        }if(object.data[0].activo == 1){
+          this.mostrarImagen(object.data[0].fotografia,object.data[0].extension);
+        }
+        if(object.data[0].activo == 1){
           this.activo = true;
         }else{
           this.activo = false;
@@ -286,7 +286,6 @@ export class CatalogoEmpresaComponent implements OnInit {
         //Funcionalidad de modal
         jQuery("#guardar").hide();
         jQuery("#editar").show();
-        //Se llenan los sistemas
       }else{
         Swal.fire("Ha ocurrido un error",object.message,"error");
       }
@@ -434,4 +433,11 @@ export class CatalogoEmpresaComponent implements OnInit {
     }
   }
 
+  mostrarImagen(docB64 : any, extension : any){
+    let img = "data:image/"+extension+";base64, "+docB64;
+    this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
+    this.docB64 = docB64+"";
+    this.fotografia.docB64 = docB64;
+    this.fotografia.extension = extension;
+  }
 }

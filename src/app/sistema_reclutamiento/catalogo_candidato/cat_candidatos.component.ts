@@ -26,7 +26,7 @@ export class CatalogoCandidatosComponent implements OnInit {
   public fotografia = new Fotografia(0,"","","");
   public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
-  public candidato = new Candidato(0,this.id_cliente,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia); 
+  public candidato = new Candidato(0,this.id_cliente,6,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia); 
   public candidatos : any;
   public band = true;
   public modal : any;
@@ -37,7 +37,7 @@ export class CatalogoCandidatosComponent implements OnInit {
   public docB64 = "";
   //Filtros
   public taken = 5; //Registros por default
-  public status = 2; //Status default
+  public status = -1; //Status default
   public palabra = "";
   //Paginacion
   public total_registros = 0;
@@ -174,10 +174,148 @@ export class CatalogoCandidatosComponent implements OnInit {
     }
   }
 
+  editar(folio : any){
+    this.candidato_service.obtenerCandidatoPorId(folio)
+    .subscribe( (object : any)=>{
+      if(object.ok){
+        this.openModal();
+        jQuery("#guardar").hide();
+        jQuery("#editar").show();
+        //Datos de direccion
+        this.candidato.direccion.id_direccion = object.data[0].id_direccion;
+        this.candidato.direccion.calle = object.data[0].calle;
+        this.candidato.direccion.numero_exterior = object.data[0].numero_exterior;
+        this.candidato.direccion.numero_interior = object.data[0].numero_interior;
+        this.candidato.direccion.cruzamiento_uno = object.data[0].cruzamiento_uno;
+        this.candidato.direccion.cruzamiento_dos = object.data[0].cruzamiento_dos;
+        this.candidato.direccion.codigo_postal = object.data[0].codigo_postal;
+        this.candidato.direccion.colonia = object.data[0].colonia;
+        this.candidato.direccion.localidad = object.data[0].localidad;
+        this.candidato.direccion.municipio = object.data[0].municipio;
+        this.candidato.direccion.estado = object.data[0].estado;
+        this.candidato.direccion.descripcion = object.data[0].descripcion_direccion;
+        //Datos de usuario
+        this.candidato.id_candidato = object.data[0].id_candidato;
+        this.candidato.apellido_paterno = object.data[0].apellido_paterno;
+        this.candidato.apellido_materno = object.data[0].apellido_materno;
+        this.candidato.id_statu = object.data[0].id_status;
+        this.candidato.nombre = object.data[0].nombre;
+        this.candidato.rfc = object.data[0].rfc;
+        this.candidato.curp = object.data[0].curp;
+        this.candidato.fecha_nacimiento = object.data[0].fecha_nacimiento;
+        this.candidato.lugar_nacimiento = object.data[0].lugar_nacimiento;
+        this.candidato.numero_social = object.data[0].numero_seguro;
+        this.candidato.descripcion = object.data[0].descripcion;
+        this.candidato.edad = object.data[0].edad;
+        this.candidato.correo = object.data[0].correo;
+        this.candidato.telefono = object.data[0].telefono;
+        this.candidato.telefono_dos = object.data[0].telefono_dos;
+        this.candidato.telefono_tres = object.data[0].telefono_tres;
+        this.candidato.fotografia.id_fotografia = object.data[0].id_fotografia;
+        //Poner imagen
+        if(object.data[0].fotografia != ""){
+          this.mostrarImagen(object.data[0].fotografia,object.data[0].extension);
+        }
+
+      }else{
+        Swal.fire("Ha ocurrido un error",object.message,"error");
+      }
+    });
+  }
+
+  modificarCandidato(){
+    let band = true;
+    if(this.candidato.apellido_paterno == "" || this.candidato.apellido_materno == "" || this.candidato.nombre == ""){
+      Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
+    }else{
+      if(
+        this.direccion.calle == 0 && this.direccion.codigo_postal == "" &&
+        this.direccion.colonia == "" && this.direccion.cruzamiento_dos == "" &&
+        this.direccion.cruzamiento_uno == "" && this.direccion.descripcion ==  "" &&
+        this.direccion.estado == "" && this.direccion.localidad == "" &&
+        this.direccion.municipio == "" && this.direccion.numero_exterior == ""
+        && this.direccion.numero_interior == ""
+        ){
+          Swal.fire({
+            title: '¿Estas seguro de modificar una empresa sin ningun dato de dirección?',
+            text: "El empresa se modificará sin domicilio, pero puedes actulizar su información en cualquier momento",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, estoy seguro',
+            cancelButtonText : "Cancelar"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              band = true;
+            }else{
+              band = false;
+            }
+          });
+      }else{
+        if(band){
+          if(this.fotografia.docB64 == ""){
+            Swal.fire({
+              title: '¿Estas seguro de modificar al candidato sin ningun foto?',
+              text: "El candidato se modificará sin foto, pero puedes actulizar su información en cualquier momento",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Si, estoy seguro',
+              cancelButtonText : "Cancelar"
+            }).then((result) => {
+              if (result.isConfirmed) {
+                band = true;
+              }else{
+                band = false;
+              }
+            });
+          }else{
+            if(band){
+              this.candidato_service.actualizarCandidato(this.candidato)
+              .subscribe( (object) =>{
+                if(object.ok){
+                  this.mostrarCandidatos();
+                  Swal.fire("Buen trabajo","La empresa se ha modificado correctamente","success");
+                }else{
+                  Swal.fire("Ha ocurrido un error",object.message,"error");
+                }
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  eliminar(folio : any){
+    Swal.fire({
+      title: '¿Estas seguro que deseas eliminar este candidato?',
+      text: "Una vez eliminado, ya no lo podrás visualizar de nuevo",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.candidato_service.eliminarCandidato(folio)
+        .subscribe( (object : any)=>{
+          if(object.ok){
+            this.mostrarCandidatos();
+          }else{
+            Swal.fire("Ha ocurrido un error",object.message,"error");
+          }
+        });
+      }
+    });
+  }
   limpiarCampos(){
     this.direccion  = new Direccion(0,0,"","","","","","","","","","");
     this.fotografia = new Fotografia(0,"","",""); 
-    this.candidato = new Candidato(0,this.id_cliente,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia);
+    this.candidato = new Candidato(0,this.id_cliente,6,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia);
   }
 
   generarEdad(){
@@ -201,14 +339,6 @@ export class CatalogoCandidatosComponent implements OnInit {
     (error : any) => {
       swal.fire('Ha ocurrido un error','No se han encontrado resultados', 'warning');
     });
-  }
-
-  mostrarImagen(docB64 : any, extension : any){
-    let img = "data:image/"+extension+";base64, "+docB64;
-    this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
-    this.docB64 = docB64+"";
-    this.fotografia.docB64 = docB64;
-    this.fotografia.extension = extension;
   }
 
   accionContenedorGuardar(band : any){
@@ -312,9 +442,6 @@ export class CatalogoCandidatosComponent implements OnInit {
     }
   }
 
-  editar(folio : any){
-  }
-
   guardar(){
     this.openModal();
   }
@@ -327,13 +454,13 @@ export class CatalogoCandidatosComponent implements OnInit {
   filtroStatus(){
     this.pagina_actual = 0;
     this.limite_inferior = 0;
-    // this.mostrarEmpresas();
+    this.mostrarCandidatos();
   }
 
   busqueda(){
     this.pagina_actual = 0;
     this.limite_inferior = 0;
-    // this.mostrarEmpresas();
+    this.mostrarCandidatos();
   }
   modificarMunicipio(){
     let colonia = this.candidato.direccion.colonia;
@@ -348,6 +475,14 @@ export class CatalogoCandidatosComponent implements OnInit {
         }
       }
     });
+  }
+
+  mostrarImagen(docB64 : any, extension : any){
+    let img = "data:image/"+extension+";base64, "+docB64;
+    this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
+    this.docB64 = docB64+"";
+    this.fotografia.docB64 = docB64;
+    this.fotografia.extension = extension;
   }
 }
 

@@ -17,7 +17,7 @@
             <div class=" dropdown-header noti-title">
               <h6 class="text-overflow m-0">Bienvenido!</h6>
             </div>
-            <a routerLinkActive="active" [routerLink]="['/user-profile']" class="dropdown-item">
+            <a class="dropdown-item">
               <i class="ni ni-curved-next"></i>
               <span (click)="openModal()">Cambiar de cliente</span>
             </a>
@@ -35,7 +35,7 @@
         <div class="form-row">
           <div class="form-group col-md-12">
             <div class="list-group">
-              <a *ngFor="let cliente of clientes[0]" (click)="eleccion(cliente.id_cliente)" style="cursor: pointer;" class="list-group-item list-group-item-action" aria-current="true">
+              <a *ngFor="let cliente of clientes" (click)="eleccion(cliente.id_cliente)" style="cursor: pointer;" class="list-group-item list-group-item-action {{cliente.class}}" aria-current="true">
                 {{cliente.cliente}}
               </a>
             </div>

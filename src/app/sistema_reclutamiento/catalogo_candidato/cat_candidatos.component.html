@@ -18,11 +18,11 @@
                 <div class="col-lg-4 col-sm-12">
                     <p style="display: inline-block;" class="my-0 py-0 mr-2">Filtro :</p> 
                     <select [(ngModel)]="status" name="status" id="status" class="form-control" style="display: inline-block;width: 150px;" (change)="filtroStatus()">
-                        <option value="2">Todos</option>
-                        <option value="1">En reclutamiento</option>
-                        <option value="0">Activos</option>
-                        <option value="0">De baja</option>
-                        <option value="0">Suspendidos</option>
+                        <option value="-1" default>Todos</option>
+                        <option value="6">En reclutamiento</option>
+                        <option value="1">Activos</option>
+                        <option value="2">De baja</option>
+                        <option value="3">Suspendidos</option>
                     </select>
                 </div>
                 <div class="col-lg-4 col-sm-12" style="text-align: end;">
@@ -46,6 +46,7 @@
                             <td colspan="1" style="vertical-align: middle;">{{candidato.status}}</td>
                             <td colspan="1" style="width: 20%;">
                                 <a title="Editar" (click)="editar(candidato.folio)" style="cursor: pointer;" class="btn btn-primary"><img src="./assets/iconos/edit.svg" style="width: 24px;"></a>
+                                <a title="Eliminar" (click)="eliminar(candidato.folio)" style="cursor: pointer;" class="btn btn-warning"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a>
                             </td>
                         </tr>
                     </tbody>
@@ -106,8 +107,8 @@
     </div>
     <div class="modal-body">
         <div class="form-row col-12 mb-2" style="display: flex;justify-content: flex-end;">
-          <select class="form-control" style="width: 200px;">
-              <option default>En reclutamiento</option>
+          <select [(ngModel)]="candidato.id_statu" class="form-control" style="width: 200px;">
+              <option default value="6">En reclutamiento</option>
               <option value="1">Activo</option>
               <option value="2">Baja</option>
               <option value="3">Suspendido</option>
@@ -139,19 +140,19 @@
                                     <div class="col-lg-3 col-sm-12">
                                         <div class="form-group">
                                             <label for="apellido_paterno">Apellido paterno *</label>
-                                            <input [(ngModel)]="candidato.apellido_paterno" name="apellido_paterno" type="text" class="form-control" id="apellido_paterno">
+                                            <input [(ngModel)]="candidato.apellido_paterno" name="apellido_paterno" type="text" class="form-control" id="apellido_paterno" style="text-transform: uppercase;">
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-12">
                                       <div class="form-group">
                                           <label for="apellido_materno">Apellido materno *</label>
-                                          <input [(ngModel)]="candidato.apellido_materno" name="apellido_materno" type="text" class="form-control" id="apellido_materno">
+                                          <input [(ngModel)]="candidato.apellido_materno" name="apellido_materno" type="text" class="form-control" id="apellido_materno" style="text-transform: uppercase;">
                                       </div>
                                     </div>
                                     <div class="col-6">
                                       <div class="form-group">
                                           <label for="nombre">Nombres *</label>
-                                          <input [(ngModel)]="candidato.nombre" name="nombre" type="text" class="form-control" id="nombre">
+                                          <input [(ngModel)]="candidato.nombre" name="nombre" type="text" class="form-control" id="nombre" style="text-transform: uppercase;">
                                       </div>
                                     </div>
                                 </div>
@@ -159,13 +160,13 @@
                                   <div class="col-lg-4 col-sm-12">
                                     <div class="form-group">
                                       <label for="curp">CURP</label>
-                                      <input [(ngModel)]="candidato.curp" name="rfc" type="text" class="form-control" id="curp">
+                                      <input [(ngModel)]="candidato.curp" name="rfc" type="text" class="form-control" id="curp" style="text-transform: uppercase;">
                                     </div>
                                   </div>
                                   <div class="col-lg-4 col-sm-12">
                                     <div class="form-group">
                                       <label for="rfc">RFC</label>
-                                      <input [(ngModel)]="candidato.rfc" name="rfc" type="text" class="form-control" id="rfc">
+                                      <input [(ngModel)]="candidato.rfc" name="rfc" type="text" class="form-control" id="rfc" style="text-transform: uppercase;">
                                     </div>
                                   </div>
                                   <div class="col-lg-4" col-sm-12>
@@ -190,7 +191,7 @@
                           <div class="col-lg-2 col-sm-12">
                             <div class="form-group">
                               <label for="edad">Edad</label>
-                              <input [(ngModel)]="candidato.edad" name="edad" type="text" class="form-control" id="edad">
+                              <input [(ngModel)]="candidato.edad" name="edad" type="number" class="form-control" id="edad">
                             </div>
                           </div>
                           <div class="col-lg-6 col-sm-12">
@@ -291,7 +292,7 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
         <button type="button" class="btn btn-success" (click)="altaCandidato()" id="guardar">Guardar</button>
-        <!-- <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button> -->
+        <button type="button" class="btn btn-success" (click)="modificarCandidato()" id="editar" >Editar</button>
     </div>
 </ng-template>
   

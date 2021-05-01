@@ -13,6 +13,7 @@ export class HeaderComponent implements OnInit {
   public color = COLOR;
   public nombre = window.sessionStorage.getItem("nombre");
   public usuario_logueado = window.sessionStorage.getItem("user");
+  public cliente_seleccionado = parseInt(window.sessionStorage["cliente"]);
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   public modal: any;
   public clientes : any;
@@ -31,13 +32,27 @@ export class HeaderComponent implements OnInit {
     this.clientes = [];
     this.cliente_service.obtenerClientePorIdUsuario(this.usuario_logueado)
       .subscribe( (object : any) => {
-        console.log(object);
         if(object.ok){
           if(object.data.length > 1){
-            this.clientes.push(object.data);
+            for(let i=0;i<object.data.length;i++){
+              if(this.cliente_seleccionado == parseInt(object.data[i].id_cliente)){
+                this.clientes.push({
+                  "cliente" : object.data[i].cliente,
+                  "id_cliente" : object.data[i].id_cliente,
+                  "class" : "active"
+                });
+              }else{
+                this.clientes.push({
+                  "cliente" : object.data[i].cliente,
+                  "id_cliente" : object.data[i].id_cliente,
+                  "class" : ""
+                });
+              }
+            }
           }
         }
       });
+      console.log(this.clientes);
   }
   eleccion(id_cliente : any){
     window.sessionStorage["cliente"] = id_cliente;

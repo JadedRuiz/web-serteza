@@ -31,7 +31,11 @@ export class CandidatoService {
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        if(err.error.message.includes("String data, right truncated: 1406 Data too long for column 'fotografia'")){
+          Swal.fire("Ha ocurrido un error", "La imagen que deseas cargar es demasiado pesada para ser almacenada", 'error');
+        }else{
+          Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+        }
         return throwError(err);
       }));
   }
