@@ -4,6 +4,7 @@ export class Candidato {
     constructor(
         public id_candidato : number, 
         public id_cliente : number,
+        public id_statu : number,
         public apellido_paterno : String, 
         public apellido_materno : String, 
         public nombre : String, 
