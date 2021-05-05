@@ -9,6 +9,7 @@ import { SistemaAdminComponent } from './sistema-admin.component';
 import { CatalogoUsuarioComponent } from './catalogo_usuario/catalogo_usuario.component';
 import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.component';
 import { ProcedimientoUsuarioComponent } from './procedimiento_usuario/procedimiento_usuario.component';
+import { ProcedimientoEmpresaComponent } from './procedimiento_empresa/procedimiento_empresa.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { ProcedimientoUsuarioComponent } from './procedimiento_usuario/procedimi
     CatalogoClienteComponent,
     CatalogoUsuarioComponent,
     CatalogoEmpresaComponent,
-    ProcedimientoUsuarioComponent
+    ProcedimientoUsuarioComponent,
+    ProcedimientoEmpresaComponent
   ],
   imports: [
     CommonModule,

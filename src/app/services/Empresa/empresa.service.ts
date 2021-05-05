@@ -48,48 +48,58 @@ export class EmpresaService {
           return throwError(err);
         }));
   }
-    altaEmpresa(empresa : Empresa){
-      let url = SERVER_API+"empresa/altaEmpresa";
-      return this.http.post( url, empresa )
+  altaEmpresa(empresa : Empresa){
+    let url = SERVER_API+"empresa/altaEmpresa";
+    return this.http.post( url, empresa )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      return throwError(err);
+    }));
+  }
+  asignarEmpresaAUsuario(json : any){
+    let url = SERVER_API+"empresa/asignarEmpresaAUsuario";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      return throwError(err);
+    }));
+  }
+  actualizarEmpresa(empresa : Empresa){
+    let url = SERVER_API+"empresa/actualizarEmpresa";
+    return this.http.post( url, empresa )
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
         Swal.fire("Ha ocurrido un error", err.error.data, 'error');
         return throwError(err);
       }));
-    }
-    asignarEmpresaAUsuario(json : any){
-      let url = SERVER_API+"empresa/asignarEmpresaAUsuario";
-      return this.http.post( url, json )
+  }
+  bajaEmpresa(id : any){
+    let url = SERVER_API+"empresa/bajaEmpresa/"+id;
+    return this.http.get(url);
+  }
+  eliminarLiga(json : any){
+    let url = SERVER_API+"empresa/elimiminarLiga";
+    return this.http.post( url, json )
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
         Swal.fire("Ha ocurrido un error", err.error.data, 'error');
         return throwError(err);
       }));
-    }
-    actualizarEmpresa(empresa : Empresa){
-      let url = SERVER_API+"empresa/actualizarEmpresa";
-      return this.http.post( url, empresa )
-        .pipe(map( (resp: any) => {
-          return resp;
-        }), catchError(err => {
-          Swal.fire("Ha ocurrido un error", err.error.data, 'error');
-          return throwError(err);
-        }));
-    }
-    bajaEmpresa(id : any){
-      let url = SERVER_API+"empresa/bajaEmpresa/"+id;
-      return this.http.get(url);
-    }
-    eliminarLiga(json : any){
-      let url = SERVER_API+"empresa/elimiminarLiga";
-      return this.http.post( url, json )
-        .pipe(map( (resp: any) => {
-          return resp;
-        }), catchError(err => {
-          Swal.fire("Ha ocurrido un error", err.error.data, 'error');
-          return throwError(err);
-        }));
-    }
+  }
+  ligarClienteAEmpresa(json : any){
+    let url = SERVER_API+"empresa/ligarClienteAEmpresa";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        return throwError(err);
+      }));
+  }
 }

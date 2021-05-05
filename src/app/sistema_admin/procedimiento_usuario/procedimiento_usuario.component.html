@@ -5,7 +5,7 @@
     <div class="col">
       <div class="card border-info">
         <div class="card-header">
-           ASIGNACIÓN DE PERMMISOS DE LOS USUARIOS
+           ASIGNAR PERMMISOS DE USUARIOS
         </div>
         <div class="card-body">
             <div class="container">
@@ -38,14 +38,14 @@
                                     <div class="tab-content" id="myTabContent">
                                         <div class="tab-pane active" id="empresa" role="tabpanel">
                                             <div *ngIf="bandera_empresa">
-                                                <div class="div mb-2 mt-2" style="text-align: end;">
-                                                    <button class="btn btn-success mt-2" (click)="nuevaEmpresa()">Agregar nuevas empresas al usuario</button>
-                                                </div>
                                                 <ul class="list-group" style="text-align: start;">
                                                     <li *ngFor="let empresa of empresas_configuradas" class="list-group-item" style="cursor: pointer;">{{empresa.nombre}}
                                                     <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning float-right" (click)="eliminarLigaEmpresa(empresa.folio)"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a>
                                                     </li>
                                                 </ul>
+                                                <div class="div mb-2 mt-2" style="text-align: center;">
+                                                    <button class="btn btn-success mt-2" (click)="nuevaEmpresa()">Agregar nuevas empresas al usuario</button>
+                                                </div>
                                             </div>
                                             <div *ngIf="!bandera_empresa" class="mt-2 text-center">
                                                 <p>Este usuario aún no cuenta con empresas permitidas</p>
@@ -54,14 +54,14 @@
                                         </div>
                                         <div class="tab-pane" id="cliente" role="tabpanel">
                                             <div *ngIf="bandera_cliente">
-                                                <div class="div mb-2 mt-2" style="text-align: end;">
-                                                    <button class="btn btn-success mt-2" (click)="nuevoCliente()">Agregar nuevos clientes al usuario</button>
-                                                </div>
                                                 <ul class="list-group" style="text-align: start;">
                                                     <li *ngFor="let cliente of clietes_configurados"  class="list-group-item" style="cursor: pointer;">{{cliente.nombre}}
                                                     <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning float-right" (click)="eliminarLigaCliente(cliente.folio)"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a>
                                                     </li>
                                                 </ul>
+                                                <div class="div mb-2 mt-2" style="text-align: center;">
+                                                    <button class="btn btn-success mt-2" (click)="nuevoCliente()">Agregar nuevos clientes al usuario</button>
+                                                </div>
                                             </div>
                                             <div *ngIf="!bandera_cliente" class="mt-2 text-center">
                                                 <p>Este usuario aún no cuenta con clientes permitidos</p>

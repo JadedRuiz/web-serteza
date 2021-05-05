@@ -70,6 +70,10 @@ export class ClienteService {
     let url = SERVER_API+"cliente/eliminarCliente/"+id;
     return this.http.get(url);
   }
+  obtenerClientesPorIdEmpresa(id : any){
+    let url = SERVER_API+"cliente/obtenerClientesPorIdEmpresa/"+id;
+    return this.http.get(url);
+  }
   eliminarLiga(json : any){
     let url = SERVER_API+"cliente/elimiminarLiga";
     return this.http.post( url, json )

@@ -192,6 +192,7 @@ export class ProcedimientoUsuarioComponent implements OnInit {
       }
     });
   }
+
   mostrarClientes(){
     this.arreglo = [];
     let json = {
@@ -246,6 +247,7 @@ export class ProcedimientoUsuarioComponent implements OnInit {
     this.empresas_seleccionadas = [];
     this.clietes_seleccionados = [];
   }
+  
   altaRegistro(){
     if(this.tipo_modal == 1){
       if(this.empresas_seleccionadas.length == 0){
@@ -286,6 +288,7 @@ export class ProcedimientoUsuarioComponent implements OnInit {
       }
     }
   }
+
   eliminarLigaCliente(id_cliente : any){
     let json = {
       id_cliente : id_cliente,
