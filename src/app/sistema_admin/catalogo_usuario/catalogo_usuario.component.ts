@@ -60,7 +60,6 @@ export class CatalogoUsuarioComponent implements OnInit {
       pagina : this.pagina_actual
     };
     this.usuarios = [];
-    console.log(json);
     this.usuario_service.obtenerUsuarios(json)
     .subscribe( (object : any) =>{
         if(object.ok){

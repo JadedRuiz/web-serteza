@@ -26,7 +26,6 @@ export class ClienteService {
       Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
-    return this.http.get(url);
   }
   obtenerClientesPorId(id : number){
     let url = SERVER_API+"cliente/obtenerClientesPorId/"+id;

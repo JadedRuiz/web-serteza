@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CatalogoClienteComponent } from './catalogo_cliente/cat_cliente.component';
+import { CatalogoDepartamentoComponent } from './catalogo_departamento/catalogo_departamento.component';
 import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.component';
 import { CatalogoUsuarioComponent } from './catalogo_usuario/catalogo_usuario.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -17,6 +18,7 @@ const routes: Routes = [
         { path : "catalogo_cliente", component : CatalogoClienteComponent},
         { path : "catalogo_empresa", component : CatalogoEmpresaComponent},
         { path : "catalogo_usuario", component : CatalogoUsuarioComponent},
+        { path : "catalogo_departamento", component : CatalogoDepartamentoComponent},
         { path : "procedimiento_usuario", component : ProcedimientoUsuarioComponent},
         { path : "procedimineto_empresa", component : ProcedimientoEmpresaComponent},
         { path: '', redirectTo: '/login', pathMatch: 'full'}

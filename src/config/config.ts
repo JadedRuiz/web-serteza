@@ -1,5 +1,6 @@
 const API_CP = "https://api-sepomex.hckdrk.mx/query/";
 const API_SERTEZA = "http://localhost/api_serteza/public/api/";
+// const API_SERTEZA = "https://serteza.herokuapp.com/public/api/";
 const CLASS_COLOR = "bg-gradient-success";
 
 
