@@ -1,0 +1,105 @@
+<div class="header {{color}} pb-5 pt-5 pt-md-7">
+</div>
+<div class="container-fluid mt--5">
+  <div class="row">
+    <div class="col">
+      <div class="card border-info">
+        <div class="card-header">
+           ASIGNAR PERMMISOS DE USUARIOS
+        </div>
+        <div class="card-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="buscador">
+                            <input [(ngModel)]="palabra" type="search" placeholder="Buscar">
+                            <a title="Buscar" (click)="busqueda()"><i class="fas fa-search"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-lg-5 col-sm-12">
+                        <ul class="list-group" style="max-height: 450px;overflow: auto;">
+                            <li *ngFor="let usuario of usuarios" id="usuario_{{usuario.folio}}" (click)="seleccionar(usuario.folio,usuario.nombre)" class="list-group-item" style="cursor: pointer;">{{usuario.nombre}}</li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-7 mt-lg-0 col-sm-12 mt-sm-4" style="height: 500px;overflow: auto;">
+                        <div class="card my-0 py-0">
+                            <div class="card-body text-center">
+                                <div *ngIf="id_seleccionado; else pintaBody">
+                                    <ul class="nav nav-tabs profile-tab" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-toggle="tab" href="#empresa" role="tab" aria-selected="true">Empresas permitidas</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link " data-toggle="tab" href="#cliente" role="tab" aria-selected="false">Clientes permitidos</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content" id="myTabContent">
+                                        <div class="tab-pane active" id="empresa" role="tabpanel">
+                                            <div *ngIf="bandera_empresa">
+                                                <ul class="list-group" style="text-align: start;">
+                                                    <li *ngFor="let empresa of empresas_configuradas" class="list-group-item" style="cursor: pointer;">{{empresa.nombre}}
+                                                    <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning float-right" (click)="eliminarLigaEmpresa(empresa.folio)"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a>
+                                                    </li>
+                                                </ul>
+                                                <div class="div mb-2 mt-2" style="text-align: center;">
+                                                    <button class="btn btn-success mt-2" (click)="nuevaEmpresa()">Agregar nuevas empresas al usuario</button>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="!bandera_empresa" class="mt-2 text-center">
+                                                <p>Este usuario aún no cuenta con empresas permitidas</p>
+                                                <button class="btn btn-success" (click)="nuevaEmpresa()">Agregar nuevas empresas al usuario</button>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="cliente" role="tabpanel">
+                                            <div *ngIf="bandera_cliente">
+                                                <ul class="list-group" style="text-align: start;">
+                                                    <li *ngFor="let cliente of clietes_configurados"  class="list-group-item" style="cursor: pointer;">{{cliente.nombre}}
+                                                    <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning float-right" (click)="eliminarLigaCliente(cliente.folio)"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a>
+                                                    </li>
+                                                </ul>
+                                                <div class="div mb-2 mt-2" style="text-align: center;">
+                                                    <button class="btn btn-success mt-2" (click)="nuevoCliente()">Agregar nuevos clientes al usuario</button>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="!bandera_cliente" class="mt-2 text-center">
+                                                <p>Este usuario aún no cuenta con clientes permitidos</p>
+                                                <button class="btn btn-success" (click)="nuevoCliente()">Agregar nuevos clientes al usuario</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ng-template #pintaBody >Para poder visualizar los permisos, primero debes seleccionar un usuario</ng-template>
+                            </div>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
+    <div class="modal-header">
+        <h2 class="modal-title" id="tituloModal">{{titulo_modal}}</h2>
+    </div>
+    <div class="modal-body">
+        <p class="py-0 my-0">Seleccione las empresas que desea agregarle a este usuario</p>
+        <div class="buscador">
+            <input [(ngModel)]="palabra" type="search" placeholder="Buscar">
+            <a title="Buscar" (click)="busqueda()"><i class="fas fa-search"></i></a>
+        </div>
+        <small class="text-warning">Si la empresa que esta buscando no existe puede agregarlo en el catálogo de empresas</small>
+        <ul *ngIf="arreglo; else pintaInfo" class="list-group mt-2" style="max-height: 350px;">
+            <li *ngFor="let row of arreglo" id="arreglo{{row.folio}}" (click)="seleccionarEnModal(row.folio)" class="list-group-item list-arreglo {{row.atributo}}" style="cursor: pointer;">{{row.nombre}}</li>
+        </ul>
+        <ng-template #pintaInfo ><p class="text-center mt-2">No existen empresas en el catálogo</p></ng-template>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="btn btn-success" (click)="altaRegistro()" id="guardar">Guardar</button>
+        <!-- <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button> -->
+    </div>
+</ng-template>

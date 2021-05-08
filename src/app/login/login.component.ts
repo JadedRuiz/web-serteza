@@ -100,5 +100,8 @@ export class LoginComponent implements OnInit {
     if(this.sistema_elegido == "4"){
       this.router.navigate(["sistema_control/dashboard"]);
     }
+    if(this.sistema_elegido == "5"){
+      this.router.navigate(["sistema_super_admin/dashboard"]);
+    }
   }
 }

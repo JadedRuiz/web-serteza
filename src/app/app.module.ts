@@ -10,6 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { SistemaReclutamientoModule } from './sistema_reclutamiento/sistema-reclutamiento.module';
+import { SistemaSuperAdminModule } from './sistema_super_admin/sistema_super_admin.module';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { SistemaReclutamientoModule } from './sistema_reclutamiento/sistema-recl
     BrowserModule,
     AppRoutingModule,
     SistemaAdminModule,
+    SistemaSuperAdminModule,
     SistemaReclutamientoModule,
     NgbModule,
     FormsModule,

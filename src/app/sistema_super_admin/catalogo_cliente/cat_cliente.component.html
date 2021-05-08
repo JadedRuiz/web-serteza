@@ -1,0 +1,209 @@
+<div class="header {{color}}" style="height: 250px;">
+  <div class="container-fluid">
+      <div class="header-body">
+          <div class="row pt-md-7">
+              <h2 class="text-white">CATÁLOGO DE CLIENTES</h2>
+          </div>
+      </div>
+  </div>
+</div>
+<div class="container-fluid mt--5">
+  <div class="row">
+    <div class="col">
+      <div class="card border-info">
+        <div class="card-body">
+            <div class="row mb-2">
+                <div class="col-lg-4 col-sm-12 mb-2">
+                    <div class="buscador">
+                        <input [(ngModel)]="palabra" type="search" placeholder="Buscar">
+                        <a title="Buscar" (click)="busqueda()"><i class="fas fa-search"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <p style="display: inline-block;" class="my-0 py-0 mr-2">Filtro :</p> 
+                    <select [(ngModel)]="status" name="status" id="status" class="form-control" style="display: inline-block;width: 150px;" (change)="filtroStatus()">
+                        <option value="2">Todos</option>
+                        <option value="1">Activos</option>
+                        <option value="0">Inactivos</option>
+                    </select>
+                </div>
+                <div class="col-lg-4 col-sm-12" style="text-align: end;">
+                    <a class="btn btn-info" (click)="guardar()" title="Nuevo cliente"><img src="./assets/iconos/agregar.svg" style="width: 24px;"></a>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Folio</th>
+                            <th scope="col">Nombre del cliente</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="band; else pintaVacio" class="">
+                        <tr *ngFor="let cliente of clientes">
+                            <td colspan="1" style="vertical-align: middle;">{{cliente.folio}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{cliente.cliente}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{cliente.status}}</td>
+                            <td colspan="1" style="width: 20%;">
+                                <a title="Editar" (click)="editar(cliente.folio)" style="cursor: pointer;" class="btn btn-primary"><img src="./assets/iconos/edit.svg" style="width: 24px;"></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <ng-template #pintaVacio>
+                        <tbody>
+                            <tr>
+                                <td colspan="4" class="text-center">No existen clientes</td>
+                            </tr>
+                        </tbody>
+                    </ng-template>
+                    <tbody></tbody>
+                </table>
+                <div class="filtros container mt-3">
+                    <div class="row">
+                        <div class="col-lg-4 col-sm-12"></div>
+                        <div class="col-lg-4 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
+                            <nav *ngIf="mostrar_pagination" aria-label="Page navigation example">
+                                <ul class="pagination">
+                                  <li class="page-item" *ngIf="previous">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                      <span aria-hidden="true">&laquo;</span>
+                                      <span class="sr-only">Previous</span>
+                                    </a>
+                                  </li>
+                                  <li *ngFor="let pagina of paginas" class="page-item {{pagina.active}}" (click)="irPagina(pagina.valor_pagina)"><a class="page-link" style="cursor: pointer;">{{pagina.numero}}</a></li>
+                                  <li class="page-item" *ngIf="next">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                      <span aria-hidden="true">&raquo;</span>
+                                      <span class="sr-only">Next</span>
+                                    </a>
+                                  </li>
+                                </ul>
+                              </nav>
+                        </div>
+                        <div class="col-lg-4 col-sm-12" style="text-align: end;">
+                            <p class="mr-2" style="display: inline-block;">Clientes :</p>
+                            <select [(ngModel)]="taken" (change)="mostrarClientes()" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
+    <div class="modal-header">
+        <h2 class="modal-title" id="tituloModal">Nuevo cliente</h2>
+    </div>
+    <div class="modal-body">
+        <div class="form-row col-12 mb-2" style="display: flex;justify-content: flex-end;">
+            <div class="custom-control custom-switch">
+                <input [(ngModel)]="activo" name="activo" type="checkbox" class="custom-control-input" id="customSwitch1">
+                <label *ngIf="activo" class="custom-control-label" for="customSwitch1">Activado</label>
+                <label *ngIf="!activo" class="custom-control-label" for="customSwitch1">Desactivado</label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12">
+              <ul class="nav nav-tabs profile-tab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" data-toggle="tab" href="#cliente_tab" role="tab" aria-selected="true">Datos del cliente</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link " data-toggle="tab" href="#direccion_tab" role="tab" aria-selected="false">Dirección</a>
+                </li>
+              </ul>
+            </div>
+            <div class="tab-content col-12" id="myTabContent">
+              <div class="tab-pane active col-12" id="cliente_tab" role="tabpanel">
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="cliente">Nombre del cliente</label>
+                    <input [(ngModel)]="cliente.cliente" name="cliente" type="text" class="form-control" id="cliente" required>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="contacto">Contacto</label>
+                    <input [(ngModel)]="cliente.contacto" name="contacto" type="text" class="form-control" id="contacto" required>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-12"> 
+                    <label for="desc_cliente">Descripción del cliente</label>
+                    <textarea [(ngModel)]="cliente.descripcion" name="descripcion" class="form-control" rows="5" id="desc_cliente" name="desc_empleado"></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane col-12" id="direccion_tab" role="tabpanel">
+                <div class="form-row">
+                  <div class="form-group col-md-1">
+                    <label for="calle">Calle</label>
+                    <input [(ngModel)]="cliente.direccion.calle" name="calle" type="number" class="form-control" id="calle" required>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="num_ext">Número ext.</label>
+                    <input [(ngModel)]="cliente.direccion.numero_exterior" name="num_exterior" type="text" class="form-control" id="num_ext" placeholder="">
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="num_int">Número int.</label>
+                    <input [(ngModel)]="cliente.direccion.numero_interior" name="num_interior" type="text" class="form-control" id="num_int" placeholder="">
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="cruzamientos_form">Cruzamientos</label>
+                    <div class="form-inline form-row align-items-center" id="cruzamientos_form">
+                      <input [(ngModel)]="cliente.direccion.cruzamiento_uno" name="cruzamiento_ext" type="number" class="form-control col-5" id="cruzamientos_int" placeholder="">
+                      <p class="text-center col-2"> y </p>
+                      <input [(ngModel)]="cliente.direccion.cruzamiento_dos" name="cruzamiento_int" type="number" class="form-control col-5" id="cruzamientos_ext" placeholder="">
+                    </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="codigo_postal">Código postal</label>
+                    <div class="input-group mb-3">
+                      <input [(ngModel)]="cliente.direccion.codigo_postal" name="codigo_postal" id="codigo_postal" type="number" class="form-control" aria-describedby="icono">
+                      <div class="input-group-append">
+                        <span class="input-group-text" id="icono" style="cursor:pointer;" (click)="getDatos()"><i class="ni ni-fat-add"></i></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-3">
+                    <label for="colonia">Colonia</label>
+                    <select [(ngModel)]="cliente.direccion.colonia" name="colonia" type="text" class="form-control" (change)="modificarMunicipio()" id="colonia" placeholder="">
+                      <option *ngFor="let colonia of colonias">{{colonia}}</option>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="localidad">Localidad</label>
+                    <input [(ngModel)]="cliente.direccion.localidad" name="localidad" type="text" class="form-control" id="localidad" placeholder="">
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="municipio">Municipio</label>
+                    <input [(ngModel)]="cliente.direccion.municipio" name="municipio" type="text" class="form-control" id="municipio">
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="estado">Estado</label>
+                    <input [(ngModel)]="cliente.direccion.estado" name="estado" type="text" class="form-control" id="estado">
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="btn btn-success" (click)="altaCliente()" id="guardar">Guardar</button>
+        <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button>
+    </div>
+</ng-template>
+  
