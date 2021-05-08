@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SERVER_API } from 'src/config/config';
 import { CookieService } from "ngx-cookie-service";
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
