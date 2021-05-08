@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="header-body">
             <div class="row pt-md-7">
-                <h2 class="text-white">CATÁLOGO DE USUARIOS</h2>
+                <h2 class="text-white">CATÁLOGO DE DEPARTAMENTOS</h2>
             </div>
         </div>
     </div>
@@ -28,7 +28,7 @@
                     </select>
                 </div>
                 <div class="col-lg-4 col-sm-12" style="text-align: end;">
-                    <a class="btn btn-info" (click)="guardar()" title="Nuevo usuario"><img src="./assets/iconos/add-user.svg" style="width: 24px;"></a>
+                    <a class="btn btn-info" (click)="guardar()" title="Nuevo departamento"><img src="./assets/iconos/agregar.svg" style="width: 24px;"></a>
                 </div>
             </div>
             <div class="table-responsive">
@@ -42,19 +42,19 @@
                         </tr>
                     </thead>
                     <tbody *ngIf="band; else pintaVacio" class="">
-                        <tr *ngFor="let usuario of usuarios">
-                            <td colspan="1" style="vertical-align: middle;">{{usuario.folio}}</td>
-                            <td colspan="1" style="vertical-align: middle;">{{usuario.nombre}}</td>
-                            <td colspan="1" style="vertical-align: middle;">{{usuario.status}}</td>
+                        <tr *ngFor="let departamento of departamentos">
+                            <td colspan="1" style="vertical-align: middle;">{{departamento.folio}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{departamento.departamento}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{departamento.status}}</td>
                             <td colspan="1" style="width: 20%;">
-                                <a title="Editar" (click)="editar(usuario.folio)" style="cursor: pointer;" class="btn btn-primary"><img src="./assets/iconos/edit.svg" style="width: 24px;"></a>
+                                <a title="Editar" (click)="editar(departamento.folio)" style="cursor: pointer;" class="btn btn-primary"><img src="./assets/iconos/edit.svg" style="width: 24px;"></a>
                             </td>
                         </tr>
                     </tbody>
                     <ng-template #pintaVacio>
                         <tbody>
                             <tr>
-                                <td colspan="4" class="text-center">No existen usuarios</td>
+                                <td colspan="4" class="text-center">No existen departamentos</td>
                             </tr>
                         </tbody>
                     </ng-template>
@@ -84,7 +84,7 @@
                         </div>
                         <div class="col-lg-4 col-sm-12" style="text-align: end;">
                             <p class="mr-2" style="display: inline-block;">Usuarios :</p>
-                            <select [(ngModel)]="taken" (change)="mostrarUsuarios()" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
+                            <select [(ngModel)]="taken" (change)="mostrarDepartamentos()" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
                                 <option value="5">5</option>
                                 <option value="10">10</option>
                                 <option value="20">20</option>
@@ -104,10 +104,9 @@
 </div>
 <ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
     <div class="modal-header">
-        <h2 class="modal-title" id="tituloModal">Nuevo usuario</h2>
+        <h2 class="modal-title" id="tituloModal">Nuevo departamento</h2>
     </div>
     <div class="modal-body">
-        <form>
         <div class="form-row col-12 mb-2" style="display: flex;justify-content: flex-end;">
             <div class="custom-control custom-switch">
                 <input [(ngModel)]="activo" name="activo" type="checkbox" class="custom-control-input" id="customSwitch1">
@@ -116,33 +115,78 @@
             </div>
         </div>
         <div class="form-row">
-            <div class="form-group col-4">
-                <p>Nombre : *</p>
-                <input [(ngModel)]="usuario.nombre" name="nombre" type="text" class="form-control" id="nombre">
+            <div class="form-group col-sm-9">
+                <label for="departamento">Departamento *</label>
+                <input [(ngModel)]="departamento.departamento" type="text" class="form-control" id="departamento">
             </div>
-            <div class="form-group col-4">
-                <p>Usuario : *</p>
-                <input [(ngModel)]="usuario.usuario" name="usuario" type="text" class="form-control" id="usuario">
-            </div>
-            <div class="form-group col-4">
-                <p>Contraseña : *</p>
-                <input [(ngModel)]="usuario.password" name="password" type="password" class="form-control" id="password">
+            <div class="form-group col-sm-3">
+                <label for="disponibilidad">Disponibilidad *</label>
+                <input [(ngModel)]="departamento.disponibilidad" type="number" class="form-control" id="disponibilidad" min="1" pattern="^[1-9]+">
             </div>
         </div>
         <div class="form-row">
-            <p>Seleccione los sistemas que administrará este usuario :</p>
-            <div class="form-group col-12 m-auto">
-                <ul class="list-group">
-                    <li *ngFor="let sistema of sistemas" id="{{sistema.sistema}}" (click)="seleccionar(sistema.id_sistema,sistema.sistema)" style="cursor:pointer;" class="list-group-item {{sistema.active}}">{{sistema.sistema}}</li>
-                    </ul>
+            <div class="form-group col-sm-12">
+                <label for="descripcion">Descripcion</label>
+                <textarea [(ngModel)]="departamento.descripcion" type="text" class="form-control" id="descripcion"></textarea>
             </div>
         </div>
-        </form>
+        <div class="form-row">
+            <h2>Nuevo puesto</h2>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-sm-9">
+                <label for="puesto">Puesto</label>
+                <input [(ngModel)]="puesto.puesto" type="text" class="form-control" id="puesto">
+            </div>
+            <div class="form-group col-sm-3">
+                <label for="disponibilidad">Disponibilidad</label>
+                <input [(ngModel)]="puesto.disponibilidad" type="number" class="form-control" id="disponibilidad" min="1" pattern="^[1-9]+">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-sm-12">
+                <label for="descripcion">Descripcion</label>
+                <textarea [(ngModel)]="puesto.descripcion" type="text" class="form-control" id="descripcion"></textarea>
+            </div>
+        </div>
+        <div class="form-row float-right">
+            <button class="btn btn-success" (click)=agregarPuesto()>Agregar</button>
+        </div>
+        <div class="form-row mt-5">
+            <div class="table-resposive col-sm-12">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Puestos</th>
+                            <th scope="col">Descripcion</th>
+                            <th scope="col" style="width: 5%;text-align: center;">Disponibilidad</th>
+                            <th scope="col" style="width: 5%;text-align: center;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="band_puestos">
+                        <tr *ngFor="let puesto_array of puestos">
+                            <td style="vertical-align: middle;">{{puesto_array.puesto}}</td>
+                            <td style="vertical-align: middle;">{{puesto_array.descripcion}}</td>
+                            <td style="vertical-align: middle;" style="width: 5%;text-align: center;">
+                                <input type="number" name="" id="valor_{{puesto_array.id_puesto}}" value="{{puesto_array.disponibilidad}}" class="form-control" (change)="cambiarValor(puesto_array.id_puesto,puesto_array.disponibilidad)">
+                            </td>
+                            <td style="vertical-align: middle;" ><a class="btn btn-info" (click)="eliminarPuesto(puesto_array.id_puesto)" title="Nuevo departamento"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a></td>
+                        </tr>
+                    </tbody>
+                    <tbody *ngIf="!band_puestos">
+                        <tr></tr>
+                        <tr class="text-center">
+                            <td colspan="4">Este departamento no cuenta con puestos</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
-        <button type="button" class="btn btn-success" (click)="altaUsuario()" id="guardar">Guardar</button>
-        <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button>
+        <button type="button" class="btn btn-success" (click)="altaDepartamento()" id="guardar">Guardar</button>
+        <!-- <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button> -->
     </div>
 </ng-template>
   

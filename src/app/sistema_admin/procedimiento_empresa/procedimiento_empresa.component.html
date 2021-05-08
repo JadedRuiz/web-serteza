@@ -32,7 +32,7 @@
                                             <a class="nav-link active" data-toggle="tab" href="#empresa" role="tab" aria-selected="true">Clientes  de la empresa</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link " data-toggle="tab" href="#cliente" role="tab" aria-selected="false">Puestos</a>
+                                            <a class="nav-link " data-toggle="tab" href="#cliente" role="tab" aria-selected="false">Departamentos</a>
                                         </li>
                                     </ul>
                                     <div class="tab-content" id="myTabContent">
@@ -55,7 +55,7 @@
                                         <div class="tab-pane" id="cliente" role="tabpanel">
                                             <div *ngIf="band_puesto">
                                                 <div class="div mb-2 mt-2" style="text-align: end;">
-                                                    <button class="btn btn-success mt-2" (click)="nuevoPuesto()">Agregar nuevo puesto a la empresa</button>
+                                                    <button class="btn btn-success mt-2" (click)="nuevoPuesto()">Agregar nuevo departamento a la empresa</button>
                                                 </div>
                                                 <ul class="list-group" style="text-align: start;">
                                                     <li *ngFor="let puesto of puestos_empresa"  class="list-group-item" style="cursor: pointer;">{{puesto.nombre}}
@@ -64,8 +64,8 @@
                                                 </ul>
                                             </div>
                                             <div *ngIf="!band_puesto" class="mt-2 text-center">
-                                                <p>Esta empresa aún no cuenta con puestos</p>
-                                                <button class="btn btn-success" (click)="nuevoPuesto()">Agregar nuevo puesto a la empresa</button>
+                                                <p>Esta empresa aún no cuenta con departamentos</p>
+                                                <button class="btn btn-success" (click)="nuevoPuesto()">Agregar nuevo departamento a la empresa</button>
                                             </div>
                                         </div>
                                     </div>

@@ -56,12 +56,13 @@ export class SidebarComponent implements OnInit {
   }
   pintarMenu(){
     this.menuItems = [
-      { path: '/dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
+      { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : [
           {path: 'catalogo_usuario', title: 'Mis usuarios', icon: 'ni-circle-08  text-orange'},
           {path: 'catalogo_empresa', title: 'Mis empresas', icon: 'ni-building  text-orange'},
-          {path: 'catalogo_cliente', title: 'Mis clientes', icon: 'ni-collection  text-orange'}
+          {path: 'catalogo_cliente', title: 'Mis clientes', icon: 'ni-collection  text-orange'},
+          {path: 'catalogo_departamento', title: 'Mis departamentos', icon: 'ni-archive-2  text-orange'}
         ]
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
