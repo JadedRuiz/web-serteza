@@ -9,6 +9,7 @@ import { SistemaAdminComponent } from './sistema_super_admin.component';
 import { CatalogoUsuarioComponent } from './catalogo_usuario/catalogo_usuario.component';
 import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.component';
 import { ProcedimientoUsuarioComponent } from './procedimiento_usuario/procedimiento_usuario.component';
+import { WebcamModule } from 'ngx-webcam';
 
 
 @NgModule({
@@ -17,14 +18,15 @@ import { ProcedimientoUsuarioComponent } from './procedimiento_usuario/procedimi
     CatalogoClienteComponent,
     CatalogoUsuarioComponent,
     CatalogoEmpresaComponent,
-    ProcedimientoUsuarioComponent
+    ProcedimientoUsuarioComponent,
   ],
   imports: [
     CommonModule,
     NgbModule,
     SistemaSuperAdminRoutingModule,
     CompartidoModule,
-    FormsModule
+    FormsModule,
+    WebcamModule
   ]
 })
 export class SistemaSuperAdminModule { }
