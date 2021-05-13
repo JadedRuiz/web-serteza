@@ -123,9 +123,10 @@ export class CatalogoUsuarioComponent implements OnInit {
           password : this.usuario.usuario,
           sistemas : this.sistemas_seleccionados,
           usuario_creacion : this.usuario_creacion,
+          id_empresa : this.empresa_seleccionada,
           activo : active
         };
-        this.usuario_service.altaUsuario(json)
+        this.usuario_service.altaUsuarioAdmin(json)
         .subscribe( (object) =>{
           if(object.ok){
             this.limpiarCampos();
@@ -228,15 +229,17 @@ export class CatalogoUsuarioComponent implements OnInit {
 
   obtenerSistemas(){
     this.sistemas = [];
-    this.usuario_service.obtenerSistemas()
+    this.usuario_service.obtenerSistemasAdmin(this.usuario_creacion)
     .subscribe( (object : any) =>{
-      if(object.length > 0){
-        for(let i=0;i<object.length;i++){
-          this.sistemas.push({
-            "id_sistema" : object[i].id_sistema,
-            "sistema" : object[i].sistema,
-            "active" : "",
-          });
+      if(object.ok){
+        if(object.data.length > 0){
+          for(let i=0;i<object.data.length;i++){
+            this.sistemas.push({
+              "id_sistema" : object.data[i].id_sistema,
+              "sistema" : object.data[i].sistema,
+              "active" : "",
+            });
+          }
         }
       }
     });

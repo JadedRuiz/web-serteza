@@ -37,6 +37,16 @@ export class UsuarioService {
         return throwError(err);
       }));
   }
+  altaUsuarioAdmin(json : any){
+    let url = SERVER_API+"usuario/altaUsuarioAdmin";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", 'El campo "usuario" que se intenta dar de alta ya se encuentra utilizado.', 'error');
+        return throwError(err);
+      }));
+  }
   modificarUsuario(json : any){
     let url = SERVER_API+"usuario/modificarUsuario";
     return this.http.post( url, json )
@@ -68,6 +78,10 @@ export class UsuarioService {
   }
   obtenerSistemas(){
     let url = SERVER_API+"usuario/obtenerSistemas";
+    return this.http.get(url);
+  }
+  obtenerSistemasAdmin(id : any){
+    let url = SERVER_API+"usuario/obtenerSistemasAdmin/"+id;
     return this.http.get(url);
   }
   obtenerUsuarioPorId(id_usuario : any){

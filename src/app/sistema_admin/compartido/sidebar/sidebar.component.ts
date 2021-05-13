@@ -47,14 +47,18 @@ export class SidebarComponent implements OnInit {
    });
   }
   mostrarLogo(){
-    let id_empresa = parseInt(window.sessionStorage.getItem("empresa")+"");
-    this.empresa.obtenerEmpresaPorId(id_empresa)
-    .subscribe( (object : any) => {
-      if(object.ok){
-        let base64 = "data:image/"+object.data[0].extension+";base64, "+object.data[0].fotografia;
-        this.foto_empresa = this.sanitizer.bypassSecurityTrustResourceUrl(base64);
-      }
-    });
+    if(window.sessionStorage.getItem("empresa") != null){
+      let id_empresa = parseInt(window.sessionStorage.getItem("empresa")+"");
+      this.empresa.obtenerEmpresaPorId(id_empresa)
+      .subscribe( (object : any) => {
+        if(object.ok){
+          let base64 = "data:image/"+object.data[0].extension+";base64, "+object.data[0].fotografia;
+          this.foto_empresa = this.sanitizer.bypassSecurityTrustResourceUrl(base64);
+        }
+      });
+    }else{
+      this.foto_empresa = "./assets/img/defaults/imagen-empresa-default.png";
+    }
   }
   pintarMenu(){
     this.menuItems = [
