@@ -28,8 +28,10 @@ export class CatalogoUsuarioComponent implements OnInit {
   public sistemas_seleccionados : any;
   public usuario_creacion = window.sessionStorage.getItem("user");
   public modal : any;
+  public modal_camera : any;
   public fotografia = new Fotografia(0,"","","");
   @ViewChild('content', {static: false}) contenidoDelModal : any;
+  @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
   @Output() getPicture = new EventEmitter<WebcamImage>();
   showWebcam = true;
   isCameraExist = true;
@@ -65,6 +67,7 @@ export class CatalogoUsuarioComponent implements OnInit {
   ) {
     this.sistemas_seleccionados = [];
     this.modal = NgbModalRef;
+    this.modal_camera = NgbModalRef;
     this.paginas = [];
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
    }
@@ -230,6 +233,7 @@ export class CatalogoUsuarioComponent implements OnInit {
       jQuery("#sistema_"+id_sistema).addClass("active");
     }
   }
+  
   limpiarActive(){
     for(let o=0; o<this.sistemas.length;o++){
       this.sistemas[o].active = " ";
@@ -275,10 +279,18 @@ export class CatalogoUsuarioComponent implements OnInit {
     this.limpiarActive();
   }
 
+  openModalCamera(){
+    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'sm', centered : true, backdropClass : 'light-blue-backdrop'});
+  }
+
   cerrarModal(){
     this.modal.close();
   }
   
+  cerrarModalCamera(){
+    this.modal_camera.close();
+  }
+
   paginar(){
     this.paginas = [];
     let paginas_a_pintar = parseInt(this.total_registros+"")%parseInt(this.taken+"");

@@ -17,7 +17,7 @@
             <div class=" dropdown-header noti-title">
               <h6 class="text-overflow m-0">Bienvenido!</h6>
             </div>
-            <a class="dropdown-item">
+            <a *ngIf="clientes.length" class="dropdown-item">
               <i class="ni ni-curved-next"></i>
               <span (click)="openModal()">Cambiar de cliente</span>
             </a>

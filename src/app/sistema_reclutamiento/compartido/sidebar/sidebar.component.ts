@@ -47,16 +47,6 @@ export class SidebarComponent implements OnInit {
       this.isCollapsed = true;
    });
   }
-  mostrarLogo(){
-    let id_empresa = parseInt(window.sessionStorage.getItem("empresa")+"");
-    this.empresa.obtenerEmpresaPorId(id_empresa)
-    .subscribe( (object : any) => {
-      if(object.ok){
-        let base64 = "data:image/"+object.data.extension+";base64, "+object.data.fotografia;
-        this.foto_empresa = this.sanitizer.bypassSecurityTrustResourceUrl(base64);
-      }
-    });
-  }
   pintarMenu(){
     this.menuItems = [
       { path: '/dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
@@ -84,7 +74,7 @@ export class SidebarComponent implements OnInit {
             this.clientes.push(object.data);
             this.openModal();
           }else{
-            window.sessionStorage["cliente"] = object.data[0].id;
+            window.sessionStorage["cliente"] = object.data[0].id_cliente;
           }
         }
       });

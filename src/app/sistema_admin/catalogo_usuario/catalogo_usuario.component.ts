@@ -5,6 +5,8 @@ import { Usuario } from 'src/app/models/Usuario';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import * as jQuery from 'jquery';
+import { Fotografia } from 'src/app/models/Fotografia';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-catalogo-usuario',
@@ -18,11 +20,19 @@ export class CatalogoUsuarioComponent implements OnInit {
   public usuarios : any;
   public sistemas : any;
   public band = true;
+  public show = false;
+  public band_persiana = true;
+  public foto_user : any;
   public sistemas_seleccionados : any;
   public usuario_creacion = window.sessionStorage.getItem("user");
   public modal : any;
+  public modal_camera : any;
+  public fotografia = new Fotografia(0,"","","");
+  public docB64 = "";
   @ViewChild('content', {static: false}) contenidoDelModal : any;
+  @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
   public activo = true;
+  public empresa_seleccionada = window.sessionStorage.getItem("empresa");
   //Filtros
   public taken = 5; //Registros por default
   public status = 2; //Status default
@@ -40,11 +50,14 @@ export class CatalogoUsuarioComponent implements OnInit {
 
   constructor(
     private usuario_service : UsuarioService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private sanitizer: DomSanitizer
   ) {
     this.sistemas_seleccionados = [];
     this.modal = NgbModalRef;
+    this.modal_camera = NgbModalRef;
     this.paginas = [];
+    this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
    }
 
   ngOnInit(): void {
@@ -57,10 +70,12 @@ export class CatalogoUsuarioComponent implements OnInit {
       palabra : this.palabra,
       taken : this.taken,
       status : this.status,
-      pagina : this.pagina_actual
+      pagina : this.pagina_actual,
+      id_entidad : this.empresa_seleccionada,
+      tipo_entidad : 1
     };
     this.usuarios = [];
-    this.usuario_service.obtenerUsuarios(json)
+    this.usuario_service.obtenerUsuariosDeEntidad(json)
     .subscribe( (object : any) =>{
         if(object.ok){
           //Mostrar si los registros son mayores a los registros que se muestran
@@ -170,13 +185,13 @@ export class CatalogoUsuarioComponent implements OnInit {
         this.usuario.id_usuario = parseInt(object.data[0].id_usuario);
         this.usuario.nombre = object.data[0].nombre;
         this.usuario.usuario = object.data[0].usuario;
+        this.usuario.password = object.data[0].password;
         if(object.data[0].activo == 1){
           this.activo = true;
         }else{
           this.activo = false;
         }
         //Funcionalidad de modal
-        jQuery("#password").attr("disabled","true");
         jQuery("#guardar").hide();
         jQuery("#editar").show();
         //Se llenan los sistemas
@@ -195,20 +210,22 @@ export class CatalogoUsuarioComponent implements OnInit {
     });
   }
 
-  seleccionar(id_sistema : any, sistema : any){
+  seleccionar(id_sistema : any){
     if(this.sistemas_seleccionados.includes(id_sistema)){
       this.sistemas_seleccionados.splice(this.sistemas_seleccionados.indexOf(id_sistema),1);
-      jQuery("#"+sistema).removeClass("active");
+      jQuery("#sistema_"+id_sistema).removeClass("active");
     }else{
       this.sistemas_seleccionados.push(id_sistema);
-      jQuery("#"+sistema).addClass("active");
+      jQuery("#sistema_"+id_sistema).addClass("active");
     }
   }
+
   limpiarActive(){
     for(let o=0; o<this.sistemas.length;o++){
       this.sistemas[o].active = " ";
     }
   }
+
   obtenerSistemas(){
     this.sistemas = [];
     this.usuario_service.obtenerSistemas()
@@ -236,8 +253,16 @@ export class CatalogoUsuarioComponent implements OnInit {
     this.limpiarActive();
   }
 
+  openModalCamera(){
+    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'sm', centered : true, backdropClass : 'light-blue-backdrop'});
+  }
+
   cerrarModal(){
     this.modal.close();
+  }
+
+  cerrarModalCamera(){
+    this.modal_camera.close();
   }
   
   paginar(){
@@ -297,5 +322,51 @@ export class CatalogoUsuarioComponent implements OnInit {
     this.pagina_actual = 0;
     this.limite_inferior = 0;
     this.mostrarUsuarios();
+  }
+
+  mostrarPersiana(){
+    this.band_persiana = false;
+  }
+
+  ocultarPersiana(){
+    this.band_persiana = true;
+  }
+
+  subirImagen(){
+    document.getElementById("foto_user")?.click();
+  }
+
+  cambiarImagen(event: any){
+    if (event.target.files && event.target.files[0]) {
+      let archivos = event.target.files[0];
+      let extension = archivos.name.split(".")[1];
+      this.fotografia.extension = extension;
+      if(extension == "jpg" || extension == "png"){
+        this.convertirImagenAB64(archivos).then( respuesta => {
+          let img = "data:image/"+extension+";base64, "+respuesta;
+          this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
+          this.docB64 = respuesta+"";
+          this.fotografia.docB64 = respuesta+"";
+          this.fotografia.extension = extension;
+        });
+      }else{
+        Swal.fire("Ha ocurrido un error","Tipo de imagen no permitida","error");
+      }
+    }
+  }
+  convertirImagenAB64(fileInput : any){
+    return new Promise(function(resolve, reject) {
+      let b64 = "";
+      const reader = new FileReader();
+      reader.readAsDataURL(fileInput);
+      reader.onload = (e: any) => {
+          b64 = e.target.result.split("base64,")[1];
+          resolve(b64);
+      };
+    });
+  }
+
+  mostrarPassword(){
+    this.show = !this.show;
   }
 }

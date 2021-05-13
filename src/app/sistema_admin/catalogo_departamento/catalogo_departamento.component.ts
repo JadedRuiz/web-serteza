@@ -22,7 +22,8 @@ export class CatalogoDepartamentoComponent implements OnInit {
   public taken = 5;
   public band = false;
   public usuario = parseInt(window.sessionStorage.getItem("user")+"");
-  public departamento = new Departamento(0,"","",1,this.usuario,1,[]);
+  public empresa = parseInt(window.sessionStorage.getItem("empresa")+"");
+  public departamento = new Departamento(0,this.empresa,"","",1,this.usuario,1,[]);
   public puesto = new Puesto(0,"","","1",this.usuario,1);
   public puestos : any;
   public activo = true;
@@ -61,7 +62,8 @@ export class CatalogoDepartamentoComponent implements OnInit {
       "taken" : this.taken,
       "pagina" : this.pagina_actual,
       "status" : this.status,
-      "palabra" : this.palabra
+      "palabra" : this.palabra,
+      "id_empresa" : this.empresa
     };
     this.departamento_service.obtenerDepartamentos(json)
     .subscribe( (object : any)=>{
@@ -83,6 +85,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
           this.departamentos.push({
             "folio" : object.data.registros[i].id_departamento,
             "departamento" : object.data.registros[i].departamento,
+            "disponibilidad" : object.data.registros[i].disponibilidad,
             "status" : status
           });
         }
@@ -135,33 +138,21 @@ export class CatalogoDepartamentoComponent implements OnInit {
   }
 
   agregarPuesto(){
-    if(parseInt(this.departamento.disponibilidad+"") > 0){
-      if(parseInt(this.puesto.disponibilidad+"")>0){
-        //validar la sumatoria de los puestos
-        let sumatoria = 0;
-        for(let i=0;i<this.puestos.length;i++){
-          sumatoria += parseInt(""+this.puestos[i].disponibilidad);
-        }
-        sumatoria = sumatoria + parseInt(""+this.puesto.disponibilidad);
-        if(parseInt(this.departamento.disponibilidad+"") >= sumatoria){
-          this.band_puestos = true;
-          this.puestos.push({
-            "id_puesto" : this.cont,
-            "puesto" : this.puesto.puesto,
-            "descripcion" : this.puesto.descripcion,
-            "disponibilidad" : this.puesto.disponibilidad
-          });
-          this.cont++;
-          this.puesto = new Puesto(0,"","","",this.usuario,1);
-        }else{
-          Swal.fire("Ha ocurrido un error","No se puede agregar un puesto con disponibilidad mayor al del departamento","error");
-        }
-      }else{
-        Swal.fire("Ha ocurrido un error","Antes de agregar un puesto define su disponibilidad","error");
-      }
-    }else{
-      Swal.fire("Ha ocurrido un error","Antes de agregar un puesto define la disponibilidad del departamento","error");
+    //validar la sumatoria de los puestos
+    let sumatoria = 0;
+    for(let i=0;i<this.puestos.length;i++){
+      sumatoria += parseInt(""+this.puestos[i].disponibilidad);
     }
+    this.departamento.disponibilidad = sumatoria + parseInt(""+this.puesto.disponibilidad);
+      this.band_puestos = true;
+      this.puestos.push({
+        "id_puesto" : this.cont,
+        "puesto" : this.puesto.puesto,
+        "descripcion" : this.puesto.descripcion,
+        "disponibilidad" : this.puesto.disponibilidad
+      });
+      this.cont++;
+      this.puesto = new Puesto(0,"","","",this.usuario,1);
   }
 
   eliminarPuesto(folio : any){
@@ -178,11 +169,11 @@ export class CatalogoDepartamentoComponent implements OnInit {
       if (result.isConfirmed) {
         for(let i=0;i<this.puestos.length;i++){
           if(this.puestos[i].id_puesto == folio){
+            this.departamento.disponibilidad -= this.puestos[i].disponibilidad;
             this.puestos.splice(i,1);
           }
         }
         if(this.tipo_modal == 2){
-    
           this.puesto_service.eliminarPuesto(folio)
           .subscribe( (object : any)=>{
             if(object.ok){
@@ -195,25 +186,14 @@ export class CatalogoDepartamentoComponent implements OnInit {
     
   }
 
-  cambiarValor(folio : any,valor_original : any){
+  cambiarValor( folio : any, valor_original : any ){
     let valor = jQuery("#valor_"+folio).val();
-    let sumatoria = 0;
+    this.departamento.disponibilidad -= valor_original;
     for(let i=0;i<this.puestos.length;i++){
       if(this.puestos[i].id_puesto == folio){
-        sumatoria += parseInt(""+valor);
-      }else{
-        sumatoria += parseInt(""+this.puestos[i].disponibilidad);
+        this.puestos[i].disponibilidad = valor;
+        this.departamento.disponibilidad += parseInt(valor+"");
       }
-    }
-    if(parseInt(this.departamento.disponibilidad+"") >= sumatoria){
-      for(let i=0;i<this.puestos.length;i++){
-        if(this.puestos[i].id_puesto == folio){
-          this.puestos[i].disponibilidad = valor;
-        }
-      }
-    }else{
-      Swal.fire("Ha ocurrido un error","La sumatoria de la disponibilidad de los puestos no puede ser mayor al del departamento","error");
-      jQuery("#valor_"+folio).val(valor_original);
     } 
   }
 
@@ -247,7 +227,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
   }
 
   limpiarCampos(){
-    this.departamento = new Departamento(0,"","",0,this.usuario,1,[]);
+    this.departamento = new Departamento(0,this.empresa,"","",0,this.usuario,1,[]);
     this.puesto = new Puesto(0,"","","",this.usuario,1);
     this.puestos = [];
     this.cont = 0;

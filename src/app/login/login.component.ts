@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
     public usuario_service : UsuarioService,
     private router : Router,
     private modalService: NgbModal,
-    private cliente: ClienteService,
+    private cliente_service: ClienteService,
     private empresa : EmpresaService
     ) { 
       this.modal = NgbModalRef;
@@ -87,11 +87,26 @@ export class LoginComponent implements OnInit {
   }
   redirigirPrincipal(){
     if(this.sistema_elegido == "1"){
-      window.sessionStorage["foto_user"] = "";
-      this.router.navigate(["sistema_admin/dashboard"]);
+      this.empresa.obtenerEmpresaPorIdUsuario(window.sessionStorage["user"])
+      .subscribe( (object : any) => {
+        if(object.ok){
+          window.sessionStorage["foto_user"] = "";
+          this.router.navigate(["sistema_admin/dashboard"]);
+        }else{
+          Swal.fire("Ha ocurrido un error","Este usuario no cuenta empresas para administrar","error");
+        }
+      });
     }
     if(this.sistema_elegido == "2"){
-      this.router.navigate(["sistema_reclutamiento/dashboard"]);
+      //Validamos si tiene clientes antes de mandarlo
+      this.cliente_service.obtenerClientePorIdUsuario(window.sessionStorage["user"])
+      .subscribe( (object : any) => {
+        if(object.ok){
+          this.router.navigate(["sistema_reclutamiento/dashboard"]);
+        }else{
+          Swal.fire("Ha ocurrido un error","Este usuario no cuenta con clientes","error");
+        }
+      });
     }
     if(this.sistema_elegido == "3"){
       this.router.navigate(["sistema_nomina/dashboard"]);

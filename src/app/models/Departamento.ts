@@ -1,6 +1,7 @@
 export class Departamento {
     constructor(
         public id_departamento : number, 
+        public id_empresa : number,
         public departamento : String, 
         public descripcion : String, 
         public disponibilidad : number, 

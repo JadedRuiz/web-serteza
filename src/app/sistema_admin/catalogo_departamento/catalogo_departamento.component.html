@@ -1,16 +1,14 @@
 <div class="header {{color}}" style="height: 250px;">
     <div class="container-fluid">
-        <div class="header-body">
-            <div class="row pt-md-7">
-                <h2 class="text-white">CATÁLOGO DE DEPARTAMENTOS</h2>
-            </div>
-        </div>
     </div>
 </div>
-<div class="container-fluid mt--5">
+<div class="container-fluid mt--9">
   <div class="row">
     <div class="col">
       <div class="card border-info">
+          <div class="card-header">
+            CATÁLOGO DE DEPARTAMENTOS
+          </div>
         <div class="card-body">
             <div class="row mb-2">
                 <div class="col-lg-4 col-sm-12 mb-2">
@@ -34,17 +32,21 @@
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
-                        <tr>
-                            <th scope="col">Folio</th>
-                            <th scope="col">Nombre</th>
+                        <tr style="text-align: center;">
+                            <th scope="col">#</th>
+                            <th scope="col">Departamento</th>
+                            <th scope="col">Disponibilidad</th>
+                            <th scope="col">Total</th>
                             <th scope="col">Status</th>
                             <th scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody *ngIf="band; else pintaVacio" class="">
-                        <tr *ngFor="let departamento of departamentos">
+                        <tr *ngFor="let departamento of departamentos" style="text-align: center;">
                             <td colspan="1" style="vertical-align: middle;">{{departamento.folio}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{departamento.departamento}}</td>
+                            <td colspan="1" style="vertical-align: middle;">12</td>
+                            <td colspan="1" style="vertical-align: middle;">{{departamento.disponibilidad}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{departamento.status}}</td>
                             <td colspan="1" style="width: 20%;">
                                 <a title="Editar" (click)="editar(departamento.folio)" style="cursor: pointer;" class="btn btn-primary"><img src="./assets/iconos/edit.svg" style="width: 24px;"></a>
@@ -121,7 +123,7 @@
             </div>
             <div class="form-group col-sm-3">
                 <label for="disponibilidad">Disponibilidad *</label>
-                <input [(ngModel)]="departamento.disponibilidad" type="number" class="form-control" id="disponibilidad" min="1" pattern="^[1-9]+">
+                <input [(ngModel)]="departamento.disponibilidad" type="number" class="form-control" id="disponibilidad" min="1" pattern="^[1-9]+" disabled>
             </div>
         </div>
         <div class="form-row">

@@ -7,7 +7,7 @@
       </button>
       <!-- Brand -->
       <a class="navbar-brand pt-0">
-        <img src="./assets/img/defaults/imagen-no-disponible.png" class="navbar-brand-img" alt="...">
+        <img [src]="foto_empresa" class="navbar-brand-img" alt="...">
       </a>
       <!-- User -->
       <ul class="nav align-items-center d-md-none">
@@ -86,4 +86,25 @@
       </div>
     </div>
   </nav>
+  <ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header justify-content-center">
+      <h4 class="modal-title" id="modal-basic-title">¿Que empresa desea administrar?</h4>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <div class="list-group">
+              <a *ngFor="let empresa of empresas[0]" (click)="eleccion(empresa.id_empresa)" style="cursor: pointer;" class="list-group-item list-group-item-action" aria-current="true">
+                {{empresa.empresa}}
+              </a>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer justify-content-center">
+      <button (click)="cerrarSesion()" type="button" class="btn btn-warning" aria-label="Close">Cancelar</button>
+    </div>
+  </ng-template>
   

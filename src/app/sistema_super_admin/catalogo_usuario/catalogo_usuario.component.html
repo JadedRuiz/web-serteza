@@ -120,7 +120,7 @@
                         <div [class]="band_persiana ? 'persiana' : 'persiana_mostrar'">
                             <div class="container">
                                 <div class="row mt-5 text-center justify-content-center">
-                                    <a style="cursor: pointer;" class="text-info tomar_foto">Tomar fotografía</a>  
+                                    <a style="cursor: pointer;" class="text-info tomar_foto" (click)="openModalCamera()">Tomar fotografía</a>  
                                 </div>
                                 <div class="row mt-3 justify-content-center">
                                     <a class="text-info">ó</a>
@@ -196,36 +196,52 @@
                     </ul>
             </div>
         </div>
-        <div class="row">
-            <div *ngIf="isCameraExist; else noCameraExist">
-                <div style="text-align:center">
-                    <div class="btn-group">
-                        <button class="button" (click)="takeSnapshot()">Take Picture</button>
-                        <button class="button" (click)="changeWebCame(true)">Toggle Camera</button>
-                        <button class="button" (click)="onOffWebCame()">Switch camera</button>
-                    </div> <br />
-                    <webcam [height]="500" [width]="1000" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
-                        *ngIf="showWebcam" [switchCamera]="nextWebcamObservable"></webcam>
-                </div>
-            
-                <div *ngIf="errors.length > 0">
-                    <h4>Error Messages:</h4>
-                    <ul *ngFor="let error of errors">
-                        <li>{{ error | json }}</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <ng-template #noCameraExist>
-                Camera device not available
-            </ng-template>
-        </div>
+        
         </form>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
         <button type="button" class="btn btn-success" (click)="altaUsuario()" id="guardar">Guardar</button>
         <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button>
+    </div>
+</ng-template>
+
+<ng-template #modal_camera let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h2 class="modal-title" id="tituloModal">Tomar fotografia</h2>
+    </div>
+    <div class="modal-body">
+        <div class="container">
+            <div class="row">
+                <div *ngIf="isCameraExist; else noCameraExist">
+                    <div class="border border-success rounded text-center" style="width: 450px;height: 350px;">
+                        <div class="btn-group">
+                            <button class="button" (click)="changeWebCame(true)">Toggle Camera</button>
+                            <button class="button" (click)="onOffWebCame()">Switch camera</button>
+                        </div> <br />
+                        <webcam [height]="450" [width]="350" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
+                            *ngIf="showWebcam" [switchCamera]="nextWebcamObservable"></webcam>
+                    </div>
+                
+                    <div *ngIf="errors.length > 0">
+                        <h4>Error Messages:</h4>
+                        <ul *ngFor="let error of errors">
+                            <li>{{ error | json }}</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <ng-template #noCameraExist>
+                    <div class="border border-danger rounded text-center" style="display: flex;justify-content: center;align-items: center;width: 450px;height: 350px;">
+                        Este dispositivo no cuenta con una camara disponible
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModalCamera()">Cerrar</button>
+        <button *ngIf="isCameraExist" type="button" class="btn btn-success" (click)="takeSnapshot()">Tomar foto</button>
     </div>
 </ng-template>
   

@@ -52,7 +52,6 @@ export class HeaderComponent implements OnInit {
           }
         }
       });
-      console.log(this.clientes);
   }
   eleccion(id_cliente : any){
     window.sessionStorage["cliente"] = id_cliente;

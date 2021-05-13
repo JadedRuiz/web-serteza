@@ -1,16 +1,14 @@
 <div class="header {{color}}" style="height: 250px;">
     <div class="container-fluid">
-        <div class="header-body">
-            <div class="row pt-md-7">
-                <h2 class="text-white">CATÁLOGO DE USUARIOS</h2>
-            </div>
-        </div>
     </div>
 </div>
-<div class="container-fluid mt--5">
+<div class="container-fluid mt--9">
   <div class="row">
     <div class="col">
       <div class="card border-info">
+        <div class="card-header">
+            USUARIOS
+         </div>
         <div class="card-body">
             <div class="row mb-2">
                 <div class="col-lg-4 col-sm-12 mb-2">
@@ -115,28 +113,70 @@
                 <label *ngIf="!activo" class="custom-control-label" for="customSwitch1">Desactivado</label>
             </div>
         </div>
-        <div class="form-row">
-            <div class="form-group col-4">
-                <p>Nombre : *</p>
-                <input [(ngModel)]="usuario.nombre" name="nombre" type="text" class="form-control" id="nombre">
-            </div>
-            <div class="form-group col-4">
-                <p>Usuario : *</p>
-                <input [(ngModel)]="usuario.usuario" name="usuario" type="text" class="form-control" id="usuario">
-            </div>
-            <div class="form-group col-4">
-                <p>Contraseña : *</p>
-                <input [(ngModel)]="usuario.password" name="password" type="password" class="form-control" id="password">
+        <div class="contianer col-12">
+            <div class="row">
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group rounded hover_img_user" style="max-width:190px;height:200px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;overflow: hidden;" (mouseover)="mostrarPersiana()" (mouseout)="ocultarPersiana()">
+                        <div [class]="band_persiana ? 'persiana' : 'persiana_mostrar'">
+                            <div class="container">
+                                <div class="row mt-5 text-center justify-content-center">
+                                    <a style="cursor: pointer;" class="text-info tomar_foto" (click)="openModalCamera()">Tomar fotografía</a>  
+                                </div>
+                                <div class="row mt-3 justify-content-center">
+                                    <a class="text-info">ó</a>
+                                </div>
+                                <div class="row text-center mt-3 justify-content-center">
+                                    <a style="cursor: pointer;" class="text-info tomar_foto" (click)="subirImagen()">Subir imagen</a>
+                                </div>
+                            </div>
+                        </div>
+                        <img id="imagen_perfil" class="img-fluid" [src]="foto_user">
+                        <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
+                    </div>
+                </div>
+                <div class="col-lg-9 col-sm-12">
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="apellido_paterno">Nombre *</label>
+                                <input [(ngModel)]="usuario.nombre" name="nombre" type="text" class="form-control" id="nombre" style="text-transform: uppercase;">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                          <div class="form-group">
+                                <label for="usuario">Usuario *</label>
+                                <div class="input-group input-group-alternative" id="usuario">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                                </div>
+                                <input [(ngModel)]="usuario.usuario" name="usuario" class="form-control" placeholder="Usuario" type="text" required>
+                                </div>  
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                          <div class="form-group">
+                              <label for="nombre">Contraseña *</label>
+                              <div class="input-group input-group-alternative">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" style="cursor: pointer;" title="mostrar contraseña" (click)="mostrarPassword()"><i class="ni ni-lock-circle-open"></i></span>
+                                </div>
+                                <input [(ngModel)]="usuario.password" name="password" class="form-control" placeholder="Contraseña" [type]="show ? 'text' : 'password'" required>
+                              </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="form-row">
             <p>Seleccione los sistemas que administrará este usuario :</p>
             <div class="form-group col-12 m-auto">
                 <ul class="list-group">
-                    <li *ngFor="let sistema of sistemas" id="{{sistema.sistema}}" (click)="seleccionar(sistema.id_sistema,sistema.sistema)" style="cursor:pointer;" class="list-group-item {{sistema.active}}">{{sistema.sistema}}</li>
+                    <li *ngFor="let sistema of sistemas" id="sistema_{{sistema.id_sistema}}" (click)="seleccionar(sistema.id_sistema)" style="cursor:pointer;" class="list-group-item {{sistema.active}}">{{sistema.sistema}}</li>
                     </ul>
             </div>
         </div>
+        
         </form>
     </div>
     <div class="modal-footer">
@@ -145,4 +185,3 @@
         <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button>
     </div>
 </ng-template>
-  
