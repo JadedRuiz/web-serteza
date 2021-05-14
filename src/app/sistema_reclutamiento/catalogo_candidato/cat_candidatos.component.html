@@ -1,11 +1,11 @@
-<div class="header {{color}} pb-5 pt-5 pt-md-7">
+<div class="header {{color}}" style="height: 250px;">
 </div>
-<div class="container-fluid mt--5">
+<div class="container-fluid mt--9">
   <div class="row">
     <div class="col">
       <div class="card border-info">
         <div class="card-header">
-           CATÁLOGO DE CANDIDATOS
+          CANDIDATOS
         </div>
         <div class="card-body">
             <div class="row mb-2">
@@ -160,13 +160,13 @@
                                   <div class="col-lg-4 col-sm-12">
                                     <div class="form-group">
                                       <label for="curp">CURP</label>
-                                      <input [(ngModel)]="candidato.curp" name="rfc" type="text" class="form-control" id="curp" style="text-transform: uppercase;">
+                                      <input [(ngModel)]="candidato.curp" name="rfc" type="text" class="form-control" id="curp" style="text-transform: uppercase;" maxlength="18">
                                     </div>
                                   </div>
                                   <div class="col-lg-4 col-sm-12">
                                     <div class="form-group">
                                       <label for="rfc">RFC</label>
-                                      <input [(ngModel)]="candidato.rfc" name="rfc" type="text" class="form-control" id="rfc" style="text-transform: uppercase;">
+                                      <input [(ngModel)]="candidato.rfc" name="rfc" type="text" class="form-control" id="rfc" style="text-transform: uppercase;" maxlength="14">
                                     </div>
                                   </div>
                                   <div class="col-lg-4" col-sm-12>
@@ -185,13 +185,13 @@
                           <div class="col-lg-4 col-sm-12">
                             <div class="form-group">
                               <label for="fecha_nacimiento">Fecha de nacimiento</label>
-                              <input [(ngModel)]="candidato.fecha_nacimiento" name="fecha_nacimiento" type="date" class="form-control" id="fecha_nacimiento">
+                              <input [(ngModel)]="candidato.fecha_nacimiento" name="fecha_nacimiento" type="date" class="form-control" id="fecha_nacimiento" (change)="generarEdad()">
                             </div>
                           </div>
                           <div class="col-lg-2 col-sm-12">
                             <div class="form-group">
                               <label for="edad">Edad</label>
-                              <input [(ngModel)]="candidato.edad" name="edad" type="number" class="form-control" id="edad">
+                              <input [(ngModel)]="candidato.edad" name="edad" type="number" class="form-control" id="edad" maxlength="3">
                             </div>
                           </div>
                           <div class="col-lg-6 col-sm-12">
@@ -204,15 +204,15 @@
                         <div class="row">
                           <div class="form-group col-lg-4 col-sm-12">
                             <label for="tel_1">Telefono(s)</label>
-                            <input [(ngModel)]="candidato.telefono" name="telefono" type="number" class="form-control" id="tel_1" placeholder="Ingrese el número">
+                            <input [(ngModel)]="candidato.telefono" name="telefono" type="text" class="form-control" id="tel_1" placeholder="Ingrese el número" maxlength="10">
                           </div>
                           <div class="form-group col-lg-4 col-sm-12">
                             <label for="tel_2">&nbsp;</label>
-                            <input [(ngModel)]="candidato.telefono_dos" name="telefono_dos" type="number" class="form-control" id="tel_2" placeholder="Ingrese el número">
+                            <input [(ngModel)]="candidato.telefono_dos" name="telefono_dos" type="text" class="form-control" id="tel_2" placeholder="Ingrese el número" maxlength="10">
                           </div>
                           <div class="form-group col-lg-4 col-sm-12">
                             <label for="tel_3">&nbsp;</label>
-                            <input [(ngModel)]="candidato.telefono_tres" name="telefono_tres" type="number" class="form-control" id="tel_3" placeholder="Ingrese el número">
+                            <input [(ngModel)]="candidato.telefono_tres" name="telefono_tres" type="text" class="form-control" id="tel_3" placeholder="Ingrese el número" maxlength="10">
                           </div>
                         </div>
                         <div class="row">
@@ -227,9 +227,9 @@
               </div>
               <div class="tab-pane col-12" id="direccion_tab" role="tabpanel">
                 <div class="form-row">
-                  <div class="form-group col-md-1">
+                  <div class="form-group col-md-2">
                     <label for="calle">Calle</label>
-                    <input [(ngModel)]="candidato.direccion.calle" name="calle" type="number" class="form-control" id="calle" required>
+                    <input [(ngModel)]="candidato.direccion.calle" name="calle" type="text" class="form-control" id="calle" required>
                   </div>
                   <div class="form-group col-md-2">
                     <label for="num_ext">Número ext.</label>
@@ -242,15 +242,15 @@
                   <div class="form-group col-md-3">
                     <label for="cruzamientos_form">Cruzamientos</label>
                     <div class="form-inline form-row align-items-center" id="cruzamientos_form">
-                      <input [(ngModel)]="candidato.direccion.cruzamiento_uno" name="cruzamiento_ext" type="number" class="form-control col-5" id="cruzamientos_int" placeholder="">
+                      <input [(ngModel)]="candidato.direccion.cruzamiento_uno" name="cruzamiento_ext" type="text" class="form-control col-5" id="cruzamientos_int" placeholder="">
                       <p class="text-center col-2"> y </p>
-                      <input [(ngModel)]="candidato.direccion.cruzamiento_dos" name="cruzamiento_int" type="number" class="form-control col-5" id="cruzamientos_ext" placeholder="">
+                      <input [(ngModel)]="candidato.direccion.cruzamiento_dos" name="cruzamiento_int" type="text" class="form-control col-5" id="cruzamientos_ext" placeholder="">
                     </div>
                   </div>
-                  <div class="form-group col-md-3">
+                  <div class="form-group col-md-2">
                     <label for="codigo_postal">Código postal</label>
                     <div class="input-group mb-3">
-                      <input [(ngModel)]="candidato.direccion.codigo_postal" name="codigo_postal" id="codigo_postal" type="number" class="form-control" aria-describedby="icono">
+                      <input [(ngModel)]="candidato.direccion.codigo_postal" name="codigo_postal" id="codigo_postal" type="text" class="form-control" aria-describedby="icono" maxlength="5">
                       <div class="input-group-append">
                         <span class="input-group-text" id="icono" style="cursor:pointer;" (click)="getDatos()"><i class="ni ni-fat-add"></i></span>
                       </div>
@@ -292,7 +292,7 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
         <button type="button" class="btn btn-success" (click)="altaCandidato()" id="guardar">Guardar</button>
-        <button type="button" class="btn btn-success" (click)="modificarCandidato()" id="editar" >Editar</button>
+        <button type="button" class="btn btn-success" (click)="modificarCandidato()" id="editar" >Guardar</button>
     </div>
 </ng-template>
   

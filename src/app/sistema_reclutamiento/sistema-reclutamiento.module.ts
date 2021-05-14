@@ -9,13 +9,15 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SistemaReclutamientoRoutingModule } from './sistema-reclutamiento-routing.module';
+import { ProcedimientoContratacionComponent } from './procedimiento_contratacion/procedimiento_contratacion.component';
 
 
 @NgModule({
   declarations: [
     SistemaReclutamientoComponent,
     DashboardComponent,
-    CatalogoCandidatosComponent
+    CatalogoCandidatosComponent,
+    ProcedimientoContratacionComponent
   ],
   imports: [
     CompartidoModule,

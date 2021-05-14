@@ -11,6 +11,8 @@
 .buscador input{
     border: 0;
     width: 88%;
+    outline: 0 none;
+    text-transform: uppercase;
 }
 .buscador a{
     margin-left: 5px;

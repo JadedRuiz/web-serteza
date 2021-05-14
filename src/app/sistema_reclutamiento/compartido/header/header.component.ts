@@ -17,12 +17,13 @@ export class HeaderComponent implements OnInit {
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   public modal: any;
   public clientes : any;
+  public texto : String;
 
   constructor(private router: Router,
     public cliente_service : ClienteService,
     private modalService: NgbModal
     ) {
-      
+      this.texto = "SISTEMA DE RECLUTAMIENTO";
      }
 
   ngOnInit(): void {

@@ -71,7 +71,7 @@ export class CatalogoCandidatosComponent implements OnInit {
 
   mostrarCandidatos(){
     let json = {
-      palabra : this.palabra,
+      palabra : this.palabra.toUpperCase(),
       taken : this.taken,
       status : this.status,
       pagina : this.pagina_actual,
@@ -120,7 +120,7 @@ export class CatalogoCandidatosComponent implements OnInit {
         && this.direccion.numero_interior == ""
         ){
           Swal.fire({
-            title: '¿Estas seguro de agregar una empresa sin ningun dato de dirección?',
+            title: '¿Estas seguro de agregar una empresa sin ninguna dato de dirección?',
             text: "El empresa se registrará sin domicilio, pero puedes actulizar su información en cualquier momento",
             icon: 'warning',
             showCancelButton: true,
@@ -316,6 +316,7 @@ export class CatalogoCandidatosComponent implements OnInit {
     this.direccion  = new Direccion(0,0,"","","","","","","","","","");
     this.fotografia = new Fotografia(0,"","",""); 
     this.candidato = new Candidato(0,this.id_cliente,6,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia);
+    this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
   }
 
   generarEdad(){
@@ -443,12 +444,15 @@ export class CatalogoCandidatosComponent implements OnInit {
   }
 
   guardar(){
+    this.limpiarCampos();
     this.openModal();
+    jQuery("#guardar").show();
+    jQuery("#editar").hide();
   }
 
   irPagina(pagina : any){
     this.pagina_actual = pagina;
-    // this.mostrarEmpresas();
+    this.mostrarCandidatos();
   }
 
   filtroStatus(){
