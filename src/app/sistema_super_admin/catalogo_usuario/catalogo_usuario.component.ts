@@ -136,6 +136,7 @@ export class CatalogoUsuarioComponent implements OnInit {
           usuario : this.usuario.usuario,
           password : this.usuario.password,
           sistemas : this.sistemas_seleccionados,
+          fotografia : this.fotografia,
           usuario_creacion : this.usuario_creacion,
           activo : active
         };
@@ -280,7 +281,8 @@ export class CatalogoUsuarioComponent implements OnInit {
   }
 
   openModalCamera(){
-    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'sm', centered : true, backdropClass : 'light-blue-backdrop'});
+    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+    this.showWebcam = true;
   }
 
   cerrarModal(){
@@ -385,7 +387,7 @@ export class CatalogoUsuarioComponent implements OnInit {
   }
 
   takeSnapshot(): void {
-    this.trigger.next();
+    let foto = this.trigger.next();
   }
 
   onOffWebCame() {
@@ -403,6 +405,13 @@ export class CatalogoUsuarioComponent implements OnInit {
   handleImage(webcamImage: WebcamImage) {
     this.getPicture.emit(webcamImage);
     this.showWebcam = false;
+    this.foto_user = webcamImage.imageAsDataUrl;
+    let docB64 = this.foto_user.split(",");
+    this.fotografia.docB64 = docB64[1];
+    this.fotografia.extension = "jpeg";
+    this.fotografia.nombre = "foto_user";
+    this.cerrarModalCamera();
+    // console.log(webcamImage.imageAsDataUrl)
   }
 
   get triggerObservable(): Observable<void> {
