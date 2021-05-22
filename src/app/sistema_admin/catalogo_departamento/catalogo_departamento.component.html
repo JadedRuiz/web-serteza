@@ -146,13 +146,29 @@
             </div>
         </div>
         <div class="form-row">
+            <div class="form-group col-sm-4">
+                <label for="sueldo_tipo_a">Sueldo tipo a</label>
+                <input [(ngModel)]="puesto.sueldo_tipo_a" type="text" class="form-control" id="sueldo_tipo_a">
+            </div>
+            <div class="form-group col-sm-4">
+                <label for="sueldo_tipo_b">Sueldo tipo b</label>
+                <input [(ngModel)]="puesto.sueldo_tipo_b" type="text" class="form-control" id="sueldo_tipo_b">
+            </div>
+            <div class="form-group col-sm-4">
+                <label for="sueldo_tipo_c">Sueldo tipo c</label>
+                <input [(ngModel)]="puesto.sueldo_tipo_c" type="text" class="form-control" id="sueldo_tipo_c">
+            </div>
+        </div>
+        <div class="form-row">
             <div class="form-group col-sm-12">
                 <label for="descripcion">Descripcion</label>
                 <textarea [(ngModel)]="puesto.descripcion" type="text" class="form-control" id="descripcion"></textarea>
             </div>
         </div>
         <div class="form-row float-right">
-            <button class="btn btn-success" (click)=agregarPuesto()>Agregar</button>
+            <button class="btn btn-success" (click)=agregarPuesto() id="agregarPuesto">Agregar</button>
+            <button class="btn btn-warning" (click)=limpiaTexto() id="limpiaTexto" style="display: none;">Limpiar</button>
+            <button class="btn btn-success" (click)=agregarPuesto() id="guardaPuesto" style="display: none;">Guardar</button>
         </div>
         <div class="form-row mt-5">
             <div class="table-resposive col-sm-12">
@@ -166,7 +182,7 @@
                         </tr>
                     </thead>
                     <tbody *ngIf="band_puestos">
-                        <tr *ngFor="let puesto_array of puestos">
+                        <tr *ngFor="let puesto_array of puestos" (click)="editarPuesto(puesto_array.id_puesto)" style="cursor: pointer;">
                             <td style="vertical-align: middle;">{{puesto_array.puesto}}</td>
                             <td style="vertical-align: middle;">{{puesto_array.descripcion}}</td>
                             <td style="vertical-align: middle;" style="width: 5%;text-align: center;">

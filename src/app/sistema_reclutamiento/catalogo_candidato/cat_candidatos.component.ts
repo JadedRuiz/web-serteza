@@ -75,7 +75,7 @@ export class CatalogoCandidatosComponent implements OnInit {
       taken : this.taken,
       status : this.status,
       pagina : this.pagina_actual,
-      id_cliente : this.id_cliente
+      id_cliente : this.id_cliente  
     };
     this.candidatos = [];
     this.candidato_service.obtenerCandidatos(json)
