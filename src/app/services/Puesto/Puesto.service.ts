@@ -14,6 +14,11 @@ export class PuestoService {
     public http: HttpClient
   ) { }
 
+  obtenerPuestosPorIdDepartamento(id : any){
+    let url = SERVER_API+"puesto/obtenerPuestosPorIdDepartamento/"+id;
+    return this.http.get(url);
+  }
+
   eliminarPuesto(id : any){
     let url = SERVER_API+"puesto/eliminarPuesto/"+id;
     return this.http.get(url)

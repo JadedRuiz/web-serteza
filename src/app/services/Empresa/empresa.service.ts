@@ -102,4 +102,8 @@ export class EmpresaService {
         return throwError(err);
       }));
   }
+  obtenerEmpresasPorIdCliente(id : any){
+    let url = SERVER_API+"empresa/obtenerEmpresasPorIdCliente/"+id;
+    return this.http.get(url);
+  }
 }
