@@ -7,6 +7,7 @@ import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { DepartamentoService } from 'src/app/services/Departamento/Departamento.service';
 import { PuestoService } from 'src/app/services/Puesto/Puesto.service';
 
+
 @Component({
   selector: 'app-procedimiento-contratacion',
   templateUrl: './procedimiento_contratacion.component.html',
@@ -21,7 +22,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
   public bandera = [true, true, true];
   public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
-  public contrato = new Contrato(0,0,0,0,0,"","0",this.usuario_creacion);
+  public contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0",this.usuario_creacion);
   public contratos : any;
   public modal : any;
   public taken = 5;
@@ -44,6 +45,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
   public departamentos : any;
   //Puesto
   public puestos : any;
+  public sueldos = ["","",""];
 
   constructor(
     private modalService: NgbModal,
@@ -58,6 +60,14 @@ export class ProcedimientoContratacionComponent implements OnInit {
   ngOnInit(): void {
     
   }
+
+  mostrarCandidato(){
+    let valor = this.contrato.candidato.split(" ")[1];
+    let object = this.candidatos.filter( (x : any) => x.folio === parseInt(valor))[0];
+    this.contrato.candidato = object.nombre;
+    this.contrato.id_candidato = object.folio;
+  }
+
   mostrarCandidatos(){
     let json = {
       palabra : "",
@@ -105,58 +115,72 @@ export class ProcedimientoContratacionComponent implements OnInit {
   }
 
   mostrarDepartamentos(){
-    console.log(this.contrato.id_empresa);
-    if(this.contrato.id_empresa == 0){
-      this.bandera[0] = true;
-    }else{
-      this.bandera[0] = false;
-      this.departamentos = [];
-      let json = {
-        "taken" : 999,
-        "pagina" : 0,
-        "status" : 2,
-        "palabra" : "",
-        "id_empresa" : this.contrato.id_empresa
-      };
-      this.departamento_service.obtenerDepartamentos(json)
-      .subscribe( (object : any)=>{
-        if(object.ok){
-          for(let i=0;i<object.data.registros.length;i++){
-            this.departamentos.push({
-              "id_departamento" : object.data.registros[i].id_departamento,
-              "departamento" : object.data.registros[i].departamento
-            });
-          }
-        }else{
-          this.departamentos = [];
+    let valor = this.contrato.empresa.split(" ")[1];
+    let object = this.empresas.filter( (x : any) => x.id_empresa_cliente === parseInt(valor))[0];
+    this.contrato.empresa = object.empresa;
+    this.contrato.id_empresa = object.id_empresa_cliente;
+    this.bandera[0] = false;
+    this.departamentos = [];
+    let json = {
+      "taken" : 999,
+      "pagina" : 0,
+      "status" : 2,
+      "palabra" : "",
+      "id_empresa" : this.contrato.id_empresa
+    };
+    this.departamento_service.obtenerDepartamentos(json)
+    .subscribe( (object : any)=>{
+      if(object.ok){
+        for(let i=0;i<object.data.registros.length;i++){
+          this.departamentos.push({
+            "id_departamento" : object.data.registros[i].id_departamento,
+            "departamento" : object.data.registros[i].departamento
+          });
         }
-      });
-    }
+      }else{
+        this.departamentos = [];
+      }
+    });
   }
 
   mostrarPuestos(){
-    if(this.contrato.id_departamento == 0){
-      this.bandera[1] = true;
-    }else{
-      this.bandera[1] = false;
-      this.puestos = [];
-      console.log(this.contrato.id_departamento);
-      this.puesto_service.obtenerPuestosPorIdDepartamento(this.contrato.id_departamento)
-      .subscribe( (object : any) => {
-        if(object.ok){
-          for(let i=0;i<object.data.length;i++){
-            this.puestos.push({
-              "id_puesto" : object.data[i].id_puesto,
-              "puesto" : object.data[i].puesto
-            });
-          }
-        }else{
-          this.puestos = [];
+    let valor = this.contrato.departamento.split(" ")[1];
+    let object = this.departamentos.filter( (x : any) => x.id_departamento === parseInt(valor))[0];
+    this.contrato.departamento = object.departamento;
+    this.contrato.id_departamento = object.id_departamento;
+    this.bandera[1] = false;
+    this.puestos = [];
+    this.puesto_service.obtenerPuestosPorIdDepartamento(this.contrato.id_departamento)
+    .subscribe( (object : any) => {
+      if(object.ok){
+        for(let i=0;i<object.data.length;i++){
+          this.puestos.push({
+            "id_puesto" : object.data[i].id_puesto,
+            "puesto" : object.data[i].puesto,
+            "sueldo_tipo_a" : object.data[i].sueldo_tipo_a,
+            "sueldo_tipo_b" : object.data[i].sueldo_tipo_b,
+            "sueldo_tipo_c" : object.data[i].sueldo_tipo_c,
+          });
         }
-      });
-    }
-    
+      }else{
+        this.puestos = [];
+      }
+    });
   }
+  mostrarSueldos(){
+    this.bandera[2] = false;  
+    let valor = this.contrato.puesto.split(" ")[1];
+    let object = this.puestos.filter( (x : any) => x.id_puesto === parseInt(valor))[0];
+    this.contrato.puesto = object.puesto;
+    this.contrato.id_puesto = object.id_puesto;
+    this.contrato.sueldo = object.sueldo_tipo_c;
+    this.sueldos = [object.sueldo_tipo_a,object.sueldo_tipo_b,object.sueldo_tipo_c];
+  }
+
+  cambiarSueldo(sueldo : any){
+    this.contrato.sueldo = sueldo;
+  }
+
   mostrarContratos(){
 
   }

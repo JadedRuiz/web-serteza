@@ -10,6 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SistemaReclutamientoRoutingModule } from './sistema-reclutamiento-routing.module';
 import { ProcedimientoContratacionComponent } from './procedimiento_contratacion/procedimiento_contratacion.component';
+import { WebcamModule } from 'ngx-webcam';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { ProcedimientoContratacionComponent } from './procedimiento_contratacion
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
+    WebcamModule
   ]
 })
 export class SistemaReclutamientoModule { }

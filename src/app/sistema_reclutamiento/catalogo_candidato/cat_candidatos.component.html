@@ -34,6 +34,7 @@
                     <thead>
                         <tr>
                             <th scope="col">Folio</th>
+                            <th scope="col">Fotografia</th>
                             <th scope="col">Nombre del candidato</th>
                             <th scope="col">Status</th>
                             <th scope="col">Acciones</th>
@@ -42,6 +43,11 @@
                     <tbody *ngIf="band; else pintaVacio" class="">
                         <tr *ngFor="let candidato of candidatos">
                             <td colspan="1" style="vertical-align: middle;">{{candidato.folio}}</td>
+                            <td colspan="1" style="vertical-align: middle;">
+                              <div class="img" style="height: 60px; width: 80px;">
+                                <img [src]="candidato.fotografia" alt="" style="width: 100%; height: 100%;">
+                              </div>
+                            </td>
                             <td colspan="1" style="vertical-align: middle;">{{candidato.nombre}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{candidato.status}}</td>
                             <td colspan="1" style="width: 20%;">
@@ -130,10 +136,27 @@
                     <div class="container col-12">
                         <div class="row">
                             <div class="col-lg-2 col-sm-12">
-                                <div class="form-group rounded" style="max-width:190px;height:200px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;overflow: hidden;">
+                                <!-- <div class="form-group rounded" style="max-width:190px;height:200px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;overflow: hidden;">
                                     <img (click)="subirImagen()" id="imagen_perfil" class="img-fluid" [src]="foto_user">
                                     <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
-                                </div>
+                                </div> -->
+                                <div class="form-group rounded hover_img_user" style="max-width:190px;height:200px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;overflow: hidden;" (mouseover)="mostrarPersiana()" (mouseout)="ocultarPersiana()">
+                                  <div [class]="band_persiana ? 'persiana' : 'persiana_mostrar'">
+                                      <div class="container">
+                                          <div class="row mt-5 text-center justify-content-center">
+                                              <a style="cursor: pointer;" class="text-info tomar_foto" (click)="openModalCamera()">Tomar fotografía</a>  
+                                          </div>
+                                          <div class="row mt-3 justify-content-center">
+                                              <a class="text-info">ó</a>
+                                          </div>
+                                          <div class="row text-center mt-3 justify-content-center">
+                                              <a style="cursor: pointer;" class="text-info tomar_foto" (click)="subirImagen()">Subir imagen</a>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <img id="imagen_perfil" class="img-fluid" [src]="foto_user">
+                                  <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
+                              </div>
                             </div>
                             <div class="col-lg-10 col-sm-12">
                                 <div class="row">
@@ -295,4 +318,42 @@
         <button type="button" class="btn btn-success" (click)="modificarCandidato()" id="editar" >Guardar</button>
     </div>
 </ng-template>
-  
+
+<ng-template #modal_camera let-c="close" let-d="dismiss">
+  <div class="modal-header">
+      <h2 class="modal-title" id="tituloModal">Tomar fotografia</h2>
+  </div>
+  <div class="modal-body">
+      <div class="container">
+          <div class="row">
+              <div *ngIf="isCameraExist; else noCameraExist" class="col-12">
+                  <div class="border border-success rounded text-center" style="width: 100%;height: 265px;">
+                      <!-- <div class="btn-group">
+                          <button class="button" (click)="changeWebCame(true)">Toggle Camera</button>
+                          <button class="button" (click)="onOffWebCame()">Switch camera</button>
+                      </div> <br /> -->
+                      <webcam [height]="450" [width]="350" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
+                          *ngIf="showWebcam" [switchCamera]="nextWebcamObservable"></webcam>
+                  </div>
+              
+                  <div *ngIf="errors.length > 0">
+                      <h4>Error Messages:</h4>
+                      <ul *ngFor="let error of errors">
+                          <li>{{ error | json }}</li>
+                      </ul>
+                  </div>
+              </div>
+              
+              <ng-template #noCameraExist>
+                  <div class="border border-danger rounded text-center" style="display: flex;justify-content: center;align-items: center;width: 450px;height: 350px;">
+                      Este dispositivo no cuenta con una camara disponible
+                  </div>
+              </ng-template>
+          </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="cerrarModalCamera()">Cerrar</button>
+      <button *ngIf="isCameraExist" type="button" class="btn btn-success" (click)="takeSnapshot()">Tomar foto</button>
+  </div>
+</ng-template>

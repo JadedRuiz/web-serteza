@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, Output, EventEmitter} from '@angular/core';
 import { NgForm } from '@angular/forms';
 import swal from'sweetalert2';
 import { LocalidadService } from 'src/app/services/localidad/localidad.service';
@@ -8,10 +8,12 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Candidato } from 'src/app/models/Candidato';
 import { Direccion } from 'src/app/models/Direccion';
 import { Fotografia } from 'src/app/models/Fotografia';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import * as jQuery from 'jquery';
+import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
+import { Observable, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-candidatos-original',
@@ -31,10 +33,19 @@ export class CatalogoCandidatosComponent implements OnInit {
   public band = true;
   public modal : any;
   public estatus_color = "";
+  public modal_camera : any;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
+  @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
   public activo = true;
   public foto_user : any;
   public docB64 = "";
+  @Output() getPicture = new EventEmitter<WebcamImage>();
+  showWebcam = true;
+  isCameraExist = true;
+  errors: WebcamInitError[] = [];
+  // webcam snapshot trigger
+  private trigger: Subject<void> = new Subject<void>();
+  private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
   //Filtros
   public taken = 5; //Registros por default
   public status = -1; //Status default
@@ -49,7 +60,8 @@ export class CatalogoCandidatosComponent implements OnInit {
   public limite_superior = this.paginas_a_mostrar;
   public next = false;
   public previous = false;
-  
+  public band_persiana = true;
+
   colonias = [
     "Primero ingresa el Codigo Postal"
   ];
@@ -63,10 +75,16 @@ export class CatalogoCandidatosComponent implements OnInit {
     private modalService: NgbModal,
   ) {
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
+    this.modal_camera = NgbModalRef;
+    this.modal = NgbModalRef;
    }
 
   ngOnInit(): void {
     this.mostrarCandidatos();
+    WebcamUtil.getAvailableVideoInputs()
+    .then((mediaDevices: MediaDeviceInfo[]) => {
+      this.isCameraExist = mediaDevices && mediaDevices.length > 0;
+    });
   }
 
   mostrarCandidatos(){
@@ -95,8 +113,17 @@ export class CatalogoCandidatosComponent implements OnInit {
           for(let i =0; i<object.data.registros.length; i++){
             let nombre = object.data.registros[i].nombre;
             let apellidos = object.data.registros[i].apellido_paterno + " " + object.data.registros[i].apellido_materno;
+            let fotografia_user : any;
+            console.log(object.data.registros[i].fotografia);
+            if(object.data.registros[i].fotografia != ""){
+              let img = "data:image/"+object.data.registros[i].extension+";base64, "+object.data.registros[i].fotografia;
+              fotografia_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
+            }else{
+              fotografia_user = "./assets/img/defaults/usuario_por_defecto.svg";
+            }
             this.candidatos.push({
               "folio" : object.data.registros[i].id_candidato,
+              "fotografia" : fotografia_user,
               "nombre" : apellidos + " " + nombre,
               "status" : object.data.registros[i].status
             });
@@ -393,6 +420,14 @@ export class CatalogoCandidatosComponent implements OnInit {
     }
   }
 
+  mostrarPersiana(){
+    this.band_persiana = false;
+  }
+
+  ocultarPersiana(){
+    this.band_persiana = true;
+  }
+  
   openModal() {
     this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop'});
   }
@@ -487,6 +522,51 @@ export class CatalogoCandidatosComponent implements OnInit {
     this.docB64 = docB64+"";
     this.fotografia.docB64 = docB64;
     this.fotografia.extension = extension;
+  }
+
+  openModalCamera(){
+    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+    this.showWebcam = true;
+  }
+
+  cerrarModalCamera(){
+    this.modal_camera.close();
+  }
+
+  takeSnapshot(): void {
+    let foto = this.trigger.next();
+  }
+
+  onOffWebCame() {
+    this.showWebcam = !this.showWebcam;
+  }
+
+  handleInitError(error: WebcamInitError) {
+    this.errors.push(error);
+  }
+
+  changeWebCame(directionOrDeviceId: boolean | string) {
+    this.nextWebcam.next(directionOrDeviceId);
+  }
+
+  handleImage(webcamImage: WebcamImage) {
+    this.getPicture.emit(webcamImage);
+    this.showWebcam = false;
+    this.foto_user = webcamImage.imageAsDataUrl;
+    let docB64 = this.foto_user.split(",");
+    this.fotografia.docB64 = docB64[1];
+    this.fotografia.extension = "jpeg";
+    this.fotografia.nombre = "foto_user";
+    this.cerrarModalCamera();
+    // console.log(webcamImage.imageAsDataUrl)
+  }
+
+  get triggerObservable(): Observable<void> {
+    return this.trigger.asObservable();
+  }
+
+  get nextWebcamObservable(): Observable<boolean | string> {
+    return this.nextWebcam.asObservable();
   }
 }
 

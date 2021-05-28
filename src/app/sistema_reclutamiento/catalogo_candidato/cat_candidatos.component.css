@@ -11,8 +11,6 @@
 .buscador input{
     border: 0;
     width: 88%;
-    outline: 0 none;
-    text-transform: uppercase;
 }
 .buscador a{
     margin-left: 5px;
@@ -25,4 +23,29 @@
 }
 .buscador i {
     color: black;
+}
+.hover_img_user{
+    position: relative;
+}
+.persiana{
+    display: none;
+}
+.persiana_mostrar {
+    height: 200px;
+    width: 100%;
+    background-color:black;
+    position: absolute;
+    top: 0%;
+    left: 0;
+    opacity: .6;
+    animation-name: mostrar;
+    animation-duration: 1s;
+}
+@keyframes mostrar {
+    from {
+        top: 100%;
+    }
+    to {
+        top: 0%;
+    }
 }
