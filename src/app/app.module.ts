@@ -11,6 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { SistemaReclutamientoModule } from './sistema_reclutamiento/sistema-reclutamiento.module';
 import { SistemaSuperAdminModule } from './sistema_super_admin/sistema_super_admin.module';
+import { SitemaPrestasoftModule } from './sistema_prestasoft/sistema_prestasoft.module';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { SistemaSuperAdminModule } from './sistema_super_admin/sistema_super_adm
     SistemaAdminModule,
     SistemaSuperAdminModule,
     SistemaReclutamientoModule,
+    SitemaPrestasoftModule,
     NgbModule,
     FormsModule,
     ReactiveFormsModule,

@@ -117,5 +117,8 @@ export class LoginComponent implements OnInit {
     if(this.sistema_elegido == "5"){
       this.router.navigate(["sistema_super_admin/dashboard"]);
     }
+    if(this.sistema_elegido == "6"){
+      this.router.navigate(["sistema_prestasoft/dashboard"]);
+    }
   }
 }
