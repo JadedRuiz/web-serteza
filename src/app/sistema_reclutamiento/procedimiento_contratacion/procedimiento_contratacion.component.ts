@@ -6,6 +6,8 @@ import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { DepartamentoService } from 'src/app/services/Departamento/Departamento.service';
 import { PuestoService } from 'src/app/services/Puesto/Puesto.service';
+import Swal from 'sweetalert2';
+import { ContratoService } from 'src/app/services/Contrato/Contrato.service';
 
 
 @Component({
@@ -22,10 +24,11 @@ export class ProcedimientoContratacionComponent implements OnInit {
   public bandera = [true, true, true];
   public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
-  public contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0",this.usuario_creacion);
+  public contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","",this.usuario_creacion);
   public contratos : any;
   public modal : any;
   public taken = 5;
+  public solicitud_contratos = new Array<Contrato>();
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   //Paginacion
   public total_registros = 0;
@@ -52,13 +55,18 @@ export class ProcedimientoContratacionComponent implements OnInit {
     private candidato_service: CandidatoService,
     private empresa_service : EmpresaService,
     private departamento_service : DepartamentoService,
-    private puesto_service : PuestoService
+    private puesto_service : PuestoService,
+    private contrato_service : ContratoService
   ) {
     this.modal = NgbModalRef;
    }
 
   ngOnInit(): void {
     
+  }
+
+  mostrarMovimientos(){
+
   }
 
   mostrarCandidato(){
@@ -177,6 +185,59 @@ export class ProcedimientoContratacionComponent implements OnInit {
     this.sueldos = [object.sueldo_tipo_a,object.sueldo_tipo_b,object.sueldo_tipo_c];
   }
 
+  agregarCandidato(){
+    if(this.contrato.id_candidato != 0 && this.contrato.id_departamento != 0 &&
+       this.contrato.id_puesto != 0 && this.contrato.sueldo != "0"){
+         if(this.solicitud_contratos.length > 0){
+          this.contrato.id_contrato = this.solicitud_contratos.length+1;
+          let band_contrato = true;
+          this.solicitud_contratos.forEach(solicitud => {
+            if(solicitud.id_candidato == this.contrato.id_candidato){
+                band_contrato = false;
+            }
+          });
+          if(band_contrato){
+            this.solicitud_contratos.push(this.contrato);
+            this.contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","",this.usuario_creacion);
+          }else{
+            Swal.fire("Tenemos un problema","El candidato no puede repetirse","warning");
+          }
+         }else{
+          this.solicitud_contratos.push(this.contrato);
+          this.contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","",this.usuario_creacion);
+         }
+       }else{
+        Swal.fire("Tenemos un problema","Primero llena los campos requeridos","warning");
+       }
+    
+  }
+  eliminarCandidato(id_contrado : any){
+    this.solicitud_contratos.forEach((solicitud,index) => {
+      if(solicitud.id_contrato == id_contrado){
+        this.solicitud_contratos.splice(index,1);
+      }
+    })
+  }
+  crearMov(){
+    if(this.solicitud_contratos.length > 0){
+      let json = {
+        id_empresa_cliente : this.id_cliente,
+        detalle_contratacion : this.solicitud_contratos
+      }
+      this.contrato_service.altaMovContratacion(json)
+      .subscribe( (object : any)=>{
+        if(object.ok){
+          this.cerrarModal();
+          this.mostrarMovimientos();
+          Swal.fire("Buen trabajo","El movimiento de contratacion se ha registrado con éxito","success");
+        }else{
+          Swal.fire("Ha ocurrido un errro",object.message,"error");
+        }
+      });
+    }else{
+      Swal.fire("Tenemos un problema","No se han agregado candidatos al movimiento","warning");
+    }
+  }
   cambiarSueldo(sueldo : any){
     this.contrato.sueldo = sueldo;
   }

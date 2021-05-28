@@ -12,6 +12,7 @@ export class Contrato {
         public id_puesto : number,
         public fecha_ingreso : String,
         public sueldo : string,
+        public descripcion : string,
         public usuario_creacion : number
     ) { }
 

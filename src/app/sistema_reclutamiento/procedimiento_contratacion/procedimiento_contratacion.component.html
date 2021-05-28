@@ -157,11 +157,19 @@
             </div>
             <div class="form-group col-lg-4 col-sm-12">
               <label for="fecha">Fecha de ingreso</label>
-              <input type="date" name="fecha_ingreso" id="fecha" class="form-control">
+              <input [(ngModel)]="contrato.fecha_ingreso" type="date" name="fecha_ingreso" id="fecha" class="form-control">
             </div>
           </div>
           <div class="form-row">
-            <button class="btn btn-success ml-auto">Agregar</button>
+            <div class="col-12">
+              <div class="form-group"> 
+                  <label for="desc_cempresa">Observaciones</label>
+                  <textarea [(ngModel)]="contrato.descripcion" name="desc_cempresa" class="form-control" rows="5" id="desc_cempresa"></textarea>
+              </div>
+            </div> 
+          </div>
+          <div class="form-row">
+            <button class="btn btn-success ml-auto" (click)="agregarCandidato()">Agregar</button>
           </div>
           <div class="form-row mt-2">
             <div class="table-responsive">
@@ -170,12 +178,21 @@
                   <tr>
                     <th colspan="1">Candidato</th>
                     <th colspan="1">Empresa</th>
+                    <th colspan="1">Departamento</th>
                     <th colspan="1">Puesto</th>
                     <th colspan="1">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-
+                  <tr *ngFor="let solicitud of solicitud_contratos">
+                    <td>{{solicitud.candidato}}</td>
+                    <td>{{solicitud.empresa}}</td>
+                    <td>{{solicitud.departamento}}</td>
+                    <td>{{solicitud.puesto}}</td>
+                    <td>
+                      <a title="Eliminar" (click)="eliminarCandidato(solicitud.id_contrato)" style="cursor: pointer;" class="btn btn-warning"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -184,7 +201,7 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()" >Cerrar</button>
-        <button type="button" class="btn btn-success" id="guardar">Crear contratacion</button>
+        <button type="button" class="btn btn-success" (click)="crearMov()">Crear contratacion</button>
         <!-- <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button> -->
     </div>
 </ng-template>
