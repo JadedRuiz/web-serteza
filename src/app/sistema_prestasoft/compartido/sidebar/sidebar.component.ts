@@ -49,14 +49,10 @@ export class SidebarComponent implements OnInit {
       { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : [
-          {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08  text-orange'},
-          {path: 'catalogo_empresa', title: 'Empresas', icon: 'ni-building  text-orange'},
-          {path: 'catalogo_cliente', title: 'Clientes', icon: 'ni-collection  text-orange'}
         ]
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
         submenu : [
-          {path: 'procedimiento_usuario', title: 'Asignar permisos a usuario', icon: 'ni-badge text-yellow'}
         ]
       },
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: false, tipo : ""}
