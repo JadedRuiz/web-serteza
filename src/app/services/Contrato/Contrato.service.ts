@@ -15,8 +15,8 @@ export class ContratoService {
     public http: HttpClient
   ) { }
 
-  obtenerDepartamentos(json : any){
-      let url = SERVER_API + "departamento/obtenerDepartamentos";
+  obtenerMoviemientosContratacion(json : any){
+      let url = SERVER_API + "contratacion/obtenerMoviemientosContratacion";
       return this.http.post( url, json )
       .pipe(map( (resp: any) => {
         return resp;
@@ -48,8 +48,8 @@ export class ContratoService {
   //   }));
   // }
   
-  obtenerDepartamentoPorId(id : any){
-    let url = SERVER_API+"departamento/obtenerDepartamentoPorId/"+id;
+  obtenerMoviemientosContratacionPorId(id : any){
+    let url = SERVER_API+"contratacion/obtenerMoviemientosContratacionPorId/"+id;
     return this.http.get(url)
     .pipe(map( (resp: any) => {
         return resp;
@@ -57,6 +57,17 @@ export class ContratoService {
         Swal.fire("Ha ocurrido un error", err.error.data, 'error');
         return throwError(err);
       }));
+  }
+
+  eliminarDetalleContratacion(json : any){
+    let url = SERVER_API+"contratacion/eliminarDetalleContratacion";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      return throwError(err);
+    }));
   }
 
 }

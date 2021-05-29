@@ -24,12 +24,13 @@ export class ProcedimientoContratacionComponent implements OnInit {
   public bandera = [true, true, true];
   public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
-  public contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","",this.usuario_creacion);
+  public contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","");
   public contratos : any;
   public modal : any;
   public taken = 5;
   public solicitud_contratos = new Array<Contrato>();
   @ViewChild('content', {static: false}) contenidoDelModal : any;
+  private tipo_movimiento = 0;
   //Paginacion
   public total_registros = 0;
   public mostrar_pagination = false;
@@ -62,18 +63,42 @@ export class ProcedimientoContratacionComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    
+    this.mostrarMovimientos();
   }
 
   mostrarMovimientos(){
-
+    let json = {
+      id_cliente : this.id_cliente
+    };
+    this.contratos = [];
+    this.contrato_service.obtenerMoviemientosContratacion(json)
+    .subscribe( (object : any) => {
+      if(object.ok){
+        this.band = true;
+        for(let i=0;i<object.data.length;i++){
+          this.contratos.push({
+            'folio' : object.data[i].id_contratacion,
+            'fecha' : object.data[i].fecha_contratacion,
+            'status' : "Solicitud"
+          })
+        }
+      }else{
+        this.band = false;
+      }
+    });
   }
 
   mostrarCandidato(){
     let valor = this.contrato.candidato.split(" ")[1];
-    let object = this.candidatos.filter( (x : any) => x.folio === parseInt(valor))[0];
-    this.contrato.candidato = object.nombre;
-    this.contrato.id_candidato = object.folio;
+    if(!"1234567890".includes(valor)){
+      this.contrato.candidato = "";
+      Swal.fire("Tenemos un problema","El candidato seleccionado ya se encuentra en un movimiento de contratacion, intente con otro","warning");
+    }else{
+      let object = this.candidatos.filter( (x : any) => x.folio === parseInt(valor))[0];
+      this.contrato.candidato = object.nombre;
+      this.contrato.id_candidato = object.folio; 
+    }
+     
   }
 
   mostrarCandidatos(){
@@ -110,7 +135,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
       if(object.ok){
         for(let i=0;i<object.data.length;i++){
           this.empresas.push({
-            "id_empresa_cliente" : object.data[i].id_empresa_cliente,
+            "id_empresa" : object.data[i].id_empresa,
             "empresa" : object.data[i].empresa
           });
         }
@@ -124,10 +149,9 @@ export class ProcedimientoContratacionComponent implements OnInit {
 
   mostrarDepartamentos(){
     let valor = this.contrato.empresa.split(" ")[1];
-    let object = this.empresas.filter( (x : any) => x.id_empresa_cliente === parseInt(valor))[0];
+    let object = this.empresas.filter( (x : any) => x.id_empresa === parseInt(valor))[0];
     this.contrato.empresa = object.empresa;
-    this.contrato.id_empresa = object.id_empresa_cliente;
-    this.bandera[0] = false;
+    this.contrato.id_empresa = object.id_empresa
     this.departamentos = [];
     let json = {
       "taken" : 999,
@@ -139,6 +163,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
     this.departamento_service.obtenerDepartamentos(json)
     .subscribe( (object : any)=>{
       if(object.ok){
+        this.bandera[0] = false;
         for(let i=0;i<object.data.registros.length;i++){
           this.departamentos.push({
             "id_departamento" : object.data.registros[i].id_departamento,
@@ -189,7 +214,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
     if(this.contrato.id_candidato != 0 && this.contrato.id_departamento != 0 &&
        this.contrato.id_puesto != 0 && this.contrato.sueldo != "0"){
          if(this.solicitud_contratos.length > 0){
-          this.contrato.id_contrato = this.solicitud_contratos.length+1;
+          this.contrato.id_detalle = this.solicitud_contratos.length+1;
           let band_contrato = true;
           this.solicitud_contratos.forEach(solicitud => {
             if(solicitud.id_candidato == this.contrato.id_candidato){
@@ -198,30 +223,60 @@ export class ProcedimientoContratacionComponent implements OnInit {
           });
           if(band_contrato){
             this.solicitud_contratos.push(this.contrato);
-            this.contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","",this.usuario_creacion);
+            this.contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","");
           }else{
             Swal.fire("Tenemos un problema","El candidato no puede repetirse","warning");
           }
          }else{
           this.solicitud_contratos.push(this.contrato);
-          this.contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","",this.usuario_creacion);
+          this.contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","");
          }
        }else{
         Swal.fire("Tenemos un problema","Primero llena los campos requeridos","warning");
        }
     
   }
-  eliminarCandidato(id_contrado : any){
-    this.solicitud_contratos.forEach((solicitud,index) => {
-      if(solicitud.id_contrato == id_contrado){
-        this.solicitud_contratos.splice(index,1);
+  eliminarDetalle(id_detalle : any){
+    Swal.fire({
+      title: '¿Estas seguro que deseas eliminar este candidato?',
+      text: "Una vez eliminado, ya no lo podrás visualizar de nuevo",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.solicitud_contratos.forEach((solicitud,index) => {
+          if(solicitud.id_detalle == id_detalle){
+            this.solicitud_contratos.splice(index,1);
+          }
+        });
+        if(this.tipo_movimiento == 1){
+          //Ejecuta el metodo de eliminar
+          let json = {
+            id_detalle : id_detalle,
+            usuario_creacion : this.usuario_creacion
+          };
+          this.contrato_service.eliminarDetalleContratacion(json)
+          .subscribe( (object : any)=>{
+            if(object.ok){
+              Swal.fire("Buen trabajo",object.data,"success");
+            }else{
+              Swal.fire("Ha ocurrido un error",object.message,"error");
+            }
+          });
+        }
       }
-    })
+    });
   }
+
   crearMov(){
     if(this.solicitud_contratos.length > 0){
       let json = {
-        id_empresa_cliente : this.id_cliente,
+        id_cliente : this.id_cliente,
+        usuario_creacion : this.usuario_creacion,
         detalle_contratacion : this.solicitud_contratos
       }
       this.contrato_service.altaMovContratacion(json)
@@ -238,19 +293,70 @@ export class ProcedimientoContratacionComponent implements OnInit {
       Swal.fire("Tenemos un problema","No se han agregado candidatos al movimiento","warning");
     }
   }
+
+  actualizarMov(){
+
+  }
+
   cambiarSueldo(sueldo : any){
     this.contrato.sueldo = sueldo;
   }
 
-  mostrarContratos(){
-
+  editar(folio : any){
+    this.contrato_service.obtenerMoviemientosContratacionPorId(folio)
+    .subscribe( (object : any) =>{
+      if(object.ok){
+        this.resetearModal();
+        this.tipo_movimiento = 1;
+        for(let i=0;i<object.data.length;i++){
+          let new_contrato = new Contrato(
+            parseInt(object.data[i].id_detalle_contratacion),
+            object.data[i].departamento,
+            parseInt(object.data[i].id_departamento),
+            object.data[i].empresa,
+            parseInt(object.data[i].id_empresa),
+            object.data[i].apellido_paterno+" "+object.data[i].apellido_materno+" "+object.data[i].nombre,
+            parseInt(object.data[i].id_candidato),
+            object.data[i].puesto,
+            parseInt(object.data[i].id_puesto),
+            object.data[i].fecha_alta,
+            object.data[i].sueldo,
+            object.data[i].observacion
+          );
+          this.solicitud_contratos.push(new_contrato);
+        }
+        this.openModal();
+      }else{
+        Swal.fire("Ha ocurrido un error",object.message,"error");
+      }
+    });
   }
 
-  editar(folio : any){
-
+  editarDetalle(id_detalle : any){
+    this.solicitud_contratos.forEach(solicitud =>{
+      if(solicitud.id_detalle == id_detalle){
+        this.contrato = new Contrato(
+          solicitud.id_detalle,
+          solicitud.departamento,
+          solicitud.id_departamento,
+          solicitud.empresa,
+          solicitud.id_empresa,
+          solicitud.candidato,
+          solicitud.id_candidato,
+          solicitud.puesto,
+          solicitud.id_puesto,
+          solicitud.fecha_ingreso,
+          solicitud.sueldo,
+          solicitud.descripcion
+        );
+        this.bandera = [false,false,false];
+      }
+    });
   }
 
   nuevoContrato(){
+    this.resetearModal();
+    this.tipo_movimiento = 0;
     this.mostrarCandidatos();
     this.mostrarEmpresas();
     this.openModal();
@@ -262,6 +368,13 @@ export class ProcedimientoContratacionComponent implements OnInit {
 
   filtroStatus() { 
     
+  }
+
+  resetearModal(){
+    this.solicitud_contratos = new Array<Contrato>();
+    this.contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","");
+    this.bandera = [true, true, true];
+    this.sueldos = ["","",""]
   }
 
   paginar(){
@@ -308,11 +421,19 @@ export class ProcedimientoContratacionComponent implements OnInit {
 
   irPagina(pagina : any){
     this.pagina_actual = pagina;
-    this.mostrarContratos();
+    this.mostrarMovimientos();
   }
 
   openModal() {
     this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop'});
+    if(this.tipo_movimiento == 1){
+      jQuery("#guardar").hide();
+      jQuery("#editar").show();
+    } 
+    if(this.tipo_movimiento == 0){
+      jQuery("#editar").hide();
+      jQuery("#guardar").show();
+    }
   }
 
   cerrarModal(){
