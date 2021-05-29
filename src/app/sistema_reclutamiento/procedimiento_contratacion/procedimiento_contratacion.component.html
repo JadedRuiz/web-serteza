@@ -40,10 +40,11 @@
                   <tbody *ngIf="band; else pintaVacio" class="">
                       <tr *ngFor="let contrato of contratos">
                           <td colspan="1" style="vertical-align: middle;">{{contrato.folio}}</td>
-                          <td colspan="1" style="vertical-align: middle;">{{contrato.nombre}}</td>
+                          <td colspan="1" style="vertical-align: middle;">{{contrato.fecha}}</td>
                           <td colspan="1" style="vertical-align: middle;">{{contrato.status}}</td>
                           <td colspan="1" style="width: 20%;">
                               <a title="Editar" (click)="editar(contrato.folio)" style="cursor: pointer;" class="btn btn-primary"><img src="./assets/iconos/edit.svg" style="width: 24px;"></a>
+                              <a title="Reporte de contratación" style="cursor: pointer;" class="btn btn-info"><img src="./assets/iconos/reporte.svg" style="width: 24px;"></a>
                           </td>
                       </tr>
                   </tbody>
@@ -80,7 +81,7 @@
                       </div>
                       <div class="col-lg-4 col-sm-12" style="text-align: end;">
                           <p class="mr-2" style="display: inline-block;">Contratos :</p>
-                          <select [(ngModel)]="taken" (change)="mostrarContratos()" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
+                          <select [(ngModel)]="taken" (change)="mostrarMovimientos()" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
                               <option value="5">5</option>
                               <option value="10">10</option>
                               <option value="20">20</option>
@@ -117,7 +118,7 @@
               <label for="empresa">Empresa</label>
               <input type="text" list="empresa" [(ngModel)]="contrato.empresa" class="form-control" (change)="mostrarDepartamentos()" placeholder="Seleccione la empresa">
               <datalist id="empresa">
-                <option *ngFor="let empresa of empresas" value="Empresa {{empresa.id_empresa_cliente}}" label="{{empresa.empresa}}">
+                <option *ngFor="let empresa of empresas" value="Empresa {{empresa.id_empresa}}" label="{{empresa.empresa}}">
               </datalist>
             </div>
             <div class="form-group col-lg-3 col-sm-12">
@@ -157,25 +158,43 @@
             </div>
             <div class="form-group col-lg-4 col-sm-12">
               <label for="fecha">Fecha de ingreso</label>
-              <input type="date" name="fecha_ingreso" id="fecha" class="form-control">
+              <input [(ngModel)]="contrato.fecha_ingreso" type="date" name="fecha_ingreso" id="fecha" class="form-control">
             </div>
           </div>
           <div class="form-row">
-            <button class="btn btn-success ml-auto">Agregar</button>
+            <div class="col-12">
+              <div class="form-group"> 
+                  <label for="desc_cempresa">Observaciones</label>
+                  <textarea [(ngModel)]="contrato.descripcion" name="desc_cempresa" class="form-control" rows="5" id="desc_cempresa"></textarea>
+              </div>
+            </div> 
+          </div>
+          <div class="form-row">
+            <button class="btn btn-success ml-auto" (click)="agregarCandidato()">Agregar</button>
           </div>
           <div class="form-row mt-2">
             <div class="table-responsive">
               <table class="table">
                 <thead>
-                  <tr>
+                  <tr class="text-center">
                     <th colspan="1">Candidato</th>
                     <th colspan="1">Empresa</th>
+                    <th colspan="1">Departamento</th>
                     <th colspan="1">Puesto</th>
                     <th colspan="1">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-
+                  <tr *ngFor="let solicitud of solicitud_contratos" style="cursor: pointer;" class="text-center">
+                    <td style="vertical-align: middle;" (click)="editarDetalle(solicitud.id_detalle)">{{solicitud.candidato}}</td>
+                    <td style="vertical-align: middle;" (click)="editarDetalle(solicitud.id_detalle)">{{solicitud.empresa}}</td>
+                    <td style="vertical-align: middle;" (click)="editarDetalle(solicitud.id_detalle)">{{solicitud.departamento}}</td>
+                    <td style="vertical-align: middle;" (click)="editarDetalle(solicitud.id_detalle)">{{solicitud.puesto}}</td>
+                    <td style="vertical-align: middle;">
+                      <a title="Eliminar" (click)="eliminarDetalle(solicitud.id_detalle)" style="cursor: pointer;" class="btn btn-warning"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a>
+                      <a title="Reporte para el contratado" style="cursor: pointer;" class="btn btn-info"><img src="./assets/iconos/reporte.svg" style="width: 24px;"></a>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -184,7 +203,7 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()" >Cerrar</button>
-        <button type="button" class="btn btn-success" id="guardar">Crear contratacion</button>
-        <!-- <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button> -->
+        <button type="button" class="btn btn-success" (click)="crearMov()" id="guardar">Crear contratación</button>
+        <button type="button" class="btn btn-success" (click)="actualizarMov()" id="editar" style="display: none;">Actualizar contratación</button>
     </div>
 </ng-template>
