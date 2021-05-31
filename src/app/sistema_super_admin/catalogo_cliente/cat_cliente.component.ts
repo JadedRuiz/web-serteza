@@ -8,6 +8,8 @@ import { ClienteService } from 'src/app/services/Cliente/cliente.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import * as jQuery from 'jquery';
+import { Fotografia } from 'src/app/models/Fotografia';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-candidatos',
@@ -18,7 +20,6 @@ export class CatalogoClienteComponent implements OnInit {
   //Variables globales
   public color = COLOR;
   public direccion : Direccion = new Direccion(0,0,"","","","","","","","","","");
-  public cliente = new Cliente(0,"","","",0,0,this.direccion,1);
   public clientes : any;
   public sistemas : any;
   public band = true;
@@ -27,6 +28,10 @@ export class CatalogoClienteComponent implements OnInit {
   public modal : any;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   public activo = true;
+  public foto_user : any;
+  public docB64 = "";
+  public fotografia = new Fotografia(0,"","","");
+  public cliente = new Cliente(0,"","","",0,0,this.direccion,1,this.fotografia);
   //Filtros
   public taken = 5; //Registros por default
   public status = 2; //Status default
@@ -49,8 +54,11 @@ export class CatalogoClienteComponent implements OnInit {
   constructor( 
     private modalService: NgbModal,
     public cp_service: LocalidadService,
-    private cliente_service: ClienteService
-  ) { }
+    private cliente_service: ClienteService,
+    private sanitizer: DomSanitizer
+  ) {
+      this.foto_user = "./assets/img/defaults/imagen-no-disponible.png";
+    }
 
   ngOnInit(): void {
     this.mostrarClientes();
@@ -63,7 +71,6 @@ export class CatalogoClienteComponent implements OnInit {
       pagina : this.pagina_actual
     };
     this.clientes = [];
-    console.log(json);
     this.cliente_service.obtenerClientes(json)
     .subscribe( (object : any) =>{
         console.log(object);
@@ -125,27 +132,27 @@ export class CatalogoClienteComponent implements OnInit {
               band = false;
             }
           });
-      }else{
-        if(band){
-          if(!this.activo){
-            this.cliente.activo = 0;
-          }
-          this.cliente.usuario_creacion = parseInt(this.usuario_creacion+"");
-          this.cliente_service.altaCliente(this.cliente)
-          .subscribe( (object) =>{
-            if(object.ok){
-              this.limpiarCampos();
-              this.mostrarClientes();
-              Swal.fire("Buen trabajo","El cliente se ha dado de alta correctamente","success");
-              this.cerrarModal();
-            }else{
-              Swal.fire("Ha ocurrido un error",object.message,"error");
-            }
-          });
-        }
       }
     }
+    if(band){
+      if(!this.activo){
+        this.cliente.activo = 0;
+      }
+      this.cliente.usuario_creacion = parseInt(this.usuario_creacion+"");
+      this.cliente_service.altaCliente(this.cliente)
+      .subscribe( (object) =>{
+        if(object.ok){
+          this.limpiarCampos();
+          this.mostrarClientes();
+          Swal.fire("Buen trabajo","El cliente se ha dado de alta correctamente","success");
+          this.cerrarModal();
+        }else{
+          Swal.fire("Ha ocurrido un error",object.message,"error");
+        }
+      });
+    }
   }
+  
   modificarUsuario(){
     let band = true;
     if(this.cliente.cliente == "" || this.cliente.contacto == ""){
@@ -194,11 +201,13 @@ export class CatalogoClienteComponent implements OnInit {
       }
     }
   }
+
   guardar(){
     this.openModal();
     jQuery("#editar").hide();
     jQuery("#guardar").show();
   }
+
   editar(folio : any){
     this.cliente_service.obtenerClientesPorId(folio)
     .subscribe( (object : any) => {
@@ -219,6 +228,7 @@ export class CatalogoClienteComponent implements OnInit {
           object.data[0].estado,
           object.data[0].descripcion_direccion
         );
+        this.fotografia.id_fotografia = object.data[0].id_fotografia;
         this.cliente = new Cliente(
           object.data[0].id_cliente,
           object.data[0].cliente,
@@ -226,8 +236,10 @@ export class CatalogoClienteComponent implements OnInit {
           object.data[0].descripcion,
           0,parseInt(this.usuario_creacion+""),
           this.direccion,
-          1
-        )
+          1,
+          this.fotografia
+        );
+        this.foto_user = object.data[0].fotografia;
         if(object.data[0].activo == 1){
           this.activo = true;
         }else{
@@ -243,8 +255,10 @@ export class CatalogoClienteComponent implements OnInit {
   }
 
   limpiarCampos(){
+    this.fotografia = new Fotografia(0,"","","");
+    this.foto_user = "./assets/img/defaults/imagen-no-disponible.png";
     this.direccion = new Direccion(0,0,"","","","","","","","","","");
-    this.cliente = new Cliente(0,"","","",0,0,this.direccion,1);
+    this.cliente = new Cliente(0,"","","",0,0,this.direccion,1,this.fotografia);
     this.sistemas_seleccionados = [];
   }
 
@@ -315,6 +329,7 @@ export class CatalogoClienteComponent implements OnInit {
     this.limite_inferior = 0;
     this.mostrarClientes();
   }
+
   getDatos(){
     this.cp_service.getDirrecion(this.cliente.direccion.codigo_postal)
     .subscribe( (data: any) => {
@@ -345,5 +360,48 @@ export class CatalogoClienteComponent implements OnInit {
         }
       }
     });
+  }
+
+  subirImagen(){
+    document.getElementById("foto_user")?.click();
+  }
+
+  convertirImagenAB64(fileInput : any){
+    return new Promise(function(resolve, reject) {
+      let b64 = "";
+      const reader = new FileReader();
+      reader.readAsDataURL(fileInput);
+      reader.onload = (e: any) => {
+          b64 = e.target.result.split("base64,")[1];
+          resolve(b64);
+      };
+    });
+  }
+
+  cambiarImagen(event: any){
+    if (event.target.files && event.target.files[0]) {
+      let archivos = event.target.files[0];
+      let extension = archivos.name.split(".")[1];
+      this.fotografia.extension = extension;
+      if(extension == "jpg" || extension == "png"){
+        this.convertirImagenAB64(archivos).then( respuesta => {
+          let img = "data:image/"+extension+";base64, "+respuesta;
+          this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
+          this.docB64 = respuesta+"";
+          this.fotografia.docB64 = respuesta+"";
+          this.fotografia.extension = extension;
+        });
+      }else{
+        Swal.fire("Ha ocurrido un error","Tipo de imagen no permitida","error");
+      }
+    }
+  }
+
+  mostrarImagen(docB64 : any, extension : any){
+    let img = "data:image/"+extension+";base64, "+docB64;
+    this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
+    this.docB64 = docB64+"";
+    this.fotografia.docB64 = docB64;
+    this.fotografia.extension = extension;
   }
 }
