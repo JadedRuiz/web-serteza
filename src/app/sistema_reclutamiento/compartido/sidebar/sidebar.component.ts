@@ -1,7 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
-import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ClienteService } from 'src/app/services/Cliente/cliente.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -32,7 +31,6 @@ export class SidebarComponent implements OnInit {
   constructor(
     private router: Router,
     public usuario: UsuarioService,
-    public empresa: EmpresaService,
     private sanitizer: DomSanitizer,
     private cliente_service : ClienteService,
     private modalService: NgbModal
@@ -43,6 +41,7 @@ export class SidebarComponent implements OnInit {
   ngOnInit() {
     this.pintarMenu();
     this.validarClientes();
+    this.mostrarLogo();
     this.router.events.subscribe((event) => {
       this.isCollapsed = true;
    });
@@ -62,6 +61,19 @@ export class SidebarComponent implements OnInit {
       },
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: false, tipo : ""}
     ];
+  }
+  mostrarLogo(){
+    if(window.sessionStorage.getItem("cliente") != null){
+      let id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
+      this.cliente_service.obtenerClientesPorId(id_cliente)
+      .subscribe( (object : any) => {
+        if(object.ok){
+          this.foto_empresa = ""+object.data[0].fotografia;
+        }
+      });
+    }else{
+      this.foto_empresa = "./assets/img/defaults/imagen-empresa-default.png";
+    }
   }
   validarClientes(){
     //AQUI SE RECUPERAN LOS CLIENTES DEL USUARIO LOGUEADO
