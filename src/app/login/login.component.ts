@@ -117,5 +117,16 @@ export class LoginComponent implements OnInit {
     if(this.sistema_elegido == "5"){
       this.router.navigate(["sistema_super_admin/dashboard"]);
     }
+    if(this.sistema_elegido == "6"){
+      this.empresa.obtenerEmpresaPorIdUsuario(window.sessionStorage["user"])
+      .subscribe( (object : any) => {
+        if(object.ok){
+          window.sessionStorage["foto_user"] = "";
+          this.router.navigate(["sistema_prestasoft/dashboard"]);
+        }else{
+          Swal.fire("Ha ocurrido un error","Este usuario no cuenta empresas para administrar","error");
+        }
+      });
+    }
   }
 }

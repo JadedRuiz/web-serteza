@@ -1,7 +1,7 @@
 
 export class Contrato {
     constructor (
-        public id_contrato : number,
+        public id_detalle : number,
         public departamento : String,
         public id_departamento : number,
         public empresa : String,
@@ -12,7 +12,7 @@ export class Contrato {
         public id_puesto : number,
         public fecha_ingreso : String,
         public sueldo : string,
-        public usuario_creacion : number
+        public descripcion : string
     ) { }
 
 }
