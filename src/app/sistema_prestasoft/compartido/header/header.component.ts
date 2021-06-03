@@ -37,7 +37,6 @@ export class HeaderComponent implements OnInit {
     this.empresa_service.obtenerEmpresaPorIdUsuario(this.usuario_logueado)
     .subscribe( (object : any) => {
       if(object.ok){
-        console.log(this.empresa_seleccionado);
         if(object.data.length > 1){
           for(let i=0;i<object.data.length;i++){
             if(this.empresa_seleccionado == parseInt(object.data[i].id_empresa)){
@@ -54,6 +53,8 @@ export class HeaderComponent implements OnInit {
               });
             }
           }
+        }else{
+          window.sessionStorage["empresa"] = object.data[0].id_empresa;
         }
       }
     });
