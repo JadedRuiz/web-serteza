@@ -275,9 +275,7 @@ export class CatalogoEmpresaComponent implements OnInit {
         this.empresa.rfc = object.data[0].rfc;
         this.empresa.usuario_creacion = this.usuario_creacion;
         this.fotografia.id_fotografia = object.data[0].id_fotografia;
-        if(object.data[0].fotografia != ""){
-          this.mostrarImagen(object.data[0].fotografia,object.data[0].extension);
-        }
+        this.foto_user = object.data[0].fotografia;
         if(object.data[0].activo == 1){
           this.activo = true;
         }else{
