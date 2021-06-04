@@ -5,6 +5,7 @@ import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ClienteService } from 'src/app/services/Cliente/cliente.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ProcedimientoEmpresaComponent } from '../../procedimiento_empresa/procedimiento_empresa.component';
 
 declare interface RouteInfo {
   path: string;
@@ -56,7 +57,8 @@ export class SidebarComponent implements OnInit {
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
         submenu : [
-          {path: 'procedimiento_usuario', title: 'Asignar permisos a usuario', icon: 'ni-badge text-yellow'}
+          {path: 'procedimiento_usuario', title: 'Asignar permisos a usuario', icon: 'ni-badge text-yellow'},
+          { path : "procedimineto_empresa", title: "Asignar permisos a empresa", icon: 'ni-settings text-yellow'}
         ]
       },
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: false, tipo : ""}
