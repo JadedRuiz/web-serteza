@@ -8,6 +8,7 @@ import { DepartamentoService } from 'src/app/services/Departamento/Departamento.
 import { PuestoService } from 'src/app/services/Puesto/Puesto.service';
 import Swal from 'sweetalert2';
 import { ContratoService } from 'src/app/services/Contrato/Contrato.service';
+import { SERVER_API } from 'src/config/config';
 
 
 @Component({
@@ -30,7 +31,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
   public taken = 5;
   public solicitud_contratos = new Array<Contrato>();
   @ViewChild('content', {static: false}) contenidoDelModal : any;
-  private tipo_movimiento = 0;
+  public tipo_movimiento = 0;
   //Paginacion
   public total_registros = 0;
   public mostrar_pagination = false;
@@ -352,6 +353,15 @@ export class ProcedimientoContratacionComponent implements OnInit {
         this.bandera = [false,false,false];
       }
     });
+  }
+
+  consumoReporte(tipo : any,id_detalle : any){
+    if(tipo == 1){
+      window.open(SERVER_API+'reporte/reporteContrato/'+id_detalle);
+    }
+    if(tipo == 2){
+      window.open(SERVER_API+'reporte/reporteContratado/'+id_detalle);
+    }
   }
 
   nuevoContrato(){

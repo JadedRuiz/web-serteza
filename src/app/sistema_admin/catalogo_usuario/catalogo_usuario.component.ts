@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter} from '@angular/core';
 import { COLOR } from 'src/config/config';
 import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 import { Usuario } from 'src/app/models/Usuario';
@@ -7,6 +7,8 @@ import Swal from 'sweetalert2';
 import * as jQuery from 'jquery';
 import { Fotografia } from 'src/app/models/Fotografia';
 import { DomSanitizer } from '@angular/platform-browser';
+import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
+import { Observable, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-catalogo-usuario',
@@ -47,6 +49,14 @@ export class CatalogoUsuarioComponent implements OnInit {
   public limite_superior = this.paginas_a_mostrar;
   public next = false;
   public previous = false;
+  //Camera
+  @Output() getPicture = new EventEmitter<WebcamImage>();
+  showWebcam = true;
+  isCameraExist = true;
+  errors: WebcamInitError[] = [];
+  // webcam snapshot trigger
+  private trigger: Subject<void> = new Subject<void>();
+  private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
 
   constructor(
     private usuario_service : UsuarioService,
@@ -124,7 +134,8 @@ export class CatalogoUsuarioComponent implements OnInit {
           sistemas : this.sistemas_seleccionados,
           usuario_creacion : this.usuario_creacion,
           id_empresa : this.empresa_seleccionada,
-          activo : active
+          activo : active,
+          fotografia : this.fotografia
         };
         this.usuario_service.altaUsuarioAdmin(json)
         .subscribe( (object) =>{
@@ -155,10 +166,11 @@ export class CatalogoUsuarioComponent implements OnInit {
           id_usuario : this.usuario.id_usuario,
           nombre :  this.usuario.nombre,
           usuario : this.usuario.usuario,
-          password : this.usuario.usuario,
+          password : this.usuario.password,
           sistemas : this.sistemas_seleccionados,
           usuario_creacion : this.usuario_creacion,
-          activo : active
+          activo : active,
+          fotografia : this.fotografia
         };
         this.usuario_service.modificarUsuario(json)
         .subscribe( (object) =>{
@@ -195,6 +207,9 @@ export class CatalogoUsuarioComponent implements OnInit {
         //Funcionalidad de modal
         jQuery("#guardar").hide();
         jQuery("#editar").show();
+        //Se pinta la imagen
+        this.fotografia.id_fotografia = object.data[0].id_fotografia;
+        this.foto_user = object.data[0].fotografia;
         //Se llenan los sistemas
         this.sistemas_seleccionados = [];
         for(let i=0;i<object.data[0].sistemas.length; i++){
@@ -246,6 +261,8 @@ export class CatalogoUsuarioComponent implements OnInit {
   }
 
   limpiarCampos(){
+    this.fotografia = new Fotografia(0,"","","");
+    this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
     this.usuario = new Usuario(0,"","","","",0);
     this.sistemas_seleccionados = [];
   }
@@ -257,7 +274,7 @@ export class CatalogoUsuarioComponent implements OnInit {
   }
 
   openModalCamera(){
-    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'sm', centered : true, backdropClass : 'light-blue-backdrop'});
+    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
   }
 
   cerrarModal(){
@@ -371,5 +388,41 @@ export class CatalogoUsuarioComponent implements OnInit {
 
   mostrarPassword(){
     this.show = !this.show;
+  }
+
+  takeSnapshot(): void {
+    let foto = this.trigger.next();
+  }
+
+  onOffWebCame() {
+    this.showWebcam = !this.showWebcam;
+  }
+
+  handleInitError(error: WebcamInitError) {
+    this.errors.push(error);
+  }
+
+  changeWebCame(directionOrDeviceId: boolean | string) {
+    this.nextWebcam.next(directionOrDeviceId);
+  }
+
+  handleImage(webcamImage: WebcamImage) {
+    this.getPicture.emit(webcamImage);
+    this.showWebcam = false;
+    this.foto_user = webcamImage.imageAsDataUrl;
+    let docB64 = this.foto_user.split(",");
+    this.fotografia.docB64 = docB64[1];
+    this.fotografia.extension = "jpeg";
+    this.fotografia.nombre = "foto_user";
+    this.cerrarModalCamera();
+    // console.log(webcamImage.imageAsDataUrl)
+  }
+
+  get triggerObservable(): Observable<void> {
+    return this.trigger.asObservable();
+  }
+
+  get nextWebcamObservable(): Observable<boolean | string> {
+    return this.nextWebcam.asObservable();
   }
 }

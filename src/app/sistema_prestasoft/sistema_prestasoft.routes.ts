@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from '../sistema_prestasoft/dashboard/dashboard.component';
 import { SistemaPrestaSoftComponent } from './sistema_prestasoft.component';
+import { XmlUploadComponent } from './xml-upload/xml-upload.component';
 
 
 const routes: Routes = [
@@ -10,13 +11,13 @@ const routes: Routes = [
       component : SistemaPrestaSoftComponent,
       children : [
           { path: 'dashboard', component : DashboardComponent},
+          { path: 'xml-upload', component : XmlUploadComponent},
           { path: '', redirectTo: '/login', pathMatch: 'full'}
       ]
     }
   ];
-  
-  @NgModule({
+@NgModule({
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule]
   })
-  export class SistemaPrestaSoftRoutingModule { }
+    export class SistemaPrestaSoftRoutingModule { }
