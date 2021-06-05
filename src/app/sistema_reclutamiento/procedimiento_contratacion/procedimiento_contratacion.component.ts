@@ -31,7 +31,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
   public taken = 5;
   public solicitud_contratos = new Array<Contrato>();
   @ViewChild('content', {static: false}) contenidoDelModal : any;
-  private tipo_movimiento = 0;
+  public tipo_movimiento = 0;
   //Paginacion
   public total_registros = 0;
   public mostrar_pagination = false;

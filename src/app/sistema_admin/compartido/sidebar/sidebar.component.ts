@@ -52,8 +52,7 @@ export class SidebarComponent implements OnInit {
       this.empresa.obtenerEmpresaPorId(id_empresa)
       .subscribe( (object : any) => {
         if(object.ok){
-          let base64 = "data:image/"+object.data[0].extension+";base64, "+object.data[0].fotografia;
-          this.foto_empresa = this.sanitizer.bypassSecurityTrustResourceUrl(base64);
+          this.foto_empresa = ""+object.data[0].fotografia;
         }
       });
     }else{
@@ -71,8 +70,7 @@ export class SidebarComponent implements OnInit {
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
         submenu : [
-          {path: 'procedimiento_usuario', title: 'Asignar permisos a usuario', icon: 'ni-badge text-yellow'},
-          {path: 'procedimineto_empresa', title: 'Asignar permisos a empresa', icon: 'ni-ui-04 text-yellow'},
+          {path: 'procedimiento_usuario', title: 'Asignar permisos a usuario', icon: 'ni-badge text-yellow'}
         ]
       },
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: false, tipo : ""}

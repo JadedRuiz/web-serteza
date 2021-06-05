@@ -10,6 +10,7 @@ import { CatalogoUsuarioComponent } from './catalogo_usuario/catalogo_usuario.co
 import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.component';
 import { ProcedimientoUsuarioComponent } from './procedimiento_usuario/procedimiento_usuario.component';
 import { WebcamModule } from 'ngx-webcam';
+import { ProcedimientoEmpresaComponent } from './procedimiento_empresa/procedimiento_empresa.component';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { WebcamModule } from 'ngx-webcam';
     CatalogoUsuarioComponent,
     CatalogoEmpresaComponent,
     ProcedimientoUsuarioComponent,
+    ProcedimientoEmpresaComponent
   ],
   imports: [
     CommonModule,
