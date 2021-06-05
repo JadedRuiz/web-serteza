@@ -137,7 +137,7 @@
                 <option *ngFor="let puesto of puestos" value="Puesto {{puesto.id_puesto}}" label="{{puesto.puesto}}">
               </datalist>
             </div>
-            <div class="form-group col-lg-4 col-sm-12">
+            <div class="form-group col-lg-3 col-sm-12">
               <div class="row">
                 <label for="sueldo" class="col 4">Sueldo</label>
                 <div class="col 8">
@@ -156,7 +156,11 @@
               </div>
               <input type="text" [(ngModel)]="contrato.sueldo" class="form-control" id="sueldo" [disabled]="bandera[2]">
             </div>
-            <div class="form-group col-lg-4 col-sm-12">
+            <div class="form-group col-lg-3 col-sm-12">
+              <label for="fecha">Tipo nómina</label>
+              <input [(ngModel)]="contrato.fecha_ingreso" type="input" name="fecha_ingreso" id="fecha" class="form-control">
+            </div>
+            <div class="form-group col-lg-2 col-sm-12">
               <label for="fecha">Fecha de ingreso</label>
               <input [(ngModel)]="contrato.fecha_ingreso" type="date" name="fecha_ingreso" id="fecha" class="form-control">
             </div>
@@ -192,7 +196,7 @@
                     <td style="vertical-align: middle;" (click)="editarDetalle(solicitud.id_detalle)">{{solicitud.puesto}}</td>
                     <td style="vertical-align: middle;">
                       <a title="Eliminar" (click)="eliminarDetalle(solicitud.id_detalle)" style="cursor: pointer;" class="btn btn-warning"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a>
-                      <a title="Reporte para el contratado" style="cursor: pointer;" class="btn btn-info" (click)="consumoReporte(2,solicitud.id_detalle)"><img src="./assets/iconos/reporte.svg" style="width: 24px;"></a>
+                      <a *ngIf="tipo_movimiento == 1" title="Reporte para el contratado" style="cursor: pointer;" class="btn btn-info" (click)="consumoReporte(2,solicitud.id_detalle)"><img src="./assets/iconos/reporte.svg" style="width: 24px;"></a>
                     </td>
                   </tr>
                 </tbody>
