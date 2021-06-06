@@ -51,8 +51,7 @@ export class LoginComponent implements OnInit {
           this.sistema_elegido = "";
           window.sessionStorage["user"] = resp.data.info_usuario.id;
           window.sessionStorage["nombre"] = resp.data.info_usuario.nombre;
-          window.sessionStorage["foto_user"] = resp.data.info_usuario.url_foto;
-
+          window.sessionStorage["foto"] = resp.data.info_usuario.url_foto;
           if(resp.data.info_usuario.sistemas.length > 1){ //Tiene más de un sistema
             for(let i=0; i<resp.data.info_usuario.sistemas.length; i++){
               let json = {

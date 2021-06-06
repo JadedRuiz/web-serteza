@@ -9,14 +9,15 @@ import { CatalogoUsuarioComponent } from './catalogo_usuario/catalogo_usuario.co
 import { ProcedimientoUsuarioComponent } from './procedimiento_usuario/procedimiento_usuario.component';
 import { CatalogoDepartamentoComponent } from './catalogo_departamento/catalogo_departamento.component';
 import { WebcamModule } from 'ngx-webcam';
-
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
     SistemaAdminComponent,
     CatalogoUsuarioComponent,
     ProcedimientoUsuarioComponent,
-    CatalogoDepartamentoComponent
+    CatalogoDepartamentoComponent,
+    DashboardComponent
   ],
   imports: [
     CommonModule,

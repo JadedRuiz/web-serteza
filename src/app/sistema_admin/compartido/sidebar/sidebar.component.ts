@@ -26,6 +26,7 @@ export class SidebarComponent implements OnInit {
   public subMenuItems = Array();
   public isCollapsed = true;
   public foto_empresa : any //
+  public foto_user : any;
   public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
 
   constructor(
@@ -36,12 +37,13 @@ export class SidebarComponent implements OnInit {
     private modalService: NgbModal
     ) {
       this.foto_empresa = "./assets/img/defaults/imagen-empresa-default.png";
+      this.foto_user = "./assets/img/defaults/ico_default_admin.jpg";
     }
 
   ngOnInit() {
     this.pintarMenu();
     this.validarEmpresa();
-    this.mostrarLogo();
+    this.foto_user = window.sessionStorage["foto"];
     this.router.events.subscribe((event) => {
       this.isCollapsed = true;
    });
@@ -88,9 +90,12 @@ export class SidebarComponent implements OnInit {
             this.openModal();
           }else{
             window.sessionStorage["empresa"] = object.data[0].id_empresa;
+            this.mostrarLogo();
           }
         }
       });
+    }else{
+      this.mostrarLogo();
     }
   }
   eleccion(id_empresa : any){
@@ -105,7 +110,7 @@ export class SidebarComponent implements OnInit {
     window.sessionStorage.removeItem("cliente");
     window.sessionStorage.removeItem("nombre");
     window.sessionStorage.removeItem("user");
-    window.sessionStorage.removeItem("foto_user");
+    window.sessionStorage.removeItem("foto");
     this.router.navigateByUrl("login");
   }
   openModal() {

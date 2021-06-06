@@ -6,7 +6,6 @@ import { Departamento } from 'src/app/models/Departamento';
 import { Puesto } from 'src/app/models/Puesto';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
-import { from } from 'rxjs';
 
 @Component({
   selector: 'app-catalogo-departamento',

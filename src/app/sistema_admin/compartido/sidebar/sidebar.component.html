@@ -7,26 +7,15 @@
       </button>
       <!-- Brand -->
       <a class="navbar-brand pt-0">
-        <img [src]="foto_empresa" class="navbar-brand-img" alt="...">
+        <img src="{{foto_empresa}}" class="navbar-brand-img" alt="...">
       </a>
       <!-- User -->
       <ul class="nav align-items-center d-md-none">
-        <li class="nav-item" ngbDropdown placement="bottom-right">
-          <a class="nav-link nav-link-icon" role="button" ngbDropdownToggle>
-            <i class="ni ni-bell-55"></i>
-          </a>
-          <div class="dropdown-menu-arrow dropdown-menu-right" ngbDropdownMenu>
-            <a class="dropdown-item" href="javascript:void(0)">Action</a>
-            <a class="dropdown-item" href="javascript:void(0)">Another action</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="javascript:void(0)">Something else here</a>
-          </div>
-        </li>
         <li class="nav-item" placement="bottom-right">
           <a class="nav-link" role="button">
             <div class="media align-items-center">
               <span class="avatar avatar-sm rounded-circle">
-                <img alt="Image placeholder" src="./assets/img/defaults/ico_default_admin.jpg">
+                <img alt="Image placeholder" src="{{foto_user}}">
               </span>
             </div>
           </a>
