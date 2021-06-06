@@ -21,7 +21,7 @@ export class CandidatoService {
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
         return throwError(err);
       }));
   }

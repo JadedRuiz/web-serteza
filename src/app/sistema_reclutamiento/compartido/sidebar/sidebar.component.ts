@@ -41,7 +41,6 @@ export class SidebarComponent implements OnInit {
   ngOnInit() {
     this.pintarMenu();
     this.validarClientes();
-    this.mostrarLogo();
     this.router.events.subscribe((event) => {
       this.isCollapsed = true;
    });
@@ -74,7 +73,7 @@ export class SidebarComponent implements OnInit {
       this.cliente_service.obtenerClientesPorId(id_cliente)
       .subscribe( (object : any) => {
         if(object.ok){
-          this.foto_empresa = ""+object.data[0].fotografia;
+          this.foto_empresa = ""+object.data[0].fotografia+"";
         }
       });
     }else{
@@ -93,14 +92,18 @@ export class SidebarComponent implements OnInit {
             this.openModal();
           }else{
             window.sessionStorage["cliente"] = object.data[0].id_cliente;
+            this.mostrarLogo();
           }
         }
       });
+    }else{
+      this.mostrarLogo();
     }
   }
   eleccion(id_cliente : any){
     window.sessionStorage["cliente"] = id_cliente;
     this.closeModal();
+    this.mostrarLogo();
   }
   cerrarSesion(){
     this.usuario.logout();

@@ -85,7 +85,8 @@ export class CatalogoDepartamentoComponent implements OnInit {
           this.departamentos.push({
             "folio" : object.data.registros[i].id_departamento,
             "departamento" : object.data.registros[i].departamento,
-            "disponibilidad" : object.data.registros[i].disponibilidad,
+            "vacantes" : object.data.registros[i].vacantes,
+            "autorizados" : object.data.registros[i].autorizados,
             "status" : status
           });
         }
@@ -149,7 +150,10 @@ export class CatalogoDepartamentoComponent implements OnInit {
         "id_puesto" : this.cont,
         "puesto" : this.puesto.puesto,
         "descripcion" : this.puesto.descripcion,
-        "disponibilidad" : this.puesto.disponibilidad
+        "disponibilidad" : this.puesto.disponibilidad,
+        "sueldo_tipo_a" : this.puesto.sueldo_tipo_a,
+        "sueldo_tipo_b" : this.puesto.sueldo_tipo_b,
+        "sueldo_tipo_c" : this.puesto.sueldo_tipo_c
       });
       this.cont++;
       this.puesto = new Puesto(0,"","","","","1","",this.usuario,1);
@@ -208,7 +212,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
         this.departamento.id_departamento = object.data[0].id_departamento;
         this.departamento.departamento = object.data[0].departamento;
         this.departamento.descripcion = object.data[0].descripcion;
-        this.departamento.disponibilidad = object.data[0].disponibilidad;
+        this.departamento.disponibilidad = object.data[0].autorizados;
         if(object.data[0].activo == "1"){
           this.activo = true;
         }else{
@@ -225,8 +229,11 @@ export class CatalogoDepartamentoComponent implements OnInit {
     this.puestos.forEach( (element : any) => {
       if(element.id_puesto == id){
         this.puesto.puesto = element.puesto;
-        this.puesto.disponibilidad = element.disponibilidad;
+        this.puesto.disponibilidad = element.autorizados;
         this.puesto.descripcion = element.descripcion;
+        this.puesto.sueldo_tipo_a = element.sueldo_tipo_a;
+        this.puesto.sueldo_tipo_b = element.sueldo_tipo_b;
+        this.puesto.sueldo_tipo_c = element.sueldo_tipo_c;
       }
     });
   }

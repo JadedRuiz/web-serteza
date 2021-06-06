@@ -158,7 +158,9 @@
             </div>
             <div class="form-group col-lg-3 col-sm-12">
               <label for="fecha">Tipo nómina</label>
-              <input [(ngModel)]="contrato.fecha_ingreso" type="input" name="fecha_ingreso" id="fecha" class="form-control">
+              <select name="" id="nomina" class="form-control" [(ngModel)]="contrato.id_nomina">
+                <option *ngFor="let nomina of nominas" value="{{nomina.id_nomina}}">{{nomina.nomina}}</option>
+              </select>
             </div>
             <div class="form-group col-lg-2 col-sm-12">
               <label for="fecha">Fecha de ingreso</label>

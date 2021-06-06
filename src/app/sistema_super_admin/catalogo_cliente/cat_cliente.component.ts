@@ -73,7 +73,6 @@ export class CatalogoClienteComponent implements OnInit {
     this.clientes = [];
     this.cliente_service.obtenerClientes(json)
     .subscribe( (object : any) =>{
-        console.log(object);
         if(object.ok){
           //Mostrar si los registros son mayores a los registros que se muestran
           this.total_registros = object.data.total;
