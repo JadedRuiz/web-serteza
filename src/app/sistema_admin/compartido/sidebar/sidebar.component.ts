@@ -42,7 +42,8 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit() {
     this.pintarMenu();
-    this.validarEmpresa();
+    // this.validarEmpresa();
+    this.mostrarLogo();
     this.foto_user = window.sessionStorage["foto"];
     this.router.events.subscribe((event) => {
       this.isCollapsed = true;

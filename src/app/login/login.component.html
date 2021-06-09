@@ -127,34 +127,24 @@
 </footer>
 <ng-template #content let-c="close" let-d="dismiss">
   <div class="modal-header justify-content-center">
-    <h4 class="modal-title" id="modal-basic-title">¿Que sistema desea administrar?</h4>
+    <h4 *ngIf="tipo_arreglo == 0" class="modal-title" id="modal-basic-title">¿Que sistema desea administrar?</h4>
+    <h4 *ngIf="tipo_arreglo == 1" class="modal-title" id="modal-basic-title">¿Que empresa desea administrar?</h4>
   </div>
   <div class="modal-body">
     <form>
       <div class="form-row">
         <div class="form-group col-md-12">
-          <div class="list-group">
+          <div *ngIf="tipo_arreglo == 0" class="list-group">
             <a *ngFor="let sistema of sistemas" style="cursor: pointer;" (click)="eleccion(sistema.id)" class="list-group-item list-group-item-action" aria-current="true">
               {{sistema.sistema}}
             </a>
           </div>
-          <!-- <label for="sitema">Sistemas</label>
-          <select [(ngModel)]="sistema_elegido"  ng-init="sistema_elegido = { nombre: sistema[0].sistema}" name="sistema_elegido" type="text" class="form-control" (change)="mostrarEmpresas()" id="sitema">
-            <option *ngFor="let sistema of sistemas" value="{{sistema.id}}"></option>
-          </select> -->
+          <div *ngIf="tipo_arreglo == 1" class="list-group">
+            <a *ngFor="let empresa of empresas" style="cursor: pointer;" (click)="redirigirPrincipal(empresa.id_empresa)" class="list-group-item list-group-item-action" aria-current="true">
+              {{empresa.empresa}}
+            </a>
+          </div>
         </div>
-        <!-- <div class="form-group col-md-12">
-          <label for="empresa">Empresas</label>
-          <select [disabled]="disabled_empresa" [(ngModel)]="empresa_elegido" name="empresa_elegido" type="text" class="form-control" (change)="mostrarClientes()" id="empresa">
-            <option *ngFor="let empresa of empresas" value="{{empresa.id}}">{{empresa.empresa}}</option>
-          </select>
-        </div>
-        <div class="form-group col-md-12">
-          <label for="cliente">Clientes</label>
-          <select [disabled]="disabled_cliente" [(ngModel)]="cliente_elegido" name="cliente_elegido" type="text" class="form-control" id="cliente">
-            <option *ngFor="let cliente of clientes" value="{{cliente.id}}">{{cliente.cliente}}</option>
-          </select>
-        </div> -->
       </div>
     </form>
   </div>
