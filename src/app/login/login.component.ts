@@ -20,6 +20,7 @@ export class LoginComponent implements OnInit {
   usuario: Usuario = new Usuario(0,"","","","",0);
   sistemas : any;
   empresas : any;
+  clientes : any;
   sistema_elegido = "";
   disabled_empresa = true;
   disabled_cliente = true;
@@ -66,7 +67,7 @@ export class LoginComponent implements OnInit {
           }else{
             this.sistema_elegido = resp.data.info_usuario.sistemas[0].id;
             window.sessionStorage["sistema"] = this.sistema_elegido;
-            // this.redirigirPrincipal();
+            this.eleccion(this.sistema_elegido);
           }
         }else{
           Swal.fire("Ha ocurrio un error",resp.data,"error");
@@ -77,8 +78,11 @@ export class LoginComponent implements OnInit {
   eleccion(id : any){
     this.sistema_elegido = id;
     window.sessionStorage["sistema"] = this.sistema_elegido;
-    this.closeModal();
-    if(this.sistema_elegido == id){
+    if(this.sistema_elegido == "5"){
+      this.router.navigate(["sistema_super_admin/dashboard"]);
+    }
+    if(this.sistema_elegido == "1"){
+      this.closeModal();
       this.empresas = [];
       this.empresa.obtenerEmpresaPorIdUsuario(window.sessionStorage["user"])
       .subscribe( (object : any) => {
@@ -102,6 +106,31 @@ export class LoginComponent implements OnInit {
         }
       });
     }
+    if(this.sistema_elegido == "2"){
+      this.closeModal();
+      this.clientes = [];
+      this.cliente_service.obtenerClientePorIdUsuario(window.sessionStorage["user"])
+      .subscribe( (object : any) => {
+        if(object.ok){
+          if(object.data.length > 1){
+            this.tipo_arreglo = 2;
+            object.data.forEach( (dato : any) => {
+              this.clientes.push({
+                "id_cliente" : dato.id_cliente,
+                "cliente" : dato.cliente
+              });
+            });
+            this.openModal();
+          }else{
+            window.sessionStorage["cliente"] = object.data[0].id_cliente;
+            this.router.navigate(["sistema_reclutamiento/dashboard"]);
+          }
+        }else{
+          Swal.fire("Ha ocurrido un error","Este usuario no cuenta con clientes","error");
+        }
+      });
+    }
+    
   }
   openModal() {
     this.modal = this.modalService.open(this.contenidoDelModal,{ centered : true, backdropClass : 'light-blue-backdrop'});
@@ -112,27 +141,19 @@ export class LoginComponent implements OnInit {
   redirigirPrincipal(id : any){
     if(this.sistema_elegido == "1"){
       window.sessionStorage["empresa"] = id;
+      this.closeModal();
       this.router.navigate(["sistema_admin/dashboard"]);
     }
     if(this.sistema_elegido == "2"){
-      //Validamos si tiene clientes antes de mandarlo
-      this.cliente_service.obtenerClientePorIdUsuario(window.sessionStorage["user"])
-      .subscribe( (object : any) => {
-        if(object.ok){
-          this.router.navigate(["sistema_reclutamiento/dashboard"]);
-        }else{
-          Swal.fire("Ha ocurrido un error","Este usuario no cuenta con clientes","error");
-        }
-      });
+      window.sessionStorage["cliente"] = id;
+      this.closeModal();
+      this.router.navigate(["sistema_reclutamiento/dashboard"]);
     }
     if(this.sistema_elegido == "3"){
       this.router.navigate(["sistema_nomina/dashboard"]);
     }
     if(this.sistema_elegido == "4"){
       this.router.navigate(["sistema_control/dashboard"]);
-    }
-    if(this.sistema_elegido == "5"){
-      this.router.navigate(["sistema_super_admin/dashboard"]);
     }
     if(this.sistema_elegido == "6"){
       this.empresa.obtenerEmpresaPorIdUsuario(window.sessionStorage["user"])

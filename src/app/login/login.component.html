@@ -129,6 +129,7 @@
   <div class="modal-header justify-content-center">
     <h4 *ngIf="tipo_arreglo == 0" class="modal-title" id="modal-basic-title">¿Que sistema desea administrar?</h4>
     <h4 *ngIf="tipo_arreglo == 1" class="modal-title" id="modal-basic-title">¿Que empresa desea administrar?</h4>
+    <h4 *ngIf="tipo_arreglo == 2" class="modal-title" id="modal-basic-title">¿Que cliente desea administrar?</h4>
   </div>
   <div class="modal-body">
     <form>
@@ -142,6 +143,11 @@
           <div *ngIf="tipo_arreglo == 1" class="list-group">
             <a *ngFor="let empresa of empresas" style="cursor: pointer;" (click)="redirigirPrincipal(empresa.id_empresa)" class="list-group-item list-group-item-action" aria-current="true">
               {{empresa.empresa}}
+            </a>
+          </div>
+          <div *ngIf="tipo_arreglo == 2" class="list-group">
+            <a *ngFor="let cliente of clientes" style="cursor: pointer;" (click)="redirigirPrincipal(cliente.id_cliente)" class="list-group-item list-group-item-action" aria-current="true">
+              {{cliente.cliente}}
             </a>
           </div>
         </div>
