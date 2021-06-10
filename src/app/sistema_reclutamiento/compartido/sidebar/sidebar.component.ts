@@ -40,6 +40,7 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit() {
     this.pintarMenu();
+    this.mostrarLogo();
     // this.validarClientes();
     this.router.events.subscribe((event) => {
       this.isCollapsed = true;

@@ -81,7 +81,7 @@ export class LoginComponent implements OnInit {
     if(this.sistema_elegido == "5"){
       this.router.navigate(["sistema_super_admin/dashboard"]);
     }
-    if(this.sistema_elegido == "1"){
+    if(this.sistema_elegido == "1" || this.sistema_elegido == "6"){
       this.closeModal();
       this.empresas = [];
       this.empresa.obtenerEmpresaPorIdUsuario(window.sessionStorage["user"])
@@ -99,7 +99,7 @@ export class LoginComponent implements OnInit {
             this.openModal();
           }else{
             window.sessionStorage["empresa"] = object.data[0].id_empresa;
-            this.router.navigate(["sistema_admin/dashboard"]);
+            this.redirigirPrincipal(object.data[0].id_empresa);
           }
         }else{
           Swal.fire("Ha ocurrido un error","Este usuario no cuenta empresas para administrar","error");
@@ -123,7 +123,7 @@ export class LoginComponent implements OnInit {
             this.openModal();
           }else{
             window.sessionStorage["cliente"] = object.data[0].id_cliente;
-            this.router.navigate(["sistema_reclutamiento/dashboard"]);
+            this.redirigirPrincipal(object.data[0].id_cliente);
           }
         }else{
           Swal.fire("Ha ocurrido un error","Este usuario no cuenta con clientes","error");
@@ -156,15 +156,7 @@ export class LoginComponent implements OnInit {
       this.router.navigate(["sistema_control/dashboard"]);
     }
     if(this.sistema_elegido == "6"){
-      this.empresa.obtenerEmpresaPorIdUsuario(window.sessionStorage["user"])
-      .subscribe( (object : any) => {
-        if(object.ok){
-          window.sessionStorage["foto_user"] = "";
-          this.router.navigate(["sistema_prestasoft/dashboard"]);
-        }else{
-          Swal.fire("Ha ocurrido un error","Este usuario no cuenta empresas para administrar","error");
-        }
-      });
+      this.router.navigate(["sistema_prestasoft/dashboard"]);
     }
   }
 }
