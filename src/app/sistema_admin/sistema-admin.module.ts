@@ -7,24 +7,25 @@ import { FormsModule } from '@angular/forms';
 import { SistemaAdminComponent } from './sistema-admin.component';
 import { CatalogoUsuarioComponent } from './catalogo_usuario/catalogo_usuario.component';
 import { ProcedimientoUsuarioComponent } from './procedimiento_usuario/procedimiento_usuario.component';
-import { ProcedimientoEmpresaComponent } from './procedimiento_empresa/procedimiento_empresa.component';
 import { CatalogoDepartamentoComponent } from './catalogo_departamento/catalogo_departamento.component';
-
+import { WebcamModule } from 'ngx-webcam';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
     SistemaAdminComponent,
     CatalogoUsuarioComponent,
     ProcedimientoUsuarioComponent,
-    ProcedimientoEmpresaComponent,
-    CatalogoDepartamentoComponent
+    CatalogoDepartamentoComponent,
+    DashboardComponent
   ],
   imports: [
     CommonModule,
     NgbModule,
     SistemaAdminRoutingModule,
     CompartidoModule,
-    FormsModule
+    FormsModule,
+    WebcamModule
   ]
 })
 export class SistemaAdminModule { }

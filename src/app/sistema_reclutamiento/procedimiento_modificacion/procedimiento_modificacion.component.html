@@ -1,3 +1,4 @@
+
 <div class="header {{color}}" style="height: 250px;">
 </div>
 <div class="container-fluid mt--9">
@@ -5,7 +6,7 @@
       <div class="col">
         <div class="card border-info">
           <div class="card-header">
-            SOLICITUDES DE CONTRATACIÓN REALIZADAS
+            MODIFICACIONES
           </div>
           <div class="card-body">
             <div class="row mb-2">
@@ -24,7 +25,7 @@
                   </select>
               </div>
               <div class="col-lg-4 col-sm-12" style="text-align: end;">
-                  <a class="btn btn-info" (click)="nuevoContrato()" title="Nuevo usuario"><img src="./assets/iconos/add-file.svg" style="width: 24px;"></a>
+                  <a class="btn btn-info" title="Nuevo usuario"><img src="./assets/iconos/add-file.svg" style="width: 24px;"></a>
               </div>
             </div>
             <div class="table-responsive">
@@ -37,7 +38,7 @@
                           <th scope="col">Acciones</th>
                       </tr>
                   </thead>
-                  <tbody *ngIf="band; else pintaVacio" class="">
+                  <!-- <tbody *ngIf="band; else pintaVacio" class="">
                       <tr *ngFor="let contrato of contratos">
                           <td colspan="1" style="vertical-align: middle;">{{contrato.folio}}</td>
                           <td colspan="1" style="vertical-align: middle;">{{contrato.fecha}}</td>
@@ -47,15 +48,14 @@
                               <a title="Reporte de contratación" style="cursor: pointer;" class="btn btn-info" (click)="consumoReporte(1,contrato.folio)"><img src="./assets/iconos/reporte.svg" style="width: 24px;"></a>
                           </td>
                       </tr>
-                  </tbody>
-                  <ng-template #pintaVacio>
+                  </tbody> -->
+                  <!-- <ng-template #pintaVacio>
                       <tbody>
                           <tr>
                               <td colspan="4" class="text-center">No existen contratos</td>
                           </tr>
                       </tbody>
-                  </ng-template>
-                  <tbody></tbody>
+                  </ng-template> -->
               </table>
               <div class="filtros container mt-3">
                   <div class="row">
@@ -81,7 +81,7 @@
                       </div>
                       <div class="col-lg-4 col-sm-12" style="text-align: end;">
                           <p class="mr-2" style="display: inline-block;">Contratos :</p>
-                          <select [(ngModel)]="taken" (change)="mostrarMovimientos()" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
+                          <select [(ngModel)]="taken" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
                               <option value="5">5</option>
                               <option value="10">10</option>
                               <option value="20">20</option>
@@ -102,9 +102,9 @@
 
   <ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
     <div class="modal-header">
-        <h2 class="modal-title" id="tituloModal">Nuevo contrato</h2>
+        <h2 class="modal-title" id="tituloModal">Nueva baja</h2>
     </div>
-    <div class="modal-body">
+    <!-- <div class="modal-body">
         <div class="form">
           <div class="form-row">
             <div class="form-group col-lg-5 col-sm-12">
@@ -206,10 +206,10 @@
             </div>
           </div>
         </div>
-    </div>
-    <div class="modal-footer">
+    </div> -->
+    <!-- <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()" >Cerrar</button>
         <button type="button" class="btn btn-success" (click)="crearMov()" id="guardar">Crear contratación</button>
         <button type="button" class="btn btn-success" (click)="actualizarMov()" id="editar" style="display: none;">Actualizar contratación</button>
-    </div>
+    </div> -->
 </ng-template>

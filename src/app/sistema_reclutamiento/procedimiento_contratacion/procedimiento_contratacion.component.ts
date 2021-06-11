@@ -25,13 +25,13 @@ export class ProcedimientoContratacionComponent implements OnInit {
   public bandera = [true, true, true];
   public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
-  public contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","");
+  public contrato = new Contrato(0,"",0,"",0,"",0,0,"",0,"","0","");
   public contratos : any;
   public modal : any;
   public taken = 5;
   public solicitud_contratos = new Array<Contrato>();
   @ViewChild('content', {static: false}) contenidoDelModal : any;
-  private tipo_movimiento = 0;
+  public tipo_movimiento = 0;
   //Paginacion
   public total_registros = 0;
   public mostrar_pagination = false;
@@ -51,7 +51,8 @@ export class ProcedimientoContratacionComponent implements OnInit {
   //Puesto
   public puestos : any;
   public sueldos = ["","",""];
-
+  //Nomina
+  public nominas : any;
   constructor(
     private modalService: NgbModal,
     private candidato_service: CandidatoService,
@@ -90,12 +91,13 @@ export class ProcedimientoContratacionComponent implements OnInit {
   }
 
   mostrarCandidato(){
-    let valor = this.contrato.candidato.split(" ")[1];
-    if(!"1234567890".includes(valor)){
+    let valor = this.contrato.candidato;
+    if(!valor.includes("Candidato")){
       this.contrato.candidato = "";
       Swal.fire("Tenemos un problema","El candidato seleccionado ya se encuentra en un movimiento de contratacion, intente con otro","warning");
     }else{
-      let object = this.candidatos.filter( (x : any) => x.folio === parseInt(valor))[0];
+      valor = this.contrato.candidato.split(" ")[1];
+      let object = this.candidatos.filter( (x : any) => x.folio === parseInt(valor+""))[0];
       this.contrato.candidato = object.nombre;
       this.contrato.id_candidato = object.folio; 
     }
@@ -125,6 +127,16 @@ export class ProcedimientoContratacionComponent implements OnInit {
         }
       }else{
         this.candidatos = [];
+      }
+    })
+  }
+
+  mostrarNominas(){
+    this.nominas = [];
+    this.contrato_service.obtenerCatalogoNomina()
+    .subscribe( (object :any) =>{
+      if(object.ok){
+        this.nominas = object.data;
       }
     })
   }
@@ -201,6 +213,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
       }
     });
   }
+
   mostrarSueldos(){
     this.bandera[2] = false;  
     let valor = this.contrato.puesto.split(" ")[1];
@@ -224,19 +237,20 @@ export class ProcedimientoContratacionComponent implements OnInit {
           });
           if(band_contrato){
             this.solicitud_contratos.push(this.contrato);
-            this.contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","");
+            this.contrato = new Contrato(0,"",0,"",0,"",0,0,"",0,"","0","");
           }else{
             Swal.fire("Tenemos un problema","El candidato no puede repetirse","warning");
           }
          }else{
           this.solicitud_contratos.push(this.contrato);
-          this.contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","");
+          this.contrato = new Contrato(0,"",0,"",0,"",0,0,"",0,"","0","");
          }
        }else{
         Swal.fire("Tenemos un problema","Primero llena los campos requeridos","warning");
        }
     
   }
+  
   eliminarDetalle(id_detalle : any){
     Swal.fire({
       title: '¿Estas seguro que deseas eliminar este candidato?',
@@ -318,6 +332,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
             parseInt(object.data[i].id_empresa),
             object.data[i].apellido_paterno+" "+object.data[i].apellido_materno+" "+object.data[i].nombre,
             parseInt(object.data[i].id_candidato),
+            parseInt(object.data[0].id_nomina),
             object.data[i].puesto,
             parseInt(object.data[i].id_puesto),
             object.data[i].fecha_alta,
@@ -344,6 +359,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
           solicitud.id_empresa,
           solicitud.candidato,
           solicitud.id_candidato,
+          solicitud.id_nomina,
           solicitud.puesto,
           solicitud.id_puesto,
           solicitud.fecha_ingreso,
@@ -369,6 +385,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
     this.tipo_movimiento = 0;
     this.mostrarCandidatos();
     this.mostrarEmpresas();
+    this.mostrarNominas();
     this.openModal();
   }
 
@@ -382,7 +399,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
 
   resetearModal(){
     this.solicitud_contratos = new Array<Contrato>();
-    this.contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","");
+    this.contrato = new Contrato(0,"",0,"",0,"",0,0,"",0,"","0","");
     this.bandera = [true, true, true];
     this.sueldos = ["","",""]
   }

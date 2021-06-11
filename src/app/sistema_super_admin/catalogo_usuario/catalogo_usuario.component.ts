@@ -172,7 +172,8 @@ export class CatalogoUsuarioComponent implements OnInit {
           password : this.usuario.password,
           sistemas : this.sistemas_seleccionados,
           usuario_creacion : this.usuario_creacion,
-          activo : active
+          activo : active,
+          fotografia : this.fotografia
         };
         this.usuario_service.modificarUsuario(json)
         .subscribe( (object) =>{
@@ -206,6 +207,9 @@ export class CatalogoUsuarioComponent implements OnInit {
         }else{
           this.activo = false;
         }
+        //Agregar fotografia
+        this.fotografia.id_fotografia = object.data[0].id_fotografia;
+        this.foto_user = object.data[0].fotografia;
         //Funcionalidad de modal
         jQuery("#guardar").hide();
         jQuery("#editar").show();
@@ -270,6 +274,8 @@ export class CatalogoUsuarioComponent implements OnInit {
 
   limpiarCampos(){
     this.usuario = new Usuario(0,"","","","",0);
+    this.fotografia = new Fotografia(0,"","","");
+    this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
     this.sistemas_seleccionados = [];
   }
 

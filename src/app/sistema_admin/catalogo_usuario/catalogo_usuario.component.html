@@ -185,3 +185,41 @@
         <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button>
     </div>
 </ng-template>
+<ng-template #modal_camera let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h2 class="modal-title" id="tituloModal">Tomar fotografia</h2>
+    </div>
+    <div class="modal-body">
+        <div class="container">
+            <div class="row">
+                <div *ngIf="isCameraExist; else noCameraExist" class="col-12">
+                    <div class="border border-success rounded text-center" style="width: 100%;height: 265px;">
+                        <!-- <div class="btn-group">
+                            <button class="button" (click)="changeWebCame(true)">Toggle Camera</button>
+                            <button class="button" (click)="onOffWebCame()">Switch camera</button>
+                        </div> <br /> -->
+                        <webcam [height]="450" [width]="350" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
+                            *ngIf="showWebcam" [switchCamera]="nextWebcamObservable"></webcam>
+                    </div>
+                
+                    <div *ngIf="errors.length > 0">
+                        <h4>Error Messages:</h4>
+                        <ul *ngFor="let error of errors">
+                            <li>{{ error | json }}</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <ng-template #noCameraExist>
+                    <div class="border border-danger rounded text-center" style="display: flex;justify-content: center;align-items: center;width: 450px;height: 350px;">
+                        Este dispositivo no cuenta con una camara disponible
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModalCamera()">Cerrar</button>
+        <button *ngIf="isCameraExist" type="button" class="btn btn-success" (click)="takeSnapshot()">Tomar foto</button>
+    </div>
+</ng-template>

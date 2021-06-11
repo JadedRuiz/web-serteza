@@ -114,17 +114,9 @@ export class CatalogoCandidatosComponent implements OnInit {
           for(let i =0; i<object.data.registros.length; i++){
             let nombre = object.data.registros[i].nombre;
             let apellidos = object.data.registros[i].apellido_paterno + " " + object.data.registros[i].apellido_materno;
-            let fotografia_user : any;
-            console.log(object.data.registros[i].fotografia);
-            if(object.data.registros[i].fotografia != ""){
-              let img = "data:image/"+object.data.registros[i].extension+";base64, "+object.data.registros[i].fotografia;
-              fotografia_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
-            }else{
-              fotografia_user = "./assets/img/defaults/usuario_por_defecto.svg";
-            }
             this.candidatos.push({
               "folio" : object.data.registros[i].id_candidato,
-              "fotografia" : fotografia_user,
+              "fotografia" : ""+object.data.registros[i].fotografia,
               "nombre" : apellidos + " " + nombre,
               "status" : object.data.registros[i].status
             });
@@ -241,9 +233,7 @@ export class CatalogoCandidatosComponent implements OnInit {
         this.candidato.telefono_tres = object.data[0].telefono_tres;
         this.candidato.fotografia.id_fotografia = object.data[0].id_fotografia;
         //Poner imagen
-        if(object.data[0].fotografia != ""){
-          this.mostrarImagen(object.data[0].fotografia,object.data[0].extension);
-        }
+        this.foto_user = ""+object.data[0].fotografia;
 
       }else{
         Swal.fire("Ha ocurrido un error",object.message,"error");

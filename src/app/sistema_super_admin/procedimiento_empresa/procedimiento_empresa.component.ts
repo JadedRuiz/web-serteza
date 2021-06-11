@@ -121,7 +121,7 @@ export class ProcedimientoEmpresaComponent implements OnInit {
   }
 
   nuevoCliente(){
-    this.titulo_modal = "Nuevo cliente";
+    this.titulo_modal = "Agregar cliente a empresa";
     this.tipo_modal = 1;
     this.openModal();
     this.subtitulo_modal = "Seleccione los clientes que desea agregarle a está empresa";
