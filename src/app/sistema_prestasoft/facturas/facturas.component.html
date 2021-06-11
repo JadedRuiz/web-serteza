@@ -11,7 +11,7 @@
           </div>
         <div class="card-body">
             <div class="row mb-2">
-                <div class="col-3">
+                <div class="col-lg-3 col-md-12 col-sm-12">
                     <div class="form-check">
                         <input (change)="cambioFechas($event)"  class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="dia" checked>
                         <label class="form-check-label" for="exampleRadios1">
@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 
-                <div class="col-lg-8 col-sm-12 mb-2" *ngIf="dia">
+                <div class="col-lg-8 col-md-8 col-sm-10 mb-2" *ngIf="dia">
                     <div class="buscador">
                         <mat-form-field class="w-100">
                             <mat-label>Buscar Cliente / Proveedor</mat-label>
@@ -38,15 +38,16 @@
                                    matInput
                                    [formControl]="myControl"
                                    [matAutocomplete]="auto">
-                            <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getFacturas($event.option.value)'>
+                            <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getFacturas($event)'>
                               <mat-option *ngFor="let option of filteredOptions | async" [value]="option.nombrecomercial">
+                                  <input [(ngModel)] = "id_provcliente" type="hidden" [value]="option.id_provcliente">
                                 {{option.nombrecomercial}}
                               </mat-option>
                             </mat-autocomplete>
                           </mat-form-field>
                     </div>
                 </div>
-                <div class="col-lg-8 col-sm-12 mb-2" *ngIf="periodo">
+                <div class="col-lg-8 col-md-2 col-sm-2 mb-2" *ngIf="periodo">
                     <mat-form-field class="w-100">
                         <mat-label>Buscar por UUID</mat-label>
                         <input type="text"

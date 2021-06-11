@@ -30,12 +30,13 @@ export class FacturasComponent implements OnInit {
   public previous = false;
   public band_persiana = true;
   public band = true;
+  id_provcliente = "";
 
 
   periodo = false;
 
   miObjeto: any = {
-    id_provcliente: 0,
+    id_provcliente: "",
     id_empresa: this.miEmpresa,
     id_bovedaxml: false,
     index: false
@@ -74,12 +75,24 @@ export class FacturasComponent implements OnInit {
   }
   getFacturas(value: any){
     this.clienteProveedorID = value;
-    console.log(value);
+    this.miObjeto.id_provcliente = this.id_provcliente;
+    console.log(this.id_provcliente);
     this.contabilidadService.getFacturas(this.miObjeto)
     .subscribe( (object : any) => {
       if(object.ok){
+        console.log(object);
+        console.log(this.id_provcliente);
+        this.total_registros = object.totales;
+        console.log(this.total_registros);
+        if(this.total_registros > this.taken){
+          this.mostrar_pagination = true;
+          this.paginar();
+        }else{
+          this.mostrar_pagination = false;
+        }
+        //Mostrar usuarios
+        this.band = true; 
         this.objFactura = object.datos;
-        console.log(object.datos);
       }else{
         Swal.fire("Ha ocurrido un error",object.message,"error");
       }
@@ -89,16 +102,9 @@ export class FacturasComponent implements OnInit {
     console.log(this.miObjetoCliente);
     this.contabilidadService.getClienteProveedor(this.miObjetoCliente)
     .subscribe( (object : any) => {
-      if(object.ok){
-        this.total_registros = object.totales;
-        if(this.total_registros > this.taken){
-          this.mostrar_pagination = true;
-          this.paginar();
-        }else{
-          this.mostrar_pagination = false;
-        }
-        //Mostrar usuarios
-        this.band = true;       this.options = object.data;
+      if(object.ok){    
+        console.log(object.data);  
+        this.options = object.data;
       }else{
         Swal.fire("Ha ocurrido un error",object.message,"error");
       }
@@ -146,7 +152,9 @@ export class FacturasComponent implements OnInit {
     }
   }
   irPagina(pagina : any){
+    console.log(pagina);
     this.pagina_actual = pagina;
+    this.miObjeto.index = pagina + 6;
     this.getFacturas(this.objFactura);
   }
   busqueda(event: string){

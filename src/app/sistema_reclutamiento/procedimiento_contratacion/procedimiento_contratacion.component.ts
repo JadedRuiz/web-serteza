@@ -213,6 +213,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
       }
     });
   }
+
   mostrarSueldos(){
     this.bandera[2] = false;  
     let valor = this.contrato.puesto.split(" ")[1];
@@ -249,6 +250,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
        }
     
   }
+  
   eliminarDetalle(id_detalle : any){
     Swal.fire({
       title: '¿Estas seguro que deseas eliminar este candidato?',

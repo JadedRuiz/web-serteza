@@ -24,5 +24,14 @@ export class DashboardService {
         return throwError(err);
       }));
   }
-
+  obtenerDashboardRh(id : any){
+    let url = SERVER_API + "dashboard/obtenerDashboardRh/"+id;
+    return this.http.get( url )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
 }
