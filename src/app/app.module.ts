@@ -13,6 +13,7 @@ import { SistemaReclutamientoModule } from './sistema_reclutamiento/sistema-recl
 import { SistemaSuperAdminModule } from './sistema_super_admin/sistema_super_admin.module';
 import { SitemaPrestasoftModule } from './sistema_prestasoft/sistema_prestasoft.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,11 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
     
     
   ],
-  providers: [CookieService],
+  providers: [
+    CookieService,
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
+  
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
