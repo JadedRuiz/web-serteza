@@ -49,10 +49,18 @@ export class SidebarComponent implements OnInit {
       { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : [
+          { path: '#', title: 'Cliente / Proveedor',  icon:'ni-satisfied text-orange', id:"rh_header", band: true, tipo : "collapse"},
+          { path: '#', title: 'Ivas',  icon:'ni-money-coins text-orange', id:"rh_header", band: true, tipo : "collapse"},
+          { path: '#', title: 'Conceptos',  icon:'ni-books text-orange', id:"rh_header", band: true, tipo : "collapse"},
+          { path: '#', title: 'Bancos',  icon:'ni-building text-orange', id:"rh_header", band: true, tipo : "collapse"}
         ]
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
         submenu : [
+          { path: 'facturas', title: 'Captura facturas',  icon:'ni-folder-17 text-yellow', id:"rh_header", band: true, tipo : "collapse"},          
+          { path: '#', title: 'Captura pagos',  icon:'ni-collection text-yellow', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'xml-upload', title: 'Carga xml´s',  icon:'ni-cloud-upload-96 text-yellow', id:"rh_header", band: true, tipo : "collapse"},
+          { path: '#', title: 'Estado de cuenta',  icon:'ni-book-bookmark text-yellow', id:"rh_header", band: true, tipo : "collapse"}
         ]
       },
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: false, tipo : ""}

@@ -121,7 +121,7 @@ export class LoginComponent implements OnInit {
       .subscribe( (object : any) => {
         if(object.ok){
           window.sessionStorage["foto_user"] = "";
-          this.router.navigate(["sistema_prestasoft/dashboard"]);
+          this.router.navigate(["contabilidad/dashboard"]);
         }else{
           Swal.fire("Ha ocurrido un error","Este usuario no cuenta empresas para administrar","error");
         }
