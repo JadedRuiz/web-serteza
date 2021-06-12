@@ -151,12 +151,16 @@ export class LoginComponent implements OnInit {
     }
     if(this.sistema_elegido == "3"){
       this.router.navigate(["sistema_nomina/dashboard"]);
+      this.closeModal();
     }
     if(this.sistema_elegido == "4"){
       this.router.navigate(["sistema_control/dashboard"]);
+      this.closeModal();
     }
     if(this.sistema_elegido == "6"){
+      window.sessionStorage["empresa"] = id;
       this.router.navigate(["sistema_prestasoft/dashboard"]);
+      this.closeModal();
     }
   }
 }
