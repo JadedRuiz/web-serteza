@@ -159,7 +159,7 @@ export class LoginComponent implements OnInit {
     }
     if(this.sistema_elegido == "6"){
       window.sessionStorage["empresa"] = id;
-      this.router.navigate(["sistema_prestasoft/dashboard"]);
+      this.router.navigate(["contabilidad/dashboard"]);
       this.closeModal();
     }
   }

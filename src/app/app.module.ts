@@ -12,6 +12,8 @@ import { CookieService } from 'ngx-cookie-service';
 import { SistemaReclutamientoModule } from './sistema_reclutamiento/sistema-reclutamiento.module';
 import { SistemaSuperAdminModule } from './sistema_super_admin/sistema_super_admin.module';
 import { SitemaPrestasoftModule } from './sistema_prestasoft/sistema_prestasoft.module';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -29,9 +31,16 @@ import { SitemaPrestasoftModule } from './sistema_prestasoft/sistema_prestasoft.
     NgbModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NoopAnimationsModule,
+    
+    
   ],
-  providers: [CookieService],
+  providers: [
+    CookieService,
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
+  
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

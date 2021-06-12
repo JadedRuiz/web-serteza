@@ -85,6 +85,7 @@ export class XmlUploadComponent implements OnInit {
       var longitud_traslado = 0;
       var tiene_impuesto = false;
       var tiene_valor_impuesto = false;
+      var tipo_cambio = 1;
       reader.onload = (evt) => {
       const xmlData: string = (evt as any).target.result;
       const parser = new xml2js.Parser(
@@ -95,7 +96,10 @@ export class XmlUploadComponent implements OnInit {
       parser.parseString(xmlData,  (err: any, result: any) => {
           var obj = result;
           if(obj["cfdi:Comprobante"]["$"]["TipoDeComprobante"] == "I"){
-          tiene_impuesto = obj["cfdi:Comprobante"].hasOwnProperty("cfdi:Impuestos")
+          tiene_impuesto = obj["cfdi:Comprobante"].hasOwnProperty("cfdi:Impuestos");
+          if (obj["cfdi:Comprobante"]["$"]["Moneda"] == "USD"){
+            tipo_cambio = obj["cfdi:Comprobante"]["$"]["TipoCambio"];
+          }
           if(tiene_impuesto){
               if(obj["cfdi:Comprobante"]["cfdi:Impuestos"][0].length == 0){
                 ieps = 0;
@@ -135,6 +139,7 @@ export class XmlUploadComponent implements OnInit {
             ieps: ieps,
             retencion_iva: 11,
             retencion_isr:  22,
+            tipo_cambio: tipo_cambio,
             xml: xmlData
           });
         }
