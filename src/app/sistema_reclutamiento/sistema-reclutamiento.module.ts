@@ -13,6 +13,10 @@ import { ProcedimientoContratacionComponent } from './procedimiento_contratacion
 import { WebcamModule } from 'ngx-webcam';
 import { ProcedimientoBajaComponent } from './procedimiento_baja/procedimiento_baja.component';
 import { ProcedimientoModificacionComponent } from './procedimiento_modificacion/procedimiento_modificacion.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -32,7 +36,11 @@ import { ProcedimientoModificacionComponent } from './procedimiento_modificacion
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    WebcamModule
+    WebcamModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule
   ]
 })
 export class SistemaReclutamientoModule { }

@@ -9,6 +9,7 @@ import * as jQuery from 'jquery';
 import { DomSanitizer } from '@angular/platform-browser';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import { Observable, Subject } from 'rxjs';
+import { FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-catalogo-usuario',
@@ -28,20 +29,18 @@ export class CatalogoUsuarioComponent implements OnInit {
   public sistemas_seleccionados : any;
   public usuario_creacion = window.sessionStorage.getItem("user");
   public modal : any;
-  public modal_camera : any;
   public fotografia = new Fotografia(0,"","","");
+  public texto_modal = "";
   @ViewChild('content', {static: false}) contenidoDelModal : any;
+  // webcam snapshot trigger
+  public modal_camera : any;
   @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
   @Output() getPicture = new EventEmitter<WebcamImage>();
   showWebcam = true;
   isCameraExist = true;
-
   errors: WebcamInitError[] = [];
-  // webcam snapshot trigger
   private trigger: Subject<void> = new Subject<void>();
   private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
-
-
   public activo = true;
   public docB64 = "";
   public options : any;
@@ -59,6 +58,9 @@ export class CatalogoUsuarioComponent implements OnInit {
   public limite_superior = this.paginas_a_mostrar;
   public next = false;
   public previous = false;
+  //Autocomplete
+  myControl = new FormControl();
+  usuarios_busqueda : any;
 
   constructor(
     private usuario_service : UsuarioService,
@@ -70,6 +72,7 @@ export class CatalogoUsuarioComponent implements OnInit {
     this.modal_camera = NgbModalRef;
     this.paginas = [];
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
+    this.usuarios_busqueda = [];
    }
 
   ngOnInit(): void {
@@ -82,13 +85,13 @@ export class CatalogoUsuarioComponent implements OnInit {
   }
 
   mostrarUsuarios(){
+    this.usuarios = [];
     let json = {
       palabra : this.palabra,
       taken : this.taken,
       status : this.status,
       pagina : this.pagina_actual
     };
-    this.usuarios = [];
     this.usuario_service.obtenerUsuarios(json)
     .subscribe( (object : any) =>{
         if(object.ok){
@@ -118,6 +121,20 @@ export class CatalogoUsuarioComponent implements OnInit {
           this.band = false;
         }
     });
+  }
+
+  autocomplete(palabra : string){
+    this.usuarios_busqueda = [];
+    if(palabra.length > 3){
+      this.usuario_service.autoCompleteUsuario({"nombre_usuario":palabra})
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.usuarios_busqueda = object.data;
+        }else{
+          this.usuarios_busqueda = [];
+        }
+      })
+    }
   }
 
   altaUsuario(){
@@ -154,6 +171,7 @@ export class CatalogoUsuarioComponent implements OnInit {
       }
     }
   }
+
   modificarUsuario(){
     if(this.usuario.nombre == "" || this.usuario.usuario == ""){
       Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
@@ -187,12 +205,16 @@ export class CatalogoUsuarioComponent implements OnInit {
       }
     }
   }
+
   guardar(){
     this.openModal();
+    this.texto_modal = "Nuevo usuario";
     jQuery("#editar").hide();
     jQuery("#guardar").show();
   }
+
   editar(folio : any){
+    this.texto_modal = "Editar usuario";
     this.usuario_service.obtenerUsuarioPorId(folio)
     .subscribe( (object : any) => {
       if(object.ok){
@@ -244,6 +266,7 @@ export class CatalogoUsuarioComponent implements OnInit {
       this.sistemas[o].active = " ";
     }
   }
+
   obtenerSistemas(){
     this.sistemas = [];
     this.usuario_service.obtenerSistemas()
@@ -277,6 +300,7 @@ export class CatalogoUsuarioComponent implements OnInit {
     this.fotografia = new Fotografia(0,"","","");
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
     this.sistemas_seleccionados = [];
+    this.myControl.reset('');
   }
 
   openModal() {
@@ -346,16 +370,16 @@ export class CatalogoUsuarioComponent implements OnInit {
     this.mostrarUsuarios();
   }
 
-  filtroStatus(){
-    this.pagina_actual = 0;
-    this.limite_inferior = 0;
-    this.mostrarUsuarios();
+  getUsuario(event : any) {
+    this.editar(event.option.id);
+    this.usuarios_busqueda.splice(0,this.usuarios_busqueda.length);
+    this.myControl.reset('');
   }
 
-  busqueda(){
-    this.pagina_actual = 0;
-    this.limite_inferior = 0;
-    this.mostrarUsuarios();
+  busqueda(value : string){
+    if(value.length > 3){
+      this.autocomplete(value);
+    }
   }
 
   subirImagen(){

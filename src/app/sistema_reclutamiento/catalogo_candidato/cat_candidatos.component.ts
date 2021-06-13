@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
 import * as jQuery from 'jquery';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import { Observable, Subject } from 'rxjs';
+import { FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-candidatos-original',
@@ -61,6 +62,9 @@ export class CatalogoCandidatosComponent implements OnInit {
   public next = false;
   public previous = false;
   public band_persiana = true;
+  //Autocomplete
+  myControl = new FormControl();
+  candidatos_busqueda : any;
 
   colonias = [
     "Primero ingresa el Codigo Postal"
@@ -126,6 +130,21 @@ export class CatalogoCandidatosComponent implements OnInit {
         }
     });
   }
+
+  autocomplete(palabra : string){
+    this.candidatos_busqueda = [];
+    if(palabra.length > 3){
+      this.candidato_service.autoCompleteCandidato({"nombre_candidato":palabra,"id_cliente":this.id_cliente})
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.candidatos_busqueda = object.data;
+        }else{
+          this.candidatos_busqueda = [];
+        }
+      })
+    }
+  }
+
   altaCandidato(){
     let band = true;
     if(this.candidato.apellido_paterno == "" || this.candidato.apellido_materno == "" || this.candidato.nombre == ""){
@@ -481,17 +500,18 @@ export class CatalogoCandidatosComponent implements OnInit {
     this.mostrarCandidatos();
   }
 
-  filtroStatus(){
-    this.pagina_actual = 0;
-    this.limite_inferior = 0;
-    this.mostrarCandidatos();
+  getCandidato(event : any) {
+    this.editar(event.option.id);
+    this.candidatos_busqueda.splice(0,this.candidatos_busqueda.length);
+    this.myControl.reset('');
   }
 
-  busqueda(){
-    this.pagina_actual = 0;
-    this.limite_inferior = 0;
-    this.mostrarCandidatos();
+  busqueda(value : string){
+    if(value.length > 3){
+      this.autocomplete(value);
+    }
   }
+
   modificarMunicipio(){
     let colonia = this.candidato.direccion.colonia;
     this.cp_service.getDirrecion(this.candidato.direccion.codigo_postal)

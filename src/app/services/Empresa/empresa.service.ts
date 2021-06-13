@@ -106,4 +106,14 @@ export class EmpresaService {
     let url = SERVER_API+"empresa/obtenerEmpresasPorIdCliente/"+id;
     return this.http.get(url);
   }
+  autoCompleteEmpresa(json : any){
+    let url = SERVER_API+"empresa/autoCompleteEmpresa";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        return throwError(err);
+      }));
+  }
 }

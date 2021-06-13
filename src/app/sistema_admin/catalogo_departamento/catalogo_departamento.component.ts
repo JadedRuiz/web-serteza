@@ -6,11 +6,11 @@ import { Departamento } from 'src/app/models/Departamento';
 import { Puesto } from 'src/app/models/Puesto';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
+import { FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-catalogo-departamento',
-  templateUrl: './catalogo_departamento.component.html',
-  styleUrls: ['./catalogo_departamento.component.css']
+  templateUrl: './catalogo_departamento.component.html'
 })
 export class CatalogoDepartamentoComponent implements OnInit {
 
@@ -41,6 +41,9 @@ export class CatalogoDepartamentoComponent implements OnInit {
   public limite_superior = this.paginas_a_mostrar;
   public next = false;
   public previous = false;
+  //Autocomplete
+  myControl = new FormControl();
+  departamentos_busqueda : any;
 
   constructor(
     private departamento_service : DepartamentoService,
@@ -93,6 +96,20 @@ export class CatalogoDepartamentoComponent implements OnInit {
         this.band = false;
       }
     });
+  }
+
+  autocomplete(palabra : string){
+    this.departamentos_busqueda = [];
+    if(palabra.length > 3){
+      this.departamento_service.autoCompleteDepartamento({"nombre_departamento":palabra,"id_empresa":this.empresa})
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.departamentos_busqueda = object.data;
+        }else{
+          this.departamentos_busqueda = [];
+        }
+      })
+    }
   }
 
   altaDepartamento(){
@@ -244,12 +261,16 @@ export class CatalogoDepartamentoComponent implements OnInit {
     this.puesto = new Puesto(0,"","","","","1","",this.usuario,1);
   }
 
-  filtroStatus(){
-    this.mostrarDepartamentos();
+  getDepartamento(event : any) {
+    this.editar(event.option.id);
+    this.departamentos_busqueda.splice(0,this.departamentos_busqueda.length);
+    this.myControl.reset('');
   }
 
-  busqueda(){
-    this.mostrarDepartamentos();
+  busqueda(value : string){
+    if(value.length > 3){
+      this.autocomplete(value);
+    }
   }
 
   limpiarCampos(){
