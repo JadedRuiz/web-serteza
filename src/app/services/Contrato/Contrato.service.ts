@@ -81,4 +81,14 @@ export class ContratoService {
     }));
   }
 
+  aplicarContratacion(id_movimiento : any, usuario_creacion : any){
+    let url = SERVER_API+"contratacion/aplicarContratacion/"+id_movimiento+"/"+usuario_creacion;
+    return this.http.get(url)
+    .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        return throwError(err);
+      }));
+  }
 }
