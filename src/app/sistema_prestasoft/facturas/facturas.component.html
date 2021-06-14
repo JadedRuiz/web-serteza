@@ -27,7 +27,6 @@
                 </div>
                 
                 <div class="col-lg-8 col-md-8 col-sm-10 mb-2" *ngIf="dia">
-                    <div class="buscador">
                         <mat-form-field class="w-100">
                             <mat-label>Buscar Cliente / Proveedor</mat-label>
                             <input #input
@@ -39,26 +38,26 @@
                                    [formControl]="myControl"
                                    [matAutocomplete]="auto">
                             <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getFacturas($event)'>
-                              <mat-option *ngFor="let option of filteredOptions | async" [value]="option.nombrecomercial">
-                                  <input [(ngModel)] = "id_provcliente" type="hidden" [value]="option.id_provcliente">
+                              <mat-option *ngFor="let option of filteredOptions | async"  [value]="option">
                                 {{option.nombrecomercial}}
                               </mat-option>
                             </mat-autocomplete>
                           </mat-form-field>
-                    </div>
                 </div>
-                <div class="col-lg-8 col-md-2 col-sm-2 mb-2" *ngIf="periodo">
+                <div class="col-lg-8 col-md-2 col-sm-10 mb-2" *ngIf="periodo">
                     <mat-form-field class="w-100">
                         <mat-label>Buscar por UUID</mat-label>
-                        <input type="text"
+                        <input #inputUUID
+                                type="text"
                                placeholder="Buscar por UUID..."
                                aria-label="Buscar por UUID"
                                matInput
-                               [formControl]="myControl"
+                               (keyup)="busqueda( inputUUID.value)"
+                               [formControl]="myControlUUID"
                                [matAutocomplete]="auto">
                         <mat-autocomplete #auto="matAutocomplete">
-                          <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                            {{option}}
+                          <mat-option *ngFor="let option of opcionesFiltrado | async" [value]="option">
+                            {{option.nombrecomercial}}
                           </mat-option>
                         </mat-autocomplete>
                       </mat-form-field>
@@ -87,7 +86,7 @@
                             <td colspan="1" style="vertical-align: middle;">{{obj.folio}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{obj.tipo_documento}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{obj.fecha}}</td>
-                            <td colspan="1" style="vertical-align: middle;">{{obj.total| currency: 'MXN'}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{obj.moneda}} {{obj.total| currency: 'USD'}}</td>
                             <td colspan="1" style="width: 20%;">
                                 <a title="Editar"  style="cursor: pointer;" class="btn btn-success btn-sm"><img src="./assets/iconos/reporte.svg" style="width: 14px;"></a>
                                 <a title="Editar"  style="cursor: pointer;" class="btn btn-info btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>

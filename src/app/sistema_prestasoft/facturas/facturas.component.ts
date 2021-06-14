@@ -12,10 +12,13 @@ import Swal from 'sweetalert2';
 })
 export class FacturasComponent implements OnInit {
   myControl = new FormControl();
+  myControlUUID = new FormControl();
   clienteProveedorID = 0;
   options: any[] = [];
   miEmpresa = window.sessionStorage["empresa"];
   filteredOptions: Observable<any[]> | undefined;
+  opcionesFiltrado: Observable<any[]> | undefined;
+
   periodoDia = false;
   dia = true;
   public taken = 5; //Registros por default
@@ -55,6 +58,12 @@ export class FacturasComponent implements OnInit {
         startWith(''),
         map(value => this._filter(value))
       );
+
+      this.opcionesFiltrado = this.myControlUUID.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value))
+      );
   }
   cambioFechas(evt: any){
     var target = evt.target.value;
@@ -68,22 +77,26 @@ export class FacturasComponent implements OnInit {
   }
   private _filter(value: string): string[] {
     if(value.length > 3){
+      console.log(value);
       const filterValue = value.toLowerCase();
       return this.options.filter(option => option.nombrecomercial.toLowerCase().includes(filterValue));
     }
     return [];
   }
   getFacturas(value: any){
-    this.clienteProveedorID = value;
-    this.miObjeto.id_provcliente = this.id_provcliente;
-    console.log(this.id_provcliente);
+    console.log(value);
+    this.clienteProveedorID = value.option.value["id_provcliente"];
+    this.miObjeto.id_provcliente = this.clienteProveedorID;
+    this.myControl.patchValue(value.option.value["nombrecomercial"]);
+    this.getListadoFacturas();
+  }
+  getListadoFacturas(){
+
     this.contabilidadService.getFacturas(this.miObjeto)
     .subscribe( (object : any) => {
       if(object.ok){
         console.log(object);
-        console.log(this.id_provcliente);
         this.total_registros = object.totales;
-        console.log(this.total_registros);
         if(this.total_registros > this.taken){
           this.mostrar_pagination = true;
           this.paginar();
@@ -151,11 +164,14 @@ export class FacturasComponent implements OnInit {
       }
     }
   }
+
   irPagina(pagina : any){
     console.log(pagina);
+    let miIndex = ((pagina + 1) * 5) - 5;
+    console.log(miIndex);
     this.pagina_actual = pagina;
-    this.miObjeto.index = pagina + 6;
-    this.getFacturas(this.objFactura);
+    this.miObjeto.index = miIndex;
+    this.getListadoFacturas();
   }
   busqueda(event: string){
     if(event.length > 3){
