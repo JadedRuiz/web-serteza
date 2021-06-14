@@ -10,7 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SistemaReclutamientoRoutingModule } from './sistema-reclutamiento-routing.module';
 import { ProcedimientoContratacionComponent } from './procedimiento_contratacion/procedimiento_contratacion.component';
-import { WebcamModule } from 'ngx-webcam';
+// import { WebcamModule } from 'ngx-webcam';
 import { ProcedimientoBajaComponent } from './procedimiento_baja/procedimiento_baja.component';
 import { ProcedimientoModificacionComponent } from './procedimiento_modificacion/procedimiento_modificacion.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -19,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import { MatNativeDateModule } from '@angular/material/core'; 
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import { CompartidoModuleGeneral } from 'src/app/compartido/compartido.module';
 
 @NgModule({
   declarations: [
@@ -38,13 +39,14 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    WebcamModule,
+    // WebcamModule,
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    CompartidoModuleGeneral
   ]
 })
 export class SistemaReclutamientoModule { }

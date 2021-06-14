@@ -32,7 +32,7 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    NoopAnimationsModule,
+    NoopAnimationsModule
     
     
   ],
