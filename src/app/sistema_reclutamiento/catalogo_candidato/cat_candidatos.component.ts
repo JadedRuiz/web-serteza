@@ -1,10 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild, Output, EventEmitter} from '@angular/core';
-import { NgForm } from '@angular/forms';
 import swal from'sweetalert2';
 import { LocalidadService } from 'src/app/services/localidad/localidad.service';
 import { COLOR } from 'src/config/config';
 import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Candidato } from 'src/app/models/Candidato';
 import { Direccion } from 'src/app/models/Direccion';
 import { Fotografia } from 'src/app/models/Fotografia';
@@ -12,8 +10,11 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import * as jQuery from 'jquery';
-import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
-import { Observable, Subject } from 'rxjs';
+// import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
+// import { Observable, Subject } from 'rxjs';
+import { FormControl} from '@angular/forms';
+import { CameraComponent } from 'src/app/compartido/camera/camera.component';
+import { Console } from 'console';
 
 @Component({
   selector: 'app-candidatos-original',
@@ -39,13 +40,15 @@ export class CatalogoCandidatosComponent implements OnInit {
   public activo = true;
   public foto_user : any;
   public docB64 = "";
-  @Output() getPicture = new EventEmitter<WebcamImage>();
-  showWebcam = true;
-  isCameraExist = true;
-  errors: WebcamInitError[] = [];
-  // webcam snapshot trigger
-  private trigger: Subject<void> = new Subject<void>();
-  private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
+  // @Output() getPicture = new EventEmitter<WebcamImage>();
+  texto = "Mensaje desde padre";
+  @ViewChild(CameraComponent) camera = CameraComponent;
+  // showWebcam = true;
+  // isCameraExist = true;
+  // errors: WebcamInitError[] = [];
+  // // webcam snapshot trigger
+  // private trigger: Subject<void> = new Subject<void>();
+  // private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
   //Filtros
   public taken = 5; //Registros por default
   public status = -1; //Status default
@@ -61,6 +64,9 @@ export class CatalogoCandidatosComponent implements OnInit {
   public next = false;
   public previous = false;
   public band_persiana = true;
+  //Autocomplete
+  myControl = new FormControl();
+  candidatos_busqueda : any;
 
   colonias = [
     "Primero ingresa el Codigo Postal"
@@ -81,12 +87,11 @@ export class CatalogoCandidatosComponent implements OnInit {
 
   ngOnInit(): void {
     this.mostrarCandidatos();
-    WebcamUtil.getAvailableVideoInputs()
-    .then((mediaDevices: MediaDeviceInfo[]) => {
-      this.isCameraExist = mediaDevices && mediaDevices.length > 0;
-    });
+    // WebcamUtil.getAvailableVideoInputs()
+    // .then((mediaDevices: MediaDeviceInfo[]) => {
+    //   this.isCameraExist = mediaDevices && mediaDevices.length > 0;
+    // });
   }
-
   mostrarCandidatos(){
     let json = {
       palabra : this.palabra.toUpperCase(),
@@ -126,6 +131,21 @@ export class CatalogoCandidatosComponent implements OnInit {
         }
     });
   }
+
+  autocomplete(palabra : string){
+    this.candidatos_busqueda = [];
+    if(palabra.length > 3){
+      this.candidato_service.autoCompleteCandidato({"nombre_candidato":palabra,"id_cliente":this.id_cliente})
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.candidatos_busqueda = object.data;
+        }else{
+          this.candidatos_busqueda = [];
+        }
+      })
+    }
+  }
+
   altaCandidato(){
     let band = true;
     if(this.candidato.apellido_paterno == "" || this.candidato.apellido_materno == "" || this.candidato.nombre == ""){
@@ -481,17 +501,18 @@ export class CatalogoCandidatosComponent implements OnInit {
     this.mostrarCandidatos();
   }
 
-  filtroStatus(){
-    this.pagina_actual = 0;
-    this.limite_inferior = 0;
-    this.mostrarCandidatos();
+  getCandidato(event : any) {
+    this.editar(event.option.id);
+    this.candidatos_busqueda.splice(0,this.candidatos_busqueda.length);
+    this.myControl.reset('');
   }
 
-  busqueda(){
-    this.pagina_actual = 0;
-    this.limite_inferior = 0;
-    this.mostrarCandidatos();
+  busqueda(value : string){
+    if(value.length > 3){
+      this.autocomplete(value);
+    }
   }
+
   modificarMunicipio(){
     let colonia = this.candidato.direccion.colonia;
     this.cp_service.getDirrecion(this.candidato.direccion.codigo_postal)
@@ -517,47 +538,48 @@ export class CatalogoCandidatosComponent implements OnInit {
 
   openModalCamera(){
     this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
-    this.showWebcam = true;
+    // this.showWebcam = true;
   }
 
   cerrarModalCamera(){
     this.modal_camera.close();
+    console.log(this.foto_user);
   }
 
-  takeSnapshot(): void {
-    let foto = this.trigger.next();
-  }
+  // takeSnapshot(): void {
+  //   let foto = this.trigger.next();
+  // }
 
-  onOffWebCame() {
-    this.showWebcam = !this.showWebcam;
-  }
+  // onOffWebCame() {
+  //   this.showWebcam = !this.showWebcam;
+  // }
 
-  handleInitError(error: WebcamInitError) {
-    this.errors.push(error);
-  }
+  // handleInitError(error: WebcamInitError) {
+  //   this.errors.push(error);
+  // }
 
-  changeWebCame(directionOrDeviceId: boolean | string) {
-    this.nextWebcam.next(directionOrDeviceId);
-  }
+  // changeWebCame(directionOrDeviceId: boolean | string) {
+  //   this.nextWebcam.next(directionOrDeviceId);
+  // }
 
-  handleImage(webcamImage: WebcamImage) {
-    this.getPicture.emit(webcamImage);
-    this.showWebcam = false;
-    this.foto_user = webcamImage.imageAsDataUrl;
-    let docB64 = this.foto_user.split(",");
-    this.fotografia.docB64 = docB64[1];
-    this.fotografia.extension = "jpeg";
-    this.fotografia.nombre = "foto_user";
-    this.cerrarModalCamera();
-    // console.log(webcamImage.imageAsDataUrl)
-  }
+  // handleImage(webcamImage: WebcamImage) {
+  //   this.getPicture.emit(webcamImage);
+  //   this.showWebcam = false;
+  //   this.foto_user = webcamImage.imageAsDataUrl;
+  //   let docB64 = this.foto_user.split(",");
+  //   this.fotografia.docB64 = docB64[1];
+  //   this.fotografia.extension = "jpeg";
+  //   this.fotografia.nombre = "foto_user";
+  //   this.cerrarModalCamera();
+  //   // console.log(webcamImage.imageAsDataUrl)
+  // }
 
-  get triggerObservable(): Observable<void> {
-    return this.trigger.asObservable();
-  }
+  // get triggerObservable(): Observable<void> {
+  //   return this.trigger.asObservable();
+  // }
 
-  get nextWebcamObservable(): Observable<boolean | string> {
-    return this.nextWebcam.asObservable();
-  }
+  // get nextWebcamObservable(): Observable<boolean | string> {
+  //   return this.nextWebcam.asObservable();
+  // }
 }
 

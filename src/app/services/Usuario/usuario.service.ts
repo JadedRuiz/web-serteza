@@ -98,4 +98,34 @@ export class UsuarioService {
       return throwError(err);
     }));
   }
+  autoCompleteUsuario(json : any){
+    let url = SERVER_API+"usuario/autoCompleteUsuario";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+  autoCompletePorIdEmpresa(json : any){
+    let url = SERVER_API+"usuario/autoCompletePorIdEmpresa";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+  tieneSistema(json : any){
+    let url = SERVER_API+"usuario/tieneSistema";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
 }

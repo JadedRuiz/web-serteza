@@ -9,6 +9,7 @@ import { Fotografia } from 'src/app/models/Fotografia';
 import { DomSanitizer } from '@angular/platform-browser';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import { Observable, Subject } from 'rxjs';
+import { FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-catalogo-usuario',
@@ -28,11 +29,8 @@ export class CatalogoUsuarioComponent implements OnInit {
   public sistemas_seleccionados : any;
   public usuario_creacion = window.sessionStorage.getItem("user");
   public modal : any;
-  public modal_camera : any;
-  public fotografia = new Fotografia(0,"","","");
-  public docB64 = "";
+  public texto_modal = "";
   @ViewChild('content', {static: false}) contenidoDelModal : any;
-  @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
   public activo = true;
   public empresa_seleccionada = window.sessionStorage.getItem("empresa");
   //Filtros
@@ -50,13 +48,20 @@ export class CatalogoUsuarioComponent implements OnInit {
   public next = false;
   public previous = false;
   //Camera
+  @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
   @Output() getPicture = new EventEmitter<WebcamImage>();
   showWebcam = true;
   isCameraExist = true;
   errors: WebcamInitError[] = [];
+  public modal_camera : any;
+  public fotografia = new Fotografia(0,"","","");
+  public docB64 = "";
   // webcam snapshot trigger
   private trigger: Subject<void> = new Subject<void>();
   private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
+  //Autocomplete
+  myControl = new FormControl();
+  usuarios_busqueda : any;
 
   constructor(
     private usuario_service : UsuarioService,
@@ -116,6 +121,20 @@ export class CatalogoUsuarioComponent implements OnInit {
     });
   }
 
+  autocomplete(palabra : string){
+    this.usuarios_busqueda = [];
+    if(palabra.length > 3){
+      this.usuario_service.autoCompletePorIdEmpresa({"nombre_usuario":palabra,"id_empresa" : this.empresa_seleccionada})
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.usuarios_busqueda = object.data;
+        }else{
+          this.usuarios_busqueda = [];
+        }
+      })
+    }
+  }
+
   altaUsuario(){
     if(this.usuario.nombre == "" || this.usuario.usuario == "" || this.usuario.password == ""){
       Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
@@ -151,6 +170,7 @@ export class CatalogoUsuarioComponent implements OnInit {
       }
     }
   }
+
   modificarUsuario(){
     if(this.usuario.nombre == "" || this.usuario.usuario == ""){
       Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
@@ -185,6 +205,7 @@ export class CatalogoUsuarioComponent implements OnInit {
     }
   }
   guardar(){
+    this.texto_modal = "Nuevo usuario";
     this.openModal();
     jQuery("#editar").hide();
     jQuery("#guardar").show();
@@ -193,6 +214,7 @@ export class CatalogoUsuarioComponent implements OnInit {
     this.usuario_service.obtenerUsuarioPorId(folio)
     .subscribe( (object : any) => {
       if(object.ok){
+        this.texto_modal = "Editar usuario";
         this.openModal();
         //Se llena la informacion en el modal
         this.usuario.id_usuario = parseInt(object.data[0].id_usuario);
@@ -332,16 +354,16 @@ export class CatalogoUsuarioComponent implements OnInit {
     this.mostrarUsuarios();
   }
 
-  filtroStatus(){
-    this.pagina_actual = 0;
-    this.limite_inferior = 0;
-    this.mostrarUsuarios();
+  getUsuario(event : any) {
+    this.editar(event.option.id);
+    this.usuarios_busqueda.splice(0,this.usuarios_busqueda.length);
+    this.myControl.reset('');
   }
 
-  busqueda(){
-    this.pagina_actual = 0;
-    this.limite_inferior = 0;
-    this.mostrarUsuarios();
+  busqueda(value : string){
+    if(value.length > 3){
+      this.autocomplete(value);
+    }
   }
 
   mostrarPersiana(){

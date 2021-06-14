@@ -7,23 +7,39 @@
     <div class="col">
       <div class="card border-info">
         <div class="card-header">
-            USUARIOS
+            CATÁLOGO DE USUARIOS
          </div>
         <div class="card-body">
             <div class="row mb-2">
                 <div class="col-lg-4 col-sm-12 mb-2">
                     <div class="buscador">
-                        <input [(ngModel)]="palabra" type="search" placeholder="Buscar">
-                        <a title="Buscar" (click)="busqueda()"><i class="fas fa-search"></i></a>
+                        <mat-form-field class="w-100">
+                            <mat-label>Buscar usuario</mat-label>
+                            <input #input
+                                   type="text"
+                                   placeholder="Buscar..."
+                                   (keyup)="busqueda(input.value)"
+                                   aria-label="Buscar usuario"
+                                   matInput
+                                   [formControl]="myControl"
+                                   [matAutocomplete]="auto">
+                            <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getUsuario($event)'>
+                                <mat-option *ngFor="let option of usuarios_busqueda" [value]="option.nombre" [id]="option.id_usuario+''">
+                                    {{option.nombre}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
                     </div>
                 </div>
                 <div class="col-lg-4 col-sm-12">
-                    <p style="display: inline-block;" class="my-0 py-0 mr-2">Filtro :</p> 
-                    <select [(ngModel)]="status" name="status" id="status" class="form-control" style="display: inline-block;width: 150px;" (change)="filtroStatus()">
-                        <option value="2">Todos</option>
-                        <option value="1">Activos</option>
-                        <option value="0">Inactivos</option>
-                    </select>
+                    <mat-form-field class="w-100">
+                        <mat-label>Status</mat-label>
+                        <mat-select [(ngModel)]="status" (selectionChange)="mostrarUsuarios()">
+                            <mat-option [value]="2">Todos</mat-option>
+                            <mat-option [value]="1">Activos</mat-option>
+                            <mat-option [value]="0">Inactivos</mat-option>
+                        </mat-select>
+                    </mat-form-field>
                 </div>
                 <div class="col-lg-4 col-sm-12" style="text-align: end;">
                     <a class="btn btn-info" (click)="guardar()" title="Nuevo usuario"><img src="./assets/iconos/add-user.svg" style="width: 24px;"></a>
@@ -36,7 +52,7 @@
                             <th scope="col">Folio</th>
                             <th scope="col">Nombre</th>
                             <th scope="col">Status</th>
-                            <th scope="col">Acciones</th>
+                            <th scope="col" class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody *ngIf="band; else pintaVacio" class="">
@@ -44,8 +60,8 @@
                             <td colspan="1" style="vertical-align: middle;">{{usuario.folio}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{usuario.nombre}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{usuario.status}}</td>
-                            <td colspan="1" style="width: 20%;">
-                                <a title="Editar" (click)="editar(usuario.folio)" style="cursor: pointer;" class="btn btn-primary"><img src="./assets/iconos/edit.svg" style="width: 24px;"></a>
+                            <td colspan="1" style="width: 20%;" class="text-center">
+                                <a title="Editar" (click)="editar(usuario.folio)" style="cursor: pointer;" class="btn btn-info btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
                             </td>
                         </tr>
                     </tbody>
@@ -60,8 +76,8 @@
                 </table>
                 <div class="filtros container mt-3">
                     <div class="row">
-                        <div class="col-lg-4 col-sm-12"></div>
-                        <div class="col-lg-4 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
+                        <div class="col-lg-5 col-sm-12"></div>
+                        <div class="col-lg-5 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
                             <nav *ngIf="mostrar_pagination" aria-label="Page navigation example">
                                 <ul class="pagination">
                                   <li class="page-item" *ngIf="previous">
@@ -80,17 +96,19 @@
                                 </ul>
                               </nav>
                         </div>
-                        <div class="col-lg-4 col-sm-12" style="text-align: end;">
-                            <p class="mr-2" style="display: inline-block;">Usuarios :</p>
-                            <select [(ngModel)]="taken" (change)="mostrarUsuarios()" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
-                                <option value="5">5</option>
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="30">30</option>
-                                <option value="40">40</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
+                        <div class="col-lg-2 col-sm-12" style="text-align: end;">
+                            <mat-form-field class="w-100">
+                                <mat-label>No. resultados</mat-label>
+                                <mat-select [(ngModel)]="taken" (selectionChange)="mostrarUsuarios()">
+                                    <mat-option [value]="5">5</mat-option>
+                                    <mat-option [value]="10">10</mat-option>
+                                    <mat-option [value]="20">20</mat-option>
+                                    <mat-option [value]="30">30</mat-option>
+                                    <mat-option [value]="40">40</mat-option>
+                                    <mat-option [value]="50">50</mat-option>
+                                    <mat-option [value]="100">100</mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                     </div>
                 </div>
@@ -102,7 +120,7 @@
 </div>
 <ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
     <div class="modal-header">
-        <h2 class="modal-title" id="tituloModal">Nuevo usuario</h2>
+        <h2 class="modal-title" id="tituloModal">{{texto_modal}}</h2>
     </div>
     <div class="modal-body">
         <form>
@@ -182,7 +200,7 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
         <button type="button" class="btn btn-success" (click)="altaUsuario()" id="guardar">Guardar</button>
-        <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button>
+        <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Guardar</button>
     </div>
 </ng-template>
 <ng-template #modal_camera let-c="close" let-d="dismiss">

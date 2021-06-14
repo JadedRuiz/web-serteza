@@ -59,4 +59,15 @@ export class DepartamentoService {
       }));
   }
 
+  autoCompleteDepartamento(json : any){
+    let url = SERVER_API+"departamento/autoCompleteDepartamento";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      return throwError(err);
+    }));
+  }
+
 }

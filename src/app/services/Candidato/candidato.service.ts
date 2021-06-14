@@ -65,4 +65,14 @@ export class CandidatoService {
     let url = SERVER_API+"candidato/eliminarCandidato/"+id;
     return this.http.get(url);
   }
+  autoCompleteCandidato(json : any){
+    let url = SERVER_API+"candidato/autoCompleteCandidato";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
+        return throwError(err);
+      }));
+  }
 }

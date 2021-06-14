@@ -6,8 +6,9 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <!-- Brand -->
-      <a class="navbar-brand pt-0">
+      <a class="navbar-brand pt-0 text-center">
         <img src="{{foto_empresa}}" class="navbar-brand-img" alt="...">
+        <h4>SISTEMA ADMINISTRATIVO</h4>
       </a>
       <!-- User -->
       <ul class="nav align-items-center d-md-none">
@@ -27,15 +28,9 @@
         <div class="navbar-collapse-header d-md-none">
           <div class="row">
             <div class="col-6 collapse-brand">
-              <a  routerLinkActive="active" [routerLink]="['/dashboard']">
-                <img src="./assets/img/defaults/imagen-no-disponible.png">
+              <a  routerLinkActive="active" [routerLink]="['dashboard']">
+                <img src="{{foto_empresa}}">
               </a>
-            </div>
-            <div class="col-6 collapse-close">
-              <button type="button" class="navbar-toggler" (click)="isCollapsed=!isCollapsed">
-                <span></span>
-                <span></span>
-              </button>
             </div>
           </div>
         </div>

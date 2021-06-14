@@ -9,6 +9,8 @@ import { PuestoService } from 'src/app/services/Puesto/Puesto.service';
 import Swal from 'sweetalert2';
 import { ContratoService } from 'src/app/services/Contrato/Contrato.service';
 import { SERVER_API } from 'src/config/config';
+import { FormControl, FormGroup } from '@angular/forms';
+import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 
 
 @Component({
@@ -19,7 +21,7 @@ import { SERVER_API } from 'src/config/config';
 export class ProcedimientoContratacionComponent implements OnInit {
   
   public color = COLOR;
-  public status = 2;
+  public status = "-1";
   public palabra = "";
   public band = false;
   public bandera = [true, true, true];
@@ -32,6 +34,8 @@ export class ProcedimientoContratacionComponent implements OnInit {
   public solicitud_contratos = new Array<Contrato>();
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   public tipo_movimiento = 0;
+  public btn_delete = true;
+  public aplicar = false;
   //Paginacion
   public total_registros = 0;
   public mostrar_pagination = false;
@@ -53,13 +57,21 @@ export class ProcedimientoContratacionComponent implements OnInit {
   public sueldos = ["","",""];
   //Nomina
   public nominas : any;
+  //Autocomplete
+  myControl = new FormControl();
+  candidatos_busqueda : any;
+  //Fechas
+  public fecha_inicial = "";
+  public fecha_final = "";
+
   constructor(
     private modalService: NgbModal,
     private candidato_service: CandidatoService,
     private empresa_service : EmpresaService,
     private departamento_service : DepartamentoService,
     private puesto_service : PuestoService,
-    private contrato_service : ContratoService
+    private contrato_service : ContratoService,
+    private usuario_service : UsuarioService
   ) {
     this.modal = NgbModalRef;
    }
@@ -68,9 +80,33 @@ export class ProcedimientoContratacionComponent implements OnInit {
     this.mostrarMovimientos();
   }
 
+  autocomplete(palabra : string){
+    this.candidatos_busqueda = [];
+    if(palabra.length > 3){
+      this.candidato_service.autoCompleteCandidato({"nombre_candidato":palabra,"id_cliente":this.id_cliente})
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.candidatos_busqueda = object.data;
+        }else{
+          this.candidatos_busqueda = [];
+        }
+      })
+    }
+  }
+
   mostrarMovimientos(){
+    this.usuario_service.tieneSistema({"usuario":this.usuario_creacion,"id_sistema" : "3"})
+    .subscribe( (object : any) => {
+      this.aplicar = true;
+      if(object.ok){
+        this.aplicar = false;
+      }
+    });
     let json = {
-      id_cliente : this.id_cliente
+      id_cliente : this.id_cliente,
+      fecha_inicio : this.fecha_inicial,
+      fecha_final : this.fecha_final,
+      id_status : this.status
     };
     this.contratos = [];
     this.contrato_service.obtenerMoviemientosContratacion(json)
@@ -78,10 +114,17 @@ export class ProcedimientoContratacionComponent implements OnInit {
       if(object.ok){
         this.band = true;
         for(let i=0;i<object.data.length;i++){
+          let band = false;
+          let status = object.data[i].status;
+          if(object.data[i].id_status == 5){
+            status = "En solicitud";
+            band = true;
+          }
           this.contratos.push({
-            'folio' : object.data[i].id_contratacion,
-            'fecha' : object.data[i].fecha_contratacion,
-            'status' : "Solicitud"
+            'folio' : object.data[i].id_movimiento,
+            'fecha' : object.data[i].fecha_movimiento,
+            'status' : status,
+            "band" : band
           })
         }
       }else{
@@ -277,6 +320,10 @@ export class ProcedimientoContratacionComponent implements OnInit {
           this.contrato_service.eliminarDetalleContratacion(json)
           .subscribe( (object : any)=>{
             if(object.ok){
+              if(object.data == "true"){
+                this.cerrarModal();
+                this.mostrarMovimientos();
+              }
               Swal.fire("Buen trabajo",object.data,"success");
             }else{
               Swal.fire("Ha ocurrido un error",object.message,"error");
@@ -287,6 +334,31 @@ export class ProcedimientoContratacionComponent implements OnInit {
     });
   }
 
+  aplicarContrato(folio : any){
+    Swal.fire({
+      title: '¿Estas seguro que deseas aplicar la solicitud?',
+      text: "",
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.contrato_service.aplicarContratacion(folio,this.usuario_creacion)
+        .subscribe( (object : any) => {
+          if(object.ok){
+            this.mostrarMovimientos();
+            Swal.fire("Buen trabajo",object.data,"success");
+          }else{
+            Swal.fire("Ha ocurrido un error",object.message,"error");
+          }
+        });
+      }
+    });
+    
+  }
   crearMov(){
     if(this.solicitud_contratos.length > 0){
       let json = {
@@ -339,6 +411,10 @@ export class ProcedimientoContratacionComponent implements OnInit {
             object.data[i].sueldo,
             object.data[i].observacion
           );
+          this.btn_delete = true;
+          if(object.data[i].id_status != "5"){
+              this.btn_delete = false;
+          }
           this.solicitud_contratos.push(new_contrato);
         }
         this.openModal();
@@ -389,12 +465,16 @@ export class ProcedimientoContratacionComponent implements OnInit {
     this.openModal();
   }
 
-  busqueda() {
-
+  getMovimiento(event : any) {
+    this.editar(event.option.id);
+    this.candidatos_busqueda.splice(0,this.candidatos_busqueda.length);
+    this.myControl.reset('');
   }
 
-  filtroStatus() { 
-    
+  busqueda(value : string){
+    if(value.length > 3){
+      this.autocomplete(value);
+    }
   }
 
   resetearModal(){
@@ -460,6 +540,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
     if(this.tipo_movimiento == 0){
       jQuery("#editar").hide();
       jQuery("#guardar").show();
+      this.btn_delete = true;
     }
   }
 

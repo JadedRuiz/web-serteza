@@ -21,6 +21,7 @@ export class SidebarComponent implements OnInit {
   public clientes : any;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   public modal: any;
+  public url_foto : any;
 
   public menuItems = Array();
   public subMenuItems = Array();
@@ -36,6 +37,7 @@ export class SidebarComponent implements OnInit {
     private modalService: NgbModal
     ) {
       this.foto_empresa = "./assets/img/defaults/imagen-no-disponible.png";
+      this.url_foto = './assets/iconos/perfil.svg';
     }
 
   ngOnInit() {
@@ -45,6 +47,7 @@ export class SidebarComponent implements OnInit {
     this.router.events.subscribe((event) => {
       this.isCollapsed = true;
    });
+   this.url_foto = window.sessionStorage["foto"];
   }
   pintarMenu(){
     this.menuItems = [
