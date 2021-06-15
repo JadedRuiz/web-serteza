@@ -1,10 +1,6 @@
 const API_CP = "https://api-sepomex.hckdrk.mx/query/";
-<<<<<<< HEAD
-// const API_SERTEZA = "http://localhost:8888/api_serteza/public/api/";
-=======
-// const API_SERTEZA = "http://localhost/api_serteza/public/api/";
->>>>>>> 8803cc2f5a45aa5c9e3e995c8919235d1111fbd6
-const API_SERTEZA = "https://serp-api.serteza.com/public/api/";
+const API_SERTEZA = "http://localhost/api_serteza/public/api/";
+// const API_SERTEZA = "https://serp-api.serteza.com/public/api/";
 const CLASS_COLOR = "bg-gradient-info";
 const token_cp  = "c9a268f4-1791-4926-9177-e23f62de2eb7";
 
