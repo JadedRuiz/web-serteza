@@ -10,13 +10,8 @@
 
 # dependencies
 /node_modules
-<<<<<<< HEAD
-/package-lock.json
-/package.json
-=======
 /config
 
->>>>>>> 86a7e89e2e70037d4fe447736d498876a6a495d3
 # profiling files
 chrome-profiler-events*.json
 speed-measure-plugin*.json

@@ -45,6 +45,15 @@ export class ContabilidadService {
       Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
-    
+  }
+  getUuid(obj: any){
+    let url = SERVER_API + "contabilidad/get-uuid";
+    return this.http.post( url, obj )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
   }
 }

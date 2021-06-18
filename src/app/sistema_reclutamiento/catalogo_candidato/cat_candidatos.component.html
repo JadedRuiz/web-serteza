@@ -371,6 +371,6 @@
   </div>
   <div class="modal-footer">
       <button type="button" class="btn btn-warning" (click)="cerrarModalCamera()">Cerrar</button>
-      <button *ngIf="!prueba.isCameraExist" type="button" class="btn btn-success" (click)="foto_user = prueba.takeSnapshot(); cerrarModalCamera()">Tomar foto</button>
+      <button *ngIf="prueba.isCameraExist" type="button" class="btn btn-success" (click)="foto_user = prueba.takeSnapshot(); cerrarModalCamera()">Tomar foto</button>
   </div>
 </ng-template>
