@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { COLOR } from 'src/config/config';
 
 @Component({
@@ -11,6 +13,13 @@ export class ProcedimientoModificacionComponent implements OnInit {
   public color = COLOR;
   public status = 2;
   public palabra = "";
+  public fecha_inicial = "";
+  public fecha_final = "";
+  @ViewChild('content', {static: false}) contenidoDelModal : any;
+  public modal : any;
+  //Autocomplete
+  myControl = new FormControl();
+  candidatos_busqueda : any;
   //Paginacion
   public total_registros = 0;
   public mostrar_pagination = false;
@@ -22,17 +31,15 @@ export class ProcedimientoModificacionComponent implements OnInit {
   public next = false;
   public previous = false;
   public taken = 5;
-  constructor() { }
+  constructor(
+    private modalService: NgbModal
+    ) { }
 
   ngOnInit(): void {
   }
 
-  busqueda() {
+  busqueda(event : any) {
 
-  }
-
-  filtroStatus() { 
-    
   }
 
   irPagina(pagina : any){
@@ -81,4 +88,11 @@ export class ProcedimientoModificacionComponent implements OnInit {
     }
   }
 
+  openModal() {
+    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+  }
+
+  cerrarModal(){
+    this.modal.close();
+  }
 }
