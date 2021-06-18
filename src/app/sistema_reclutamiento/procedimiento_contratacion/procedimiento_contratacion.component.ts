@@ -243,12 +243,17 @@ export class ProcedimientoContratacionComponent implements OnInit {
     .subscribe( (object : any) => {
       if(object.ok){
         for(let i=0;i<object.data.length;i++){
+          let band = true;
+          if(object.data[i].vacantes == "0"){
+            band = false;
+          }
           this.puestos.push({
             "id_puesto" : object.data[i].id_puesto,
             "puesto" : object.data[i].puesto,
             "sueldo_tipo_a" : object.data[i].sueldo_tipo_a,
             "sueldo_tipo_b" : object.data[i].sueldo_tipo_b,
             "sueldo_tipo_c" : object.data[i].sueldo_tipo_c,
+            "vacante" : band
           });
         }
       }else{
@@ -261,10 +266,16 @@ export class ProcedimientoContratacionComponent implements OnInit {
     this.bandera[2] = false;  
     let valor = this.contrato.puesto.split(" ")[1];
     let object = this.puestos.filter( (x : any) => x.id_puesto === parseInt(valor))[0];
-    this.contrato.puesto = object.puesto;
-    this.contrato.id_puesto = object.id_puesto;
-    this.contrato.sueldo = object.sueldo_tipo_c;
-    this.sueldos = [object.sueldo_tipo_a,object.sueldo_tipo_b,object.sueldo_tipo_c];
+    if(object.vacante){
+      this.contrato.puesto = object.puesto;
+      this.contrato.id_puesto = object.id_puesto;
+      this.contrato.sueldo = object.sueldo_tipo_c;
+      this.sueldos = [object.sueldo_tipo_a,object.sueldo_tipo_b,object.sueldo_tipo_c];
+    }else{
+      Swal.fire("Aviso","Este puesto ya no cuenta con vacantes","info");
+      this.contrato.puesto = "";
+    }
+    
   }
 
   agregarCandidato(){
