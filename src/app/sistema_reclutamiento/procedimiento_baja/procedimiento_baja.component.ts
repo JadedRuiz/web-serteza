@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
 import { COLOR } from 'src/config/config';
+import { FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-procedimiento-baja',
@@ -11,6 +14,15 @@ export class ProcedimientoBajaComponent implements OnInit {
   public color = COLOR;
   public status = 2;
   public palabra = "";
+  public fecha_inicial = "";
+  public fecha_final = "";
+  public bajas : any;
+  @ViewChild('content', {static: false}) contenidoDelModal : any;
+  public modal : any;
+  public candidatos : any;
+  public candidatos_seleccionados : any;
+  public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
+  myControl = new FormControl();
   //Paginacion
   public total_registros = 0;
   public mostrar_pagination = false;
@@ -22,18 +34,58 @@ export class ProcedimientoBajaComponent implements OnInit {
   public next = false;
   public previous = false;
   public taken = 5;
+  //
 
-  constructor() { }
+  constructor(
+    private modalService: NgbModal,
+    private candidato_service: CandidatoService) { 
+      this.candidatos_seleccionados = [];
+    }
 
   ngOnInit(): void {
+    this.mostrarBajas();
+  }
+  
+  mostrarBajas(){
+    this.bajas = [];
   }
 
-  busqueda() {
-
+  mostrarCandidatos(value : any){
+    this.candidatos = [];
+    if(value.length > 3){
+      let json = {
+        palabra : value,
+        taken : 5,
+        status : 1,
+        pagina : 0,
+        id_cliente : this.id_cliente  
+      };
+      this.candidato_service.obtenerCandidatos(json)
+      .subscribe( (object : any) => {
+        if(object.ok){
+          this.candidatos = object.data.registros;
+        }else{
+          this.candidatos = [];
+        }
+      });
+    }else{
+      this.candidatos = [];
+    }
   }
 
-  filtroStatus() { 
-    
+  getCandidato(event : any){
+    this.candidatos_seleccionados.push({
+      "id_candidato" : event.option.id,
+      "nombre" :  event.option.value,
+      "fecha_baja" : "",
+      "observacion" : ""
+    });
+    this.candidatos.splice(0,this.candidatos.length);
+    this.myControl.reset('');
+  }
+
+  crearBaja(){
+    console.log(this.candidatos_seleccionados);
   }
 
   irPagina(pagina : any){
@@ -80,5 +132,13 @@ export class ProcedimientoBajaComponent implements OnInit {
         }
       }
     }
+  }
+
+  openModal() {
+    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop'});
+  }
+
+  cerrarModal(){
+    this.modal.close();
   }
 }

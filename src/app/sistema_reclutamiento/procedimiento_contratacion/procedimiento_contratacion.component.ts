@@ -144,7 +144,6 @@ export class ProcedimientoContratacionComponent implements OnInit {
       this.contrato.candidato = object.nombre;
       this.contrato.id_candidato = object.folio; 
     }
-     
   }
 
   mostrarCandidatos(){
