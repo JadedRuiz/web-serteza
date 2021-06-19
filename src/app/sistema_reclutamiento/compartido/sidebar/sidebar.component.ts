@@ -59,9 +59,9 @@ export class SidebarComponent implements OnInit {
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
         submenu : [
-          {path: 'procedimiento_contratacion', title: 'Nueva contratación', icon: 'ni-folder-17 text-yellow'},
+          {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17 text-yellow'},
           {path: 'procedimiento_modificacion', title: 'Modificaciónes', icon: 'ni-curved-next text-yellow'},
-          {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove text-yellow'}
+          {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove text-yellow'},
         ]
       },
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: true, tipo : "collapse",

@@ -34,7 +34,6 @@ export class XmlUploadComponent implements OnInit {
   async save(event: any) {
     this.cargando = true;
     console.log(event);
-
     this.llenarData(event).then( respuesta => {
       console.log(respuesta);
       this.miObjeto = {
@@ -56,7 +55,7 @@ export class XmlUploadComponent implements OnInit {
         }
       }));
     });
-      console.log(this.miObjeto);
+    console.log(this.miObjeto);
     this.archivos = '';
   }
   llenarData( event: any){
@@ -140,6 +139,7 @@ export class XmlUploadComponent implements OnInit {
             retencion_iva: 11,
             retencion_isr:  22,
             tipo_cambio: tipo_cambio,
+            id_movfactura: 0,
             xml: xmlData
           });
         }
