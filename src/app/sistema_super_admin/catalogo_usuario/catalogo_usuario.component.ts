@@ -157,17 +157,7 @@ export class CatalogoUsuarioComponent implements OnInit {
           usuario_creacion : this.usuario_creacion,
           activo : active
         };
-        this.usuario_service.altaUsuario(json)
-        .subscribe( (object) =>{
-          if(object.ok){
-            this.limpiarCampos();
-            this.mostrarUsuarios();
-            Swal.fire("Buen trabajo","El usuario se ha dado de alta correctamente","success");
-            this.cerrarModal();
-          }else{
-            Swal.fire("Ha ocurrido un error",object.message,"error");
-          }
-        });
+        this.confirmar("Confirmación","¿Seguro que desea guardar la información?","info",json,1);
       }
     }
   }
@@ -193,15 +183,7 @@ export class CatalogoUsuarioComponent implements OnInit {
           activo : active,
           fotografia : this.fotografia
         };
-        this.usuario_service.modificarUsuario(json)
-        .subscribe( (object) =>{
-          if(object.ok){
-            this.mostrarUsuarios();
-            Swal.fire("Buen trabajo","El usuario se ha modificado correctamente","success");
-          }else{
-            Swal.fire("Ha ocurrido un error",object.message,"error");
-          }
-        });
+        this.confirmar("Confirmación","¿Seguro que desea editar la información?","info",json,2);
       }
     }
   }
@@ -404,6 +386,7 @@ export class CatalogoUsuarioComponent implements OnInit {
       }
     }
   }
+
   convertirImagenAB64(fileInput : any){
     return new Promise(function(resolve, reject) {
       let b64 = "";
@@ -452,4 +435,43 @@ export class CatalogoUsuarioComponent implements OnInit {
     return this.nextWebcam.asObservable();
   }
 
+  confirmar(title : any ,texto : any ,tipo_alert : any,json : any,tipo : number){
+    Swal.fire({
+      title: title,
+      text: texto,
+      icon: tipo_alert,
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if(tipo == 1){  //Guardar
+          this.usuario_service.altaUsuario(json)
+          .subscribe( (object) =>{
+            if(object.ok){
+              this.limpiarCampos();
+              this.mostrarUsuarios();
+              Swal.fire("Buen trabajo","El usuario se ha dado de alta correctamente","success");
+              this.cerrarModal();
+            }else{
+              Swal.fire("Ha ocurrido un error",object.message,"error");
+            }
+          });
+        }
+        if(tipo == 2){  //Editar
+          this.usuario_service.modificarUsuario(json)
+          .subscribe( (object) =>{
+            if(object.ok){
+              this.mostrarUsuarios();
+              Swal.fire("Buen trabajo","El usuario se ha modificado correctamente","success");
+            }else{
+              Swal.fire("Ha ocurrido un error",object.message,"error");
+            }
+          });
+        }
+      }
+    });
+  }
 }

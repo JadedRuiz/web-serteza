@@ -1,4 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
-
+.btn-yellow {
+    color: #212529;
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+.btn-gray {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

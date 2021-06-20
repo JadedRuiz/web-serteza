@@ -4,6 +4,7 @@ import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ClienteService } from 'src/app/services/Cliente/cliente.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import Swal from 'sweetalert2';
 
 declare interface RouteInfo {
   path: string;
@@ -110,14 +111,26 @@ export class SidebarComponent implements OnInit {
     this.mostrarLogo();
   }
   cerrarSesion(){
-    this.usuario.logout();
-    window.sessionStorage.removeItem("sistema");
-    window.sessionStorage.removeItem("empresa");
-    window.sessionStorage.removeItem("cliente");
-    window.sessionStorage.removeItem("nombre");
-    window.sessionStorage.removeItem("user");
-    window.sessionStorage.removeItem("foto_user");
-    this.router.navigateByUrl("login");
+    Swal.fire({
+      title: '¿Estas que deseas cerrar sesión?',
+      text: "",
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.usuario.logout();
+        window.sessionStorage.removeItem("sistema");
+        window.sessionStorage.removeItem("cliente");
+        window.sessionStorage.removeItem("nombre");
+        window.sessionStorage.removeItem("user");
+        window.sessionStorage.removeItem("foto_user");
+        this.router.navigateByUrl("login");
+      }
+    });
   }
   openModal() {
     this.modal = this.modalService.open(this.contenidoDelModal,{ centered : true, backdropClass : 'light-blue-backdrop'});

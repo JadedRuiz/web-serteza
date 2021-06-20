@@ -61,7 +61,7 @@
                             <td colspan="1" style="vertical-align: middle;">{{cliente.cliente}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{cliente.status}}</td>
                             <td colspan="1" style="width: 20%;" class="text-center">
-                                <a title="Editar" (click)="editar(cliente.folio)" style="cursor: pointer;" class="btn btn-info btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                                <a title="Editar" (click)="editar(cliente.folio)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
                             </td>
                         </tr>
                     </tbody>
@@ -237,7 +237,7 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
         <button type="button" class="btn btn-success" (click)="altaCliente()" id="guardar">Guardar</button>
-        <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button>
+        <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Guardar</button>
     </div>
 </ng-template>
   

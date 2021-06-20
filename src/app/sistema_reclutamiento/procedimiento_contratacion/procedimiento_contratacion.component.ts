@@ -376,16 +376,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
         usuario_creacion : this.usuario_creacion,
         detalle_contratacion : this.solicitud_contratos
       }
-      this.contrato_service.altaMovContratacion(json)
-      .subscribe( (object : any)=>{
-        if(object.ok){
-          this.cerrarModal();
-          this.mostrarMovimientos();
-          Swal.fire("Buen trabajo","El movimiento de contratacion se ha registrado con éxito","success");
-        }else{
-          Swal.fire("Ha ocurrido un errro",object.message,"error");
-        }
-      });
+      this.confirmar("Confirmación","¿Seguro que desea guardar la información?","info",json,1);
     }else{
       Swal.fire("Tenemos un problema","No se han agregado candidatos al movimiento","warning");
     }
@@ -556,5 +547,36 @@ export class ProcedimientoContratacionComponent implements OnInit {
 
   cerrarModal(){
     this.modal.close();
+  }
+
+  confirmar(title : any ,texto : any ,tipo_alert : any,json : any,tipo : number){
+    Swal.fire({
+      title: title,
+      text: texto,
+      icon: tipo_alert,
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if(tipo == 1){  //Guardar
+          this.contrato_service.altaMovContratacion(json)
+          .subscribe( (object : any)=>{
+            if(object.ok){
+              this.cerrarModal();
+              this.mostrarMovimientos();
+              Swal.fire("Buen trabajo","El movimiento de contratacion se ha registrado con éxito","success");
+            }else{
+              Swal.fire("Ha ocurrido un errro",object.message,"error");
+            }
+          });
+        }
+        if(tipo == 2){  //Editar
+          
+        }
+      }
+    });
   }
 }

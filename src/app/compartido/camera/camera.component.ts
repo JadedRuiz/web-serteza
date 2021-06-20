@@ -17,6 +17,7 @@ export class CameraComponent implements OnInit {
   private trigger: Subject<void> = new Subject<void>();
   private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
   public foto_user : any;
+  public docB64 = "";
 
   constructor() { 
     this.messageError = "Este dispositivo no cuenta con una camara disponible";
@@ -50,12 +51,7 @@ export class CameraComponent implements OnInit {
     this.getPicture.emit(webcamImage);
     // this.showWebcam = false;
     this.foto_user = webcamImage.imageAsDataUrl;
-    // let docB64 = this.foto_user.split(",");
-    // this.fotografia.docB64 = docB64[1];
-    // this.fotografia.extension = "jpeg";
-    // this.fotografia.nombre = "foto_user";
-    // this.cerrarModalCamera();
-    // console.log(webcamImage.imageAsDataUrl)
+    this.docB64 = this.foto_user.split(",")[1];
   }
 
   get triggerObservable(): Observable<void> {

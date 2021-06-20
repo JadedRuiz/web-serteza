@@ -162,7 +162,7 @@ export class CatalogoCandidatosComponent implements OnInit {
           Swal.fire({
             title: '¿Estas seguro de agregar una empresa sin ninguna dato de dirección?',
             text: "El empresa se registrará sin domicilio, pero puedes actulizar su información en cualquier momento",
-            icon: 'warning',
+            icon: 'info',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
@@ -181,7 +181,7 @@ export class CatalogoCandidatosComponent implements OnInit {
             Swal.fire({
               title: '¿Estas seguro de agregar al candidato sin ningun foto?',
               text: "El candidato se registrará sin foto, pero puedes actulizar su información en cualquier momento",
-              icon: 'warning',
+              icon: 'info',
               showCancelButton: true,
               confirmButtonColor: '#3085d6',
               cancelButtonColor: '#d33',
@@ -196,17 +196,7 @@ export class CatalogoCandidatosComponent implements OnInit {
             });
           }else{
             if(band){
-              this.candidato_service.altaCandidato(this.candidato)
-              .subscribe( (object) =>{
-                if(object.ok){
-                  this.limpiarCampos();
-                  this.mostrarCandidatos();
-                  Swal.fire("Buen trabajo","La empresa se ha dado de alta correctamente","success");
-                  this.cerrarModal();
-                }else{
-                  Swal.fire("Ha ocurrido un error",object.message,"error");
-                }
-              });
+              this.confirmar("Confirmación","¿Seguro que desea guardar la información?","info",1);
             }
           }
         }
@@ -311,15 +301,7 @@ export class CatalogoCandidatosComponent implements OnInit {
             });
           }else{
             if(band){
-              this.candidato_service.actualizarCandidato(this.candidato)
-              .subscribe( (object) =>{
-                if(object.ok){
-                  this.mostrarCandidatos();
-                  Swal.fire("Buen trabajo","La empresa se ha modificado correctamente","success");
-                }else{
-                  Swal.fire("Ha ocurrido un error",object.message,"error");
-                }
-              });
+              this.confirmar("Confirmación","¿Seguro que desea editar la información?","info",2);
             }
           }
         }
@@ -581,5 +563,44 @@ export class CatalogoCandidatosComponent implements OnInit {
   // get nextWebcamObservable(): Observable<boolean | string> {
   //   return this.nextWebcam.asObservable();
   // }
+  confirmar(title : any ,texto : any ,tipo_alert : any,tipo : number){
+    Swal.fire({
+      title: title,
+      text: texto,
+      icon: tipo_alert,
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if(tipo == 1){  //Guardar
+          this.candidato_service.altaCandidato(this.candidato)
+          .subscribe( (object) =>{
+            if(object.ok){
+              this.limpiarCampos();
+              this.mostrarCandidatos();
+              Swal.fire("Buen trabajo","La empresa se ha dado de alta correctamente","success");
+              this.cerrarModal();
+            }else{
+              Swal.fire("Ha ocurrido un error",object.message,"error");
+            }
+          });
+        }
+        if(tipo == 2){  //Editar
+          this.candidato_service.actualizarCandidato(this.candidato)
+          .subscribe( (object) =>{
+            if(object.ok){
+              this.mostrarCandidatos();
+              Swal.fire("Buen trabajo","La empresa se ha modificado correctamente","success");
+            }else{
+              Swal.fire("Ha ocurrido un error",object.message,"error");
+            }
+          });
+        }
+      }
+    });
+  }
 }
 
