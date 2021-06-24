@@ -56,4 +56,24 @@ export class ContabilidadService {
       return throwError(err);
     }));
   }
+
+
+  obtenerMonedas(){
+    let url = SERVER_API+"contabilidad/get-monedas";
+    return this.http.get(url);
+  }
+
+  obtenerMetodoPago(){
+    let url = SERVER_API+"contabilidad/get-metodos-pago";
+    return this.http.get(url);
+  }
+
+  obtenerTipoComprobantes(){
+    let url = SERVER_API+"contabilidad/get-tipos-comprobantes";
+    return this.http.get(url);
+  }
+  obtenerConceptos(id_empresa: number){
+    let url = SERVER_API+"contabilidad/get-conceptos/"+ id_empresa;
+    return this.http.get(url);
+  }
 }
