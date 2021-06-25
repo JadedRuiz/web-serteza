@@ -6,27 +6,17 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <!-- Brand -->
-      <a class="navbar-brand pt-0">
-        <img [src]="foto_empresa" class="navbar-brand-img" alt="...">
+      <a class="navbar-brand pt-0 text-center">
+        <img src="{{foto_empresa}}" class="navbar-brand-img" alt="...">
+        <h4>SISTEMA ADMINISTRATIVO</h4>
       </a>
       <!-- User -->
       <ul class="nav align-items-center d-md-none">
-        <li class="nav-item" ngbDropdown placement="bottom-right">
-          <a class="nav-link nav-link-icon" role="button" ngbDropdownToggle>
-            <i class="ni ni-bell-55"></i>
-          </a>
-          <div class="dropdown-menu-arrow dropdown-menu-right" ngbDropdownMenu>
-            <a class="dropdown-item" href="javascript:void(0)">Action</a>
-            <a class="dropdown-item" href="javascript:void(0)">Another action</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="javascript:void(0)">Something else here</a>
-          </div>
-        </li>
         <li class="nav-item" placement="bottom-right">
           <a class="nav-link" role="button">
             <div class="media align-items-center">
               <span class="avatar avatar-sm rounded-circle">
-                <img alt="Image placeholder" src="./assets/img/defaults/ico_default_admin.jpg">
+                <img alt="Image placeholder" src="{{foto_user}}">
               </span>
             </div>
           </a>
@@ -38,15 +28,9 @@
         <div class="navbar-collapse-header d-md-none">
           <div class="row">
             <div class="col-6 collapse-brand">
-              <a  routerLinkActive="active" [routerLink]="['/dashboard']">
-                <img src="./assets/img/defaults/imagen-no-disponible.png">
+              <a  routerLinkActive="active" [routerLink]="['dashboard']">
+                <img src="{{foto_empresa}}">
               </a>
-            </div>
-            <div class="col-6 collapse-close">
-              <button type="button" class="navbar-toggler" (click)="isCollapsed=!isCollapsed">
-                <span></span>
-                <span></span>
-              </button>
             </div>
           </div>
         </div>

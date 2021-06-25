@@ -57,7 +57,6 @@ export class ProcedimientoUsuarioComponent implements OnInit {
       pagina : 0
     };
     this.usuarios = [];
-    console.log(json);
     this.usuario_service.obtenerUsuarios(json)
     .subscribe( (object : any) =>{
         if(object.ok){
@@ -131,11 +130,11 @@ export class ProcedimientoUsuarioComponent implements OnInit {
      if(jQuery("#arreglo"+folio).hasClass("active")){
       jQuery("#arreglo"+folio).removeClass("active");
       if(this.tipo_modal == 1){
-        let index = this.arreglo.indexOf(folio);
+        let index = this.empresas_seleccionadas.indexOf(folio);
         this.empresas_seleccionadas.splice(index,1);
       }
       if(this.tipo_modal == 2){
-        let index = this.arreglo.indexOf(folio);
+        let index = this.clietes_seleccionados.indexOf(folio);
         this.clietes_seleccionados.splice(index,1);
       }
      }else{ 

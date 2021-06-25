@@ -1,0 +1,279 @@
+<div class="header " style="height: 250px;">
+    <div class="container-fluid">
+    </div>
+</div>
+<div class="container-fluid mt--9">
+  <div class="row">
+    <div class="col">
+      <div class="card border-info">
+          <div class="card-header">
+            Captura de facturas
+          </div>
+        <div class="card-body">
+            <div class="row mb-2">
+                <div class="col-lg-3 col-md-12 col-sm-12">
+                    <div class="form-check">
+                        <input (change)="cambioFechas($event)"  class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="dia" checked>
+                        <label class="form-check-label" for="exampleRadios1">
+                            Búsqueda Cliente/Proveedor
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input (change)="cambioFechas($event)"  class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="periodo">
+                        <label class="form-check-label" for="exampleRadios2">
+                          Búsqueda por UUID
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="col-lg-8 col-md-10 col-sm-10 mb-2" *ngIf="dia">
+                        <mat-form-field class="w-100">
+                            <mat-label>Buscar Cliente / Proveedor</mat-label>
+                            <input #input
+                                   type="text"
+                                   placeholder="Buscar..."
+                                   (keyup)="busqueda( input.value)"
+                                   aria-label="Buscar Cliente / Proveedor"
+                                   matInput
+                                   [formControl]="myControl"
+                                   [matAutocomplete]="auto">
+                            <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getFacturas($event)'>
+                              <mat-option *ngFor="let option of filteredOptions | async"  [value]="option">
+                                {{option.nombrecomercial}}
+                              </mat-option>
+                            </mat-autocomplete>
+                          </mat-form-field>
+                </div>
+                <div class="col-lg-8 col-md-10 col-sm-10 mb-2" *ngIf="periodo">
+                    <mat-form-field class="w-100">
+                        <mat-label>Buscar por UUID</mat-label>
+                        <input #inputUUID
+                                type="text"
+                               placeholder="Buscar por UUID..."
+                               aria-label="Buscar por UUID"
+                               matInput
+                               (keyup)="busquedaUuid( inputUUID.value)"
+                               [formControl]="myControlUUID"
+                               [matAutocomplete]="auto">
+                        <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getFacturas($event)'>
+                          <mat-option *ngFor="let option of opcionesFiltrado | async" [value]="option">
+                            {{option.uuid}}
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+                </div>
+                <div class="col-lg-1 col-md-2 col-sm-2" style="text-align: end;">
+                    <a class="btn btn-info" (click)="limpiar()" title="Nuevo departamento" data-toggle="modal" data-target="#exampleModal"><img src="./assets/iconos/agregar.svg" style="width: 24px;"></a>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr style="text-align: center;">
+                            <th scope="col">#</th>
+                            <th scope="col">Uuid</th>
+                            <th scope="col">Folio</th>
+                            <th scope="col">Tipo documento</th>
+                            <th scope="col">Fecha de emisión</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody  class="">
+                        <tr *ngFor="let obj of  objFactura; let i = index" style="text-align: center;">
+                            <td colspan="1" style="vertical-align: middle;">{{i + 1}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{obj.uuid}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{obj.folio}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{obj.tipo_documento}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{obj.fecha}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{obj.moneda}} {{obj.total| currency: 'USD'}}</td>
+                            <td colspan="1" style="width: 20%;">
+                                <a title="Ver xml"  style="cursor: pointer;" (click)="expFile(obj)" class="btn btn-success btn-sm"><img src="./assets/iconos/reporte.svg" style="width: 14px;"></a>
+                                <a title="Editar" data-toggle="modal" data-target="#exampleModal" (click)="actualizar(obj)" style="cursor: pointer;" class="btn btn-info btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                                <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning btn-sm"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
+
+                                <!-- (click)="editar(departamento.folio)" -->
+                            </td>
+                        </tr>
+                    </tbody>
+                    <ng-template #pintaVacio>
+                        <tbody>
+                            <tr>
+                                <td colspan="6" class="text-center">No existen departamentos</td>
+                            </tr>
+                        </tbody>
+                    </ng-template>
+                    <tbody></tbody>
+                </table>
+                <div class="filtros container mt-3">
+                    <div class="row">
+                        <div class="col-lg-4 col-sm-12"></div>
+                        <div class="col-lg-4 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
+                            <nav  aria-label="Page navigation example">
+                                <ul class="pagination">
+                                  <li class="page-item" >
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                      <span aria-hidden="true">&laquo;</span>
+                                      <span class="sr-only">Previous</span>
+                                    </a>
+                                  </li>
+                                  <li *ngFor="let pagina of paginas" class="page-item {{pagina.active}}" (click)="irPagina(pagina.valor_pagina)"><a class="page-link" style="cursor: pointer;">{{pagina.numero}}</a></li>
+                                  <li class="page-item" *ngIf="next">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                      <span aria-hidden="true">&raquo;</span>
+                                      <span class="sr-only">Next</span>
+                                    </a>
+                                  </li>
+                                </ul>
+                              </nav>
+                        </div>
+                        <div class="col-lg-4 col-sm-12" style="text-align: end;">
+                            <!-- <select [(ngModel)]="taken" (change)="mostrarDepartamentos()" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="exampleModalLabel">Captura de facturas</h2>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+            <form #f="ngForm" ngNativeValidate (ngSubmit)="guardarCatalogo(f)">
+                <div class="form-row col-12 mb-2" style="display: flex;justify-content: flex-end;">
+                    <select class="form-control" style="width: 200px;">
+                        <option default value="6">En reclutamiento</option>
+                        <option value="1">Activo</option>
+                        <option value="2">Baja</option>
+                        <option value="3">Suspendido</option>
+                        <option value="5">Solicitud</option>
+                    </select>
+                  </div>
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label for="xml">Seleccione un xml</label>
+                    <input  name="xml" (change)="cargarXml($event)" type="file" class="form-control" >
+                  </div>
+                    <div class="form-group">
+                      <label for="xml">UUID</label>
+                      <input  [(ngModel)]="xml.uuid" name="uuid" type="text" class="form-control" >
+                    </div>
+                    <div class="form-row" *ngIf="!edito">
+                      <div class="form-group col-md-6">
+                          <label for="inputCity">Rfc Emisor</label>
+                          <input [(ngModel)]="xml.rfcEmisor"  name="rfcEmisor" type="text" class="form-control" placeholder="0" required>
+                      </div>
+                      <div class="form-group col-md-6">
+                          <label for="inputState">Razon social emisor</label>
+                          <input [(ngModel)]="xml.razonEmisor" name="razonEmisor" type="text" class="form-control" placeholder="0" required>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                          <label for="inputCity">Rfc receptor</label>
+                          <input [(ngModel)]="xml.rfcReceptor"  name="rfcReceptor" type="text" class="form-control" placeholder="0" required>
+                      </div>
+                      <div class="form-group col-md-6">
+                          <label for="inputState">Razon social receptor</label>
+                          <input [(ngModel)]="xml.razonReceptor" name="razonReceptor" type="text" class="form-control" placeholder="0" required>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="inputCity">Folio</label>
+                            <input [(ngModel)]="xml.folio"  name="folio" type="text" class="form-control" placeholder="0" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="inputState">Fecha</label>
+                            <input [(ngModel)]="xml.fecha" name="fecha" type="text" class="form-control" placeholder="0" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="inputZip">Método de pago</label>
+                            <input [(ngModel)]="xml.metodopago" name="metodopago" type="text" class="form-control" placeholder="0" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-md-4">
+                          <label for="inputCity">Forma de pago</label>
+                          <input [(ngModel)]="xml.formapago" name="formapago" type="text" class="form-control" placeholder="0" required>
+                      </div>
+                      <div class="form-group col-md-4">
+                          <label for="inputState">Moneda</label>
+                          <input [(ngModel)]="xml.moneda" name="moneda" type="text" class="form-control" placeholder="0" required>
+                      </div>
+                      <div class="form-group col-md-4">
+                          <label for="inputZip">Tipo de documento</label>
+                          <input [(ngModel)]="xml.tipo" name="tipo" type="text" class="form-control" placeholder="0" required>
+                      </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="inputCity">Cuenta contable</label>
+                        <input [(ngModel)]="xml.cuentacontable" name="cuentacontable" type="text" class="form-control" placeholder="">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="inputState">Ieps</label>
+                        <input [(ngModel)]="xml.ieps" name="ieps" type="text" class="form-control" placeholder="0" required>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="inputZip">Catálogo de ivas</label>
+                        <input [(ngModel)]="xml.clave_sat" name="clave_sat" type="number" class="form-control" placeholder="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-4">
+                      <label for="inputCity">Retención de isr</label>
+                      <input [(ngModel)]="xml.retencion_isr" name="retencion_isr" type="text" class="form-control" placeholder="0" required>
+                  </div>
+                  <div class="form-group col-md-4">
+                      <label for="inputState">Retención de iva</label>
+                      <input [(ngModel)]="xml.retencion_iva" name="retencion_iva" type="text" class="form-control" placeholder="0" required>
+                  </div>
+                  <div class="form-group col-md-4">
+                      <label for="inputZip">Tipo de cambio</label>
+                      <input [(ngModel)]="xml.tipo_cambio" name="tipo_cambio" type="number" class="form-control" placeholder="0" required>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-4">
+                      <label for="inputCity">Subtotal</label>
+                      <input [(ngModel)]="xml.subtotal" name="subtotal" type="number" class="form-control" placeholder="0" step="0.01" required>
+                  </div>
+                  <div class="form-group col-md-4">
+                      <label for="inputState">Iva</label>
+                      <input [(ngModel)]="xml.iva" name="iva" type="number" class="form-control" placeholder="0" step="0.01" required>
+                  </div>
+                  <div class="form-group col-md-4">
+                      <label for="inputZip">Total</label>
+                      <input [(ngModel)]="xml.total" name="total" type="number" class="form-control" placeholder="0" step="0.01" required>
+                  </div>
+                </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="limpiar()" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" (click)="limpiar()">Deshacer</button>
+                    <button id="miBoton" type="submit" class="btn btn-info">Guardar</button>
+                </div>
+            </form>
+      </div>
+    </div>
+  </div>

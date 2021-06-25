@@ -6,27 +6,17 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <!-- Brand -->
-      <a class="navbar-brand pt-0">
-        <img [src]="foto_empresa" class="navbar-brand-img" alt="...">
+      <a class="navbar-brand pt-0 text-center">
+        <img src="{{foto_empresa}}" class="navbar-brand-img" alt="...">
+        <h4>SISTEMA DE RECLUTAMIENTO</h4>
       </a>
       <!-- User -->
       <ul class="nav align-items-center d-md-none">
         <li class="nav-item" ngbDropdown placement="bottom-right">
-          <a class="nav-link nav-link-icon" role="button" ngbDropdownToggle>
-            <i class="ni ni-bell-55"></i>
-          </a>
-          <div class="dropdown-menu-arrow dropdown-menu-right" ngbDropdownMenu>
-            <a class="dropdown-item" href="javascript:void(0)">Action</a>
-            <a class="dropdown-item" href="javascript:void(0)">Another action</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="javascript:void(0)">Something else here</a>
-          </div>
-        </li>
-        <li class="nav-item" ngbDropdown placement="bottom-right">
           <a class="nav-link" role="button" ngbDropdownToggle>
             <div class="media align-items-center">
               <span class="avatar avatar-sm rounded-circle">
-                <img alt="Image placeholder" src="./assets/img/theme/team-1-800x800.jpg">
+                <img alt="Image placeholder" src="{{url_foto}}">
               </span>
             </div>
           </a>

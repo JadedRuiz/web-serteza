@@ -6,12 +6,11 @@ import { Departamento } from 'src/app/models/Departamento';
 import { Puesto } from 'src/app/models/Puesto';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
-import { from } from 'rxjs';
+import { FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-catalogo-departamento',
-  templateUrl: './catalogo_departamento.component.html',
-  styleUrls: ['./catalogo_departamento.component.css']
+  templateUrl: './catalogo_departamento.component.html'
 })
 export class CatalogoDepartamentoComponent implements OnInit {
 
@@ -42,6 +41,9 @@ export class CatalogoDepartamentoComponent implements OnInit {
   public limite_superior = this.paginas_a_mostrar;
   public next = false;
   public previous = false;
+  //Autocomplete
+  myControl = new FormControl();
+  departamentos_busqueda : any;
 
   constructor(
     private departamento_service : DepartamentoService,
@@ -85,7 +87,8 @@ export class CatalogoDepartamentoComponent implements OnInit {
           this.departamentos.push({
             "folio" : object.data.registros[i].id_departamento,
             "departamento" : object.data.registros[i].departamento,
-            "disponibilidad" : object.data.registros[i].disponibilidad,
+            "vacantes" : object.data.registros[i].vacantes,
+            "autorizados" : object.data.registros[i].autorizados,
             "status" : status
           });
         }
@@ -93,6 +96,20 @@ export class CatalogoDepartamentoComponent implements OnInit {
         this.band = false;
       }
     });
+  }
+
+  autocomplete(palabra : string){
+    this.departamentos_busqueda = [];
+    if(palabra.length > 3){
+      this.departamento_service.autoCompleteDepartamento({"nombre_departamento":palabra,"id_empresa":this.empresa})
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.departamentos_busqueda = object.data;
+        }else{
+          this.departamentos_busqueda = [];
+        }
+      })
+    }
   }
 
   altaDepartamento(){
@@ -149,7 +166,10 @@ export class CatalogoDepartamentoComponent implements OnInit {
         "id_puesto" : this.cont,
         "puesto" : this.puesto.puesto,
         "descripcion" : this.puesto.descripcion,
-        "disponibilidad" : this.puesto.disponibilidad
+        "disponibilidad" : this.puesto.disponibilidad,
+        "sueldo_tipo_a" : this.puesto.sueldo_tipo_a,
+        "sueldo_tipo_b" : this.puesto.sueldo_tipo_b,
+        "sueldo_tipo_c" : this.puesto.sueldo_tipo_c
       });
       this.cont++;
       this.puesto = new Puesto(0,"","","","","1","",this.usuario,1);
@@ -208,7 +228,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
         this.departamento.id_departamento = object.data[0].id_departamento;
         this.departamento.departamento = object.data[0].departamento;
         this.departamento.descripcion = object.data[0].descripcion;
-        this.departamento.disponibilidad = object.data[0].disponibilidad;
+        this.departamento.disponibilidad = object.data[0].autorizados;
         if(object.data[0].activo == "1"){
           this.activo = true;
         }else{
@@ -225,8 +245,11 @@ export class CatalogoDepartamentoComponent implements OnInit {
     this.puestos.forEach( (element : any) => {
       if(element.id_puesto == id){
         this.puesto.puesto = element.puesto;
-        this.puesto.disponibilidad = element.disponibilidad;
+        this.puesto.disponibilidad = element.autorizados;
         this.puesto.descripcion = element.descripcion;
+        this.puesto.sueldo_tipo_a = element.sueldo_tipo_a;
+        this.puesto.sueldo_tipo_b = element.sueldo_tipo_b;
+        this.puesto.sueldo_tipo_c = element.sueldo_tipo_c;
       }
     });
   }
@@ -238,12 +261,16 @@ export class CatalogoDepartamentoComponent implements OnInit {
     this.puesto = new Puesto(0,"","","","","1","",this.usuario,1);
   }
 
-  filtroStatus(){
-    this.mostrarDepartamentos();
+  getDepartamento(event : any) {
+    this.editar(event.option.id);
+    this.departamentos_busqueda.splice(0,this.departamentos_busqueda.length);
+    this.myControl.reset('');
   }
 
-  busqueda(){
-    this.mostrarDepartamentos();
+  busqueda(value : string){
+    if(value.length > 3){
+      this.autocomplete(value);
+    }
   }
 
   limpiarCampos(){

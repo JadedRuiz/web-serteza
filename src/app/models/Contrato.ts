@@ -8,6 +8,7 @@ export class Contrato {
         public id_empresa : number,
         public candidato : String,
         public id_candidato : number,
+        public id_nomina : number,
         public puesto : String,
         public id_puesto : number,
         public fecha_ingreso : String,

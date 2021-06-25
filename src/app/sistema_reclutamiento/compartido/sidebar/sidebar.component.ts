@@ -21,6 +21,7 @@ export class SidebarComponent implements OnInit {
   public clientes : any;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   public modal: any;
+  public url_foto : any;
 
   public menuItems = Array();
   public subMenuItems = Array();
@@ -36,19 +37,21 @@ export class SidebarComponent implements OnInit {
     private modalService: NgbModal
     ) {
       this.foto_empresa = "./assets/img/defaults/imagen-no-disponible.png";
+      this.url_foto = './assets/iconos/perfil.svg';
     }
 
   ngOnInit() {
     this.pintarMenu();
-    this.validarClientes();
     this.mostrarLogo();
+    // this.validarClientes();
     this.router.events.subscribe((event) => {
       this.isCollapsed = true;
    });
+   this.url_foto = window.sessionStorage["foto"];
   }
   pintarMenu(){
     this.menuItems = [
-      { path: '/dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
+      { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : [
           {path: 'catalogo_candidato', title: 'Mis candidatos', icon: 'ni-badge text-orange'},
@@ -56,10 +59,16 @@ export class SidebarComponent implements OnInit {
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
         submenu : [
-          {path: 'procedimiento_contratacion', title: 'Nueva contratación', icon: 'ni-folder-17 text-yellow'},
+          {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17 text-yellow'},
+          {path: 'procedimiento_modificacion', title: 'Modificaciónes', icon: 'ni-curved-next text-yellow'},
+          {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove text-yellow'},
         ]
       },
-      { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: false, tipo : ""}
+      { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: true, tipo : "collapse",
+        submenu : [
+          {path: 'reporte_general', title: 'Reporte General', icon: 'ni-archive-2 text-green'},
+        ]
+    }
     ];
   }
   mostrarLogo(){
@@ -68,7 +77,7 @@ export class SidebarComponent implements OnInit {
       this.cliente_service.obtenerClientesPorId(id_cliente)
       .subscribe( (object : any) => {
         if(object.ok){
-          this.foto_empresa = ""+object.data[0].fotografia;
+          this.foto_empresa = ""+object.data[0].fotografia+"";
         }
       });
     }else{
@@ -87,14 +96,18 @@ export class SidebarComponent implements OnInit {
             this.openModal();
           }else{
             window.sessionStorage["cliente"] = object.data[0].id_cliente;
+            this.mostrarLogo();
           }
         }
       });
+    }else{
+      this.mostrarLogo();
     }
   }
   eleccion(id_cliente : any){
     window.sessionStorage["cliente"] = id_cliente;
     this.closeModal();
+    this.mostrarLogo();
   }
   cerrarSesion(){
     this.usuario.logout();

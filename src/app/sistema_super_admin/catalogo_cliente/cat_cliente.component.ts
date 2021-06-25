@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import * as jQuery from 'jquery';
 import { Fotografia } from 'src/app/models/Fotografia';
 import { DomSanitizer } from '@angular/platform-browser';
+import { FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-candidatos',
@@ -46,6 +47,9 @@ export class CatalogoClienteComponent implements OnInit {
   public limite_superior = this.paginas_a_mostrar;
   public next = false;
   public previous = false;
+  //Autocomplete
+  myControl = new FormControl();
+  clientes_busqueda : any;
   
   colonias = [
     "Primero ingresa el Codigo Postal"
@@ -63,6 +67,33 @@ export class CatalogoClienteComponent implements OnInit {
   ngOnInit(): void {
     this.mostrarClientes();
   }
+
+  autocomplete(palabra : string){
+    this.clientes_busqueda = [];
+    if(palabra.length > 3){
+      this.cliente_service.autoCompleteCliente({"nombre_cliente":palabra})
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.clientes_busqueda = object.data;
+        }else{
+          this.clientes_busqueda = [];
+        }
+      })
+    }
+  }
+
+  getUsuario(event : any) {
+    this.editar(event.option.id);
+    this.clientes_busqueda.splice(0,this.clientes_busqueda.length);
+    this.myControl.reset('');
+  }
+
+  busqueda(value : string){
+    if(value.length > 3){
+      this.autocomplete(value);
+    }
+  }
+
   mostrarClientes(){
     let json = {
       palabra : this.palabra,
@@ -73,7 +104,6 @@ export class CatalogoClienteComponent implements OnInit {
     this.clientes = [];
     this.cliente_service.obtenerClientes(json)
     .subscribe( (object : any) =>{
-        console.log(object);
         if(object.ok){
           //Mostrar si los registros son mayores a los registros que se muestran
           this.total_registros = object.data.total;
@@ -315,18 +345,6 @@ export class CatalogoClienteComponent implements OnInit {
 
   irPagina(pagina : any){
     this.pagina_actual = pagina;
-    this.mostrarClientes();
-  }
-
-  filtroStatus(){
-    this.pagina_actual = 0;
-    this.limite_inferior = 0;
-    this.mostrarClientes();
-  }
-
-  busqueda(){
-    this.pagina_actual = 0;
-    this.limite_inferior = 0;
     this.mostrarClientes();
   }
 

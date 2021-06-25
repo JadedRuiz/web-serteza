@@ -9,6 +9,8 @@ import { PuestoService } from 'src/app/services/Puesto/Puesto.service';
 import Swal from 'sweetalert2';
 import { ContratoService } from 'src/app/services/Contrato/Contrato.service';
 import { SERVER_API } from 'src/config/config';
+import { FormControl, FormGroup } from '@angular/forms';
+import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 
 
 @Component({
@@ -19,19 +21,21 @@ import { SERVER_API } from 'src/config/config';
 export class ProcedimientoContratacionComponent implements OnInit {
   
   public color = COLOR;
-  public status = 2;
+  public status = "-1";
   public palabra = "";
   public band = false;
   public bandera = [true, true, true];
   public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
-  public contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","");
+  public contrato = new Contrato(0,"",0,"",0,"",0,0,"",0,"","0","");
   public contratos : any;
   public modal : any;
   public taken = 5;
   public solicitud_contratos = new Array<Contrato>();
   @ViewChild('content', {static: false}) contenidoDelModal : any;
-  private tipo_movimiento = 0;
+  public tipo_movimiento = 0;
+  public btn_delete = true;
+  public aplicar = false;
   //Paginacion
   public total_registros = 0;
   public mostrar_pagination = false;
@@ -51,6 +55,14 @@ export class ProcedimientoContratacionComponent implements OnInit {
   //Puesto
   public puestos : any;
   public sueldos = ["","",""];
+  //Nomina
+  public nominas : any;
+  //Autocomplete
+  myControl = new FormControl();
+  candidatos_busqueda : any;
+  //Fechas
+  public fecha_inicial = "";
+  public fecha_final = "";
 
   constructor(
     private modalService: NgbModal,
@@ -58,7 +70,8 @@ export class ProcedimientoContratacionComponent implements OnInit {
     private empresa_service : EmpresaService,
     private departamento_service : DepartamentoService,
     private puesto_service : PuestoService,
-    private contrato_service : ContratoService
+    private contrato_service : ContratoService,
+    private usuario_service : UsuarioService
   ) {
     this.modal = NgbModalRef;
    }
@@ -67,9 +80,33 @@ export class ProcedimientoContratacionComponent implements OnInit {
     this.mostrarMovimientos();
   }
 
+  autocomplete(palabra : string){
+    this.candidatos_busqueda = [];
+    if(palabra.length > 3){
+      this.candidato_service.autoCompleteCandidato({"nombre_candidato":palabra,"id_cliente":this.id_cliente})
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.candidatos_busqueda = object.data;
+        }else{
+          this.candidatos_busqueda = [];
+        }
+      })
+    }
+  }
+
   mostrarMovimientos(){
+    this.usuario_service.tieneSistema({"usuario":this.usuario_creacion,"id_sistema" : "3"})
+    .subscribe( (object : any) => {
+      this.aplicar = true;
+      if(object.ok){
+        this.aplicar = false;
+      }
+    });
     let json = {
-      id_cliente : this.id_cliente
+      id_cliente : this.id_cliente,
+      fecha_inicio : this.fecha_inicial,
+      fecha_final : this.fecha_final,
+      id_status : this.status
     };
     this.contratos = [];
     this.contrato_service.obtenerMoviemientosContratacion(json)
@@ -77,10 +114,17 @@ export class ProcedimientoContratacionComponent implements OnInit {
       if(object.ok){
         this.band = true;
         for(let i=0;i<object.data.length;i++){
+          let band = false;
+          let status = object.data[i].status;
+          if(object.data[i].id_status == 5){
+            status = "En solicitud";
+            band = true;
+          }
           this.contratos.push({
-            'folio' : object.data[i].id_contratacion,
-            'fecha' : object.data[i].fecha_contratacion,
-            'status' : "Solicitud"
+            'folio' : object.data[i].id_movimiento,
+            'fecha' : object.data[i].fecha_movimiento,
+            'status' : status,
+            "band" : band
           })
         }
       }else{
@@ -90,16 +134,16 @@ export class ProcedimientoContratacionComponent implements OnInit {
   }
 
   mostrarCandidato(){
-    let valor = this.contrato.candidato.split(" ")[1];
-    if(!"1234567890".includes(valor)){
+    let valor = this.contrato.candidato;
+    if(!valor.includes("Candidato")){
       this.contrato.candidato = "";
       Swal.fire("Tenemos un problema","El candidato seleccionado ya se encuentra en un movimiento de contratacion, intente con otro","warning");
     }else{
-      let object = this.candidatos.filter( (x : any) => x.folio === parseInt(valor))[0];
+      valor = this.contrato.candidato.split(" ")[1];
+      let object = this.candidatos.filter( (x : any) => x.folio === parseInt(valor+""))[0];
       this.contrato.candidato = object.nombre;
       this.contrato.id_candidato = object.folio; 
     }
-     
   }
 
   mostrarCandidatos(){
@@ -125,6 +169,16 @@ export class ProcedimientoContratacionComponent implements OnInit {
         }
       }else{
         this.candidatos = [];
+      }
+    })
+  }
+
+  mostrarNominas(){
+    this.nominas = [];
+    this.contrato_service.obtenerCatalogoNomina()
+    .subscribe( (object :any) =>{
+      if(object.ok){
+        this.nominas = object.data;
       }
     })
   }
@@ -188,12 +242,17 @@ export class ProcedimientoContratacionComponent implements OnInit {
     .subscribe( (object : any) => {
       if(object.ok){
         for(let i=0;i<object.data.length;i++){
+          let band = true;
+          if(object.data[i].vacantes == "0"){
+            band = false;
+          }
           this.puestos.push({
             "id_puesto" : object.data[i].id_puesto,
             "puesto" : object.data[i].puesto,
             "sueldo_tipo_a" : object.data[i].sueldo_tipo_a,
             "sueldo_tipo_b" : object.data[i].sueldo_tipo_b,
             "sueldo_tipo_c" : object.data[i].sueldo_tipo_c,
+            "vacante" : band
           });
         }
       }else{
@@ -201,14 +260,21 @@ export class ProcedimientoContratacionComponent implements OnInit {
       }
     });
   }
+
   mostrarSueldos(){
     this.bandera[2] = false;  
     let valor = this.contrato.puesto.split(" ")[1];
     let object = this.puestos.filter( (x : any) => x.id_puesto === parseInt(valor))[0];
-    this.contrato.puesto = object.puesto;
-    this.contrato.id_puesto = object.id_puesto;
-    this.contrato.sueldo = object.sueldo_tipo_c;
-    this.sueldos = [object.sueldo_tipo_a,object.sueldo_tipo_b,object.sueldo_tipo_c];
+    if(object.vacante){
+      this.contrato.puesto = object.puesto;
+      this.contrato.id_puesto = object.id_puesto;
+      this.contrato.sueldo = object.sueldo_tipo_c;
+      this.sueldos = [object.sueldo_tipo_a,object.sueldo_tipo_b,object.sueldo_tipo_c];
+    }else{
+      Swal.fire("Aviso","Este puesto ya no cuenta con vacantes","info");
+      this.contrato.puesto = "";
+    }
+    
   }
 
   agregarCandidato(){
@@ -224,19 +290,20 @@ export class ProcedimientoContratacionComponent implements OnInit {
           });
           if(band_contrato){
             this.solicitud_contratos.push(this.contrato);
-            this.contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","");
+            this.contrato = new Contrato(0,"",0,"",0,"",0,0,"",0,"","0","");
           }else{
             Swal.fire("Tenemos un problema","El candidato no puede repetirse","warning");
           }
          }else{
           this.solicitud_contratos.push(this.contrato);
-          this.contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","");
+          this.contrato = new Contrato(0,"",0,"",0,"",0,0,"",0,"","0","");
          }
        }else{
         Swal.fire("Tenemos un problema","Primero llena los campos requeridos","warning");
        }
     
   }
+  
   eliminarDetalle(id_detalle : any){
     Swal.fire({
       title: '¿Estas seguro que deseas eliminar este candidato?',
@@ -263,6 +330,10 @@ export class ProcedimientoContratacionComponent implements OnInit {
           this.contrato_service.eliminarDetalleContratacion(json)
           .subscribe( (object : any)=>{
             if(object.ok){
+              if(object.data == "true"){
+                this.cerrarModal();
+                this.mostrarMovimientos();
+              }
               Swal.fire("Buen trabajo",object.data,"success");
             }else{
               Swal.fire("Ha ocurrido un error",object.message,"error");
@@ -273,6 +344,31 @@ export class ProcedimientoContratacionComponent implements OnInit {
     });
   }
 
+  aplicarContrato(folio : any){
+    Swal.fire({
+      title: '¿Estas seguro que deseas aplicar la solicitud?',
+      text: "",
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.contrato_service.aplicarContratacion(folio,this.usuario_creacion)
+        .subscribe( (object : any) => {
+          if(object.ok){
+            this.mostrarMovimientos();
+            Swal.fire("Buen trabajo",object.data,"success");
+          }else{
+            Swal.fire("Ha ocurrido un error",object.message,"error");
+          }
+        });
+      }
+    });
+    
+  }
   crearMov(){
     if(this.solicitud_contratos.length > 0){
       let json = {
@@ -318,12 +414,17 @@ export class ProcedimientoContratacionComponent implements OnInit {
             parseInt(object.data[i].id_empresa),
             object.data[i].apellido_paterno+" "+object.data[i].apellido_materno+" "+object.data[i].nombre,
             parseInt(object.data[i].id_candidato),
+            parseInt(object.data[0].id_nomina),
             object.data[i].puesto,
             parseInt(object.data[i].id_puesto),
             object.data[i].fecha_alta,
             object.data[i].sueldo,
             object.data[i].observacion
           );
+          this.btn_delete = true;
+          if(object.data[i].id_status != "5"){
+              this.btn_delete = false;
+          }
           this.solicitud_contratos.push(new_contrato);
         }
         this.openModal();
@@ -344,6 +445,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
           solicitud.id_empresa,
           solicitud.candidato,
           solicitud.id_candidato,
+          solicitud.id_nomina,
           solicitud.puesto,
           solicitud.id_puesto,
           solicitud.fecha_ingreso,
@@ -369,20 +471,25 @@ export class ProcedimientoContratacionComponent implements OnInit {
     this.tipo_movimiento = 0;
     this.mostrarCandidatos();
     this.mostrarEmpresas();
+    this.mostrarNominas();
     this.openModal();
   }
 
-  busqueda() {
-
+  getMovimiento(event : any) {
+    this.editar(event.option.id);
+    this.candidatos_busqueda.splice(0,this.candidatos_busqueda.length);
+    this.myControl.reset('');
   }
 
-  filtroStatus() { 
-    
+  busqueda(value : string){
+    if(value.length > 3){
+      this.autocomplete(value);
+    }
   }
 
   resetearModal(){
     this.solicitud_contratos = new Array<Contrato>();
-    this.contrato = new Contrato(0,"",0,"",0,"",0,"",0,"","0","");
+    this.contrato = new Contrato(0,"",0,"",0,"",0,0,"",0,"","0","");
     this.bandera = [true, true, true];
     this.sueldos = ["","",""]
   }
@@ -443,6 +550,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
     if(this.tipo_movimiento == 0){
       jQuery("#editar").hide();
       jQuery("#guardar").show();
+      this.btn_delete = true;
     }
   }
 

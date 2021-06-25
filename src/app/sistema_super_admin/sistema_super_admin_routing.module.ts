@@ -5,6 +5,7 @@ import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.co
 import { CatalogoUsuarioComponent } from './catalogo_usuario/catalogo_usuario.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProcedimientoUsuarioComponent } from './procedimiento_usuario/procedimiento_usuario.component';
+import { ProcedimientoEmpresaComponent } from '../sistema_super_admin/procedimiento_empresa/procedimiento_empresa.component';
 import { SistemaAdminComponent } from './sistema_super_admin.component';
 
 const routes: Routes = [
@@ -17,6 +18,7 @@ const routes: Routes = [
         { path : "catalogo_empresa", component : CatalogoEmpresaComponent},
         { path : "catalogo_usuario", component : CatalogoUsuarioComponent},
         { path : "procedimiento_usuario", component : ProcedimientoUsuarioComponent},
+        { path : "procedimineto_empresa", component : ProcedimientoEmpresaComponent},
         { path: '', redirectTo: '/login', pathMatch: 'full'}
     ]
   }

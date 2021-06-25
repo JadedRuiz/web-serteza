@@ -1,0 +1,162 @@
+
+<div class="header {{color}}" style="height: 250px;">
+</div>
+<div class="container-fluid mt--9">
+    <div class="row">
+      <div class="col">
+        <div class="card border-info">
+          <div class="card-header">
+            BAJAS
+          </div>
+          <div class="card-body">
+            <div class="row mb-2">
+              <div class="col-lg-4 col-sm-12 mb-2">
+                <mat-form-field class="w-100">
+                  <mat-label>Filtrar por fechas</mat-label>
+                  <mat-date-range-input [rangePicker]="picker">
+                    <input matStartDate placeholder="Día inicial (mm/dd/yyyy)" [(ngModel)]="fecha_inicial">
+                    <input matEndDate placeholder="Día final (mm/dd/yyyy)" [(ngModel)]="fecha_final" (dateChange)="mostrarBajas()">
+                  </mat-date-range-input>
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-8 col-sm-12" style="text-align: end;">
+                  <a class="btn btn-info" title="Nuevo baja" (click)="openModal()"><img src="./assets/iconos/add-file.svg" style="width: 24px;"></a>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                  <thead>
+                      <tr>
+                          <th scope="col">Folio</th>
+                          <th scope="col">Fecha de la baja</th>
+                          <th scope="col">Acciones</th>
+                      </tr>
+                  </thead>
+                  <tbody *ngIf="bajas.length > 0; else pintaVacio" class="">
+                      <tr *ngFor="let baja of bajas">
+                          <td colspan="1" style="vertical-align: middle;">{{baja.folio}}</td>
+                          <td colspan="1" style="vertical-align: middle;">{{baja.fecha}}</td>
+                          <td colspan="1" style="width: 20%;">
+                              <!-- <a title="Editar" (click)="editar(baja.folio)" style="cursor: pointer;" class="btn btn-primary"><img src="./assets/iconos/edit.svg" style="width: 24px;"></a>
+                              <a title="Reporte de contratación" style="cursor: pointer;" class="btn btn-info" (click)="consumoReporte(1,baja.folio)"><img src="./assets/iconos/reporte.svg" style="width: 24px;"></a> -->
+                          </td>
+                      </tr>
+                  </tbody>
+                  <ng-template #pintaVacio>
+                      <tbody>
+                          <tr>
+                              <td colspan="4" class="text-center">No existen bajas</td>
+                          </tr>
+                      </tbody>
+                  </ng-template>
+              </table>
+              <div class="filtros container mt-3">
+                  <div class="row">
+                      <div class="col-lg-2 col-sm-12"></div>
+                      <div class="col-lg-8 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
+                          <nav *ngIf="mostrar_pagination" aria-label="Page navigation example">
+                              <ul class="pagination">
+                                <li class="page-item" *ngIf="previous">
+                                  <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                  </a>
+                                </li>
+                                <li *ngFor="let pagina of paginas" class="page-item {{pagina.active}}" (click)="irPagina(pagina.valor_pagina)"><a class="page-link" style="cursor: pointer;">{{pagina.numero}}</a></li>
+                                <li class="page-item" *ngIf="next">
+                                  <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                  </a>
+                                </li>
+                              </ul>
+                            </nav>
+                      </div>
+                      <div class="col-lg-2 col-sm-12" style="text-align: end;">
+                        <mat-form-field class="w-100">
+                          <mat-label>No. resultados</mat-label>
+                          <mat-select [(ngModel)]="taken" (selectionChange)="mostrarBajas()">
+                              <mat-option [value]="5">5</mat-option>
+                              <mat-option [value]="10">10</mat-option>
+                              <mat-option [value]="20">20</mat-option>
+                              <mat-option [value]="30">30</mat-option>
+                              <mat-option [value]="40">40</mat-option>
+                              <mat-option [value]="50">50</mat-option>
+                              <mat-option [value]="100">100</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-header">
+      <h2 class="modal-title" id="tituloModal">Nueva baja</h2>
+  </div>
+  <div class="modal-body">
+    <mat-form-field class="w-100">
+      <mat-label>Buscar candidato</mat-label>
+      <input #input
+              type="text"
+              placeholder="Buscar..."
+              (keyup)="mostrarCandidatos(input.value)"
+              aria-label="Buscar candidato"
+              matInput
+              [formControl]="myControl"
+              [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getCandidato($event)'>
+        <mat-option *ngFor="let option of candidatos" [value]="option.nombre_completo" [id]="option.id_candidato" title="Agregar empleado">
+          {{option.nombre_completo}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th colspan="1">Empleado</th>
+            <th colspan="1">Fecha de la baja</th>
+            <th colspan="1">Observacion</th>
+            <th colspan="1" class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="candidatos_seleccionados.length > 0">
+          <tr *ngFor="let candidato of candidatos_seleccionados">
+            <td style="vertical-align: middle;">{{candidato.nombre}}</td>
+            <td style="vertical-align: middle;">
+              <mat-form-field appearance="fill">
+                <input matInput [(ngModel)]="candidato.fecha_baja" [matDatepicker]="picker" placeholder="Ingrese la fecha de la baja">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </td>
+            <td style="vertical-align: middle;">
+              <input type="text" class="form-control" [(ngModel)]="candidato.observacion">
+            </td>
+            <td style="vertical-align: middle;" class="text-center">
+              <a title="Eliminar" style="cursor: pointer;" class="btn btn-warning btn-sm"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
+            </td>
+          </tr>
+        </tbody>
+        <tbody *ngIf="candidatos_seleccionados.length == 0">
+          <tr class="text-center">
+            <td colspan="4">No se han agregado empleados</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="cerrarModal()" >Cerrar</button>
+      <button type="button" class="btn btn-success" (click)="crearBaja()" id="guardar">Crear baja</button>
+      <!-- <button type="button" class="btn btn-success" (click)="actualizarMov()" id="editar" style="display: none;">Actualizar contratación</button> -->
+  </div>
+</ng-template>

@@ -9,6 +9,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import * as jQuery from 'jquery';
+import { FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-catalogo-empresa',
@@ -44,6 +45,9 @@ export class CatalogoEmpresaComponent implements OnInit {
   public limite_superior = this.paginas_a_mostrar;
   public next = false;
   public previous = false;
+  //Autocomplete
+  myControl = new FormControl();
+  empresa_busqueda : any;
   
   colonias = [
     "Primero ingresa el Codigo Postal"
@@ -60,6 +64,33 @@ export class CatalogoEmpresaComponent implements OnInit {
   ngOnInit(): void {
     this.mostrarEmpresas();
   }
+
+  autocomplete(palabra : string){
+    this.empresa_busqueda = [];
+    if(palabra.length > 3){
+      this.empresa_service.autoCompleteEmpresa({"nombre_empresa":palabra})
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.empresa_busqueda = object.data;
+        }else{
+          this.empresa_busqueda = [];
+        }
+      })
+    }
+  }
+
+  getEmpresa(event : any) {
+    this.editar(event.option.id);
+    this.empresa_busqueda.splice(0,this.empresa_busqueda.length);
+    this.myControl.reset('');
+  }
+
+  busqueda(value : string){
+    if(value.length > 3){
+      this.autocomplete(value);
+    }
+  }
+
   mostrarEmpresas(){
     let json = {
       palabra : this.palabra,
@@ -275,9 +306,7 @@ export class CatalogoEmpresaComponent implements OnInit {
         this.empresa.rfc = object.data[0].rfc;
         this.empresa.usuario_creacion = this.usuario_creacion;
         this.fotografia.id_fotografia = object.data[0].id_fotografia;
-        if(object.data[0].fotografia != ""){
-          this.mostrarImagen(object.data[0].fotografia,object.data[0].extension);
-        }
+        this.foto_user = object.data[0].fotografia;
         if(object.data[0].activo == 1){
           this.activo = true;
         }else{
@@ -355,17 +384,6 @@ export class CatalogoEmpresaComponent implements OnInit {
     this.mostrarEmpresas();
   }
 
-  filtroStatus(){
-    this.pagina_actual = 0;
-    this.limite_inferior = 0;
-    this.mostrarEmpresas();
-  }
-
-  busqueda(){
-    this.pagina_actual = 0;
-    this.limite_inferior = 0;
-    this.mostrarEmpresas();
-  }
   getDatos(){
     this.cp_service.getDirrecion(this.empresa.direccion.codigo_postal)
     .subscribe( (data: any) => {

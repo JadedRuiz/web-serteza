@@ -13,6 +13,7 @@ export class HeaderComponent implements OnInit {
   public color = COLOR;
   public nombre = window.sessionStorage.getItem("nombre");
   public usuario_logueado = window.sessionStorage.getItem("user");
+  public url_foto : any;
   public cliente_seleccionado = parseInt(window.sessionStorage["cliente"]);
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   public modal: any;
@@ -24,10 +25,12 @@ export class HeaderComponent implements OnInit {
     private modalService: NgbModal
     ) {
       this.texto = "SISTEMA DE RECLUTAMIENTO";
+      this.url_foto = './assets/iconos/perfil.svg';
      }
 
   ngOnInit(): void {
     this.recuperarClientes();
+    this.url_foto = window.sessionStorage["foto"];
   }
   recuperarClientes(){
     this.clientes = [];

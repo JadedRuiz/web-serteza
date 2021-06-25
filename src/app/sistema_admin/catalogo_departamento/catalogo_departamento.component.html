@@ -13,17 +13,33 @@
             <div class="row mb-2">
                 <div class="col-lg-4 col-sm-12 mb-2">
                     <div class="buscador">
-                        <input [(ngModel)]="palabra" type="search" placeholder="Buscar">
-                        <a title="Buscar" (click)="busqueda()"><i class="fas fa-search"></i></a>
+                        <mat-form-field class="w-100">
+                            <mat-label>Buscar departamento</mat-label>
+                            <input #input
+                                   type="text"
+                                   placeholder="Buscar..."
+                                   (keyup)="busqueda(input.value)"
+                                   aria-label="Buscar departamento"
+                                   matInput
+                                   [formControl]="myControl"
+                                   [matAutocomplete]="auto">
+                            <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getDepartamento($event)'>
+                              <mat-option *ngFor="let option of departamentos_busqueda" [value]="option.departamento" [id]="option.id_departamento+''">
+                                {{option.departamento}}
+                              </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
                     </div>
                 </div>
                 <div class="col-lg-4 col-sm-12">
-                    <p style="display: inline-block;" class="my-0 py-0 mr-2">Filtro :</p> 
-                    <select [(ngModel)]="status" name="status" id="status" class="form-control" style="display: inline-block;width: 150px;" (change)="filtroStatus()">
-                        <option value="2">Todos</option>
-                        <option value="1">Activos</option>
-                        <option value="0">Inactivos</option>
-                    </select>
+                    <mat-form-field class="w-100">
+                        <mat-label>Status</mat-label>
+                        <mat-select [(ngModel)]="status" (selectionChange)="mostrarDepartamentos()">
+                            <mat-option [value]="2">Todos</mat-option>
+                            <mat-option [value]="1">Activos</mat-option>
+                            <mat-option [value]="0">Inactivos</mat-option>
+                        </mat-select>
+                    </mat-form-field>
                 </div>
                 <div class="col-lg-4 col-sm-12" style="text-align: end;">
                     <a class="btn btn-info" (click)="guardar()" title="Nuevo departamento"><img src="./assets/iconos/agregar.svg" style="width: 24px;"></a>
@@ -32,24 +48,24 @@
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
-                        <tr style="text-align: center;">
-                            <th scope="col">#</th>
+                        <tr>
+                            <th scope="col" class="text-center">No. departamento</th>
                             <th scope="col">Departamento</th>
-                            <th scope="col">Disponibilidad</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Acciones</th>
+                            <th scope="col" class="text-center">Vacantes</th>
+                            <th scope="col" class="text-center">Autorizados</th>
+                            <th scope="col" class="text-center">Status</th>
+                            <th scope="col" class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody *ngIf="band; else pintaVacio" class="">
-                        <tr *ngFor="let departamento of departamentos" style="text-align: center;">
-                            <td colspan="1" style="vertical-align: middle;">{{departamento.folio}}</td>
+                        <tr *ngFor="let departamento of departamentos">
+                            <td colspan="1" style="vertical-align: middle;" class="text-center">{{departamento.folio}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{departamento.departamento}}</td>
-                            <td colspan="1" style="vertical-align: middle;">12</td>
-                            <td colspan="1" style="vertical-align: middle;">{{departamento.disponibilidad}}</td>
-                            <td colspan="1" style="vertical-align: middle;">{{departamento.status}}</td>
-                            <td colspan="1" style="width: 20%;">
-                                <a title="Editar" (click)="editar(departamento.folio)" style="cursor: pointer;" class="btn btn-primary"><img src="./assets/iconos/edit.svg" style="width: 24px;"></a>
+                            <td colspan="1" style="vertical-align: middle;" class="text-center">{{departamento.vacantes}}</td>
+                            <td colspan="1" style="vertical-align: middle;" class="text-center">{{departamento.autorizados}}</td>
+                            <td colspan="1" style="vertical-align: middle;" class="text-center">{{departamento.status}}</td>
+                            <td colspan="1" style="width: 20%;" class="text-center">
+                                <a title="Editar" (click)="editar(departamento.folio)" style="cursor: pointer;" class="btn btn-info btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
                             </td>
                         </tr>
                     </tbody>
@@ -64,8 +80,8 @@
                 </table>
                 <div class="filtros container mt-3">
                     <div class="row">
-                        <div class="col-lg-4 col-sm-12"></div>
-                        <div class="col-lg-4 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
+                        <div class="col-lg-5 col-sm-12"></div>
+                        <div class="col-lg-5 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
                             <nav *ngIf="mostrar_pagination" aria-label="Page navigation example">
                                 <ul class="pagination">
                                   <li class="page-item" *ngIf="previous">
@@ -84,17 +100,19 @@
                                 </ul>
                               </nav>
                         </div>
-                        <div class="col-lg-4 col-sm-12" style="text-align: end;">
-                            <p class="mr-2" style="display: inline-block;">Usuarios :</p>
-                            <select [(ngModel)]="taken" (change)="mostrarDepartamentos()" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
-                                <option value="5">5</option>
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="30">30</option>
-                                <option value="40">40</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
+                        <div class="col-lg-2 col-sm-12" style="text-align: end;">
+                            <mat-form-field class="w-100">
+                                <mat-label>No. resultados</mat-label>
+                                <mat-select [(ngModel)]="taken" (selectionChange)="mostrarDepartamentos()">
+                                    <mat-option [value]="5">5</mat-option>
+                                    <mat-option [value]="10">10</mat-option>
+                                    <mat-option [value]="20">20</mat-option>
+                                    <mat-option [value]="30">30</mat-option>
+                                    <mat-option [value]="40">40</mat-option>
+                                    <mat-option [value]="50">50</mat-option>
+                                    <mat-option [value]="100">100</mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                     </div>
                 </div>
@@ -141,21 +159,21 @@
                 <input [(ngModel)]="puesto.puesto" type="text" class="form-control" id="puesto">
             </div>
             <div class="form-group col-sm-3">
-                <label for="disponibilidad">Disponibilidad</label>
+                <label for="disponibilidad">Autorizados</label>
                 <input [(ngModel)]="puesto.disponibilidad" type="number" class="form-control" id="disponibilidad" min="1" pattern="^[1-9]+">
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-sm-4">
-                <label for="sueldo_tipo_a">Sueldo tipo a</label>
+                <label for="sueldo_tipo_a">Sueldo tipo A</label>
                 <input [(ngModel)]="puesto.sueldo_tipo_a" type="text" class="form-control" id="sueldo_tipo_a">
             </div>
             <div class="form-group col-sm-4">
-                <label for="sueldo_tipo_b">Sueldo tipo b</label>
+                <label for="sueldo_tipo_b">Sueldo tipo B</label>
                 <input [(ngModel)]="puesto.sueldo_tipo_b" type="text" class="form-control" id="sueldo_tipo_b">
             </div>
             <div class="form-group col-sm-4">
-                <label for="sueldo_tipo_c">Sueldo tipo c</label>
+                <label for="sueldo_tipo_c">Sueldo tipo C</label>
                 <input [(ngModel)]="puesto.sueldo_tipo_c" type="text" class="form-control" id="sueldo_tipo_c">
             </div>
         </div>
@@ -177,7 +195,7 @@
                         <tr>
                             <th scope="col">Puestos</th>
                             <th scope="col">Descripcion</th>
-                            <th scope="col" style="width: 5%;text-align: center;">Disponibilidad</th>
+                            <th scope="col" style="width: 5%;text-align: center;">Autorizados</th>
                             <th scope="col" style="width: 5%;text-align: center;">Acciones</th>
                         </tr>
                     </thead>
@@ -186,7 +204,7 @@
                             <td style="vertical-align: middle;">{{puesto_array.puesto}}</td>
                             <td style="vertical-align: middle;">{{puesto_array.descripcion}}</td>
                             <td style="vertical-align: middle;" style="width: 5%;text-align: center;">
-                                <input type="number" name="" id="valor_{{puesto_array.id_puesto}}" value="{{puesto_array.disponibilidad}}" class="form-control" (change)="cambiarValor(puesto_array.id_puesto,puesto_array.disponibilidad)">
+                                <input type="number" name="" id="valor_{{puesto_array.id_puesto}}" value="{{puesto_array.autorizados}}" class="form-control" (change)="cambiarValor(puesto_array.id_puesto,puesto_array.autorizados)">
                             </td>
                             <td style="vertical-align: middle;" ><a class="btn btn-info" (click)="eliminarPuesto(puesto_array.id_puesto)" title="Nuevo departamento"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a></td>
                         </tr>

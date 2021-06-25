@@ -1,17 +1,19 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from '../sistema_prestasoft/dashboard/dashboard.component';
+import { FacturasComponent } from './facturas/facturas.component';
 import { SistemaPrestaSoftComponent } from './sistema_prestasoft.component';
 import { XmlUploadComponent } from './xml-upload/xml-upload.component';
 
 
 const routes: Routes = [
     {
-    path : 'sistema_prestasoft',
+    path : 'contabilidad',
       component : SistemaPrestaSoftComponent,
       children : [
           { path: 'dashboard', component : DashboardComponent},
           { path: 'xml-upload', component : XmlUploadComponent},
+          { path: 'facturas', component : FacturasComponent},
           { path: '', redirectTo: '/login', pathMatch: 'full'}
       ]
     }

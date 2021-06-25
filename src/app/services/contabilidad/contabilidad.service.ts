@@ -16,7 +16,7 @@ export class ContabilidadService {
 
   altaXML(obj : any){
     console.log(obj);
-    let url = SERVER_API+"usuario/upload-xml";
+    let url = SERVER_API+"contabilidad/upload-xml";
     return this.http.post( url, obj )
       .pipe(map( (resp: any) => {
         return resp;
@@ -24,5 +24,36 @@ export class ContabilidadService {
         Swal.fire("Ha ocurrido un error", err.error.data, 'error');
         return throwError(err);
       }));
+  }
+  getFacturas(obj: any){
+    let url = SERVER_API + "contabilidad/get-facturas-cp";
+    return this.http.post( url, obj )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+    
+  }
+  getClienteProveedor(obj: any){
+    let url = SERVER_API + "contabilidad/get-cliente-proveedor";
+    return this.http.post( url, obj )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+  getUuid(obj: any){
+    let url = SERVER_API + "contabilidad/get-uuid";
+    return this.http.post( url, obj )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
   }
 }
