@@ -22,6 +22,7 @@ export class Xml {
         public tipo_cambio: number, 
         public xml: string, 
         public cuentacontable: string,
+        public id_concepto: number,
         public id_empresa: number,
         public id_movfactura?: number
     ) {

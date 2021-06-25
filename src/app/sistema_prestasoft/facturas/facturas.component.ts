@@ -7,6 +7,8 @@ import { ContabilidadService } from 'src/app/services/contabilidad/contabilidad.
 import Swal from 'sweetalert2';
 import * as xml2js from 'xml2js';  
 import { timer } from 'rxjs';
+import {formatCurrency, getCurrencySymbol} from '@angular/common';
+
 @Component({
   selector: 'app-facturas',
   templateUrl: './facturas.component.html',
@@ -22,7 +24,7 @@ export class FacturasComponent implements OnInit {
   filteredOptions: Observable<any[]> | undefined;
   opcionesFiltrado: Observable<any[]> | undefined;
   modal: any;
-  xml: Xml = new Xml('', '', '', '', '', '', '', '', '', '', '', '', 0, 0, 0, '', 0, 0, 0, 0, '', '', 0, 0);
+  xml: Xml = new Xml('', '', '', '', '', '', '', '', '', '', '', '', 0, 0, 0, '', 0, 0, 0, 0, '', '', 0, 0, 0);
   objetoXml: any = {
     usuario: 1,
     empresa: this.miEmpresa,
@@ -43,11 +45,9 @@ export class FacturasComponent implements OnInit {
   public previous = false;
   public band_persiana = true;
   public band = true;
+  existe = false;
   id_provcliente = "";
-
-
   periodo = false;
-
   miObjeto: any = {
     id_provcliente: "",
     id_empresa: this.miEmpresa,
@@ -64,6 +64,11 @@ export class FacturasComponent implements OnInit {
   };
   objFactura: any = [];
 
+  objMonedas: any[] = [];
+  objTipos: any[] = [];
+  objMetodos: any[] = [];
+  objConceptos: any[] = [];
+
   constructor(private contabilidadService: ContabilidadService) { }
 
   ngOnInit(): void {
@@ -78,9 +83,58 @@ export class FacturasComponent implements OnInit {
         startWith(''),
         map(value => this._filtroUuid(value))
       );
+      this.getMonedas();
+      this.getTipos();
+      this.getMetodos();
+      this.getConceptos();
+  }
+  getConceptos(){
+    this.contabilidadService.obtenerConceptos(this.miEmpresa)
+    .subscribe( (object : any) => {
+      if(object.ok){
+        console.log(object);
+        this.objConceptos = object.data;
+      }else{
+        Swal.fire("Ha ocurrido un error",object.message,"error");
+      }
+    });
+  }
+  getMonedas(){
+    this.contabilidadService.obtenerMonedas()
+    .subscribe( (object : any) => {
+      if(object.ok){
+        console.log(object);
+        this.objMonedas = object.data;
+      }else{
+        Swal.fire("Ha ocurrido un error",object.message,"error");
+      }
+    });
+  }
+  getTipos(){
+    this.contabilidadService.obtenerTipoComprobantes()
+    .subscribe( (object : any) => {
+      if(object.ok){
+        console.log(object);
+        this.objTipos = object.data;
+      }else{
+        Swal.fire("Ha ocurrido un error",object.message,"error");
+      }
+    });
+  }
+  getMetodos(){
+    this.contabilidadService.obtenerMetodoPago()
+    .subscribe( (object : any) => {
+      if(object.ok){
+        console.log(object);
+        this.objMetodos = object.data;
+      }else{
+        Swal.fire("Ha ocurrido un error",object.message,"error");
+      }
+    });
   }
   cambioFechas(evt: any){
     var target = evt.target.value;
+    this.objFactura = [];
     if(target == "dia"){
       this.dia = true;
       this.periodo = false;
@@ -115,7 +169,6 @@ export class FacturasComponent implements OnInit {
       this.myControlUUID.patchValue(value.option.value["uuid"]);
       this.getListadoFacturas();
       this.actualizar(this.objFactura);
-      
     }
     
   }
@@ -125,6 +178,7 @@ export class FacturasComponent implements OnInit {
       if(object.ok){
         this.total_registros = object.totales;
         this.edito = true;
+
         if(this.total_registros > this.taken){
           this.mostrar_pagination = true;
           this.paginar();
@@ -256,6 +310,11 @@ export class FacturasComponent implements OnInit {
     this.xml.rfcReceptor = xml.rfc;
     this.xml.id_movfactura = xml.id_movfactura;
     this.xml.id_empresa = xml.id_empresa;
+    if(xml.uuid.length > 0){
+      this.existe = true;
+    }else{
+      this.existe = false;
+    }
     // this.alimentoService.actualizar(this.alimento.id, this.alimento)
     // .subscribe( objeto => {
     //   console.log(objeto);
@@ -285,7 +344,8 @@ export class FacturasComponent implements OnInit {
   limpiar(){
     $("#miBoton").removeAttr('disabled');
     this.edito = false;
-    this.xml = new Xml('', '', '', '', '', '', '', '', '', '', '', '', 0, 0, 0, '', 0, 0, 0, 0, '', '', 0, 0);
+    this.existe = false;
+    this.xml = new Xml('', '', '', '', '', '', '', '', '', '', '', '', 0, 0, 0, '', 0, 0, 0, 0, '', '', 0, 0, 0);
   }
   async addArregloXml(selectFile: any){
       if(selectFile.type == "text/xml"){
@@ -349,8 +409,8 @@ export class FacturasComponent implements OnInit {
             this.xml.iva= iva,
             this.xml.clave_sat= clave_sat,
             this.xml.ieps= ieps,
-            this.xml.retencion_iva= 11,
-            this.xml.retencion_isr=  22,
+            this.xml.retencion_iva= 0,
+            this.xml.retencion_isr=  0,
             this.xml.tipo_cambio= tipo_cambio,
             this.xml.xml= xmlData
          }else{
@@ -388,4 +448,13 @@ export class FacturasComponent implements OnInit {
     var fileName = obj.uuid + ".xml";
     this.saveTextAsFile(fileText, fileName);
   }
+  updateValue(value: string) {
+    let val = parseInt(value, 10);
+    let cantidad = "";
+    if (Number.isNaN(val)) {
+      val = 0;
+    }
+    cantidad = formatCurrency(val, 'en-US', getCurrencySymbol('USD', 'wide'));
+    console.log(cantidad);
+}
 }

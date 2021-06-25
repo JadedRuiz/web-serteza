@@ -73,6 +73,7 @@
                             <th scope="col">#</th>
                             <th scope="col">Uuid</th>
                             <th scope="col">Folio</th>
+                            <th scope="col">Estatus</th>
                             <th scope="col">Tipo documento</th>
                             <th scope="col">Fecha de emisión</th>
                             <th scope="col">Total</th>
@@ -84,14 +85,14 @@
                             <td colspan="1" style="vertical-align: middle;">{{i + 1}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{obj.uuid}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{obj.folio}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{obj.status}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{obj.tipo_documento}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{obj.fecha}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{obj.moneda}} {{obj.total| currency: 'USD'}}</td>
                             <td colspan="1" style="width: 20%;">
                                 <a title="Ver xml"  style="cursor: pointer;" (click)="expFile(obj)" class="btn btn-success btn-sm"><img src="./assets/iconos/reporte.svg" style="width: 14px;"></a>
-                                <a title="Editar" data-toggle="modal" data-target="#exampleModal" (click)="actualizar(obj)" style="cursor: pointer;" class="btn btn-info btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
-                                <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning btn-sm"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
-
+                                <a title="Editar" data-toggle="modal" data-target="#exampleModal" (click)="actualizar(obj)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                                <a *ngIf="obj.status != 'Cancelado'" title="Eliminar"  style="cursor: pointer;" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalCancelacion"><img src="./assets/iconos/sin-parar.svg" style="width: 14px;"></a>
                                 <!-- (click)="editar(departamento.folio)" -->
                             </td>
                         </tr>
@@ -159,17 +160,8 @@
           </button>
         </div>
             <form #f="ngForm" ngNativeValidate (ngSubmit)="guardarCatalogo(f)">
-                <div class="form-row col-12 mb-2" style="display: flex;justify-content: flex-end;">
-                    <select class="form-control" style="width: 200px;">
-                        <option default value="6">En reclutamiento</option>
-                        <option value="1">Activo</option>
-                        <option value="2">Baja</option>
-                        <option value="3">Suspendido</option>
-                        <option value="5">Solicitud</option>
-                    </select>
-                  </div>
                 <div class="modal-body">
-                  <div class="form-group">
+                  <div *ngIf="!existe" class="form-group">
                     <label for="xml">Seleccione un xml</label>
                     <input  name="xml" (change)="cargarXml($event)" type="file" class="form-control" >
                   </div>
@@ -204,25 +196,44 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label for="inputState">Fecha</label>
-                            <input [(ngModel)]="xml.fecha" name="fecha" type="text" class="form-control" placeholder="0" required>
+                            <input [(ngModel)]="xml.fecha" name="fecha" type="text" class="form-control" placeholder="" required>
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="inputZip">Método de pago</label>
-                            <input [(ngModel)]="xml.metodopago" name="metodopago" type="text" class="form-control" placeholder="0" required>
+                            <label for="exampleInputEmail1">Tipo de método de pago</label>
+                            <select [(ngModel)]="xml.metodopago" name="metodopago" class="form-control">
+                                <option selected value="">Seleccione un método de pago</option>
+                                <option *ngFor="let metodo of objMetodos" [value]="metodo.c_MetodoPago">
+                                    {{metodo.c_MetodoPago}}
+                                </option> 
+                            </select>
                         </div>
                     </div>
                     <div class="form-row">
                       <div class="form-group col-md-4">
                           <label for="inputCity">Forma de pago</label>
-                          <input [(ngModel)]="xml.formapago" name="formapago" type="text" class="form-control" placeholder="0" required>
+                          <input [(ngModel)]="xml.formapago" name="formapago" type="text" class="form-control" placeholder="" required>
                       </div>
                       <div class="form-group col-md-4">
+                        <label for="exampleInputEmail1">Tipo de moneda</label>
+                        <select [(ngModel)]="xml.moneda" name="moneda" class="form-control">
+                            <option selected value="">Seleccione una moneda</option>
+                            <option *ngFor="let moneda of objMonedas" [value]="moneda.c_Moneda">
+                                {{moneda.c_Moneda}}
+                            </option> 
+                        </select>
+                    </div>
+                      <!-- <div class="form-group col-md-4">
                           <label for="inputState">Moneda</label>
                           <input [(ngModel)]="xml.moneda" name="moneda" type="text" class="form-control" placeholder="0" required>
-                      </div>
+                      </div> -->
                       <div class="form-group col-md-4">
-                          <label for="inputZip">Tipo de documento</label>
-                          <input [(ngModel)]="xml.tipo" name="tipo" type="text" class="form-control" placeholder="0" required>
+                          <label for="exampleInputEmail1">Tipo de documento</label>
+                        <select [(ngModel)]="xml.tipo" name="tipo" class="form-control">
+                            <option selected value="">Seleccione un tipo de documento</option>
+                            <option *ngFor="let tipo of objTipos" [value]="tipo.c_TipoDeComprobante">
+                                {{tipo.c_TipoDeComprobante}}
+                            </option> 
+                        </select>
                       </div>
                   </div>
                   <div class="form-row">
@@ -265,15 +276,56 @@
                   <div class="form-group col-md-4">
                       <label for="inputZip">Total</label>
                       <input [(ngModel)]="xml.total" name="total" type="number" class="form-control" placeholder="0" step="0.01" required>
+                      <span> </span>
                   </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-4">
+                    <label for="exampleInputEmail1">Concepto</label>
+                    <select [(ngModel)]="xml.id_concepto" name="id_concepto" class="form-control" required>
+                        <option selected value="0">Seleccione un concepto</option>
+                        <option *ngFor="let concepto of objConceptos" [value]="concepto.id_concepto">
+                            {{concepto.concepto}}
+                        </option> 
+                    </select>
+                </div>
                 </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="limpiar()" data-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" (click)="limpiar()">Deshacer</button>
-                    <button id="miBoton" type="submit" class="btn btn-info">Guardar</button>
+                    <button type="button" class="btn btn-danger" (click)="limpiar()" data-dismiss="modal">Cerrar</button>
+                    <button id="miBoton" type="submit" class="btn btn-success">Guardar</button>
                 </div>
             </form>
       </div>
     </div>
   </div>
+
+  <!-- Modal -->
+<div class="modal fade" id="modalCancelacion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Motivo de cancelación</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #c="ngForm" ngNativeValidate >
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="xml">Archivo del sat</label>
+          <input type="file" class="form-control" >
+        </div>
+        <div class="form-group">
+          <label for="xml">Motivo de cancelación</label>
+          <textarea type="text" class="form-control" rows="8" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary">Cancelar</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>

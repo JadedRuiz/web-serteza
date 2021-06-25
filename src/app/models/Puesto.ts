@@ -6,7 +6,7 @@ export class Puesto {
         public sueldo_tipo_a : String,
         public sueldo_tipo_b : String,
         public sueldo_tipo_c : String,
-        public disponibilidad : String,
+        public autorizados : String,
         public descripcion : String,
         public usuario : number,
         public activo : number

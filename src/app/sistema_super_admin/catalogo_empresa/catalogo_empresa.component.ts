@@ -184,18 +184,7 @@ export class CatalogoEmpresaComponent implements OnInit {
                 this.empresa.activo = 0;
               }
               this.empresa.usuario_creacion = parseInt(this.usuario_creacion+"");
-              this.empresa_service.altaEmpresa(this.empresa)
-              .subscribe( (object) =>{
-                if(object.ok){
-                  console.log(object);
-                  this.limpiarCampos();
-                  this.mostrarEmpresas();
-                  Swal.fire("Buen trabajo","La empresa se ha dado de alta correctamente","success");
-                  this.cerrarModal();
-                }else{
-                  Swal.fire("Ha ocurrido un error",object.message,"error");
-                }
-              });
+              this.confirmar("Confirmación","¿Seguro que desea guardar la información?","info",1);
             }
           }
         }
@@ -257,16 +246,7 @@ export class CatalogoEmpresaComponent implements OnInit {
                 this.empresa.activo = 0;
               }
               this.empresa.usuario_creacion = parseInt(this.usuario_creacion+"");
-              this.empresa_service.actualizarEmpresa(this.empresa)
-              .subscribe( (object) =>{
-                if(object.ok){
-                  console.log(object);
-                  this.mostrarEmpresas();
-                  Swal.fire("Buen trabajo","La empresa se ha modificado correctamente","success");
-                }else{
-                  Swal.fire("Ha ocurrido un error",object.message,"error");
-                }
-              });
+              this.confirmar("Confirmación","¿Seguro que desea editar la información?","info",2);
             }
           }
         }
@@ -457,5 +437,47 @@ export class CatalogoEmpresaComponent implements OnInit {
     this.docB64 = docB64+"";
     this.fotografia.docB64 = docB64;
     this.fotografia.extension = extension;
+  }
+
+  confirmar(title : any ,texto : any ,tipo_alert : any,tipo : number){
+    Swal.fire({
+      title: title,
+      text: texto,
+      icon: tipo_alert,
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if(tipo == 1){  //Guardar
+          this.empresa_service.altaEmpresa(this.empresa)
+          .subscribe( (object) =>{
+            if(object.ok){
+              console.log(object);
+              this.limpiarCampos();
+              this.mostrarEmpresas();
+              Swal.fire("Buen trabajo","La empresa se ha dado de alta correctamente","success");
+              this.cerrarModal();
+            }else{
+              Swal.fire("Ha ocurrido un error",object.message,"error");
+            }
+          });
+        }
+        if(tipo == 2){  //Editar
+          this.empresa_service.actualizarEmpresa(this.empresa)
+          .subscribe( (object) =>{
+            if(object.ok){
+              console.log(object);
+              this.mostrarEmpresas();
+              Swal.fire("Buen trabajo","La empresa se ha modificado correctamente","success");
+            }else{
+              Swal.fire("Ha ocurrido un error",object.message,"error");
+            }
+          });
+        }
+      }
+    });
   }
 }

@@ -69,7 +69,7 @@
                             <td colspan="1" style="vertical-align: middle;">{{empresa.cliente}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{empresa.status}}</td>
                             <td colspan="1" style="width: 20%;" class="text-center">
-                                <a title="Editar" (click)="editar(empresa.folio)" style="cursor: pointer;" class="btn btn-info btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                                <a title="Editar" (click)="editar(empresa.folio)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
                             </td>
                         </tr>
                     </tbody>
@@ -154,7 +154,7 @@
                     <div class="container col-12">
                         <div class="row">
                             <div class="col-lg-5 col-sm-12">
-                                <div class="form-group rounded" style="max-width:280px;height:175px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;">
+                                <div class="form-group rounded" style="max-width:280px;height:175px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;overflow: hidden;">
                                     <img (click)="subirImagen()" id="imagen_perfil" class="img-fluid" [src]="foto_user">
                                     <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
                                 </div>
@@ -261,7 +261,7 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
         <button type="button" class="btn btn-success" (click)="altaCliente()" id="guardar">Guardar</button>
-        <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button>
+        <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Guardar</button>
     </div>
 </ng-template>
   

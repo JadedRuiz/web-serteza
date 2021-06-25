@@ -120,26 +120,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
     }
     if(this.departamento.departamento != "" && this.departamento.disponibilidad > 0){
       if(this.puestos.length > 0){
-        if(this.tipo_modal == 1){
-          this.departamento_service.altaDepartamento(this.departamento)
-          .subscribe( (object : any)=>{
-            if(object.ok){
-              this.cerrarModal();
-              this.mostrarDepartamentos();
-              Swal.fire("Buen trabajo","Se ha agregado el departamento con éxito","success");
-              this.limpiarCampos();
-            }
-          });
-        }
-        if(this.tipo_modal == 2){
-          this.departamento_service.actualizarDepartamento(this.departamento)
-          .subscribe( (object : any)=>{
-            if(object.ok){
-              this.mostrarDepartamentos();
-              Swal.fire("Buen trabajo","Se ha modificado el departamento con éxito","success");
-            }
-          });
-        }
+        this.confirmar("Confirmación","¿Seguro que desea editar la información?","info",this.tipo_modal);
       }else{
         Swal.fire("Ha ocurrido un error","El departamento debe tener almenos un puesto","error");
       }
@@ -156,17 +137,18 @@ export class CatalogoDepartamentoComponent implements OnInit {
 
   agregarPuesto(){
     //validar la sumatoria de los puestos
+    console.log(this.puesto);
     let sumatoria = 0;
     for(let i=0;i<this.puestos.length;i++){
-      sumatoria += parseInt(""+this.puestos[i].disponibilidad);
+      sumatoria += parseInt(""+this.puestos[i].autorizados);
     }
-    this.departamento.disponibilidad = sumatoria + parseInt(""+this.puesto.disponibilidad);
+    this.departamento.disponibilidad = sumatoria + parseInt(""+this.puesto.autorizados);
       this.band_puestos = true;
       this.puestos.push({
         "id_puesto" : this.cont,
         "puesto" : this.puesto.puesto,
         "descripcion" : this.puesto.descripcion,
-        "disponibilidad" : this.puesto.disponibilidad,
+        "autorizados" : this.puesto.autorizados,
         "sueldo_tipo_a" : this.puesto.sueldo_tipo_a,
         "sueldo_tipo_b" : this.puesto.sueldo_tipo_b,
         "sueldo_tipo_c" : this.puesto.sueldo_tipo_c
@@ -245,7 +227,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
     this.puestos.forEach( (element : any) => {
       if(element.id_puesto == id){
         this.puesto.puesto = element.puesto;
-        this.puesto.disponibilidad = element.autorizados;
+        this.puesto.autorizados = element.autorizados;
         this.puesto.descripcion = element.descripcion;
         this.puesto.sueldo_tipo_a = element.sueldo_tipo_a;
         this.puesto.sueldo_tipo_b = element.sueldo_tipo_b;
@@ -334,5 +316,41 @@ export class CatalogoDepartamentoComponent implements OnInit {
 
   cerrarModal(){
     this.modal.close();
+  }
+
+  confirmar(title : any ,texto : any ,tipo_alert : any,tipo : number){
+    Swal.fire({
+      title: title,
+      text: texto,
+      icon: tipo_alert,
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if(tipo == 1){  //Guardar
+          this.departamento_service.altaDepartamento(this.departamento)
+          .subscribe( (object : any)=>{
+            if(object.ok){
+              this.cerrarModal();
+              this.mostrarDepartamentos();
+              Swal.fire("Buen trabajo","Se ha agregado el departamento con éxito","success");
+              this.limpiarCampos();
+            }
+          });
+        }
+        if(tipo == 2){  //Editar
+          this.departamento_service.actualizarDepartamento(this.departamento)
+          .subscribe( (object : any)=>{
+            if(object.ok){
+              this.mostrarDepartamentos();
+              Swal.fire("Buen trabajo","Se ha modificado el departamento con éxito","success");
+            }
+          });
+        }
+      }
+    });
   }
 }
