@@ -36,11 +36,10 @@
                   </thead>
                   <tbody *ngIf="bajas.length > 0; else pintaVacio" class="">
                       <tr *ngFor="let baja of bajas">
-                          <td colspan="1" style="vertical-align: middle;">{{baja.folio}}</td>
-                          <td colspan="1" style="vertical-align: middle;">{{baja.fecha}}</td>
+                          <td colspan="1" style="vertical-align: middle;">{{baja.id_movimiento}}</td>
+                          <td colspan="1" style="vertical-align: middle;">{{baja.fecha_movimiento}}</td>
                           <td colspan="1" style="width: 20%;">
-                              <!-- <a title="Editar" (click)="editar(baja.folio)" style="cursor: pointer;" class="btn btn-primary"><img src="./assets/iconos/edit.svg" style="width: 24px;"></a>
-                              <a title="Reporte de contratación" style="cursor: pointer;" class="btn btn-info" (click)="consumoReporte(1,baja.folio)"><img src="./assets/iconos/reporte.svg" style="width: 24px;"></a> -->
+                              <a title="Editar" (click)="editarMovimientoBaja(baja.id_movimiento)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
                           </td>
                       </tr>
                   </tbody>
@@ -128,21 +127,21 @@
             <th colspan="1" class="text-center">Acciones</th>
           </tr>
         </thead>
-        <tbody *ngIf="candidatos_seleccionados.length > 0">
-          <tr *ngFor="let candidato of candidatos_seleccionados">
-            <td style="vertical-align: middle;">{{candidato.nombre}}</td>
-            <td style="vertical-align: middle;">
-              <mat-form-field appearance="fill">
+        <tbody *ngIf="candidatos_dos.candidatos.length > 0">
+          <tr *ngFor="let candidato of candidatos_dos.candidatos">
+            <td style="vertical-align: text-top;">{{candidato.nombre}}</td>
+            <td style="vertical-align: text-top;">
+              <mat-form-field class="w-100">
                 <input matInput [(ngModel)]="candidato.fecha_baja" [matDatepicker]="picker" placeholder="Ingrese la fecha de la baja">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
               </mat-form-field>
             </td>
-            <td style="vertical-align: middle;">
-              <input type="text" class="form-control" [(ngModel)]="candidato.observacion">
+            <td style="vertical-align: text-top;">
+              <textarea class="form-control" [(ngModel)]="candidato.observacion" cols="30" rows="1"></textarea>
             </td>
-            <td style="vertical-align: middle;" class="text-center">
-              <a title="Eliminar" style="cursor: pointer;" class="btn btn-warning btn-sm"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
+            <td style="vertical-align: text-top;" class="text-center">
+              <a title="Eliminar" style="cursor: pointer;" class="btn btn-warning btn-md"><img src="./assets/iconos/delete.svg" style="width: 18px;"></a>
             </td>
           </tr>
         </tbody>

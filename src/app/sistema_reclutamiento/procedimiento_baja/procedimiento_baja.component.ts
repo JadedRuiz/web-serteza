@@ -3,6 +3,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
 import { COLOR } from 'src/config/config';
 import { FormControl} from '@angular/forms';
+import Swal from 'sweetalert2';
+import { Baja } from 'src/app/models/Baja';
+import { BajaService } from 'src/app/services/Baja/Baja.service';
 
 @Component({
   selector: 'app-procedimiento-baja',
@@ -12,7 +15,7 @@ import { FormControl} from '@angular/forms';
 export class ProcedimientoBajaComponent implements OnInit {
   
   public color = COLOR;
-  public status = 2;
+  public status = 5;
   public palabra = "";
   public fecha_inicial = "";
   public fecha_final = "";
@@ -22,7 +25,9 @@ export class ProcedimientoBajaComponent implements OnInit {
   public candidatos : any;
   public candidatos_seleccionados : any;
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
+  public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
   myControl = new FormControl();
+  public candidatos_dos = new Baja(0,0,this.id_cliente,this.usuario_creacion,[]);
   //Paginacion
   public total_registros = 0;
   public mostrar_pagination = false;
@@ -38,7 +43,9 @@ export class ProcedimientoBajaComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private candidato_service: CandidatoService) { 
+    private candidato_service: CandidatoService,
+    private baja_service : BajaService
+    ) { 
       this.candidatos_seleccionados = [];
     }
 
@@ -48,6 +55,20 @@ export class ProcedimientoBajaComponent implements OnInit {
   
   mostrarBajas(){
     this.bajas = [];
+    let json = {
+      "id_cliente" : this.id_cliente,
+      "fecha_inicio"  :this.fecha_inicial,
+      "fecha_fin" : this.fecha_final,
+      "id_status" : this.status,
+    };
+    this.baja_service.obtenerSolicitudesBaja(json)
+    .subscribe ( (object : any) => {
+      if(object.ok){
+        this.bajas = object.data;
+      }else{
+        this.bajas = [];
+      }
+    });
   }
 
   mostrarCandidatos(value : any){
@@ -74,18 +95,32 @@ export class ProcedimientoBajaComponent implements OnInit {
   }
 
   getCandidato(event : any){
-    this.candidatos_seleccionados.push({
-      "id_candidato" : event.option.id,
-      "nombre" :  event.option.value,
-      "fecha_baja" : "",
-      "observacion" : ""
+    let band = false;
+    this.candidatos_dos.candidatos.forEach( (candidato:any) => {
+      if(candidato.id_candidato == event.option.id){
+        band = true;
+      }
     });
+    if(!band){
+      this.candidatos_dos.candidatos.push({
+        "id_candidato" : event.option.id,
+        "nombre" :  event.option.value,
+        "fecha_baja" : "",
+        "observacion" : ""
+      });
+    }else{
+      Swal.fire("Ha ocurrido un error","El empleado ya se encuentra agregado","info");
+    }
     this.candidatos.splice(0,this.candidatos.length);
     this.myControl.reset('');
   }
 
   crearBaja(){
-    console.log(this.candidatos_seleccionados);
+    this.confirmar("Confirmación","¿Seguro que desea generar la baja?","info",1);
+  }
+
+  editarMovimientoBaja(id : any){
+    
   }
 
   irPagina(pagina : any){
@@ -140,5 +175,35 @@ export class ProcedimientoBajaComponent implements OnInit {
 
   cerrarModal(){
     this.modal.close();
+  }
+
+  confirmar(title : any ,texto : any ,tipo_alert : any,tipo : number){
+    Swal.fire({
+      title: title,
+      text: texto,
+      icon: tipo_alert,
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if(tipo == 1){  //Guardar
+          console.log(this.candidatos_dos);
+          this.baja_service.crearSolicitudDeBaja(this.candidatos_dos)
+          .subscribe( (object : any) => {
+            if(object.ok){
+              Swal.fire("Buen trabajo","La solicitud de baja se ha generado con éxito","success");
+            }else{
+              Swal.fire("Ha ocurrido un error","No se ha podido crear la solicitud","info");
+            }
+          });
+        }
+        if(tipo == 2){  //Editar
+          
+        }
+      }
+    });
   }
 }
