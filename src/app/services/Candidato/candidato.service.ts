@@ -57,6 +57,10 @@ export class CandidatoService {
     let url = SERVER_API+"candidato/obtenerCandidatosPorIdCliente/"+id;
     return this.http.get(url);
   }
+  obtenerCandidatoActivoId(id : any){
+    let url = SERVER_API+"candidato/obtenerCandidatoActivoId/"+id;
+    return this.http.get(url);
+  }
   obtenerCandidatoPorId(id : any){
     let url = SERVER_API+"candidato/obtenerCandidatoPorId/"+id;
     return this.http.get(url);

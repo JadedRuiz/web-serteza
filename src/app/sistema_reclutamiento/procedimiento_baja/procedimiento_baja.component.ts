@@ -6,6 +6,7 @@ import { FormControl} from '@angular/forms';
 import Swal from 'sweetalert2';
 import { Baja } from 'src/app/models/Baja';
 import { BajaService } from 'src/app/services/Baja/Baja.service';
+import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 
 @Component({
   selector: 'app-procedimiento-baja',
@@ -21,6 +22,7 @@ export class ProcedimientoBajaComponent implements OnInit {
   public fecha_final = "";
   public bajas : any;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
+  @ViewChild('editar', {static: false}) contenidoDelModalEditar : any;
   public modal : any;
   public candidatos : any;
   public candidatos_seleccionados : any;
@@ -28,6 +30,7 @@ export class ProcedimientoBajaComponent implements OnInit {
   public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
   myControl = new FormControl();
   public candidatos_dos = new Baja(0,0,this.id_cliente,this.usuario_creacion,[]);
+  public aplicar = false;
   //Paginacion
   public total_registros = 0;
   public mostrar_pagination = false;
@@ -44,7 +47,8 @@ export class ProcedimientoBajaComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private candidato_service: CandidatoService,
-    private baja_service : BajaService
+    private baja_service : BajaService,
+    private usuario_service : UsuarioService
     ) { 
       this.candidatos_seleccionados = [];
     }
@@ -61,6 +65,13 @@ export class ProcedimientoBajaComponent implements OnInit {
       "fecha_fin" : this.fecha_final,
       "id_status" : this.status,
     };
+    this.usuario_service.tieneSistema({"usuario":this.usuario_creacion,"id_sistema" : "3"})
+    .subscribe( (object : any) => {
+      this.aplicar = true;
+      if(object.ok){
+        this.aplicar = false;
+      }
+    });
     this.baja_service.obtenerSolicitudesBaja(json)
     .subscribe ( (object : any) => {
       if(object.ok){
@@ -116,13 +127,34 @@ export class ProcedimientoBajaComponent implements OnInit {
   }
 
   crearBaja(){
-    this.confirmar("Confirmación","¿Seguro que desea generar la baja?","info",1);
+    this.confirmar("Confirmación","¿Seguro que desea generar la baja?","info",1,null);
   }
-
+  modificarBaja(){
+    this.confirmar("Confirmación","¿Seguro que desea modfiicar la baja?","info",2,null);
+  }
   editarMovimientoBaja(id : any){
-    
+    this.candidatos_dos.id_movimiento = parseInt(id);
+    this.candidatos_dos.candidatos = [];
+    this.baja_service.obtenerDetalleSolicitudBaja(id)
+    .subscribe( (object : any)=>{
+      if(object.ok){
+        this.candidatos_dos.candidatos = object.data;
+        this.openModalEditar();
+      }else{
+        Swal.fire("Ha ocurrido un error",object.message,"info");
+      }
+    });
   }
-
+  eliminarDetalle(id_detalle : any,id_candidato : any){
+    this.confirmar("Confirmación","¿Seguro que desea eliminarlo?","info",3,{id_detalle : id_detalle,id_candidato : id_candidato});
+  }
+  eliminarDetalleSolicitud(id_candidato : any){
+    this.candidatos_dos.candidatos.forEach( (element : any , index : any) => {
+      if(element.id_candidato == id_candidato){
+        this.candidatos_dos.candidatos.splice(index,1);
+      }
+    });
+  }
   irPagina(pagina : any){
     this.pagina_actual = pagina;
   }
@@ -171,13 +203,15 @@ export class ProcedimientoBajaComponent implements OnInit {
 
   openModal() {
     this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop'});
+    this.candidatos_dos.candidatos = [];
   }
-
+  openModalEditar() {
+    this.modal = this.modalService.open(this.contenidoDelModalEditar,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop'});
+  }
   cerrarModal(){
     this.modal.close();
   }
-
-  confirmar(title : any ,texto : any ,tipo_alert : any,tipo : number){
+  confirmar(title : any ,texto : any ,tipo_alert : any,tipo : number,data : any){
     Swal.fire({
       title: title,
       text: texto,
@@ -195,13 +229,38 @@ export class ProcedimientoBajaComponent implements OnInit {
           .subscribe( (object : any) => {
             if(object.ok){
               Swal.fire("Buen trabajo","La solicitud de baja se ha generado con éxito","success");
+              this.cerrarModal();
+              this.mostrarBajas();
             }else{
               Swal.fire("Ha ocurrido un error","No se ha podido crear la solicitud","info");
             }
           });
         }
         if(tipo == 2){  //Editar
-          
+          this.baja_service.modificarDetalleSolicitud(this.candidatos_dos)
+          .subscribe( (object:any)=>{
+            if(object.ok){
+              Swal.fire("Buen trabajo","La solicitud de baja se ha generado con éxito","success");
+            }else{
+              Swal.fire("Ha ocurrido un error",object.message,"info");
+            }
+          });
+        }
+        if(tipo == 3){  //Eliminar Detalle
+          this.baja_service.eliminarDetalle(data.id_detalle)
+          .subscribe( (object : any) => {
+            if(object.ok){
+              if(object.data){
+                this.cerrarModal();
+                this.mostrarBajas();
+              }else{
+                this.eliminarDetalleSolicitud(data.id_candidato);
+              }
+              Swal.fire("Buen trabajo","Se ha eliminado con éxito","success");
+            }else{
+              Swal.fire("Ha ocurrido un error",object.message,"info");
+            }
+          });
         }
       }
     });

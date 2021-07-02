@@ -25,6 +25,16 @@ export class BajaService {
         return throwError(err);
       }));
   }
+  modificarDetalleSolicitud(baja : Baja){
+    let url = SERVER_API + "baja/modificarDetalleSolicitud";
+    return this.http.post( url, baja)
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
   obtenerSolicitudesBaja(json : any){
     let url = SERVER_API + "baja/obtenerSolicitudesBaja";
     return this.http.post( url, json)
@@ -34,5 +44,25 @@ export class BajaService {
       Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
+  }
+  obtenerDetalleSolicitudBaja(id : any){
+    let url = SERVER_API+"baja/obtenerDetalleSolicitudBaja/"+id;
+    return this.http.get(url)
+    .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        return throwError(err);
+      }));
+  }
+  eliminarDetalle(id : any){
+    let url = SERVER_API+"baja/eliminarDetalle/"+id;
+    return this.http.get(url)
+    .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        return throwError(err);
+      }));
   }
 }
