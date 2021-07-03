@@ -36,6 +36,8 @@ export class ProcedimientoContratacionComponent implements OnInit {
   public tipo_movimiento = 0;
   public btn_delete = true;
   public aplicar = false;
+  public tipo_accion = 1;
+  public id_detalle_movimiento = 0;
   //Paginacion
   public total_registros = 0;
   public mostrar_pagination = false;
@@ -303,12 +305,43 @@ export class ProcedimientoContratacionComponent implements OnInit {
        }
     
   }
+
+  editarCandidato(){
+    Swal.fire({
+      title: '¿Estas seguro que deseas editar este contrato?',
+      text: "",
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.solicitud_contratos.forEach((solicitud,index) => {
+          if(solicitud.id_detalle == this.id_detalle_movimiento){
+            solicitud.candidato = this.contrato.candidato;
+            solicitud.id_candidato = this.contrato.id_candidato;
+            solicitud.empresa = this.contrato.empresa;
+            solicitud.id_empresa = this.contrato.id_empresa;
+            solicitud.departamento = this.contrato.departamento;
+            solicitud.id_departamento = this.contrato.id_departamento;
+            solicitud.puesto = this.contrato.puesto;
+            solicitud.id_puesto = this.contrato.id_puesto;
+            solicitud.id_nomina = this.contrato.id_nomina;
+            solicitud.sueldo = this.contrato.sueldo;
+            solicitud.descripcion = this.contrato.descripcion;
+          }
+        });
+      }
+    });
+  }
   
   eliminarDetalle(id_detalle : any){
     Swal.fire({
       title: '¿Estas seguro que deseas eliminar este candidato?',
       text: "Una vez eliminado, ya no lo podrás visualizar de nuevo",
-      icon: 'warning',
+      icon: 'info',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
@@ -383,7 +416,15 @@ export class ProcedimientoContratacionComponent implements OnInit {
   }
 
   actualizarMov(){
-
+    if(this.solicitud_contratos.length > 0){
+      let json = {
+        usuario_creacion : this.usuario_creacion,
+        detalle_contratacion : this.solicitud_contratos
+      }
+      this.confirmar("Confirmación","¿Seguro que desea editar la información?","info",json,2);
+    }else{
+      Swal.fire("Tenemos un problema","No se han agregado candidatos al movimiento","warning");
+    }
   }
 
   cambiarSueldo(sueldo : any){
@@ -394,6 +435,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
     this.contrato_service.obtenerMoviemientosContratacionPorId(folio)
     .subscribe( (object : any) =>{
       if(object.ok){
+        this.tipo_accion = 2;
         this.resetearModal();
         this.tipo_movimiento = 1;
         for(let i=0;i<object.data.length;i++){
@@ -426,6 +468,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
   }
 
   editarDetalle(id_detalle : any){
+    this.id_detalle_movimiento = id_detalle;
     this.solicitud_contratos.forEach(solicitud =>{
       if(solicitud.id_detalle == id_detalle){
         this.contrato = new Contrato(
@@ -439,7 +482,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
           solicitud.id_nomina,
           solicitud.puesto,
           solicitud.id_puesto,
-          solicitud.fecha_ingreso,
+          "",
           solicitud.sueldo,
           solicitud.descripcion
         );
@@ -459,6 +502,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
 
   nuevoContrato(){
     this.resetearModal();
+    this.tipo_accion = 0;
     this.tipo_movimiento = 0;
     this.mostrarCandidatos();
     this.mostrarEmpresas();
@@ -574,7 +618,16 @@ export class ProcedimientoContratacionComponent implements OnInit {
           });
         }
         if(tipo == 2){  //Editar
-          
+          this.contrato_service.editarMovContrato(json)
+          .subscribe( (object : any)=>{
+            if(object.ok){
+              this.cerrarModal();
+              this.mostrarMovimientos();
+              Swal.fire("Buen trabajo","El movimiento de contratacion se ha registrado con éxito","success");
+            }else{
+              Swal.fire("Ha ocurrido un errro",object.message,"error");
+            }
+          });
         }
       }
     });

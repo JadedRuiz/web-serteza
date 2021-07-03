@@ -10,6 +10,16 @@
           </div>
           <div class="card-body">
             <div class="row mb-2">
+              <div class="col-lg-4 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Status</mat-label>
+                  <mat-select [(ngModel)]="status" (selectionChange)="mostrarBajas()">
+                      <mat-option [value]="-1">Todos</mat-option>
+                      <mat-option [value]="5">En solicitud</mat-option>
+                      <mat-option [value]="1">Aplicados</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
               <div class="col-lg-4 col-sm-12 mb-2">
                 <mat-form-field class="w-100">
                   <mat-label>Filtrar por fechas</mat-label>
@@ -21,7 +31,7 @@
                   <mat-date-range-picker #picker></mat-date-range-picker>
                 </mat-form-field>
               </div>
-              <div class="col-lg-8 col-sm-12" style="text-align: end;">
+              <div class="col-lg-4 col-sm-12" style="text-align: end;">
                   <a class="btn btn-info" title="Nuevo baja" (click)="openModal()"><img src="./assets/iconos/add-file.svg" style="width: 24px;"></a>
               </div>
             </div>
@@ -31,16 +41,19 @@
                       <tr>
                           <th scope="col">Folio</th>
                           <th scope="col">Fecha de la baja</th>
+                          <th scope="col">Estatus</th>
                           <th scope="col">Acciones</th>
                       </tr>
                   </thead>
                   <tbody *ngIf="bajas.length > 0; else pintaVacio" class="">
                       <tr *ngFor="let baja of bajas">
-                          <td colspan="1" style="vertical-align: middle;">{{baja.folio}}</td>
-                          <td colspan="1" style="vertical-align: middle;">{{baja.fecha}}</td>
+                          <td colspan="1" style="vertical-align: middle;">{{baja.id_movimiento}}</td>
+                          <td colspan="1" style="vertical-align: middle;">{{baja.fecha_movimiento}}</td>
+                          <td *ngIf="baja.id_status == 5" colspan="1" style="vertical-align: middle;">En solicitud</td>
+                          <td *ngIf="baja.id_status == 1" colspan="1" style="vertical-align: middle;">Aplicado</td>
                           <td colspan="1" style="width: 20%;">
-                              <!-- <a title="Editar" (click)="editar(baja.folio)" style="cursor: pointer;" class="btn btn-primary"><img src="./assets/iconos/edit.svg" style="width: 24px;"></a>
-                              <a title="Reporte de contratación" style="cursor: pointer;" class="btn btn-info" (click)="consumoReporte(1,baja.folio)"><img src="./assets/iconos/reporte.svg" style="width: 24px;"></a> -->
+                              <a title="Editar" (click)="editarMovimientoBaja(baja.id_movimiento)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                              <a *ngIf="aplicar && baja.id_status == 5" title="Aplicar solicitud" style="cursor: pointer;" class="btn btn-primary btn-sm" ><img src="./assets/iconos/aplicar.svg" style="width: 14px;"></a>
                           </td>
                       </tr>
                   </tbody>
@@ -128,25 +141,25 @@
             <th colspan="1" class="text-center">Acciones</th>
           </tr>
         </thead>
-        <tbody *ngIf="candidatos_seleccionados.length > 0">
-          <tr *ngFor="let candidato of candidatos_seleccionados">
-            <td style="vertical-align: middle;">{{candidato.nombre}}</td>
-            <td style="vertical-align: middle;">
-              <mat-form-field appearance="fill">
+        <tbody *ngIf="candidatos_dos.candidatos.length > 0">
+          <tr *ngFor="let candidato of candidatos_dos.candidatos">
+            <td style="vertical-align: text-top;">{{candidato.nombre}}</td>
+            <td style="vertical-align: text-top;">
+              <mat-form-field class="w-100">
                 <input matInput [(ngModel)]="candidato.fecha_baja" [matDatepicker]="picker" placeholder="Ingrese la fecha de la baja">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
               </mat-form-field>
             </td>
-            <td style="vertical-align: middle;">
-              <input type="text" class="form-control" [(ngModel)]="candidato.observacion">
+            <td style="vertical-align: text-top;">
+              <textarea class="form-control" [(ngModel)]="candidato.observacion" cols="30" rows="1"></textarea>
             </td>
-            <td style="vertical-align: middle;" class="text-center">
-              <a title="Eliminar" style="cursor: pointer;" class="btn btn-warning btn-sm"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
+            <td style="vertical-align: text-top;" class="text-center">
+              <a title="Eliminar" style="cursor: pointer;" class="btn btn-warning btn-md" (click)="eliminarDetalleSolicitud(candidato.id_candidato)"><img src="./assets/iconos/delete.svg" style="width: 18px;"></a>
             </td>
           </tr>
         </tbody>
-        <tbody *ngIf="candidatos_seleccionados.length == 0">
+        <tbody *ngIf="candidatos_dos.candidatos.length == 0">
           <tr class="text-center">
             <td colspan="4">No se han agregado empleados</td>
           </tr>
@@ -157,6 +170,69 @@
   <div class="modal-footer">
       <button type="button" class="btn btn-warning" (click)="cerrarModal()" >Cerrar</button>
       <button type="button" class="btn btn-success" (click)="crearBaja()" id="guardar">Crear baja</button>
+      <!-- <button type="button" class="btn btn-success" (click)="actualizarMov()" id="editar" style="display: none;">Actualizar contratación</button> -->
+  </div>
+</ng-template>
+<ng-template #editar let-c="close" let-d="dismiss">
+  <div class="modal-header">
+      <h2 class="modal-title" id="tituloModal">Editar baja</h2>
+  </div>
+  <div class="modal-body">
+    <mat-form-field class="w-100">
+      <mat-label>Buscar candidato</mat-label>
+      <input #input
+              type="text"
+              placeholder="Buscar..."
+              (keyup)="mostrarCandidatos(input.value)"
+              aria-label="Buscar candidato"
+              matInput
+              [formControl]="myControl"
+              [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getCandidato($event)'>
+        <mat-option *ngFor="let option of candidatos" [value]="option.nombre_completo" [id]="option.id_candidato" title="Agregar empleado">
+          {{option.nombre_completo}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th colspan="1">Empleado</th>
+            <th colspan="1">Fecha de la baja</th>
+            <th colspan="1">Observacion</th>
+            <th colspan="1" class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="candidatos_dos.candidatos.length > 0">
+          <tr *ngFor="let candidato of candidatos_dos.candidatos">
+            <td style="vertical-align: text-top;">{{candidato.nombre}}</td>
+            <td style="vertical-align: text-top;">
+              <mat-form-field class="w-100">
+                <input matInput [(ngModel)]="candidato.fecha_baja" [matDatepicker]="picker" placeholder="Ingrese la fecha de la baja">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </td>
+            <td style="vertical-align: text-top;">
+              <textarea class="form-control" [(ngModel)]="candidato.observacion" cols="30" rows="1"></textarea>
+            </td>
+            <td style="vertical-align: text-top;" class="text-center">
+              <a title="Eliminar" style="cursor: pointer;" class="btn btn-warning btn-md" (click)="eliminarDetalle(candidato.id_detalle_baja,candidato.id_candidato)"><img src="./assets/iconos/delete.svg" style="width: 18px;"></a>
+            </td>
+          </tr>
+        </tbody>
+        <tbody *ngIf="candidatos_dos.candidatos.length == 0">
+          <tr class="text-center">
+            <td colspan="4">No se han agregado empleados</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="cerrarModal()" >Cerrar</button>
+      <button type="button" class="btn btn-success" (click)="modificarBaja()" id="guardar">Editar</button>
       <!-- <button type="button" class="btn btn-success" (click)="actualizarMov()" id="editar" style="display: none;">Actualizar contratación</button> -->
   </div>
 </ng-template>

@@ -54,7 +54,8 @@
                           <td colspan="1" style="width: 20%;">
                               <a title="Reporte de contratación" style="cursor: pointer;" class="btn btn-gray btn-sm" (click)="consumoReporte(1,contrato.folio)"><img src="./assets/iconos/reporte.svg" style="width: 14px;"></a>
                               <a *ngIf="aplicar && contrato.band" title="Aplicar solicitud" style="cursor: pointer;" class="btn btn-primary btn-sm" (click)="aplicarContrato(contrato.folio)"><img src="./assets/iconos/aplicar.svg" style="width: 14px;"></a>
-                              <a title="Editar" (click)="editar(contrato.folio)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                              <a *ngIf="contrato.band" title="Editar" (click)="editar(contrato.folio)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                              <a *ngIf="!contrato.band" title="Ver movimiento" (click)="editar(contrato.folio)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/ver.svg" style="width: 14px;"></a>
                           </td>
                       </tr>
                   </tbody>
@@ -114,11 +115,13 @@
 
   <ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
     <div class="modal-header">
-        <h2 class="modal-title" id="tituloModal">Nuevo contrato</h2>
+        <h2 *ngIf="btn_delete" class="modal-title" id="tituloModal">Nuevo contrato</h2>
+        <h2 *ngIf="!btn_delete" class="modal-title" id="tituloModal">Ver movimiento</h2>
     </div>
     <div class="modal-body">
         <div class="form">
-          <div class="form-row">
+          <div *ngIf="btn_delete">
+            <div class="form-row">
             <div class="form-group col-lg-5 col-sm-12">
               <label for="candidato">Candidato</label>
               <input [(ngModel)]="contrato.candidato" type="text"  list="candidato"  class="form-control" (change)="mostrarCandidato()" id="input_candidato" placeholder="Seleccione el candidato">
@@ -188,8 +191,11 @@
             </div> 
           </div>
           <div class="form-row">
-            <button class="btn btn-success ml-auto" (click)="agregarCandidato()">Agregar</button>
+            <button *ngIf="tipo_accion == 0" class="btn btn-success ml-auto" (click)="agregarCandidato()">Agregar</button>
+            <button *ngIf="tipo_accion == 2" class="btn btn-success ml-auto" (click)="editarCandidato()">Editar</button>
           </div>
+          </div>
+          
           <div class="form-row mt-2">
             <div class="table-responsive">
               <table class="table">
@@ -209,7 +215,7 @@
                     <td style="vertical-align: middle;" (click)="editarDetalle(solicitud.id_detalle)">{{solicitud.departamento}}</td>
                     <td style="vertical-align: middle;" (click)="editarDetalle(solicitud.id_detalle)">{{solicitud.puesto}}</td>
                     <td style="vertical-align: middle;">
-                      <a *ngIf="tipo_movimiento == 1" title="Reporte para el contratado" style="cursor: pointer;" class="btn btn-success btn-sm" (click)="consumoReporte(2,solicitud.id_detalle)"><img src="./assets/iconos/reporte.svg" style="width: 14px;"></a>
+                      <a *ngIf="tipo_movimiento == 1" title="Reporte para el contratado" style="cursor: pointer;" class="btn btn-gray btn-sm" (click)="consumoReporte(2,solicitud.id_detalle)"><img src="./assets/iconos/reporte.svg" style="width: 14px;"></a>
                       <a *ngIf="btn_delete" title="Eliminar" (click)="eliminarDetalle(solicitud.id_detalle)" style="cursor: pointer;" class="btn btn-warning btn-sm"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
                     </td>
                   </tr>

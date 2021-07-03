@@ -37,6 +37,16 @@ export class ContratoService {
     }));
   }
   
+  editarMovContrato(json : any){
+    let url = SERVER_API+"contratacion/editarMovContrato";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      return throwError(err);
+    }));
+  }
   // actualizarDepartamento(departamento : Departamento){
   //   let url = SERVER_API+"departamento/actualizarDepartamento";
   //   return this.http.post( url, departamento )

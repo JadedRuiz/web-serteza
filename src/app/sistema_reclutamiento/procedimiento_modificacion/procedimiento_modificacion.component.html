@@ -124,66 +124,69 @@
                 <input #input
                        type="text"
                        placeholder="Buscar..."
-                       (keyup)="busqueda(input.value)"
+                       (keyup)="mostrarCandidatos(input.value)"
                        aria-label="Buscar candidato"
                        matInput
                        [formControl]="myControl"
                        [matAutocomplete]="auto">
-                <mat-autocomplete #auto="matAutocomplete">
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getCandidato($event)'>
+                  <mat-option *ngFor="let option of candidatos" [value]="option.nombre_completo" [id]="option.id_candidato" title="Agregar empleado">
+                    {{option.nombre_completo}}
+                  </mat-option>
                 </mat-autocomplete>
               </mat-form-field>
             </div>
           </div>
-          <div class="form-row">
+          <div *ngIf="bandera" class="form-row">
             <div class="col-4 form-group">
               <mat-form-field class="w-100">
                 <mat-label>Empresas</mat-label>
-                <mat-select [(ngModel)]="taken">
-                    <mat-option [value]="1">Bepensa</mat-option>
-                    <mat-option [value]="5" selected>Marvel</mat-option>
+                <mat-select [(ngModel)]="json.id_empresa" (selectionChange)="cambiarEmpresa()">
+                  <mat-option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">{{empresa.empresa}}</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
             <div class="col-4 form-group">
               <mat-form-field class="w-100">
                 <mat-label>Departamento</mat-label>
-                <mat-select [(ngModel)]="taken">
-                    <mat-option [value]="5">Sistemas</mat-option>
+                <mat-select [(ngModel)]="json.id_departamento"  (selectionChange)="cambiarDepartamento()">
+                  <mat-option *ngFor="let departamento of departamentos" [value]="departamento.id_departamento">{{departamento.departamento}}</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
             <div class="col-4 form-group">
               <mat-form-field class="w-100">
                 <mat-label>Puesto</mat-label>
-                <mat-select [(ngModel)]="taken">
-                    <mat-option [value]="5">Ing. sistemas</mat-option>
+                <mat-select [(ngModel)]="json.id_puesto" (selectionChange)="modificar = true">
+                  <mat-option *ngFor="let puesto of puestos" [value]="puesto.id_puesto">{{puesto.puesto}}</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
           </div>
-          <div class="form-row">
+          <div *ngIf="bandera" class="form-row">
             <div class="form-group col-4">
-              <input type="number" class="form-control" placeholder="Sueldo">
+              <input type="number" class="form-control" placeholder="Sueldo" [(ngModel)]="json.sueldo" (change)="modificar = true">
             </div>
             <div class="form-group col-4">
               <mat-form-field class="w-100">
                 <mat-label>Tipo de nómina</mat-label>
-                <mat-select [(ngModel)]="taken">
-                    <mat-option [value]="5">Quincenal</mat-option>
+                <mat-select [(ngModel)]="json.id_nomina" (selectionChange)="modificar = true">
+                    <mat-option *ngFor="let nomina of nominas" [value]="nomina.id_nomina">{{nomina.nomina}}</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
             <div class="form-group col-4">
               <mat-form-field class="w-100">
-                <mat-label>Fecha de la baja</mat-label>
-                <input matInput [matDatepicker]="picker">
+                <input matInput [(ngModel)]="json.fecha_alta" [matDatepicker]="picker" placeholder="Fecha de contratación">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
               </mat-form-field>
             </div>
           </div>
-          <div class="form-row text-left">
-            <button class="btn btn-success">Agregar</button>
+          <div *ngIf="bandera" class="row mb-2 mt-0">
+            <div class="col-12" style="text-align: end;">
+              <a class="btn btn-success" (click)="agregarModificacion()">Agregar</a>
+            </div>
           </div>
           <div class="form-row">
             <div class="table-responsive">
@@ -191,11 +194,33 @@
                 <thead>
                   <tr>
                     <th colspan="1">Empleado</th>
-                    <th colspan="1">Fecha baja</th>
+                    <th colspan="1">Fecha modificación</th>
+                    <th colspan="1">Observación</th>
                     <th colspan="1">Acciones</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody *ngIf="this.modificacion.candidatos.length > 0">
+                  <tr *ngFor="let candidato of this.modificacion.candidatos">
+                    <td>{{candidato.nombre}}</td>
+                    <td>
+                      <mat-form-field class="w-100">
+                        <input matInput [(ngModel)]="candidato.fecha_modificacion" [matDatepicker]="picker" placeholder="Ingrese la fecha de la modificación">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                      </mat-form-field>
+                    </td>
+                    <td>
+                      <textarea class="form-control" [(ngModel)]="candidato.observacion" cols="30" rows="1"></textarea>
+                    </td>
+                    <td>
+                      <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning btn-sm"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
+                    </td>
+                  </tr>
+                </tbody>
+                <tbody *ngIf="this.modificacion.candidatos.length == 0">
+                  <tr class="text-center">
+                    <td colspan="3">Aún no se agregan empleados</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -204,7 +229,6 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()" >Cerrar</button>
-        <!-- <button type="button" class="btn btn-success" (click)="crearMov()" id="guardar">Crear contratación</button>
-        <button type="button" class="btn btn-success" (click)="actualizarMov()" id="editar" style="display: none;">Actualizar contratación</button> -->
+        <button *ngIf="bandera" type="button" class="btn btn-success" (click)="crearModi()">Crear modificación</button>
     </div>
 </ng-template>
