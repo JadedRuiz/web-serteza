@@ -19,13 +19,14 @@ export class HeaderComponent implements OnInit {
   public modal: any;
   public clientes : any;
   public texto : String;
-
+  public nombre_cliente : String;
   constructor(private router: Router,
     public cliente_service : ClienteService,
     private modalService: NgbModal
     ) {
       this.texto = "SISTEMA DE RECLUTAMIENTO";
       this.url_foto = './assets/iconos/perfil.svg';
+      this.nombre_cliente = "";
      }
 
   ngOnInit(): void {
@@ -40,6 +41,7 @@ export class HeaderComponent implements OnInit {
           if(object.data.length > 1){
             for(let i=0;i<object.data.length;i++){
               if(this.cliente_seleccionado == parseInt(object.data[i].id_cliente)){
+                this.nombre_cliente = object.data[i].cliente;
                 this.clientes.push({
                   "cliente" : object.data[i].cliente,
                   "id_cliente" : object.data[i].id_cliente,

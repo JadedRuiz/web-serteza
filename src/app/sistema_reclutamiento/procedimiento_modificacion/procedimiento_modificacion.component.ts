@@ -57,7 +57,6 @@ export class ProcedimientoModificacionComponent implements OnInit {
     id_puesto : 0,
     id_nomina : 0,
     sueldo : "",
-    fecha_alta : "",
     fecha_modificacion : "",
     observacion : ""
   };
@@ -191,7 +190,6 @@ export class ProcedimientoModificacionComponent implements OnInit {
       this.bandera = true;
       this.json.nombre = event.option.value;
       this.json.id_candidato = event.option.id;
-      this.json.fecha_alta = object.data[0].fecha_alta;
       this.json.sueldo = object.data[0].sueldo;
       this.json.id_nomina = object.data[0].id_nomina;
       this.json.id_empresa = object.data[0].id_empresa;
@@ -223,7 +221,6 @@ export class ProcedimientoModificacionComponent implements OnInit {
         id_puesto : 0,
         id_nomina : 0,
         sueldo : "",
-        fecha_alta : "",
         fecha_modificacion : "",
         observacion : ""
       };

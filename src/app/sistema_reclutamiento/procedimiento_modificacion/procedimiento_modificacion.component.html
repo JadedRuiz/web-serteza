@@ -177,7 +177,7 @@
             </div>
             <div class="form-group col-4">
               <mat-form-field class="w-100">
-                <input matInput [(ngModel)]="json.fecha_alta" [matDatepicker]="picker" placeholder="Fecha de contratación">
+                <input matInput [(ngModel)]="json.fecha_modificacion" [matDatepicker]="picker" placeholder="Fecha de modificación">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
               </mat-form-field>
@@ -201,18 +201,18 @@
                 </thead>
                 <tbody *ngIf="this.modificacion.candidatos.length > 0">
                   <tr *ngFor="let candidato of this.modificacion.candidatos">
-                    <td>{{candidato.nombre}}</td>
-                    <td>
+                    <td style="vertical-align: middle;">{{candidato.nombre}}</td>
+                    <td style="vertical-align: middle;">
                       <mat-form-field class="w-100">
-                        <input matInput [(ngModel)]="candidato.fecha_modificacion" [matDatepicker]="picker" placeholder="Ingrese la fecha de la modificación">
+                        <input matInput [(ngModel)]="candidato.fecha_modificacion" [matDatepicker]="picker" placeholder="Fecha de la modificación">
                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
                       </mat-form-field>
                     </td>
-                    <td>
+                    <td style="vertical-align: middle;">
                       <textarea class="form-control" [(ngModel)]="candidato.observacion" cols="30" rows="1"></textarea>
                     </td>
-                    <td>
+                    <td style="vertical-align: middle;">
                       <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning btn-sm"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
                     </td>
                   </tr>
