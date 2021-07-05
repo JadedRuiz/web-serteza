@@ -52,8 +52,9 @@
                           <td *ngIf="baja.id_status == 5" colspan="1" style="vertical-align: middle;">En solicitud</td>
                           <td *ngIf="baja.id_status == 1" colspan="1" style="vertical-align: middle;">Aplicado</td>
                           <td colspan="1" style="width: 20%;">
-                              <a title="Editar" (click)="editarMovimientoBaja(baja.id_movimiento)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
-                              <a *ngIf="aplicar && baja.id_status == 5" title="Aplicar solicitud" style="cursor: pointer;" class="btn btn-success btn-sm" ><img src="./assets/iconos/aplicar.svg" style="width: 14px;"></a>
+                              <a *ngIf="baja.id_status == 5" title="Editar" (click)="editarMovimientoBaja(baja.id_movimiento,1)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                              <a *ngIf="aplicar && baja.id_status == 5" title="Aplicar solicitud" style="cursor: pointer;" class="btn btn-success btn-sm" (click)="aplicarBaja(baja.id_movimiento)"><img src="./assets/iconos/aplicar.svg" style="width: 14px;"></a>
+                              <a *ngIf="baja.id_status == 1" title="Editar" (click)="editarMovimientoBaja(baja.id_movimiento,2)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/ver.svg" style="width: 14px;"></a>
                           </td>
                       </tr>
                   </tbody>
@@ -175,10 +176,11 @@
 </ng-template>
 <ng-template #editar let-c="close" let-d="dismiss">
   <div class="modal-header">
-      <h2 class="modal-title" id="tituloModal">Editar baja</h2>
+      <h2 *ngIf="tipo_titulo == 1" class="modal-title" id="tituloModal">Editar baja</h2>
+      <h2 *ngIf="tipo_titulo == 2" class="modal-title" id="tituloModal">Visualizar baja</h2>
   </div>
   <div class="modal-body">
-    <mat-form-field class="w-100">
+    <mat-form-field *ngIf="tipo_titulo == 1" class="w-100">
       <mat-label>Buscar candidato</mat-label>
       <input #input
               type="text"
@@ -201,7 +203,7 @@
             <th colspan="1">Empleado</th>
             <th colspan="1">Fecha de la baja</th>
             <th colspan="1">Observacion</th>
-            <th colspan="1" class="text-center">Acciones</th>
+            <th *ngIf="tipo_titulo == 1" colspan="1" class="text-center">Acciones</th>
           </tr>
         </thead>
         <tbody *ngIf="candidatos_dos.candidatos.length > 0">
@@ -217,7 +219,7 @@
             <td style="vertical-align: text-top;">
               <textarea class="form-control" [(ngModel)]="candidato.observacion" cols="30" rows="1"></textarea>
             </td>
-            <td style="vertical-align: text-top;" class="text-center">
+            <td *ngIf="tipo_titulo == 1" style="vertical-align: text-top;" class="text-center">
               <a title="Eliminar" style="cursor: pointer;" class="btn btn-warning btn-md" (click)="eliminarDetalle(candidato.id_detalle_baja,candidato.id_candidato)"><img src="./assets/iconos/delete.svg" style="width: 18px;"></a>
             </td>
           </tr>
@@ -232,7 +234,7 @@
   </div>
   <div class="modal-footer">
       <button type="button" class="btn btn-warning" (click)="cerrarModal()" >Cerrar</button>
-      <button type="button" class="btn btn-success" (click)="modificarBaja()" id="guardar">Editar</button>
+      <button *ngIf="tipo_titulo == 1" type="button" class="btn btn-success" (click)="modificarBaja()" id="guardar">Editar</button>
       <!-- <button type="button" class="btn btn-success" (click)="actualizarMov()" id="editar" style="display: none;">Actualizar contratación</button> -->
   </div>
 </ng-template>

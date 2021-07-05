@@ -149,6 +149,9 @@
                 <li class="nav-item">
                   <a class="nav-link " data-toggle="tab" href="#direccion_tab" role="tab" aria-selected="false">Dirección</a>
                 </li>
+                <li class="nav-item" *ngIf="bandera_activo">
+                  <a class="nav-link" data-toggle="tab" href="#movientos_tab" role="tab" aria-selected="false">Movimientos</a>
+                </li>
               </ul>
             </div>
             <div class="tab-content col-12" id="myTabContent">
@@ -327,6 +330,63 @@
                             <textarea [(ngModel)]="candidato.direccion.descripcion" name="desc_dir_empresa" class="form-control" rows="5" id="desc_dir_empresa"></textarea>
                         </div>
                     </div>
+                </div>
+              </div>
+              <div *ngIf="bandera_activo" class="tab-pane col-12" id="movientos_tab" role="tabpanel">
+                <div class="form-row">
+                  <div class="form-group col-md-3">
+                    <label for="estado">Empresa</label>
+                    <input [(ngModel)]="info_contrato.informacion_contrato[0].empresa" name="empresa" type="text" class="form-control" id="empresa" disabled>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="estado">Departamento</label>
+                    <input [(ngModel)]="info_contrato.informacion_contrato[0].departamento" name="departamento" type="text" class="form-control" id="departamento" disabled>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="estado">Puesto</label>
+                    <input [(ngModel)]="info_contrato.informacion_contrato[0].puesto" name="puesto" type="text" class="form-control" id="puesto" disabled>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="estado">Sueldo</label>
+                    <input [(ngModel)]="info_contrato.informacion_contrato[0].sueldo" name="puesto" type="text" class="form-control" id="puesto" disabled>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="estado">Tipo nómina</label>
+                    <input [(ngModel)]="info_contrato.informacion_contrato[0].nomina" name="puesto" type="text" class="form-control" id="puesto" disabled>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="estado">Fecha de contratación</label>
+                    <input [(ngModel)]="info_contrato.informacion_contrato[0].fecha_alta" name="puesto" type="text" class="form-control" id="puesto" disabled>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <h4 class="col-md-12">Movimientos</h4>
+                  <div class="table-responsive col-md-12">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th colspan="1">Tipo de movimiento</th>
+                          <th colspan="1">Fecha de movimiento</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let alta of info_contrato.movimientos.alta">
+                          <td><i class="fas fa-arrow-up text-success mr-3"></i> A</td>
+                          <td>{{alta.fecha_movimiento}}</td>
+                        </tr>
+                        <tr *ngFor="let modificacion of info_contrato.movimientos.modificaciones">
+                          <td><i class="fas fa-check-bold text-success mr-3"></i> M</td>
+                          <td>{{modificacion.fecha_movimiento}}</td>
+                        </tr>
+                        <tr *ngFor="let baja of info_contrato.movimientos.baja">
+                          <td><i class="fas fa-arrow-down text-success mr-3"></i> B</td>
+                          <td>{{baja.fecha_movimiento}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>

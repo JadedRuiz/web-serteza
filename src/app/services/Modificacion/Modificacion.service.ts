@@ -4,20 +4,20 @@ import { HttpClient } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { throwError } from 'rxjs';
-import { Baja } from 'src/app/models/Baja';
+import { Modificacion } from 'src/app/models/Modificacion';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BajaService {
+export class ModificacionService {
 
   constructor(
     public http: HttpClient
   ) { }
 
-  crearSolicitudDeBaja(baja : Baja){
-      let url = SERVER_API + "baja/crearSolicitudDeBaja";
-      return this.http.post( url, baja)
+  crearSolicitudDeModificacion( mod : Modificacion){
+      let url = SERVER_API + "modificacion/solicitudDeModificacion";
+      return this.http.post( url, mod)
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
@@ -25,9 +25,9 @@ export class BajaService {
         return throwError(err);
       }));
   }
-  modificarDetalleSolicitud(baja : Baja){
-    let url = SERVER_API + "baja/modificarDetalleSolicitud";
-    return this.http.post( url, baja)
+  modificarDetalleModificacion(mod : Modificacion){
+    let url = SERVER_API + "modificacion/modificarDetalleModificacion";
+    return this.http.post( url, mod)
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
@@ -36,7 +36,7 @@ export class BajaService {
     }));
   }
   obtenerSolicitudesBaja(json : any){
-    let url = SERVER_API + "baja/obtenerSolicitudesBaja";
+    let url = SERVER_API + "modificacion/obtenerModificaciones";
     return this.http.post( url, json)
     .pipe(map( (resp: any) => {
       return resp;
@@ -45,8 +45,8 @@ export class BajaService {
       return throwError(err);
     }));
   }
-  obtenerDetalleSolicitudBaja(id : any){
-    let url = SERVER_API+"baja/obtenerDetalleSolicitudBaja/"+id;
+  obtenerDetalleModificacion(id : any){
+    let url = SERVER_API+"modificacion/obtenerDetalleModificacion/"+id;
     return this.http.get(url)
     .pipe(map( (resp: any) => {
         return resp;
@@ -56,7 +56,7 @@ export class BajaService {
       }));
   }
   eliminarDetalle(id : any){
-    let url = SERVER_API+"baja/eliminarDetalle/"+id;
+    let url = SERVER_API+"modificacion/eliminarDetalle/"+id;
     return this.http.get(url)
     .pipe(map( (resp: any) => {
         return resp;
@@ -65,14 +65,14 @@ export class BajaService {
         return throwError(err);
       }));
   }
-  aplicarBaja(id : any){
-    let url = SERVER_API+"baja/aplicarBaja/"+id;
-    return this.http.get(url)
-    .pipe(map( (resp: any) => {
-        return resp;
-      }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
-        return throwError(err);
-      }));
-  }
+//   aplicarBaja(id : any){
+//     let url = SERVER_API+"baja/aplicarBaja/"+id;
+//     return this.http.get(url)
+//     .pipe(map( (resp: any) => {
+//         return resp;
+//       }), catchError(err => {
+//         Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+//         return throwError(err);
+//       }));
+//   }
 }

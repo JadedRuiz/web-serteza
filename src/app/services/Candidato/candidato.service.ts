@@ -79,4 +79,8 @@ export class CandidatoService {
         return throwError(err);
       }));
   }
+  obtenerMovientosCandidato(id : any){
+    let url = SERVER_API+"candidato/obtenerMovientosCandidato/"+id;
+    return this.http.get(url);
+  }
 }

@@ -16,7 +16,7 @@ import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 export class ProcedimientoBajaComponent implements OnInit {
   
   public color = COLOR;
-  public status = 5;
+  public status = -1;
   public palabra = "";
   public fecha_inicial = "";
   public fecha_final = "";
@@ -31,6 +31,7 @@ export class ProcedimientoBajaComponent implements OnInit {
   myControl = new FormControl();
   public candidatos_dos = new Baja(0,0,this.id_cliente,this.usuario_creacion,[]);
   public aplicar = false;
+  public tipo_titulo = 1;
   //Paginacion
   public total_registros = 0;
   public mostrar_pagination = false;
@@ -132,7 +133,11 @@ export class ProcedimientoBajaComponent implements OnInit {
   modificarBaja(){
     this.confirmar("Confirmación","¿Seguro que desea modfiicar la baja?","info",2,null);
   }
-  editarMovimientoBaja(id : any){
+  aplicarBaja(id : any){
+    this.confirmar("Confirmación","¿Seguro que desea aplicar la baja?","info",4,id);
+  }
+  editarMovimientoBaja(id : any, tipo : any){
+    this.tipo_titulo = tipo;
     this.candidatos_dos.id_movimiento = parseInt(id);
     this.candidatos_dos.candidatos = [];
     this.baja_service.obtenerDetalleSolicitudBaja(id)
@@ -257,6 +262,17 @@ export class ProcedimientoBajaComponent implements OnInit {
                 this.eliminarDetalleSolicitud(data.id_candidato);
               }
               Swal.fire("Buen trabajo","Se ha eliminado con éxito","success");
+            }else{
+              Swal.fire("Ha ocurrido un error",object.message,"info");
+            }
+          });
+        }
+        if(tipo == 4){  //Aplicar baja
+          this.baja_service.aplicarBaja(data)
+          .subscribe( (object  : any)=>{
+            if(object.ok){
+              this.mostrarBajas();
+              Swal.fire("Buen trabajo","Se ha aplicado la baja con éxito","success");
             }else{
               Swal.fire("Ha ocurrido un error",object.message,"info");
             }
