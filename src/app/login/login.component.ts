@@ -81,7 +81,7 @@ export class LoginComponent implements OnInit {
     if(this.sistema_elegido == "5"){
       this.router.navigate(["sistema_super_admin/dashboard"]);
     }
-    if(this.sistema_elegido == "1" || this.sistema_elegido == "6"){
+    if(this.sistema_elegido == "1" || this.sistema_elegido == "6" || this.sistema_elegido == "3"){
       this.closeModal();
       this.empresas = [];
       this.empresa.obtenerEmpresaPorIdUsuario(window.sessionStorage["user"])
@@ -130,7 +130,6 @@ export class LoginComponent implements OnInit {
         }
       });
     }
-    
   }
   openModal() {
     this.modal = this.modalService.open(this.contenidoDelModal,{ centered : true, backdropClass : 'light-blue-backdrop'});
@@ -150,7 +149,7 @@ export class LoginComponent implements OnInit {
       this.router.navigate(["sistema_reclutamiento/dashboard"]);
     }
     if(this.sistema_elegido == "3"){
-      this.router.navigate(["sistema_nomina/dashboard"]);
+      this.router.navigate(["sistema_nomina/dashboard"]); 
       this.closeModal();
     }
     if(this.sistema_elegido == "4"){
