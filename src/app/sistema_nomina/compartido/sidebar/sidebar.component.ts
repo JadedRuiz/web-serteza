@@ -124,7 +124,7 @@ export class SidebarComponent implements OnInit {
       if (result.isConfirmed) {
         this.usuario.logout();
         window.sessionStorage.removeItem("sistema");
-        window.sessionStorage.removeItem("cliente");
+        window.sessionStorage.removeItem("empresa");
         window.sessionStorage.removeItem("nombre");
         window.sessionStorage.removeItem("user");
         window.sessionStorage.removeItem("foto_user");
