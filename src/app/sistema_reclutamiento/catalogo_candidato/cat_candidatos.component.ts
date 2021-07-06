@@ -215,6 +215,7 @@ export class CatalogoCandidatosComponent implements OnInit {
   }
 
   editar(folio : any){
+    this.mostrarInfoContrato(folio);
     this.candidato_service.obtenerCandidatoPorId(folio)
     .subscribe( (object : any)=>{
       if(object.ok){
@@ -240,7 +241,6 @@ export class CatalogoCandidatosComponent implements OnInit {
         this.candidato.apellido_materno = object.data[0].apellido_materno;
         if(object.data[0].id_status == 1){
           this.bandera_activo = true;
-          this.mostrarInfoContrato(folio);
         }
         this.candidato.id_statu = object.data[0].id_status;
         this.candidato.nombre = object.data[0].nombre;
