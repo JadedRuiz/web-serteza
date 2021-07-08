@@ -1,0 +1,85 @@
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-6">
+      <div class="card shadow" style="height: 550px;">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Mis puestos</h3>
+            </div>
+            <!-- <div class="col text-right">
+              <a href="#!" class="btn btn-sm btn-primary">Ver todos</a>
+            </div> -->
+          </div>
+        </div>
+        <div class="table-responsive">
+          <!-- Projects table -->
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr class="text-center">
+                <th scope="col" class="text-left">Puesto</th>
+                <th scope="col">Autorizados</th>
+                <th scope="col">Contratados</th>
+                <th scope="col">Vacantes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let puesto of puestos" class="text-center">
+                <th scope="row" class="text-left">{{puesto.puesto}}</th>
+                <td>{{puesto.autorizados}}</td>
+                <td>{{puesto.contratados}}</td>
+                <td>{{puesto.vacantes}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="card shadow" style="height: 550px;">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Ultimos movimientos</h3>
+            </div>
+            <!-- <div class="col text-right">
+              <a href="#!" class="btn btn-sm btn-primary">Ver todos</a>
+            </div> -->
+          </div>
+        </div>
+        <div class="table-responsive">
+          <!-- Projects table -->
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col" class="text-center">Tipo de movimiento</th>
+                <th scope="col">Usuario</th>
+                <th scope="col">Fecha</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="band_mov; else sino">
+              <tr *ngFor="let movimiento of movimientos">
+                <th scope="row" class="text-center">
+                  <i *ngIf="movimiento.id_movimiento == 1" class="fas fa-arrow-up text-success mr-3"></i>
+                  <i *ngIf="movimiento.id_movimiento == 2" class="fas fa-arrow-down text-danger mr-3"></i>
+                  <i *ngIf="movimiento.id_movimiento == 3" class="fas fa-arrow-up text-success mr-3"></i>
+                  <i *ngIf="movimiento.id_movimiento == 3" class="fas fa-arrow-down text-danger mr-3"></i>
+                  {{movimiento.tipo_movimiento}}
+                </th>
+                <td>{{movimiento.nombre}}</td>
+                <td>{{movimiento.fecha_movimiento}}</td>
+              </tr>
+            </tbody>
+            <ng-template #sino>
+              <tbody #sino>
+                <tr class="text-center">
+                  <th scope="row" colspan="3">Aún sin movimientos</th>
+                </tr>
+              </tbody>
+            </ng-template>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

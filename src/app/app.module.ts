@@ -14,6 +14,7 @@ import { SistemaSuperAdminModule } from './sistema_super_admin/sistema_super_adm
 import { SitemaPrestasoftModule } from './sistema_prestasoft/sistema_prestasoft.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { SistemaNominaModule } from './sistema_nomina/sistema_nomina.module';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
     SistemaSuperAdminModule,
     SistemaReclutamientoModule,
     SitemaPrestasoftModule,
+    SistemaNominaModule,
     NgbModule,
     FormsModule,
     ReactiveFormsModule,

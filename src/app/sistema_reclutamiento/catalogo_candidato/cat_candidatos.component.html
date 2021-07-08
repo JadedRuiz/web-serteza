@@ -40,7 +40,7 @@
                           <mat-option [value]="3">Suspendidos</mat-option>
                           <mat-option [value]="2">De baja</mat-option>
                       </mat-select>
-                  </mat-form-field>
+                    </mat-form-field>
                 </div>
                 <div class="col-lg-4 col-sm-12" style="text-align: end;">
                     <a class="btn btn-info" (click)="guardar()" title="Nuevo candidato"><img src="./assets/iconos/agregar.svg" style="width: 24px;"></a>
@@ -148,6 +148,9 @@
                 </li>
                 <li class="nav-item">
                   <a class="nav-link " data-toggle="tab" href="#direccion_tab" role="tab" aria-selected="false">Dirección</a>
+                </li>
+                <li class="nav-item" *ngIf="bandera_activo">
+                  <a class="nav-link" data-toggle="tab" href="#movientos_tab" role="tab" aria-selected="false">Movimientos</a>
                 </li>
               </ul>
             </div>
@@ -327,6 +330,63 @@
                             <textarea [(ngModel)]="candidato.direccion.descripcion" name="desc_dir_empresa" class="form-control" rows="5" id="desc_dir_empresa"></textarea>
                         </div>
                     </div>
+                </div>
+              </div>
+              <div *ngIf="bandera_activo" class="tab-pane col-12" id="movientos_tab" role="tabpanel">
+                <div class="form-row">
+                  <div class="form-group col-md-3">
+                    <label for="estado">Empresa</label>
+                    <input [(ngModel)]="info_contrato.informacion_contrato.empresa" name="empresa" type="text" class="form-control" id="empresa" disabled>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="departamento">Departamento</label>
+                    <input [(ngModel)]="info_contrato.informacion_contrato.departamento" name="departamento" type="text" class="form-control" id="departamento" disabled>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="puesto">Puesto</label>
+                    <input [(ngModel)]="info_contrato.informacion_contrato.puesto" name="puesto" type="text" class="form-control" id="puesto" disabled>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="sueldo">Sueldo</label>
+                    <input [(ngModel)]="info_contrato.informacion_contrato.sueldo" name="sueldo" type="text" class="form-control" id="sueldo" disabled>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="nomina">Tipo nómina</label>
+                    <input [(ngModel)]="info_contrato.informacion_contrato.nomina" name="nomina" type="text" class="form-control" id="nomina" disabled>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="contratacion">Fecha de contratación</label>
+                    <input [(ngModel)]="info_contrato.informacion_contrato.fecha_alta" name="contratacion" type="text" class="form-control" id="contratacion" disabled>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <h4 class="col-md-12">Movimientos</h4>
+                  <div class="table-responsive col-md-12">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th colspan="1">Tipo de movimiento</th>
+                          <th colspan="1">Fecha de movimiento</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let alta of info_contrato.movimientos.alta">
+                          <td><i class="fas fa-arrow-up text-success mr-3"></i> A</td>
+                          <td>{{alta.fecha_movimiento}}</td>
+                        </tr>
+                        <tr *ngFor="let modificacion of info_contrato.movimientos.modificaciones">
+                          <td><i class="fas fa-check-bold text-success mr-3"></i> M</td>
+                          <td>{{modificacion.fecha_movimiento}}</td>
+                        </tr>
+                        <tr *ngFor="let baja of info_contrato.movimientos.baja">
+                          <td><i class="fas fa-arrow-down text-success mr-3"></i> B</td>
+                          <td>{{baja.fecha_movimiento}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>

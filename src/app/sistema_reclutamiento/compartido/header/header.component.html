@@ -1,6 +1,11 @@
 <nav class="navbar navbar-top navbar-expand-md navbar-dark {{color}}" id="navbar-main">
     <div class="container-fluid">
       <!-- User -->
+      <ul class="navbar-nav align-items-center d-none d-md-flex">
+        <li class="nav-item m-auto">
+          <span class="mb-0 text-m text-white font-weight-bold">{{nombre_cliente}}</span>
+        </li>
+      </ul>
       <ul class="navbar-nav align-items-center d-none d-md-flex ml-auto mt-2">
         <li class="nav-item" ngbDropdown placement="bottom-right">
           <a class="nav-link pr-0" role="button" ngbDropdownToggle>

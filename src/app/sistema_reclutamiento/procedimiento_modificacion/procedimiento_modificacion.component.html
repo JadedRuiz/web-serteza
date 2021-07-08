@@ -34,12 +34,12 @@
                   </mat-form-field>
               </div>
               <div class="col-lg-4 col-sm-12" style="text-align: end;">
-                  <a class="btn btn-info" title="Nueva baja" (click)="openModal()"><img src="./assets/iconos/delete_doc.svg" style="width: 24px;"></a>
+                  <a class="btn btn-info" title="Nueva baja" (click)="nuevoModi()"><img src="./assets/iconos/delete_doc.svg" style="width: 24px;"></a>
               </div>
             </div>
             <div class="table-responsive">
               <table class="table table-striped">
-                  <thead>
+                  <thead class="text-center">
                       <tr>
                           <th scope="col">Folio</th>
                           <th scope="col">Fecha de modificación</th>
@@ -47,24 +47,25 @@
                           <th scope="col">Acciones</th>
                       </tr>
                   </thead>
-                  <!-- <tbody *ngIf="band; else pintaVacio" class="">
-                      <tr *ngFor="let contrato of contratos">
-                          <td colspan="1" style="vertical-align: middle;">{{contrato.folio}}</td>
-                          <td colspan="1" style="vertical-align: middle;">{{contrato.fecha}}</td>
-                          <td colspan="1" style="vertical-align: middle;">{{contrato.status}}</td>
+                  <tbody *ngIf="band; else pintaVacio" class="text-center">
+                      <tr *ngFor="let modificacion of modificaciones">
+                          <td colspan="1" style="vertical-align: middle;">{{modificacion.id_movimiento}}</td>
+                          <td colspan="1" style="vertical-align: middle;">{{modificacion.fecha}}</td>
+                          <td colspan="1" style="vertical-align: middle;">{{modificacion.status}}</td>
                           <td colspan="1" style="width: 20%;">
-                              <a title="Editar" (click)="editar(contrato.folio)" style="cursor: pointer;" class="btn btn-primary"><img src="./assets/iconos/edit.svg" style="width: 24px;"></a>
-                              <a title="Reporte de contratación" style="cursor: pointer;" class="btn btn-info" (click)="consumoReporte(1,contrato.folio)"><img src="./assets/iconos/reporte.svg" style="width: 24px;"></a>
+                              <a *ngIf="modificacion.id_status == 5" title="Editar" (click)="editar(modificacion.id_movimiento,1)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                              <a *ngIf="modificacion.id_status == 1" title="Ver" (click)="editar(modificacion.id_movimiento,2)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/ver.svg" style="width: 14px;"></a>
+                              <!-- <a title="Reporte de contratación" style="cursor: pointer;" class="btn btn-info" (click)="consumoReporte(1,modificacion.id_movimiento)"><img src="./assets/iconos/reporte.svg" style="width: 24px;"></a> -->
                           </td>
                       </tr>
-                  </tbody> -->
-                  <!-- <ng-template #pintaVacio>
+                  </tbody>
+                  <ng-template #pintaVacio>
                       <tbody>
                           <tr>
-                              <td colspan="4" class="text-center">No existen contratos</td>
+                              <td colspan="4" class="text-center">No existen modificaciones</td>
                           </tr>
                       </tbody>
-                  </ng-template> -->
+                  </ng-template>
               </table>
               <div class="filtros container mt-3">
                   <div class="row">
@@ -113,7 +114,9 @@
 
   <ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
     <div class="modal-header">
-        <h2 class="modal-title" id="tituloModal">Nueva modificación</h2>
+        <h2 *ngIf="tipo_modal == 0" class="modal-title" id="tituloModal">Nueva modificación</h2>
+        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Editar modificación</h2>
+        <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Visualizar modificación</h2>
     </div>
     <div class="modal-body">
         <div class="form">
@@ -177,7 +180,7 @@
             </div>
             <div class="form-group col-4">
               <mat-form-field class="w-100">
-                <input matInput [(ngModel)]="json.fecha_alta" [matDatepicker]="picker" placeholder="Fecha de contratación">
+                <input matInput [(ngModel)]="json.fecha_modificacion" [matDatepicker]="picker" placeholder="Fecha de modificación">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
               </mat-form-field>
@@ -201,19 +204,20 @@
                 </thead>
                 <tbody *ngIf="this.modificacion.candidatos.length > 0">
                   <tr *ngFor="let candidato of this.modificacion.candidatos">
-                    <td>{{candidato.nombre}}</td>
-                    <td>
+                    <td style="vertical-align: middle;">{{candidato.nombre}}</td>
+                    <td style="vertical-align: middle;">
                       <mat-form-field class="w-100">
-                        <input matInput [(ngModel)]="candidato.fecha_modificacion" [matDatepicker]="picker" placeholder="Ingrese la fecha de la modificación">
+                        <input matInput [(ngModel)]="candidato.fecha_modificacion" [matDatepicker]="picker" placeholder="Fecha de la modificación">
                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
                       </mat-form-field>
                     </td>
-                    <td>
+                    <td style="vertical-align: middle;">
                       <textarea class="form-control" [(ngModel)]="candidato.observacion" cols="30" rows="1"></textarea>
                     </td>
-                    <td>
-                      <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning btn-sm"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
+                    <td style="vertical-align: middle;">
+                      <a *ngIf="tipo_modal == 0" title="Eliminar"  style="cursor: pointer;" class="btn btn-warning btn-sm" (click)="eliminarFilaDetalle(candidato.id_candidato)"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
+                      <a *ngIf="tipo_modal == 1" title="Eliminar"  style="cursor: pointer;" class="btn btn-warning btn-sm" (click)="eliminarDetalle(candidato.id_detalle_modificacion,candidato.id_candidato)"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
                     </td>
                   </tr>
                 </tbody>
@@ -229,6 +233,7 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()" >Cerrar</button>
-        <button *ngIf="bandera" type="button" class="btn btn-success" (click)="crearModi()">Crear modificación</button>
+        <button *ngIf="bandera && tipo_modal == 0" type="button" class="btn btn-success" (click)="crearModi()">Crear modificación</button>
+        <button *ngIf="bandera && tipo_modal == 1" type="button" class="btn btn-success" (click)="modificarModi()">Editar modificación</button>
     </div>
 </ng-template>

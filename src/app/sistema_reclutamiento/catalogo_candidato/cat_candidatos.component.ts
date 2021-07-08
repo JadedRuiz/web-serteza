@@ -29,7 +29,8 @@ export class CatalogoCandidatosComponent implements OnInit {
   public fotografia = new Fotografia(0,"","","");
   public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
-  public candidato = new Candidato(0,this.id_cliente,6,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia); 
+  public candidato = new Candidato(0,this.id_cliente,6,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia);
+  public info_contrato : any;
   public candidatos : any;
   public band = true;
   public modal : any;
@@ -40,6 +41,7 @@ export class CatalogoCandidatosComponent implements OnInit {
   public activo = true;
   public foto_user : any;
   public docB64 = "";
+  public bandera_activo = false;
   // @Output() getPicture = new EventEmitter<WebcamImage>();
   texto = "Mensaje desde padre";
   @ViewChild(CameraComponent) camera = CameraComponent;
@@ -131,7 +133,6 @@ export class CatalogoCandidatosComponent implements OnInit {
         }
     });
   }
-
   autocomplete(palabra : string){
     this.candidatos_busqueda = [];
     if(palabra.length > 3){
@@ -204,7 +205,17 @@ export class CatalogoCandidatosComponent implements OnInit {
     }
   }
 
+  mostrarInfoContrato(id_candidato : any){
+    this.candidato_service.obtenerMovientosCandidato(id_candidato)
+    .subscribe( (object : any) =>{
+      if(object.ok){
+        this.info_contrato = object.data;
+      }
+    });
+  }
+
   editar(folio : any){
+    this.mostrarInfoContrato(folio);
     this.candidato_service.obtenerCandidatoPorId(folio)
     .subscribe( (object : any)=>{
       if(object.ok){
@@ -228,6 +239,9 @@ export class CatalogoCandidatosComponent implements OnInit {
         this.candidato.id_candidato = object.data[0].id_candidato;
         this.candidato.apellido_paterno = object.data[0].apellido_paterno;
         this.candidato.apellido_materno = object.data[0].apellido_materno;
+        if(object.data[0].id_status == 1){
+          this.bandera_activo = true;
+        }
         this.candidato.id_statu = object.data[0].id_status;
         this.candidato.nombre = object.data[0].nombre;
         this.candidato.rfc = object.data[0].rfc;
@@ -422,6 +436,7 @@ export class CatalogoCandidatosComponent implements OnInit {
   }
   
   openModal() {
+    this.bandera_activo = false;
     this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop'});
   }
 

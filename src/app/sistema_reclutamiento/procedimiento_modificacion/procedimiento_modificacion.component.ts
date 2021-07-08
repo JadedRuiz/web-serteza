@@ -7,8 +7,10 @@ import { ContratoService } from 'src/app/services/Contrato/Contrato.service';
 import { DepartamentoService } from 'src/app/services/Departamento/Departamento.service';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { PuestoService } from 'src/app/services/Puesto/Puesto.service';
+import { ModificacionService } from 'src/app/services/Modificacion/Modificacion.service';
 import { COLOR } from 'src/config/config';
 import Swal from 'sweetalert2';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-procedimiento-modificacion',
@@ -18,7 +20,7 @@ import Swal from 'sweetalert2';
 export class ProcedimientoModificacionComponent implements OnInit {
 
   public color = COLOR;
-  public status = 2;
+  public status = -1;
   public palabra = "";
   public fecha_inicial = "";
   public fecha_final = "";
@@ -29,6 +31,9 @@ export class ProcedimientoModificacionComponent implements OnInit {
   public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
   public modificacion = new Modificacion(0,0,this.id_cliente,this.usuario_creacion,[]);
   public bandera = false;
+  public band = false;
+  public modificaciones : any;
+  public tipo_modal = 0;
   //Autocomplete
   myControl = new FormControl();
   candidatos_busqueda : any;
@@ -57,9 +62,9 @@ export class ProcedimientoModificacionComponent implements OnInit {
     id_puesto : 0,
     id_nomina : 0,
     sueldo : "",
-    fecha_alta : "",
     fecha_modificacion : "",
-    observacion : ""
+    observacion : "",
+    id_detalle_modificacion : 0
   };
 
   constructor(
@@ -68,10 +73,31 @@ export class ProcedimientoModificacionComponent implements OnInit {
     private contrato_service : ContratoService,
     private empresa_service : EmpresaService,
     private departamento_service : DepartamentoService,
-    private puesto_service : PuestoService
+    private puesto_service : PuestoService,
+    private modificacion_service : ModificacionService
     ) { }
 
   ngOnInit(): void {
+    this.mostrarModificacion();
+  }
+
+  mostrarModificacion(){
+    this.modificaciones = [];
+    let array = {
+      id_cliente : this.id_cliente,
+      fecha_inicial : this.fecha_inicial,
+      fecha_final : this.fecha_final,
+      id_status : this.status
+    }
+    this.modificacion_service.obtenerSolicitudesBaja(array)
+    .subscribe( (object : any)=>{
+      if(object.ok){
+        this.band = true;
+        this.modificaciones = object.data;
+      }else{
+        this.band = false;
+      }
+    });
   }
 
   mostrarCandidatos(value : any){
@@ -191,7 +217,6 @@ export class ProcedimientoModificacionComponent implements OnInit {
       this.bandera = true;
       this.json.nombre = event.option.value;
       this.json.id_candidato = event.option.id;
-      this.json.fecha_alta = object.data[0].fecha_alta;
       this.json.sueldo = object.data[0].sueldo;
       this.json.id_nomina = object.data[0].id_nomina;
       this.json.id_empresa = object.data[0].id_empresa;
@@ -223,22 +248,65 @@ export class ProcedimientoModificacionComponent implements OnInit {
         id_puesto : 0,
         id_nomina : 0,
         sueldo : "",
-        fecha_alta : "",
         fecha_modificacion : "",
-        observacion : ""
+        observacion : "",
+        id_detalle_modificacion : 0,
       };
       this.myControl.reset('');
     }else{
       Swal.fire("Ha ocurrido un error","Antes de agregar, realice una modificación","info");
     }
   }
-
+  nuevoModi(){
+    this.modificacion.candidatos = [];
+    this.tipo_modal = 0;
+    this.openModal();
+  }
   crearModi(){
     if(this.modificacion.candidatos.length > 0){
-      console.log(this.modificacion);
+      this.confirmar("Confirmación","¿Seguro que deseas crear una solicitud de modificación","info",null,1);
     }else{
       Swal.fire("Ha ocurrido un error","Primero agregue modificaciones a la tabla","info");
     }
+  }
+
+  modificarModi(){
+    if(this.modificacion.candidatos.length > 0){
+      this.confirmar("Confirmación","¿Seguro que deseas modificar una solicitud de modificación","info",null,2);
+    }else{
+      Swal.fire("Ha ocurrido un error","Primero agregue modificaciones a la tabla","info");
+    }
+  }
+
+  editar(id : any, tipo : any){
+    this.modificacion.candidatos = [];
+    this.tipo_modal = tipo;
+    this.modificacion_service.obtenerDetalleModificacion(id)
+    .subscribe( (object : any) =>{
+      if(object.ok){
+        this.bandera = true;
+        this.modificacion.id_movimiento = id;
+        object.data.forEach( (element : any) => {
+          this.modificacion.candidatos.push(element);
+        });
+      }else{
+        this.modificacion.candidatos = [];
+        this.bandera = false;
+      }
+    });
+    this.openModal();
+  }
+
+  eliminarDetalle(id_detalle_modificacion : any, id_candidato : any){
+      this.confirmar("Confirmación","¿Seguro que deseas eliminar este detalle?","info",{id_detalle_modificacion : id_detalle_modificacion, id_candidato : id_candidato},3);
+  }
+
+  eliminarFilaDetalle(id_candidato : any){
+    this.modificacion.candidatos.forEach( (element : any , index : any) => {
+      if(element.id_candidato == id_candidato){
+        this.modificacion.candidatos.splice(index,1);
+      }
+    });
   }
 
   busqueda(event : any) {
@@ -299,5 +367,61 @@ export class ProcedimientoModificacionComponent implements OnInit {
 
   cerrarModal(){
     this.modal.close();
+  }
+
+  confirmar(title : any ,texto : any ,tipo_alert : any,json : any,tipo : number){
+    Swal.fire({
+      title: title,
+      text: texto,
+      icon: tipo_alert,
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if(tipo == 1){  //Guardar
+          this.modificacion_service.crearSolicitudDeModificacion(this.modificacion)
+          .subscribe( (object : any)=>{
+            if(object.ok){
+              this.cerrarModal();
+              this.mostrarModificacion();
+              Swal.fire("Buen trabajo","Se ha creado la solicitud éxitosamente","success");
+            }else{
+              Swal.fire("Ha ocurrido un error",object.message,"info");
+            }
+          });
+        }
+        if(tipo == 2){  //Editar
+          this.modificacion_service.modificarDetalleModificacion(this.modificacion)
+          .subscribe( (object : any) =>{
+            if(object.ok){
+              Swal.fire("Buen trabajo","Se ha editado la solicitud éxitosamente","success");
+            }else{
+              Swal.fire("Ha ocurrido un error",object.message,"info");
+            }
+          });
+        }
+        if(tipo == 3){
+          console.log(json.id_detalle_modificacion);
+          this.modificacion_service.eliminarDetalle(json.id_detalle_modificacion)
+          .subscribe( (object : any)=>{
+            if(object.ok){
+              if(object.data){
+                this.cerrarModal();
+                this.mostrarModificacion();
+                Swal.fire("Buen trabajo","Se ha eliminado la solicitud éxitosamente","success");
+              }else{
+                Swal.fire("Buen trabajo","Se ha eliminado el detalle éxitosamente","success");
+              }
+              this.eliminarFilaDetalle(json.id_candidato);
+            }else{
+              Swal.fire("Ha ocurrido un error",object.message,"info");
+            }
+          });
+        }
+      }
+    });
   }
 }
