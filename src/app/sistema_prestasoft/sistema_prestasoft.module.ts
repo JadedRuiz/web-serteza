@@ -10,6 +10,7 @@ import { FacturasComponent } from './facturas/facturas.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { BancosComponent } from './bancos/bancos.component';
 
  
 
@@ -18,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
     SistemaPrestaSoftComponent,
     XmlUploadComponent,
     FacturasComponent,
+    BancosComponent,
   ],
   imports: [
     CommonModule,
