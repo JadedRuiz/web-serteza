@@ -26,7 +26,7 @@ export class HeaderComponent implements OnInit {
     public empresa_service : EmpresaService,
     private modalService: NgbModal
     ) {
-      this.texto = "SISTEMA ADMINISTRATIVO";
+      this.texto = ""
       this.url_foto = './assets/iconos/perfil.svg';
      }
 
@@ -45,8 +45,9 @@ export class HeaderComponent implements OnInit {
               this.empresas.push({
                 "empresa" : object.data[i].empresa,
                 "id_empresa" : object.data[i].id_empresa,
-                "class" : "active"
+                "class" : "active"  
               });
+              this.texto = object.data[i].empresa
             }else{
               this.empresas.push({
                 "empresa" : object.data[i].empresa,

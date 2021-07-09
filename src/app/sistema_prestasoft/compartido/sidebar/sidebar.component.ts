@@ -52,7 +52,7 @@ export class SidebarComponent implements OnInit {
           { path: '#', title: 'Cliente / Proveedor',  icon:'ni-satisfied text-orange', id:"rh_header", band: true, tipo : "collapse"},
           { path: '#', title: 'Ivas',  icon:'ni-money-coins text-orange', id:"rh_header", band: true, tipo : "collapse"},
           { path: '#', title: 'Conceptos',  icon:'ni-books text-orange', id:"rh_header", band: true, tipo : "collapse"},
-          { path: '#', title: 'Bancos',  icon:'ni-building text-orange', id:"rh_header", band: true, tipo : "collapse"}
+          { path: 'bancos', title: 'Bancos',  icon:'ni-building text-orange', id:"rh_header", band: true, tipo : "collapse"}
         ]
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
