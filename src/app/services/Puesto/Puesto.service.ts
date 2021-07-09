@@ -19,6 +19,11 @@ export class PuestoService {
     return this.http.get(url);
   }
 
+  obtenerPuestosPorEmpresa(id : any){
+    let url = SERVER_API+"puesto/obtenerPuestosPorEmpresa/"+id;
+    return this.http.get(url);
+  }
+
   eliminarPuesto(id : any){
     let url = SERVER_API+"puesto/eliminarPuesto/"+id;
     return this.http.get(url)

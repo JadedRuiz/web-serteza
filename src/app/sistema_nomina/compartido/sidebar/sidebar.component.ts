@@ -33,7 +33,6 @@ export class SidebarComponent implements OnInit {
   constructor(
     private router: Router,
     public usuario: UsuarioService,
-    private sanitizer: DomSanitizer,
     private empresa: EmpresaService,
     private modalService: NgbModal
     ) {

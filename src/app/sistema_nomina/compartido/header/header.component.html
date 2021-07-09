@@ -61,7 +61,7 @@
             <div class="row">
               <div class="col">
                 <h5 class="card-title text-uppercase text-muted mb-0">Tipo de nómina</h5>
-                <!-- <span class="h2 font-weight-bold mb-0">{{targeta[1]}}</span> -->
+                <span class="h2 font-weight-bold mb-0">{{header[1]}}</span>
               </div>
               <div class="col-auto">
                 <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
@@ -122,15 +122,21 @@
   </div>
   <ng-template #content let-c="close" let-d="dismiss">
     <div class="modal-header justify-content-center">
-      <h4 class="modal-title" id="modal-basic-title">¿Que empresa desea utilizar?</h4>
+      <h4 *ngIf="tipo_arreglo == 0" class="modal-title" id="modal-basic-title">¿Que empresa desea utilizar?</h4>
+      <h4 *ngIf="tipo_arreglo == 1" class="modal-title" id="modal-basic-title">Seleccione el tipo de nomina</h4>
     </div>
     <div class="modal-body">
       <form>
         <div class="form-row">
           <div class="form-group col-md-12">
-            <div class="list-group">
+            <div *ngIf="tipo_arreglo == 0" class="list-group">
               <a *ngFor="let empresa of empresas" (click)="eleccion(empresa.id_empresa)" style="cursor: pointer;" class="list-group-item list-group-item-action {{empresa.class}}" aria-current="true">
                 {{empresa.empresa}}
+              </a>
+            </div>
+            <div *ngIf="tipo_arreglo == 1" class="list-group">
+              <a *ngFor="let nomina of nominas" (click)="redireccionNomina(nomina.id_nomina)" style="cursor: pointer;" class="list-group-item list-group-item-action" aria-current="true">
+                {{nomina.nomina}}
               </a>
             </div>
           </div>

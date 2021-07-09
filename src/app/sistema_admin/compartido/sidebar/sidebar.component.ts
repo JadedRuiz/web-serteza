@@ -68,7 +68,8 @@ export class SidebarComponent implements OnInit {
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : [
           {path: 'catalogo_usuario', title: 'Mis usuarios', icon: 'ni-circle-08  text-orange'},
-          {path: 'catalogo_departamento', title: 'Mis departamentos', icon: 'ni-archive-2  text-orange'}
+          {path: 'catalogo_departamento', title: 'Mis departamentos', icon: 'ni-archive-2  text-orange'},
+          {path: 'catalogo_tipo_nomina', title: 'Mis nóminas', icon: 'fas fa-clipboard-check  text-orange'},
         ]
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",

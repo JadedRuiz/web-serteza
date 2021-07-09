@@ -6,9 +6,9 @@ import { Usuario }  from 'src/app/models/Usuario'
 import { UsuarioService} from 'src/app/services/Usuario/usuario.service'; 
 import { Router } from '@angular/router';
 import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
-import { asapScheduler } from 'rxjs';
 import { ClienteService } from 'src/app/services/Cliente/cliente.service';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
+import { NominaService } from '../services/Nomina/Nomina.service';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
   sistemas : any;
   empresas : any;
   clientes : any;
+  public nominas : any;
   sistema_elegido = "";
   disabled_empresa = true;
   disabled_cliente = true;
@@ -34,7 +35,8 @@ export class LoginComponent implements OnInit {
     private router : Router,
     private modalService: NgbModal,
     private cliente_service: ClienteService,
-    private empresa : EmpresaService
+    private empresa : EmpresaService,
+    private nomina_service : NominaService
     ) { 
       this.modal = NgbModalRef;
     }
@@ -149,17 +151,43 @@ export class LoginComponent implements OnInit {
       this.router.navigate(["sistema_reclutamiento/dashboard"]);
     }
     if(this.sistema_elegido == "3"){
-      this.router.navigate(["sistema_nomina/dashboard"]); 
+      window.sessionStorage["empresa"] = id;
+      this.nominas = [];
       this.closeModal();
+      let json = {
+        id_empresa : id,
+        id_status : 1
+      };
+      this.nomina_service.obtenerLigaEmpresaNomina(json)
+      .subscribe( (object : any) => {
+        if(object.ok){
+          if(object.data.length > 1){
+            this.tipo_arreglo = 3;
+            this.nominas = object.data;
+            this.openModal();
+          }else{
+            window.sessionStorage["tipo_nomina"] = object.data[0].id_nomina;
+            this.router.navigate(["sistema_nomina/dashboard"]); 
+          }
+        }else{
+          Swal.fire("Ha ocurrido un error","Este empresa no tipos de nómina","error");
+        }
+      });
     }
     if(this.sistema_elegido == "4"){
       this.router.navigate(["sistema_control/dashboard"]);
       this.closeModal();
     }
     if(this.sistema_elegido == "6"){
+      this.closeModal();
       window.sessionStorage["empresa"] = id;
       this.router.navigate(["contabilidad/dashboard"]);
-      this.closeModal();
+      
     }
+  }
+  redireccionNomina(id : any){
+    this.closeModal();
+    window.sessionStorage["tipo_nomina"] = id;
+    this.router.navigate(["sistema_nomina/dashboard"]); 
   }
 }

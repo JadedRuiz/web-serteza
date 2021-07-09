@@ -3,6 +3,8 @@ import { COLOR } from 'src/config/config';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
+import { NominaService } from 'src/app/services/Nomina/Nomina.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-header-rc',
@@ -13,16 +15,22 @@ export class HeaderComponent implements OnInit {
   public color = COLOR;
   public nombre = window.sessionStorage.getItem("nombre");
   public usuario_logueado = window.sessionStorage.getItem("user");
+  public id_nomina = window.sessionStorage.getItem("tipo_nomina");
   public url_foto : any;
   public empresa_seleccionado = parseInt(window.sessionStorage["empresa"]);
+  public header = ["","","",""];
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   public modal: any;
   public empresas : any;
+  public nominas : any;
   public texto : String;
   public nombre_empresa : String;
+  public tipo_arreglo = 0;
+
   constructor(private router: Router,
     public empresa_service : EmpresaService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    public nomina_service : NominaService
     ) {
       this.texto = "SISTEMA DE RECLUTAMIENTO";
       this.url_foto = './assets/iconos/perfil.svg';
@@ -31,7 +39,18 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.recuperarEmpresas();
+    this.mostrarHeaderDash();
     this.url_foto = window.sessionStorage["foto"];
+  }
+  mostrarHeaderDash(){
+    this.nomina_service.obtenerNombreNominaPorId(this.id_nomina)
+    .subscribe( (object : any)=>{
+      if(object.ok){
+        this.header[1] = object.data[0].nomina;
+      }else{
+        this.header[1] = "Sin tipo, seleccionado"
+      }
+    });
   }
   recuperarEmpresas(){
     this.empresas = [];
@@ -39,6 +58,7 @@ export class HeaderComponent implements OnInit {
     .subscribe( (object : any) => {
       if(object.ok){
         if(object.data.length > 1){
+          this.tipo_arreglo = 0;
           for(let i=0;i<object.data.length;i++){
             if(this.empresa_seleccionado == parseInt(object.data[i].id_empresa)){
               this.empresas.push({
@@ -63,8 +83,31 @@ export class HeaderComponent implements OnInit {
   }
   eleccion(id_cliente : any){
     window.sessionStorage["empresa"] = id_cliente;
-    location.reload();
     this.closeModal();
+    let json = {
+      id_empresa : id_cliente,
+      id_status : 1
+    };
+    this.nomina_service.obtenerLigaEmpresaNomina(json)
+    .subscribe( (object : any) => {
+      if(object.ok){
+        if(object.data.length > 1){
+          this.tipo_arreglo = 1;
+          this.nominas = object.data;
+          this.openModal();
+        }else{
+          window.sessionStorage["tipo_nomina"] = object.data[0].id_nomina;
+          this.router.navigate(["sistema_nomina/dashboard"]); 
+        }
+      }else{
+        Swal.fire("Ha ocurrido un error","Este empresa no tipos de nómina","error");
+      }
+    });
+  }
+  redireccionNomina(id_nomina : any){
+    window.sessionStorage["tipo_nomina"] = id_nomina;
+    this.closeModal();
+    location.reload();
   }
   openModal() {
     this.modal = this.modalService.open(this.contenidoDelModal,{ centered : true, backdropClass : 'light-blue-backdrop'});
