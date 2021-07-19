@@ -15,12 +15,26 @@ import { MatInputModule } from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import { MatNativeDateModule } from '@angular/material/core'; 
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import { CatalogoDepartamentoComponent } from './catalogo_departamento/catalogo_departamento.component';
+import { CatalogoConceptoComponent } from './catalogo_concepto/catalogo_concepto.component';
+import { CatalogoPeriodoComponent } from './catalogo_periodo/catalogo_periodo.component';
+import { CatalogoSucursalComponent } from './catalogo_sucursal/catalogo_sucursal.component';
+import { CatalogoPrestacionComponent } from './catalogo_prestacion/catalogo_prestacion.component';
+import { CatalogoCuentaBancariaComponent } from './catalogo_cuenta_bancaria/catalogo_cuenta_bancaria.component';
+import { CatalogoRegistroPatronalComponent } from './catalogo_registro_patronal/catalogo_registro_patronal.component';
 
 @NgModule({
   declarations: [
     SistemaNominaComponent,
     DashboardComponent,
     CatalogoEmpleadoComponent,
+    CatalogoDepartamentoComponent,
+    CatalogoConceptoComponent,
+    CatalogoPeriodoComponent,
+    CatalogoSucursalComponent,
+    CatalogoPrestacionComponent,
+    CatalogoCuentaBancariaComponent,
+    CatalogoRegistroPatronalComponent
   ],
   imports: [
     CompartidoModule,

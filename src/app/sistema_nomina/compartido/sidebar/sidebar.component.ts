@@ -55,13 +55,13 @@ export class SidebarComponent implements OnInit {
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : [
           {path: 'catalogo_empleado', title: 'Mis empleados', icon: 'ni-circle-08 text-orange'},
-          {path: 'catalogo_candidato', title: 'Mis conceptos', icon: 'ni-box-2 text-orange'},
-          {path: 'catalogo_candidato', title: 'Mis periodos', icon: 'ni-calendar-grid-58 text-orange'},
-          {path: 'catalogo_candidato', title: 'Mis departamentos', icon: 'ni-archive-2 text-orange'},
-          {path: 'catalogo_candidato', title: 'Mis sucursales', icon: 'ni-building text-orange'},
-          {path: 'catalogo_candidato', title: 'Mis prestaciones', icon: 'ni-money-coins text-orange'},
-          {path: 'catalogo_candidato', title: 'Mis cuentas bancarias', icon: 'ni-world-2 text-orange'},
-          {path: 'catalogo_candidato', title: 'Mis registros patronales', icon: 'ni-paper-diploma text-orange'}
+          {path: 'catalogo_concepto', title: 'Mis conceptos', icon: 'ni-box-2 text-orange'},
+          {path: 'catalogo_periodo', title: 'Mis periodos', icon: 'ni-calendar-grid-58 text-orange'},
+          {path: 'catalogo_departamento', title: 'Mis departamentos', icon: 'ni-archive-2 text-orange'},
+          {path: 'catalogo_sucursal', title: 'Mis sucursales', icon: 'ni-building text-orange'},
+          {path: 'catalogo_prestacion', title: 'Mis prestaciones', icon: 'ni-money-coins text-orange'},
+          {path: 'catalogo_cuenta_bancaria', title: 'Mis cuentas bancarias', icon: 'ni-world-2 text-orange'},
+          {path: 'catalogo_registro_patronal', title: 'Mis registros patronales', icon: 'ni-paper-diploma text-orange'}
 
         ]
       },
