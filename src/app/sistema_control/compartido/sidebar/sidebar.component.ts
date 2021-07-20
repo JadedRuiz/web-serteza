@@ -55,38 +55,22 @@ export class SidebarComponent implements OnInit {
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : [
           {path: 'catalogo_empleado', title: 'Mis empleados', icon: 'ni-circle-08 text-orange'},
-          {path: 'catalogo_concepto', title: 'Mis conceptos', icon: 'ni-box-2 text-orange'},
-          {path: 'catalogo_periodo', title: 'Mis periodos', icon: 'ni-calendar-grid-58 text-orange'},
-          {path: 'catalogo_departamento', title: 'Mis departamentos', icon: 'ni-archive-2 text-orange'},
-          {path: 'catalogo_sucursal', title: 'Mis sucursales', icon: 'ni-building text-orange'},
-          {path: 'catalogo_prestacion', title: 'Mis prestaciones', icon: 'ni-money-coins text-orange'},
-          {path: 'catalogo_cuenta_bancaria', title: 'Mis cuentas bancarias', icon: 'ni-world-2 text-orange'},
-          {path: 'catalogo_registro_patronal', title: 'Mis registros patronales', icon: 'ni-paper-diploma text-orange'}
 
         ]
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-app text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
         submenu : [
           {path: 'procedimiento_solicitudes', title: 'Aplicar solicitudes de Recursos Humanos', icon: 'ni-button-play text-yellow'},
-          {path: 'procedimiento_captura', title: 'Captura de incidencias', icon: 'ni-ruler-pencil text-yellow'},
-          {path: 'procedimiento_calculo', title: 'Calculo de nómina', icon: 'ni-active-40 text-yellow'},
-          {path: 'procedimiento_cierre', title: 'Cierre de nómina', icon: 'ni-fat-remove text-yellow'},
         ]
       },
       { path: '#', title: 'Herramientas', icon: 'ni-settings text-purple', id:'rh_herramientas', band: true, tipo : "collapse",
         submenu : [
           {path: 'procedimiento_contratacion', title: 'Exportar movimientos IDSE/SUA', icon: 'ni-bold-up text-purple'},
-          {path: 'procedimiento_modificacion', title: 'Dispersión de bancos', icon: 'ni-shop text-purple'},
-          {path: 'procedimiento_baja', title: 'Activar empleado', icon: 'ni-key-25 text-purple'},
         ]
       },
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: true, tipo : "collapse",
         submenu : [
           {path: 'reporte_general', title: 'Reporte de nómina', icon: 'ni-book-bookmark text-green'},
-          {path: 'reporte_general', title: 'Cifras de control', icon: 'ni-book-bookmark text-green'},
-          {path: 'reporte_general', title: 'Reporte por conceptos', icon: 'ni-book-bookmark text-green'},
-          {path: 'reporte_general', title: 'Reporte de recibos timbrados', icon: 'ni-book-bookmark text-green'},
-          {path: 'reporte_general', title: 'Acumulados por trabajador', icon: 'ni-book-bookmark text-green'},
         ]
     }
     ];

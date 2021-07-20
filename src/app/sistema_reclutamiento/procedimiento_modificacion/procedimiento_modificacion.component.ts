@@ -11,6 +11,7 @@ import { ModificacionService } from 'src/app/services/Modificacion/Modificacion.
 import { COLOR } from 'src/config/config';
 import Swal from 'sweetalert2';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 
 @Component({
   selector: 'app-procedimiento-modificacion',
@@ -49,6 +50,7 @@ export class ProcedimientoModificacionComponent implements OnInit {
   public previous = false;
   public taken = 5;
   public modificar = false;
+  public aplicar = false;
   //Modificacion
   public nominas : any;
   public empresas : any;
@@ -74,7 +76,8 @@ export class ProcedimientoModificacionComponent implements OnInit {
     private empresa_service : EmpresaService,
     private departamento_service : DepartamentoService,
     private puesto_service : PuestoService,
-    private modificacion_service : ModificacionService
+    private modificacion_service : ModificacionService,
+    private usuario_service : UsuarioService
     ) { }
 
   ngOnInit(): void {
@@ -89,6 +92,13 @@ export class ProcedimientoModificacionComponent implements OnInit {
       fecha_final : this.fecha_final,
       id_status : this.status
     }
+    this.usuario_service.tieneSistema({"usuario":this.usuario_creacion,"id_sistema" : "3"})
+    .subscribe( (object : any) => {
+      this.aplicar = true;
+      if(object.ok){
+        this.aplicar = false;
+      }
+    });
     this.modificacion_service.obtenerSolicitudesBaja(array)
     .subscribe( (object : any)=>{
       if(object.ok){
@@ -317,6 +327,10 @@ export class ProcedimientoModificacionComponent implements OnInit {
     this.pagina_actual = pagina;
   }
   
+  aplicarModificacion(id : any){
+    this.confirmar("Confirmación","¿Seguro que deseas aplicar la modificación?","info",null,4);
+  }
+
   paginar(){
     this.paginas = [];
     let paginas_a_pintar = parseInt(this.total_registros+"")%parseInt(this.taken+"");
@@ -404,7 +418,6 @@ export class ProcedimientoModificacionComponent implements OnInit {
           });
         }
         if(tipo == 3){
-          console.log(json.id_detalle_modificacion);
           this.modificacion_service.eliminarDetalle(json.id_detalle_modificacion)
           .subscribe( (object : any)=>{
             if(object.ok){
@@ -420,6 +433,9 @@ export class ProcedimientoModificacionComponent implements OnInit {
               Swal.fire("Ha ocurrido un error",object.message,"info");
             }
           });
+        }
+        if(tipo == 4){
+
         }
       }
     });

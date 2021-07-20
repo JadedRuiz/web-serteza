@@ -15,6 +15,7 @@ import { SitemaPrestasoftModule } from './sistema_prestasoft/sistema_prestasoft.
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { SistemaNominaModule } from './sistema_nomina/sistema_nomina.module';
+import { SistemaControlModule } from './sistema_control/sistema_control.module';
 
 @NgModule({
   declarations: [
@@ -30,13 +31,12 @@ import { SistemaNominaModule } from './sistema_nomina/sistema_nomina.module';
     SistemaReclutamientoModule,
     SitemaPrestasoftModule,
     SistemaNominaModule,
+    SistemaControlModule,
     NgbModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
     NoopAnimationsModule
-    
-    
   ],
   providers: [
     CookieService,

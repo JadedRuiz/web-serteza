@@ -53,6 +53,7 @@
                           <td colspan="1" style="vertical-align: middle;">{{modificacion.fecha}}</td>
                           <td colspan="1" style="vertical-align: middle;">{{modificacion.status}}</td>
                           <td colspan="1" style="width: 20%;">
+                              <a *ngIf="aplicar && modificacion.id_status == 5" title="Aplicar solicitud" style="cursor: pointer;" class="btn btn-success btn-sm" (click)="aplicarModificacion(modificacion.id_movimiento)"><img src="./assets/iconos/aplicar.svg" style="width: 14px;"></a>
                               <a *ngIf="modificacion.id_status == 5" title="Editar" (click)="editar(modificacion.id_movimiento,1)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
                               <a *ngIf="modificacion.id_status == 1" title="Ver" (click)="editar(modificacion.id_movimiento,2)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/ver.svg" style="width: 14px;"></a>
                               <!-- <a title="Reporte de contratación" style="cursor: pointer;" class="btn btn-info" (click)="consumoReporte(1,modificacion.id_movimiento)"><img src="./assets/iconos/reporte.svg" style="width: 24px;"></a> -->

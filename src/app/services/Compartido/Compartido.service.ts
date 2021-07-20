@@ -18,4 +18,9 @@ export class CompartidoService {
     let url = SERVER_API+"obtenerCatalogo/"+nombre_tabla+"/0";
     return this.http.get(url);
   }
+
+  obtenerMovimientos(id_empresa : any){
+    let url = SERVER_API+"obtenerMovimientos/"+id_empresa;
+    return this.http.get(url);
+  }
 }

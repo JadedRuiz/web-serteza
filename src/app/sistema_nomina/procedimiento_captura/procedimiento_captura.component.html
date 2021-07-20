@@ -1,0 +1,73 @@
+<div class="container-fluid mt-3">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card shadow" style="height: 550px;">
+          <div class="card-header border-0">
+              <div class="row align-items-center">
+                  <div class="col">
+                  <h3 class="mb-0">CAPTURA DE INCIDENCIAS</h3>
+              </div>
+          </div>
+          <div class="card-body">
+              <div class="form">
+                <div class="form-row">
+                  <div class="form-group col-4">
+                    <mat-form-field class="w-100">
+                      <mat-label>Buscar empleado</mat-label>
+                      <input #input
+                             type="text"
+                             placeholder="Buscar..."
+                             (keyup)="busqueda(input.value)"
+                             aria-label="Buscar empleado"
+                             matInput
+                             [formControl]="myControl"
+                             [matAutocomplete]="auto">
+                      <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getEmpleado($event)'>
+                        <!-- <mat-option *ngFor="let option of departamentos_busqueda" [value]="option.departamento" [id]="option.id_departamento+''">
+                          {{option.departamento}}
+                        </mat-option> -->
+                      </mat-autocomplete>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <p>Información de la incidencia</p>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-4">
+                    <label for="empleado">Empleado</label>
+                    <input type="text" value="RUIZ PECH JADED ENRIQUE" class="form-control" disabled id="empleado">
+                  </div>
+                  <div class="form-group col-4">
+                    <label for="incidencia">Tipo de incidencia</label>
+                    <mat-form-field class="w-100" id="incidencia">
+                      <mat-select [(ngModel)]="tipo_incidencia" (selectionChange)="busqueda(1)">
+                          <mat-option [value]="1">Falta</mat-option>
+                          <mat-option [value]="2">Suspención</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <div class="form-group col-4">
+                    <label for="fecha">Fecha</label>
+                    <mat-form-field class="w-100" id="fecha">
+                      <input matInput [(ngModel)]="fecha" [matDatepicker]="picker" placeholder="Ingresa la fecha de la incidencia">
+                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                  <div class="form-group col-12">
+                    <label for="descripcion">Descripción</label>
+                    <textarea class="form-control" id="descripcion" cols="30" rows="6"></textarea>
+                  </div>
+                </div>
+                <div class="form-row" style="display: flex;align-items: flex-end;justify-content: flex-end;">
+                  <button class="btn btn-success">Capturar incidencia</button>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<p>procedimiento-captura works!</p>

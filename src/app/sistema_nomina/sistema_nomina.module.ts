@@ -22,6 +22,10 @@ import { CatalogoSucursalComponent } from './catalogo_sucursal/catalogo_sucursal
 import { CatalogoPrestacionComponent } from './catalogo_prestacion/catalogo_prestacion.component';
 import { CatalogoCuentaBancariaComponent } from './catalogo_cuenta_bancaria/catalogo_cuenta_bancaria.component';
 import { CatalogoRegistroPatronalComponent } from './catalogo_registro_patronal/catalogo_registro_patronal.component';
+import { ProcedimientoSolicitudesComponent } from './procedimiento_solicitudes/procedimiento_solicitudes.component';
+import { ProcedimientoCapturaComponent } from './procedimiento_captura/procedimiento_captura.component';
+import { ProcedimientoCalculoComponent } from './procedimiento_calculo/procedimiento_calculo.component';
+import { ProcedimientoCierreComponent } from './procedimiento_cierre/procedimiento_cierre.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +38,11 @@ import { CatalogoRegistroPatronalComponent } from './catalogo_registro_patronal/
     CatalogoSucursalComponent,
     CatalogoPrestacionComponent,
     CatalogoCuentaBancariaComponent,
-    CatalogoRegistroPatronalComponent
+    CatalogoRegistroPatronalComponent,
+    ProcedimientoSolicitudesComponent,
+    ProcedimientoCapturaComponent,
+    ProcedimientoCalculoComponent,
+    ProcedimientoCierreComponent
   ],
   imports: [
     CompartidoModule,

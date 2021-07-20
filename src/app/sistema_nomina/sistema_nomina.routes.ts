@@ -10,6 +10,10 @@ import { CatalogoDepartamentoComponent } from './catalogo_departamento/catalogo_
 import { CatalogoEmpleadoComponent } from './catalogo_empleado/catalogo_empleado.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SistemaNominaComponent } from './sistema_nomina.component';
+import { ProcedimientoSolicitudesComponent } from './procedimiento_solicitudes/procedimiento_solicitudes.component';
+import { ProcedimientoCapturaComponent } from './procedimiento_captura/procedimiento_captura.component';
+import { ProcedimientoCierreComponent } from './procedimiento_cierre/procedimiento_cierre.component';
+import { ProcedimientoCalculoComponent } from './procedimiento_calculo/procedimiento_calculo.component';
 
 const routes: Routes = [
   {
@@ -25,6 +29,10 @@ const routes: Routes = [
         { path : "catalogo_prestacion", component : CatalogoPrestacionComponent},
         { path : "catalogo_cuenta_bancaria", component : CatalogoCuentaBancariaComponent},
         { path : "catalogo_registro_patronal", component : CatalogoRegistroPatronalComponent},
+        { path : "procedimiento_solicitudes", component : ProcedimientoSolicitudesComponent},
+        { path : "procedimiento_captura", component : ProcedimientoCapturaComponent},
+        { path : "procedimiento_cierre", component : ProcedimientoCierreComponent},
+        { path : "procedimiento_calculo", component : ProcedimientoCalculoComponent},
         { path: '', redirectTo: '/login', pathMatch: 'full'}
     ]
   }
