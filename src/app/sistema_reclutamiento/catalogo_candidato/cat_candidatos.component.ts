@@ -14,8 +14,6 @@ import * as jQuery from 'jquery';
 // import { Observable, Subject } from 'rxjs';
 import { FormControl} from '@angular/forms';
 import { CameraComponent } from 'src/app/compartido/camera/camera.component';
-import { Console } from 'console';
-
 @Component({
   selector: 'app-candidatos-original',
   templateUrl: './cat_candidatos.component.html',
@@ -190,7 +188,7 @@ export class CatalogoCandidatosComponent implements OnInit {
               cancelButtonText : "Cancelar"
             }).then((result) => {
               if (result.isConfirmed) {
-                band = true;
+                this.confirmar("Confirmación","¿Seguro que desea guardar la información?","info",1);
               }else{
                 band = false;
               }
@@ -540,7 +538,6 @@ export class CatalogoCandidatosComponent implements OnInit {
 
   cerrarModalCamera(){
     this.modal_camera.close();
-    console.log(this.foto_user);
   }
 
   // takeSnapshot(): void {
