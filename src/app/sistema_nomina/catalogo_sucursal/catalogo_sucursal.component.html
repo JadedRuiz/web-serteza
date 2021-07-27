@@ -119,3 +119,57 @@
     </div>
   </div>
 
+  <ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
+    <div class="modal-header">
+        <h2 class="modal-title" id="tituloModal">Nueva sucursal</h2>
+    </div>
+    <div class="modal-body">
+        <div class="form">
+            <div class="form-row">
+                <div class="form-group col-3">
+                    <mat-form-field class="w-100">
+                        <mat-label>Clientes</mat-label>
+                        <mat-select [(ngModel)]="json.id_cliente">
+                            <mat-option *ngFor="let cliente of clientes" [value]="cliente.id_cliente">{{cliente.cliente}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="form-group col-3">
+                    <label for="sucursal">Sucursal *</label>
+                    <input [(ngModel)]="json.sucursal" type="text" class="form-control text-uppercase" id="sucursal">
+                </div>
+                <div class="form-group col-3">
+                    <label for="zona">Zona</label>
+                    <input [(ngModel)]="json.zona" type="text" class="form-control text-uppercase" id="zona">
+                </div>
+                <div class="form-group col-3">
+                    <label for="impuesto_estatal">Tasa de impuesto estatal</label>
+                    <input [(ngModel)]="json.tasa_estatal" type="text" class="form-control text-uppercase" id="impuesto_estatal">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-4">
+                    <label for="impuesto_especial">Tasa de impuesto especial</label>
+                    <input [(ngModel)]="json.tasa_especial" type="text" class="form-control text-uppercase" id="impuesto_especial">
+                </div>
+                <div class="form-group col-4">
+                    <label for="prima_riesgo">Prima de riesgo</label>
+                    <input [(ngModel)]="json.prima_riesgo" type="text" class="form-control text-uppercase" id="prima_riesgo">
+                </div>
+                <div class="form-group col-4">
+                    <mat-form-field class="w-100">
+                        <mat-label>Estado</mat-label>
+                        <mat-select [(ngModel)]="json.estado">
+                            <mat-option *ngFor="let estado of estados" [value]="estado.id_estado">{{estado.estado}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="btn btn-success" (click)="altaSucursal()" id="guardar">Guardar</button>
+        <!-- <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button> -->
+    </div>
+</ng-template>
