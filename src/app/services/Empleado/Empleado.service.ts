@@ -53,6 +53,17 @@ export class EmpleadoService {
       }));
   }
 
+  obtenerEmpleadoPorTipoNomina(json : any){
+    let url = SERVER_API+"empleado/obtenerEmpleadoPorTipoNomina";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
+        return throwError(err);
+      }));
+  }
+
   crearNuevoEmpleadoConCandidatoExistente(empleado : Empleado){
     let url = SERVER_API+"empleado/crearNuevoEmpleadoConCandidatoExistente";
     return this.http.post( url, empleado )

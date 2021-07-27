@@ -14,6 +14,7 @@ import {MatSelectModule} from '@angular/material/select';
 import { MatNativeDateModule } from '@angular/material/core'; 
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { SistemaControlComponent } from './sistema_control.component';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { SistemaControlComponent } from './sistema_control.component';
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    ChartsModule
   ]
 })
 export class SistemaControlModule { }

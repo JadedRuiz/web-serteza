@@ -200,13 +200,13 @@
                         </tr>
                     </thead>
                     <tbody *ngIf="band_puestos">
-                        <tr *ngFor="let puesto_array of puestos" (click)="editarPuesto(puesto_array.id_puesto)" style="cursor: pointer;">
+                        <tr *ngFor="let puesto_array of puestos">
                             <td style="vertical-align: middle;">{{puesto_array.puesto}}</td>
                             <td style="vertical-align: middle;">{{puesto_array.descripcion}}</td>
                             <td style="vertical-align: middle;" style="width: 5%;text-align: center;">
                                 <input type="number" name="" id="valor_{{puesto_array.id_puesto}}" value="{{puesto_array.autorizados}}" class="form-control" (change)="cambiarValor(puesto_array.id_puesto,puesto_array.autorizados)">
                             </td>
-                            <td style="vertical-align: middle;" ><a class="btn btn-info" (click)="eliminarPuesto(puesto_array.id_puesto)" title="Nuevo departamento"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a></td>
+                            <td style="vertical-align: middle;" ><a class="btn btn-info" (click)="eliminarPuesto(puesto_array.id_puesto)" title="Eliminar puesto"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a></td>
                         </tr>
                     </tbody>
                     <tbody *ngIf="!band_puestos">

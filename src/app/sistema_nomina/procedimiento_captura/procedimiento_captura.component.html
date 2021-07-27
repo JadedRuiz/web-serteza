@@ -1,73 +1,153 @@
 <div class="container-fluid mt-3">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card shadow" style="height: 550px;">
-          <div class="card-header border-0">
-              <div class="row align-items-center">
-                  <div class="col">
-                  <h3 class="mb-0">CAPTURA DE INCIDENCIAS</h3>
-              </div>
-          </div>
-          <div class="card-body">
-              <div class="form">
-                <div class="form-row">
-                  <div class="form-group col-4">
-                    <mat-form-field class="w-100">
-                      <mat-label>Buscar empleado</mat-label>
-                      <input #input
-                             type="text"
-                             placeholder="Buscar..."
-                             (keyup)="busqueda(input.value)"
-                             aria-label="Buscar empleado"
-                             matInput
-                             [formControl]="myControl"
-                             [matAutocomplete]="auto">
-                      <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getEmpleado($event)'>
-                        <!-- <mat-option *ngFor="let option of departamentos_busqueda" [value]="option.departamento" [id]="option.id_departamento+''">
-                          {{option.departamento}}
-                        </mat-option> -->
-                      </mat-autocomplete>
-                    </mat-form-field>
-                  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card shadow" style="height: 550px;">
+        <div class="card-header border-0">
+            <div class="row align-items-center">
+                <div class="col">
+                <h3 class="mb-0">CAPTURA DE INCIDENCIAS</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="form">
+              <div class="form-row">
+                <div class="form-group col-lg-4 col-sm-4">
+                  <mat-form-field class="w-100">
+                    <mat-label>Buscar empleado</mat-label>
+                    <input #input
+                           type="text"
+                           placeholder="Buscar..."
+                           (keyup)="busqueda(input.value)"
+                           aria-label="Buscar empleado"
+                           matInput
+                           [formControl]="myControl"
+                           [matAutocomplete]="auto">
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getEmpleado($event)'>
+                      <mat-option *ngFor="let empleado of empleados" [value]="empleado.nombre" [id]="empleado.id_empleado">
+                        {{empleado.nombre}}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
                 </div>
-                <div class="form-row">
-                  <p>Información de la incidencia</p>
-                </div>
-                <div class="form-row">
-                  <div class="form-group col-4">
-                    <label for="empleado">Empleado</label>
-                    <input type="text" value="RUIZ PECH JADED ENRIQUE" class="form-control" disabled id="empleado">
-                  </div>
-                  <div class="form-group col-4">
-                    <label for="incidencia">Tipo de incidencia</label>
-                    <mat-form-field class="w-100" id="incidencia">
-                      <mat-select [(ngModel)]="tipo_incidencia" (selectionChange)="busqueda(1)">
-                          <mat-option [value]="1">Falta</mat-option>
-                          <mat-option [value]="2">Suspención</mat-option>
+                <div class="form-group col-lg-4 col-sm-12">
+                    <mat-form-field class="w-100" id="tipo">
+                      <mat-label>Tipo de nómina</mat-label>
+                      <mat-select [(ngModel)]="capturas.id_nomina" (selectionChange)="mostrarCapturas()">
+                          <mat-option *ngFor="let nomina of nominas" [value]="nomina.id_nomina">{{nomina.nomina}}</mat-option>
                       </mat-select>
                     </mat-form-field>
-                  </div>
-                  <div class="form-group col-4">
-                    <label for="fecha">Fecha</label>
-                    <mat-form-field class="w-100" id="fecha">
-                      <input matInput [(ngModel)]="fecha" [matDatepicker]="picker" placeholder="Ingresa la fecha de la incidencia">
-                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                      <mat-datepicker #picker></mat-datepicker>
-                    </mat-form-field>
-                  </div>
-                  <div class="form-group col-12">
-                    <label for="descripcion">Descripción</label>
-                    <textarea class="form-control" id="descripcion" cols="30" rows="6"></textarea>
-                  </div>
                 </div>
-                <div class="form-row" style="display: flex;align-items: flex-end;justify-content: flex-end;">
-                  <button class="btn btn-success">Capturar incidencia</button>
-                </div>
+                <!-- <div class="form-group col-lg-4 col-sm-12">
+                  <a *ngIf="band_botones" class="btn btn-info" (click)="guardar()" title="Capturar incidencia"><img src="./assets/iconos/agregar.svg" style="width: 24px;"></a>
+                </div> -->
               </div>
-          </div>
+            </div>
+              
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th colspan="1" class="text-center">Folio</th>
+                    <th colspan="1">Empleado</th>
+                    <th colspan="1">Conceptos</th>
+                    <th colspan="1" class="text-center">Unidades</th>
+                    <th colspan="1" class="text-center">Importe</th>
+                    <th colspan="1" class="text-center">Saldo</th>
+                    <th colspan="1" class="text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="capturas.registros.length > 0; else pintaVacio">
+                  <tr *ngFor="let captura of capturas.registros">
+                      <td style="vertical-align: middle;" class="text-center">{{captura.id_empleado}}</td>
+                      <td style="vertical-align: middle;" >
+                        <div class="img mr-2" style="height: 40px; width: 60px;display: inline-block;">
+                          <img [src]="captura.fotografia" alt="" style="width: 100%; height: 100%;">
+                        </div>
+                        {{captura.empleado}}
+                      </td>
+                      <td style="vertical-align: middle;">
+                        <mat-form-field class="w-90 mr-1" id="tipo">
+                          <mat-label>Concepto</mat-label>
+                          <mat-select [(ngModel)]="tb_row_dos.id_concepto" (selectionChange)="mostrarAcciones(captura.id_empleado)">
+                            <mat-option *ngIf="captura.conceptos.length == 0">Aún sin conceptos</mat-option>
+                            <mat-option *ngFor="let concep of captura.conceptos" [value]="concep.id_concepto">{{concep.concepto}}</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <button type="button" class="btn btn-info btn-circle btn-sm" title="Agregar Concepto" (click)="guardar(captura.id_empleado)"><i class="far fa-plus-square"></i></button>
+                      </td>
+                      <td style="vertical-align: middle;" class="text-center">{{tb_row_dos.unidades+""}}</td>
+                      <td style="vertical-align: middle;" class="text-center">{{tb_row_dos.importe+""}}</td>
+                      <td style="vertical-align: middle;" class="text-center">{{tb_row_dos.saldo+""}}</td>
+                      <td style="vertical-align: middle;">
+                        <div *ngIf="captura.conceptos.length > 0 && tb_row_dos.id_concepto != 0">
+                          <a class="btn btn-yellow btn-sm" (click)="editar(tb_row_dos.id_concepto)" title="Editar"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                          <a  class="btn btn-gray btn-sm" (click)="eliminar(tb_row_dos.id_concepto)" title="Visualizar"><img src="./assets/iconos/ver.svg" style="width: 14px;"></a>
+                          <a  class="btn btn-danger btn-sm" (click)="eliminar(tb_row_dos.id_concepto)" title="Eliminar"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
+                        </div>
+                      </td>
+                  </tr>
+                </tbody>
+                <ng-template #pintaVacio>
+                  <tbody>
+                      <tr>
+                          <td colspan="7" class="text-center">Aún no se han capturado incidencias</td>
+                      </tr>
+                  </tbody>
+                </ng-template>
+              </table>
+            </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-<p>procedimiento-captura works!</p>
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-header">
+      <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nuevo concepto</h2>
+      <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Editar concepto</h2>
+  </div>
+  <div class="modal-body">
+      <div class="form">
+        <div class="form-group row">
+          <label for="concepto" class="col-sm-3 col-form-label">Concepto</label>
+          <div class="col-sm-9">
+            <mat-form-field class="w-100" id="concepto">
+              <mat-select [(ngModel)]="tb_row.id_concepto" (selectionChange)="mostrarConfig($event)">
+                  <mat-option *ngFor="let concepto_row of cat_conceptos" [value]="concepto_row.id_concepto">{{concepto_row.concepto}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="unidades" class="col-sm-3 col-form-label">Unidades</label>
+          <div class="col-sm-9">
+            <input type="text" [(ngModel)]="tb_row.unidades" class="form-control" id="unidades" [disabled]="config[0]">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="importe" class="col-sm-3 col-form-label">Importe</label>
+          <div class="col-sm-9">
+            <input type="text" [(ngModel)]="tb_row.importe" class="form-control" id="importe" [disabled]="config[1]">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="saldo" class="col-sm-3 col-form-label">Saldo</label>
+          <div class="col-sm-9">
+            <input type="text" [(ngModel)]="tb_row.saldo" class="form-control" id="saldo" [disabled]="config[2]">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="ajustes" class="col-sm-3 col-form-label">Ajuste</label>
+          <div class="col-sm-9">
+            <input type="text" [(ngModel)]="tb_row.ajuste" class="form-control" id="ajustes">
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+      <button *ngIf="tipo_modal == 1" class="btn btn-success" (click)="agregarCalculo()">Agregar</button>
+      <!-- <button *ngIf="tipo_modal == 2" class="btn btn-success" (click)="editarIncidencia()">Editar</button> -->
+  </div>
+</ng-template>

@@ -86,12 +86,14 @@
         <h2 class="modal-title" id="tituloModal">{{titulo_modal}}</h2>
     </div>
     <div class="modal-body">
-        <p class="py-0 my-0">Seleccione las empresas que desea agregarle a este usuario</p>
+        <p *ngIf="tipo_modal == 1" class="py-0 my-0">Seleccione las empresas que desea agregarle a este usuario</p>
+        <p *ngIf="tipo_modal == 2" class="py-0 my-0">Seleccione el cliente que desea agregarle a este usuario</p>
         <div class="buscador">
             <input [(ngModel)]="palabra" type="search" placeholder="Buscar">
             <a title="Buscar" (click)="busqueda()"><i class="fas fa-search"></i></a>
         </div>
-        <small class="text-warning">Si la empresa que esta buscando no existe puede agregarlo en el catálogo de empresas</small>
+        <small *ngIf="tipo_modal == 1" class="text-warning">Si la empresa que esta buscando no existe, contacte con el proveedor.</small>
+        <small *ngIf="tipo_modal == 2" class="text-warning">Si el cliente que esta buscando no existe, contacte con el proveedor.</small>
         <ul *ngIf="arreglo; else pintaInfo" class="list-group mt-2" style="max-height: 350px;">
             <li *ngFor="let row of arreglo" id="arreglo{{row.folio}}" (click)="seleccionarEnModal(row.folio)" class="list-group-item list-arreglo {{row.atributo}}" style="cursor: pointer;">{{row.nombre}}</li>
         </ul>

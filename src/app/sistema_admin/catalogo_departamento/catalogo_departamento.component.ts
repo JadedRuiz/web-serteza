@@ -120,7 +120,12 @@ export class CatalogoDepartamentoComponent implements OnInit {
     }
     if(this.departamento.departamento != "" && this.departamento.disponibilidad > 0){
       if(this.puestos.length > 0){
-        this.confirmar("Confirmación","¿Seguro que desea editar la información?","info",this.tipo_modal);
+        if(this.tipo_modal == 1){
+          this.confirmar("Confirmación","¿Seguro que desea guardar la información?","info",1);
+        }
+        if(this.tipo_modal == 2){
+          this.confirmar("Confirmación","¿Seguro que desea editar la información?","info",2);
+        }
       }else{
         Swal.fire("Ha ocurrido un error","El departamento debe tener almenos un puesto","error");
       }
@@ -137,7 +142,6 @@ export class CatalogoDepartamentoComponent implements OnInit {
 
   agregarPuesto(){
     //validar la sumatoria de los puestos
-    console.log(this.puesto);
     let sumatoria = 0;
     for(let i=0;i<this.puestos.length;i++){
       sumatoria += parseInt(""+this.puestos[i].autorizados);
@@ -146,7 +150,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
       this.band_puestos = true;
       this.puestos.push({
         "id_puesto" : this.cont,
-        "puesto" : this.puesto.puesto,
+        "puesto" : this.puesto.puesto.toUpperCase(),
         "descripcion" : this.puesto.descripcion,
         "autorizados" : this.puesto.autorizados,
         "sueldo_tipo_a" : this.puesto.sueldo_tipo_a,

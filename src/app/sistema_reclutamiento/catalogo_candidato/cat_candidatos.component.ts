@@ -10,10 +10,10 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import * as jQuery from 'jquery';
-// import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
-// import { Observable, Subject } from 'rxjs';
+import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
+import { Observable, Subject } from 'rxjs';
 import { FormControl} from '@angular/forms';
-import { CameraComponent } from 'src/app/compartido/camera/camera.component';
+  
 @Component({
   selector: 'app-candidatos-original',
   templateUrl: './cat_candidatos.component.html',
@@ -40,15 +40,13 @@ export class CatalogoCandidatosComponent implements OnInit {
   public foto_user : any;
   public docB64 = "";
   public bandera_activo = false;
-  // @Output() getPicture = new EventEmitter<WebcamImage>();
-  texto = "Mensaje desde padre";
-  @ViewChild(CameraComponent) camera = CameraComponent;
-  // showWebcam = true;
-  // isCameraExist = true;
-  // errors: WebcamInitError[] = [];
-  // // webcam snapshot trigger
-  // private trigger: Subject<void> = new Subject<void>();
-  // private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
+  @Output() getPicture = new EventEmitter<WebcamImage>();
+  showWebcam = true;
+  isCameraExist = true;
+  errors: WebcamInitError[] = [];
+  // webcam snapshot trigger
+  private trigger: Subject<void> = new Subject<void>();
+  private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
   //Filtros
   public taken = 5; //Registros por default
   public status = -1; //Status default
@@ -87,10 +85,10 @@ export class CatalogoCandidatosComponent implements OnInit {
 
   ngOnInit(): void {
     this.mostrarCandidatos();
-    // WebcamUtil.getAvailableVideoInputs()
-    // .then((mediaDevices: MediaDeviceInfo[]) => {
-    //   this.isCameraExist = mediaDevices && mediaDevices.length > 0;
-    // });
+    WebcamUtil.getAvailableVideoInputs()
+    .then((mediaDevices: MediaDeviceInfo[]) => {
+      this.isCameraExist = mediaDevices && mediaDevices.length > 0;
+    });
   }
   mostrarCandidatos(){
     let json = {
@@ -540,41 +538,41 @@ export class CatalogoCandidatosComponent implements OnInit {
     this.modal_camera.close();
   }
 
-  // takeSnapshot(): void {
-  //   let foto = this.trigger.next();
-  // }
+  takeSnapshot(): void {
+    let foto = this.trigger.next();
+  }
 
-  // onOffWebCame() {
-  //   this.showWebcam = !this.showWebcam;
-  // }
+  onOffWebCame() {
+    this.showWebcam = !this.showWebcam;
+  }
 
-  // handleInitError(error: WebcamInitError) {
-  //   this.errors.push(error);
-  // }
+  handleInitError(error: WebcamInitError) {
+    this.errors.push(error);
+  }
 
-  // changeWebCame(directionOrDeviceId: boolean | string) {
-  //   this.nextWebcam.next(directionOrDeviceId);
-  // }
+  changeWebCame(directionOrDeviceId: boolean | string) {
+    this.nextWebcam.next(directionOrDeviceId);
+  }
 
-  // handleImage(webcamImage: WebcamImage) {
-  //   this.getPicture.emit(webcamImage);
-  //   this.showWebcam = false;
-  //   this.foto_user = webcamImage.imageAsDataUrl;
-  //   let docB64 = this.foto_user.split(",");
-  //   this.fotografia.docB64 = docB64[1];
-  //   this.fotografia.extension = "jpeg";
-  //   this.fotografia.nombre = "foto_user";
-  //   this.cerrarModalCamera();
-  //   // console.log(webcamImage.imageAsDataUrl)
-  // }
+  handleImage(webcamImage: WebcamImage) {
+    this.getPicture.emit(webcamImage);
+    this.showWebcam = false;
+    this.foto_user = webcamImage.imageAsDataUrl;
+    let docB64 = this.foto_user.split(",");
+    this.fotografia.docB64 = docB64[1];
+    this.fotografia.extension = "jpeg";
+    this.fotografia.nombre = "foto_user";
+    this.cerrarModalCamera();
+    // console.log(webcamImage.imageAsDataUrl)
+  }
 
-  // get triggerObservable(): Observable<void> {
-  //   return this.trigger.asObservable();
-  // }
+  get triggerObservable(): Observable<void> {
+    return this.trigger.asObservable();
+  }
 
-  // get nextWebcamObservable(): Observable<boolean | string> {
-  //   return this.nextWebcam.asObservable();
-  // }
+  get nextWebcamObservable(): Observable<boolean | string> {
+    return this.nextWebcam.asObservable();
+  }
   confirmar(title : any ,texto : any ,tipo_alert : any,tipo : number){
     Swal.fire({
       title: title,
