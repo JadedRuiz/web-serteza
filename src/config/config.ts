@@ -1,6 +1,6 @@
 const API_CP = "https://api-sepomex.hckdrk.mx/query/";
-// const API_SERTEZA = "http://localhost/api_serteza/public/api/";
-const API_SERTEZA = "https://serp-api.serteza.com/public/api/";
+const API_SERTEZA = "http://localhost/api_serteza/public/api/";
+// const API_SERTEZA = "https://serp-api.serteza.com/public/api/";
 const CLASS_COLOR = "bg-gradient-info";
 const token_cp  = "c9a268f4-1791-4926-9177-e23f62de2eb7";
 

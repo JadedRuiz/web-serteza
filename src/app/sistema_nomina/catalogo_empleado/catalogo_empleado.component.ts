@@ -1,6 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Observable, Subject } from 'rxjs';
 import { Candidato } from 'src/app/models/Candidato';
 import { Direccion } from 'src/app/models/Direccion';
 import { Empleado } from 'src/app/models/Empleado';
@@ -8,7 +9,10 @@ import { Fotografia } from 'src/app/models/Fotografia';
 import { CompartidoService } from 'src/app/services/Compartido/Compartido.service';
 import { EmpleadoService } from 'src/app/services/Empleado/Empleado.service';
 import { PuestoService } from 'src/app/services/Puesto/Puesto.service';
+import { SucursalService } from 'src/app/services/Sucursal/sucursal.service';
+import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import Swal from 'sweetalert2';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-catalogo-empleado',
@@ -28,14 +32,16 @@ export class CatalogoEmpleadoComponent implements OnInit {
   public candidato = new Candidato(0,0,6,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia);
   public colonias : any;
   public modal : any;
+  public band_persiana = true;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   public empleado = new Empleado(0,0,this.id_nomina,0,0,0,0,0,0,this.candidato,"","","","","","","","","","",false,false,false,this.usuario_logueado);
   public empleados : any;
-  public foto_user = "";
+  public foto_user : any;
   public nominas : any;
   public bancos : any;
   public contratos : any;
-  public puestos : any; 
+  public puestos : any;
+  public sucursales : any;
   //Paginacion
   public total_registros = 0;
   public mostrar_pagination = false;
@@ -46,14 +52,28 @@ export class CatalogoEmpleadoComponent implements OnInit {
   public limite_superior = this.paginas_a_mostrar;
   public next = false;
   public previous = false;
-  public band_persiana = true;
+  //Camera
+  @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
+  @Output() getPicture = new EventEmitter<WebcamImage>();
+  showWebcam = true;
+  isCameraExist = true;
+  errors: WebcamInitError[] = [];
+  public modal_camera : any;
+  public docB64 = "";
+  // webcam snapshot trigger
+  private trigger: Subject<void> = new Subject<void>();
+  private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
 
   constructor(
     private empleado_serice : EmpleadoService, 
     private modalService: NgbModal,
     private compartido_service : CompartidoService,
-    private puesto_service : PuestoService
-  ) { }
+    private puesto_service : PuestoService,
+    private sucursal_service : SucursalService,
+    private sanitizer: DomSanitizer
+  ) { 
+    this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
+  }
 
   ngOnInit(): void {
     this.mostrarEmpleados();
@@ -101,6 +121,16 @@ export class CatalogoEmpleadoComponent implements OnInit {
       }
     });
   }
+  mostrarSucursales(){
+    this.sucursales = [];
+    this.sucursal_service.obtenerSucursales(this.empresa)
+    .subscribe( (object : any) => {
+      if(object.ok){
+        this.sucursales = object.data;
+      }
+    });
+  }
+
   mostrarPuestos(){
     this.puestos = [];
     this.puesto_service.obtenerPuestosPorEmpresa(this.empresa)
@@ -116,19 +146,18 @@ export class CatalogoEmpleadoComponent implements OnInit {
       nombre_candidato : key
     };
     let str_texto = "";
-    if(tipo == 1){
-      str_texto = "¿El nombre ya se encuentrá registrado como empleado, ¿Desea ver ir a su detalle?";
-    }
     if(tipo == 2){
-      str_texto = "¿El RFC ya se encuentrá registrado como empleado, ¿Desea ver ir a su detalle?";
+      str_texto = "El RFC ya se encuentrá registrado como empleado";
     }
     if(tipo == 3){
-      str_texto = "¿El CURP ya se encuentrá registrado como empleado, ¿Desea ver ir a su detalle?";
+      str_texto = "El CURP ya se encuentrá registrado como empleado";
     }
     this.empleado_serice.autocompleteEmpleado(json)
     .subscribe( (object : any) => {
       if(object.ok){
-        this.confirmar("Confirmación",str_texto,"info",1,null);
+        Swal.fire("Información",str_texto,"info");
+        this.candidato.curp = "";
+        this.candidato.rfc = "";
       }else{
         this.empleado_serice.obtenerCandidatoPorEmpresa(json)
         .subscribe( (object_busqueda : any) => {
@@ -145,6 +174,7 @@ export class CatalogoEmpleadoComponent implements OnInit {
     this.mostrarPuestos();
     this.mostrarCatalogoBancos();
     this.mostrarCatalogoContratos();
+    this.mostrarSucursales();
     this.openModal();
   }
   editar(id : any){
@@ -193,10 +223,10 @@ export class CatalogoEmpleadoComponent implements OnInit {
     }else{
       this.empleado.sinsubsidio = 0;
     }
-    this.confirmar("Confirmación","¿Seguro que deseas agregar al candidato como empleado de está empresa?","info",1,null)
+    this.confirmar("Confirmación","¿Seguro que deseas agregar al candidato como empleado de está empresa?","info",1,null);
   }
   altaEmpleado(){
-    console.log(this.empleado);
+    this.confirmar("Confirmación","¿Seguro que deseas agregar al empleado a esta empresa?","info",2,null);
   }
   confirmar(title : any ,texto : any ,tipo_alert : any,tipo : number, data : any){
     Swal.fire({
@@ -221,7 +251,14 @@ export class CatalogoEmpleadoComponent implements OnInit {
           });
         }
         if(tipo == 2){  //Crear nuevo empleado
-          
+          this.empleado_serice.crearNuevoEmpleado(this.empleado)
+          .subscribe( (object : any) => {
+            if(object.ok){
+              Swal.fire("Buen trabajo","Se ha creado el empleado","success");
+              this.mostrarEmpleados();
+              this.cerrarModal();
+            }
+          });
         }
       }
     });
@@ -310,4 +347,92 @@ export class CatalogoEmpleadoComponent implements OnInit {
     this.pagina_actual = pagina;
     this.mostrarEmpleados();
   }
+
+  mostrarPersiana(){
+    this.band_persiana = false;
+  }
+
+  ocultarPersiana(){
+    this.band_persiana = true;
+  }
+
+  subirImagen(){
+    document.getElementById("foto_user")?.click();
+  }
+
+  cambiarImagen(event: any){
+    if (event.target.files && event.target.files[0]) {
+      let archivos = event.target.files[0];
+      let extension = archivos.name.split(".")[1];
+      this.fotografia.extension = extension;
+      if(extension == "jpg" || extension == "png"){
+        this.convertirImagenAB64(archivos).then( respuesta => {
+          let img = "data:image/"+extension+";base64, "+respuesta;
+          this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
+          this.docB64 = respuesta+"";
+          this.fotografia.docB64 = respuesta+"";
+          this.fotografia.extension = extension;
+        });
+      }else{
+        Swal.fire("Ha ocurrido un error","Tipo de imagen no permitida","error");
+      }
+    }
+  }
+  
+  convertirImagenAB64(fileInput : any){
+    return new Promise(function(resolve, reject) {
+      let b64 = "";
+      const reader = new FileReader();
+      reader.readAsDataURL(fileInput);
+      reader.onload = (e: any) => {
+          b64 = e.target.result.split("base64,")[1];
+          resolve(b64);
+      };
+    });
+  }
+
+  openModalCamera(){
+    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+  }
+
+  cerrarModalCamera(){
+    this.modal_camera.close();
+  }
+
+  takeSnapshot(): void {
+    let foto = this.trigger.next();
+  }
+
+  onOffWebCame() {
+    this.showWebcam = !this.showWebcam;
+  }
+
+  handleInitError(error: WebcamInitError) {
+    this.errors.push(error);
+  }
+
+  changeWebCame(directionOrDeviceId: boolean | string) {
+    this.nextWebcam.next(directionOrDeviceId);
+  }
+
+  handleImage(webcamImage: WebcamImage) {
+    this.getPicture.emit(webcamImage);
+    this.showWebcam = false;
+    this.foto_user = webcamImage.imageAsDataUrl;
+    let docB64 = this.foto_user.split(",");
+    this.fotografia.docB64 = docB64[1];
+    this.fotografia.extension = "jpeg";
+    this.fotografia.nombre = "foto_user";
+    this.cerrarModalCamera();
+    // console.log(webcamImage.imageAsDataUrl)
+  }
+
+  get triggerObservable(): Observable<void> {
+    return this.trigger.asObservable();
+  }
+
+  get nextWebcamObservable(): Observable<boolean | string> {
+    return this.nextWebcam.asObservable();
+  }
+  
 }

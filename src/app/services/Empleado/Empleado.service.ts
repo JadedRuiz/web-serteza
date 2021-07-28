@@ -75,6 +75,17 @@ export class EmpleadoService {
       }));
   }
 
+  crearNuevoEmpleado(empleado : Empleado){
+    let url = SERVER_API+"empleado/crearNuevoEmpleado";
+    return this.http.post( url, empleado )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
+        return throwError(err);
+      }));
+  }
+
   eliminarLigaEmpresaNomina(id : any){
     let url = SERVER_API+"nomina/eliminarLigaEmpresaNomina/"+id;
     return this.http.get(url);

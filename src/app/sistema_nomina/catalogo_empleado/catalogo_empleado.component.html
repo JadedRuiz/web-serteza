@@ -151,27 +151,23 @@
                     <div class="container col-12">
                         <div class="row">
                             <div class="col-lg-2 col-sm-12">
-                                <div class="form-group rounded" style="max-width:190px;height:200px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;overflow: hidden;">
-                                    <img  id="imagen_perfil" class="img-fluid" [src]="foto_user">
-                                    <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg">
+                              <div class="form-group rounded hover_img_user" style="max-width:190px;height:200px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;overflow: hidden;" (mouseover)="mostrarPersiana()" (mouseout)="ocultarPersiana()">
+                                <div [class]="band_persiana ? 'persiana' : 'persiana_mostrar'">
+                                    <div class="container">
+                                        <div class="row mt-5 text-center justify-content-center">
+                                            <a style="cursor: pointer;" class="text-info tomar_foto" (click)="openModalCamera()">Tomar fotografía</a>  
+                                        </div>
+                                        <div class="row mt-3 justify-content-center">
+                                            <a class="text-info">ó</a>
+                                        </div>
+                                        <div class="row text-center mt-3 justify-content-center">
+                                            <a style="cursor: pointer;" class="text-info tomar_foto" (click)="subirImagen()">Subir imagen</a>
+                                        </div>
+                                    </div>
                                 </div>
-                                <!-- <div class="form-group rounded hover_img_user" style="max-width:190px;height:200px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;overflow: hidden;" (mouseover)="mostrarPersiana()" (mouseout)="ocultarPersiana()">
-                                  <div [class]="band_persiana ? 'persiana' : 'persiana_mostrar'">
-                                      <div class="container">
-                                          <div class="row mt-5 text-center justify-content-center">
-                                              <a style="cursor: pointer;" class="text-info tomar_foto" (click)="openModalCamera()">Tomar fotografía</a>  
-                                          </div>
-                                          <div class="row mt-3 justify-content-center">
-                                              <a class="text-info">ó</a>
-                                          </div>
-                                          <div class="row text-center mt-3 justify-content-center">
-                                              <a style="cursor: pointer;" class="text-info tomar_foto" (click)="subirImagen()">Subir imagen</a>
-                                          </div>
-                                      </div>
-                                  </div>
-                                  <img id="imagen_perfil" class="img-fluid" [src]="foto_user">
-                                  <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
-                                </div> -->
+                                <img id="imagen_perfil" class="img-fluid" [src]="foto_user">
+                                <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
+                            </div>
                             </div>
                             <div class="col-lg-10 col-sm-12">
                                 <div class="row">
@@ -349,7 +345,7 @@
                         <mat-form-field class="w-100" id="surcusal">
                             <mat-label>Selecciona la sucursal</mat-label>
                             <mat-select [(ngModel)]="empleado.id_sucursal">
-                                <mat-option [value]="1">Prueba</mat-option>
+                                <mat-option *ngFor="let sucursal of sucursales " [value]="sucursal.id_sucursal">{{sucursal.sucursal}}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
@@ -471,4 +467,42 @@
         <button *ngIf="candidato.id_candidato == 0" type="button" class="btn btn-success" (click)="altaEmpleado()" id="guardar">Guardar</button>
         <button *ngIf="candidato.id_candidato != 0" type="button" class="btn btn-success" (click)="altaCandidatoAEmpleado()" id="guardar">Guardar</button>
     </div>
+</ng-template>
+<ng-template #modal_camera let-c="close" let-d="dismiss">
+  <div class="modal-header">
+      <h2 class="modal-title" id="tituloModal">Tomar fotografia</h2>
+  </div>
+  <div class="modal-body">
+      <div class="container">
+          <div class="row">
+              <div *ngIf="isCameraExist; else noCameraExist" class="col-12">
+                  <div class="border border-success rounded text-center" style="width: 100%;height: 265px;">
+                      <!-- <div class="btn-group">
+                          <button class="button" (click)="changeWebCame(true)">Toggle Camera</button>
+                          <button class="button" (click)="onOffWebCame()">Switch camera</button>
+                      </div> <br /> -->
+                      <webcam [height]="450" [width]="350" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
+                          *ngIf="showWebcam" [switchCamera]="nextWebcamObservable"></webcam>
+                  </div>
+              
+                  <div *ngIf="errors.length > 0">
+                      <h4>Error Messages:</h4>
+                      <ul *ngFor="let error of errors">
+                          <li>{{ error | json }}</li>
+                      </ul>
+                  </div>
+              </div>
+              
+              <ng-template #noCameraExist>
+                  <div class="border border-danger rounded text-center" style="display: flex;justify-content: center;align-items: center;width: 450px;height: 350px;">
+                      Este dispositivo no cuenta con una camara disponible
+                  </div>
+              </ng-template>
+          </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="cerrarModalCamera()">Cerrar</button>
+      <button *ngIf="isCameraExist" type="button" class="btn btn-success" (click)="takeSnapshot()">Tomar foto</button>
+  </div>
 </ng-template>
