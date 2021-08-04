@@ -32,7 +32,7 @@
                   </div>
                   <div class="col-lg-4 col-sm-12">
                       <mat-form-field class="w-100">
-                          <mat-label>Status</mat-label>
+                          <mat-label>Clase</mat-label>
                           <mat-select [(ngModel)]="status" (selectionChange)="mostrarRegistrosPatronales()">
                               <mat-option [value]="2">Todos</mat-option>
                               <mat-option [value]="1">Activos</mat-option>
@@ -47,10 +47,10 @@
               <div class="table-responsive">
                   <table class="table table-striped">
                       <thead>
-                          <tr>
+                          <tr class="text-center">
                               <th scope="col" class="text-center">No. registro</th>
                               <th scope="col">Registro patronal</th>
-                              <th scope="col" class="text-center">Status</th>
+                              <th scope="col" class="text-center">clase</th>
                               <th scope="col" class="text-center">Acciones</th>
                           </tr>
                       </thead>
@@ -68,8 +68,13 @@
                       </tbody>
                       <ng-template #pintaVacio>
                           <tbody>
-                              <tr>
-                                  <td colspan="4" class="text-center">No existen registros patronales</td>
+                              <tr class="text-center">
+                                  <td>1</td>
+                                  <td>000-00012-34-0</td>
+                                  <td>II</td>
+                                  <td>
+                                    <a title="Editar" (click)="editar()" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                                  </td>
                               </tr>
                           </tbody>
                       </ng-template>
@@ -118,3 +123,77 @@
       </div>
     </div>
   </div>
+
+<ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
+    <div class="modal-header">
+        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nuevo resgitro patronal</h2>
+        <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Editar registro patronal</h2>
+    </div>
+    <div class="modal-body">
+        <div class="form">
+            <div class="form-row">
+                <div class="form-group col-lg-3 col-sm-12">
+                    <label for="registro">Registro patronal</label>
+                    <input type="text" id="registro" class="form-control">
+                </div>
+                <div class="form-group col-lg-2 col-sm-12">
+                    <label for="division">División</label>
+                    <input type="number" id="division" class="form-control">
+                </div>
+                <div class="form-group col-lg-2 col-sm-12">
+                    <label for="grupo">Grupo</label>
+                    <input type="number" id="grupo" class="form-control">
+                </div>
+                <div class="form-group col-lg-2 col-sm-12">
+                    <label for="fraccion">Fracción</label>
+                    <input type="number" id="fraccion" class="form-control">
+                </div>
+                <div class="form-group col-lg-3 col-sm-12">
+                    <label for="clase">Clase</label>
+                    <mat-form-field id="clase" class="w-100">
+                        <mat-label>Selecciona la clase</mat-label>
+                        <mat-select [(ngModel)]="clase">
+                            <mat-option [value]="1">I</mat-option>
+                            <mat-option [value]="1">II</mat-option>
+                            <mat-option [value]="1">III</mat-option>
+                            <mat-option [value]="1">IV</mat-option>
+                            <mat-option [value]="1">V</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-lg-3 col-sm-12">
+                    <label for="guia">Guia</label>
+                    <input type="text" id="guia" class="form-control">
+                </div>
+                <div class="form-group col-lg-2 col-sm-12">
+                    <label for="prima">Prima riesgo</label>
+                    <input type="number" id="prima" class="form-control">
+                </div>
+                <div class="form-group col-lg-2 col-sm-12">
+                    <label for="tasa_uno">Tasa estatal</label>
+                    <input type="number" id="tasa_uno" class="form-control">
+                </div>
+                <div class="form-group col-lg-2 col-sm-12">
+                    <label for="tasa_dos">Tasa especial</label>
+                    <input type="number" id="tasa_dos" class="form-control">
+                </div>
+                <div class="form-group col-lg-3 col-sm-12">
+                    <label for="estado">Estado</label>
+                    <mat-form-field id="estado" class="w-100">
+                        <mat-label>Selecciona el estado</mat-label>
+                        <mat-select [(ngModel)]="estado">
+                            <mat-option *ngFor="let estado of estados" [value]="estado.id_estado">{{estado.estado}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+        <button *ngIf="tipo_modal == 1" type="button" class="btn btn-success"  id="guardar">Guardar</button>
+        <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success"  id="guardar">Guardar</button>
+    </div>
+</ng-template>

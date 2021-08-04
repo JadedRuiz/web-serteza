@@ -63,6 +63,7 @@ export class CatalogoEmpleadoComponent implements OnInit {
   // webcam snapshot trigger
   private trigger: Subject<void> = new Subject<void>();
   private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
+  public tipo_modal = 1;
 
   constructor(
     private empleado_serice : EmpleadoService, 
@@ -175,10 +176,18 @@ export class CatalogoEmpleadoComponent implements OnInit {
     this.mostrarCatalogoBancos();
     this.mostrarCatalogoContratos();
     this.mostrarSucursales();
+    this.tipo_modal = 1;
     this.openModal();
   }
   editar(id : any){
-    
+   this.empleado_serice.obtenerEmpleadoPorId(id)
+   .subscribe( (onject : any) =>{
+    if(onject.ok){
+      this.tipo_modal = 2;
+      this.openModal();
+      this.insertarCandidato(onject.data[0]);
+    }
+   }); 
   }
   getEmpleado(event : any){
 

@@ -20,6 +20,11 @@ export class EmpleadoService {
     return this.http.get(url);
   }
   
+  obtenerEmpleadoPorId(id : any){
+    let url = SERVER_API+"empleado/obtenerEmpleadoPorId/"+id;
+    return this.http.get(url);
+  }
+
   obtenerCandidatoPorEmpresa(json : any){
     let url = SERVER_API+"empleado/obtenerCandidatoPorEmpresa";
     return this.http.post( url, json )

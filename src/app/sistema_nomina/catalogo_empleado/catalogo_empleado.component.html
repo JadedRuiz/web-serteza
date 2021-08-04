@@ -129,7 +129,8 @@
 
 <ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
     <div class="modal-header">
-        <h2 class="modal-title" id="tituloModal">Nuevo empleado</h2>
+        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nuevo empleado</h2>
+        <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Editar empleado</h2>
     </div>
     <div class="modal-body">
         <div class="form-row">
