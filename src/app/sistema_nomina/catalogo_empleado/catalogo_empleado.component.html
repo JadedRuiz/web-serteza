@@ -465,8 +465,9 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
-        <button *ngIf="candidato.id_candidato == 0" type="button" class="btn btn-success" (click)="altaEmpleado()" id="guardar">Guardar</button>
-        <button *ngIf="candidato.id_candidato != 0" type="button" class="btn btn-success" (click)="altaCandidatoAEmpleado()" id="guardar">Guardar</button>
+        <button *ngIf="candidato.id_candidato == 0 && tipo_modal == 1" type="button" class="btn btn-success" (click)="altaEmpleado()" id="guardar">Guardar</button>
+        <button *ngIf="candidato.id_candidato != 0 && tipo_modal == 1" type="button" class="btn btn-success" (click)="altaCandidatoAEmpleado()" id="guardar">Guardar</button>
+        <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success" (click)="modificarEmpleado()" id="guardar">Guardar</button>
     </div>
 </ng-template>
 <ng-template #modal_camera let-c="close" let-d="dismiss">

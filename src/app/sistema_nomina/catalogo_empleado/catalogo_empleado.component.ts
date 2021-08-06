@@ -183,11 +183,21 @@ export class CatalogoEmpleadoComponent implements OnInit {
    this.empleado_serice.obtenerEmpleadoPorId(id)
    .subscribe( (onject : any) =>{
     if(onject.ok){
+      this.mostrarCatalogoNomina();
+      this.mostrarPuestos();
+      this.mostrarCatalogoBancos();
+      this.mostrarCatalogoContratos();
+      this.mostrarSucursales();
       this.tipo_modal = 2;
       this.openModal();
+      this.empleado.candidato.id_candidato = onject.data[0].id_candidato;
       this.insertarCandidato(onject.data[0]);
+      this.insertarDatoEmpleado(onject.data[0],id);
     }
    }); 
+  }
+  modificarEmpleado(){
+    this.confirmar("Confirmación","¿Seguro que deseas modificar el empleado?","info",3,null);
   }
   getEmpleado(event : any){
 
@@ -269,6 +279,16 @@ export class CatalogoEmpleadoComponent implements OnInit {
             }
           });
         }
+        if(tipo == 3){
+          this.empleado_serice.modificarEmpleado(this.empleado)
+          .subscribe( (object : any) => {
+            if(object.ok){
+              Swal.fire("Buen trabajo","Se ha modificado el empleado","success");
+              this.mostrarEmpleados();
+              this.cerrarModal();
+            }
+          });
+        }
       }
     });
   }
@@ -303,7 +323,30 @@ export class CatalogoEmpleadoComponent implements OnInit {
     this.candidato.telefono = arreglo.telefono;
     this.candidato.telefono_dos = arreglo.telefono_dos;
     this.candidato.telefono_tres = arreglo.telefono_tres;
+    this.candidato.fotografia.id_fotografia = arreglo.id_fotografia;
     this.foto_user = arreglo.fotografia;
+  }
+  insertarDatoEmpleado(dato : any,id : any){
+    this.empleado.id_empleado = id;
+    this.empleado.id_nomina = this.id_nomina;
+    this.empleado.id_catbanco = dato.id_catbanco;
+    this.empleado.id_puesto = dato.id_puesto;
+    this.empleado.id_sucursal = dato.id_sucursal;
+    this.empleado.id_registropatronal = dato.id_registropatronal;
+    this.empleado.id_contratosat = dato.id_contratosat;
+    this.empleado.fecha_antiguedad = dato.fecha_antiguedad;
+    this.empleado.fecha_ingreso = dato.fecha_ingreso;
+    this.empleado.cuenta = dato.cuenta;
+    this.empleado.tarjeta = dato.tarjeta;
+    this.empleado.clabe = dato.clabe;
+    this.empleado.tipo_salario = dato.tipo_salario;
+    this.empleado.jornada = dato.jornada;
+    this.empleado.sueldo_diario = dato.sueldo_diario;
+    this.empleado.sueldo_integrado = dato.sueldo_integrado;
+    this.empleado.sueldo_complemento = dato.sueldo_complemento;
+    this.empleado.aplicarsueldoneto = dato.aplicarsueldoneto;
+    this.empleado.sinsubsidio = dato.sinsubsidio;
+    this.empleado.prestaciones_antiguedad = dato.prestaciones_antiguedad;
   }
   limpiarCampos(){
     this.direccion = new Direccion(0,0,"","","","","","","","","","");
