@@ -7,6 +7,8 @@ import { ConceptoService } from 'src/app/services/Concepto/concepto.service';
 import { EmpleadoService } from 'src/app/services/Empleado/Empleado.service';
 import { NominaService } from 'src/app/services/Nomina/Nomina.service';
 import Swal from 'sweetalert2';
+import { SERVER_API } from 'src/config/config';
+import * as XLSX from 'ts-xlsx';
 
 @Component({
   selector: 'app-procedimiento-captura',
@@ -47,6 +49,9 @@ export class ProcedimientoCapturaComponent implements OnInit {
   public tipo_modal = 1;
   public empleado_seleccionado = 0;
   public indice_seleccionado = 0;
+  arrayBuffer:any;
+  file:any;
+  data : any;
 
   constructor(
     private modalService: NgbModal,
@@ -59,7 +64,6 @@ export class ProcedimientoCapturaComponent implements OnInit {
     this.obtenerNomina();
     this.mostrarCapturas();
   }
-
   obtenerNomina(){
     this.nominas = [];
     let json = {
@@ -111,7 +115,7 @@ export class ProcedimientoCapturaComponent implements OnInit {
     .subscribe( (object : any) =>{
       if(object.ok){
         object.data.forEach((element : any) => {
-          let capturas_row = new Concepto(element.id_empleado,element.id_empleado,element.nombre,element.fotografia,this.concepto_agreagado);
+          let capturas_row = new Concepto(element.id_empleado,element.id_empleado,element.nombre,element.fotografia,"","","",JSON.parse(JSON.stringify(this.concepto_agreagado)));
           this.capturas.registros.push(capturas_row);
         });
       }
@@ -150,9 +154,9 @@ export class ProcedimientoCapturaComponent implements OnInit {
       if(element.id_empleado = id){
         element.conceptos.forEach((conceptos : any) => {
           if(conceptos.id_concepto == this.tb_row_dos.id_concepto){
-            this.tb_row_dos.unidades =  conceptos.unidades;
-            this.tb_row_dos.importe =  conceptos.importe;
-            this.tb_row_dos.saldo =  conceptos.saldo;
+            element.unidades =  conceptos.unidades;
+            element.importe =  conceptos.importe;
+            element.saldo =  conceptos.saldo;
           }
         });
       }
@@ -167,17 +171,17 @@ export class ProcedimientoCapturaComponent implements OnInit {
   }
 
   agregarCalculo(){
-    // this.conceptos_agreagados.push(JSON.parse(JSON.stringify(this.concepto_seleccionado)));
-    // this.empleados = [];
-    // this.myControl.reset('');
-    // this.band_botones = false;
-    this.capturas.registros.forEach( (element : any) => {
-      if(element.id_empleado == this.empleado_seleccionado){
-        element.conceptos.push(JSON.parse(JSON.stringify(this.tb_row)));
-      }
-    });
-    Swal.fire("Buen trabajo","Se ha agregado el concepto","success");
-    this.cerrarModal();
+    if(this.tb_row.id_concepto != 0){
+      this.capturas.registros.forEach( (element : any) => {
+        if(element.id_empleado == this.empleado_seleccionado){
+          element.conceptos.push(JSON.parse(JSON.stringify(this.tb_row)));
+        }
+        Swal.fire("Buen trabajo","Se ha agregado el concepto","success");
+        this.cerrarModal();
+      });
+    }else{
+      Swal.fire("Ha ocurrido un error","No se puede agregar un concepto vacio","info");
+    }
   }
 
   editar(id : any){
@@ -237,7 +241,86 @@ export class ProcedimientoCapturaComponent implements OnInit {
     };
     // this.concepto_seleccionado = new Concepto(0,0,0,"","",[]);
   }
-
+  incomingfile(event : any) 
+  {
+  this.file= event.target.files[0]; 
+  this.Upload();
+  }
+  subirExcel(){
+    $("#subir").click();
+  }
+  Upload() {
+    this.data = [];
+    let fileReader = new FileReader();
+      fileReader.onload = (e : any) => {
+          this.arrayBuffer = fileReader.result;
+          var data = new Uint8Array(this.arrayBuffer);
+          var arr = new Array();
+          for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+          var bstr = arr.join("");
+          var workbook = XLSX.read(bstr, {type:"binary"});
+          var first_sheet_name = workbook.SheetNames[0];
+          var worksheet = workbook.Sheets[first_sheet_name];
+          // XLSX.utils.sheet_to_json(worksheet)
+          this.data = (XLSX.utils.sheet_to_json(worksheet, { header: 1}));
+          //Se arma el JSON
+          if(this.data[0][0] != "Clave"){
+            Swal.fire("Ha ocurrido un error","El excel no corresponde al formato correcto","error");
+          }else{
+            let capturas = [];
+            let ids_conceptos = [];
+            for(let i=0;i<this.data.length;i++){
+              let cont = 0;
+              let conceptos_prueba = [];
+              for(let o=2;o<this.data[i].length;o++){
+                if(i == 0){
+                  ids_conceptos.push(this.data[i][o]);
+                }
+                let conceptos = {
+                  id_concepto : ids_conceptos[cont],
+                  unidades : "",
+                  importe : "",
+                  saldo : ""
+                };
+                if(this.data[i][o] != undefined){
+                  conceptos.unidades = this.data[i][o];
+                }else{
+                  conceptos.unidades = "0";
+                }
+                o++;
+                if(this.data[i][o] != undefined){
+                  conceptos.importe = this.data[i][o];
+                }else{
+                  conceptos.importe = "0";
+                }
+                o++;
+                if(this.data[i][o] != undefined){
+                  conceptos.saldo = this.data[i][o];
+                }else{
+                  conceptos.saldo = "0";
+                }
+                if(i > 1){
+                  cont++;
+                }
+                conceptos_prueba.push(conceptos);
+              }
+              if(i > 1){
+                capturas.push({
+                  id_empleado : this.data[i][0],
+                  conceptos : conceptos_prueba
+                });
+              }
+            }
+            if(capturas.length>0){
+              console.log(capturas);
+            }
+          }
+      }
+      fileReader.readAsArrayBuffer(this.file);
+  }
+  descargarExcel(){
+    location.href = SERVER_API+"excel/formatoExcelCaptura/"+this.empresa_seleccionado;
+  }
   confirmar(title : any ,texto : any ,tipo_alert : any,json : any,tipo : number){
     Swal.fire({
       title: title,

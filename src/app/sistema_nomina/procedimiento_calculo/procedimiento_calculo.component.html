@@ -30,7 +30,7 @@
                   </mat-form-field> -->
                   <mat-form-field class="w-100" id="tipo">
                     <mat-label>Tipo de nómina</mat-label>
-                    <mat-select [(ngModel)]="capturas.id_nomina" (selectionChange)="mostrarCapturas()">
+                    <mat-select [(ngModel)]="capturas.id_nomina" >
                         <mat-option *ngFor="let nomina of nominas" [value]="nomina.id_nomina">{{nomina.nomina}}</mat-option>
                     </mat-select>
                   </mat-form-field>

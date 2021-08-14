@@ -57,7 +57,7 @@ export class ProcedimientoCalculoComponent implements OnInit {
 
   ngOnInit(): void {
     this.obtenerNomina();
-    this.mostrarCapturas();
+    // this.mostrarCapturas();
   }
 
   obtenerNomina(){
@@ -101,22 +101,22 @@ export class ProcedimientoCalculoComponent implements OnInit {
     });
   }
 
-  mostrarCapturas(){
-    this.capturas.registros = [];
-    let json = {
-      id_empresa : this.empresa_seleccionado,
-      id_nomina : this.capturas.id_nomina
-    };
-    this.empleado_service.obtenerEmpleadoPorTipoNomina(json)
-    .subscribe( (object : any) =>{
-      if(object.ok){
-        object.data.forEach((element : any) => {
-          let capturas_row = new Concepto(element.id_empleado,element.id_empleado,element.nombre,element.fotografia,this.concepto_agreagado);
-          this.capturas.registros.push(capturas_row);
-        });
-      }
-    });
-  }
+  // mostrarCapturas(){
+  //   this.capturas.registros = [];
+  //   let json = {
+  //     id_empresa : this.empresa_seleccionado,
+  //     id_nomina : this.capturas.id_nomina
+  //   };
+  //   this.empleado_service.obtenerEmpleadoPorTipoNomina(json)
+  //   .subscribe( (object : any) =>{
+  //     if(object.ok){
+  //       object.data.forEach((element : any) => {
+  //         let capturas_row = new Concepto(element.id_empleado,element.id_empleado,element.nombre,element.fotografia,this.concepto_agreagado);
+  //         this.capturas.registros.push(capturas_row);
+  //       });
+  //     }
+  //   });
+  // }
 
   mostrarConceptos(){
     this.cat_conceptos = [];
