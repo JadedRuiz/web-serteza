@@ -39,7 +39,7 @@ export class SidebarComponent implements OnInit {
       this.foto_empresa = "./assets/img/defaults/imagen-no-disponible.png";
       this.url_foto = './assets/iconos/perfil.svg';
     }
-
+    
   ngOnInit() {
     this.pintarMenu();
     this.mostrarLogo();
@@ -54,13 +54,16 @@ export class SidebarComponent implements OnInit {
       { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : [
-          {path: 'catalogo_empleado', title: 'Mis empleados', icon: 'ni-circle-08 text-orange'},
-
+          {path: '', title: 'Despachos', icon: 'ni-briefcase-24 text-orange'},
+          {path: '', title: 'Divisiones', icon: 'ni-archive-2 text-orange'},
+          {path: '', title: 'Sucursales', icon: 'ni-building text-orange'},
+          {path: '', title: 'Usuarios', icon: 'ni-circle-08 text-orange'},
         ]
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-app text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
         submenu : [
-          {path: 'procedimiento_solicitudes', title: 'Aplicar solicitudes de Recursos Humanos', icon: 'ni-button-play text-yellow'},
+          {path: '', title: 'Demandas Laborales', icon: 'ni-single-copy-04 text-yellow'},
+          {path: '', title: 'Registrar Comparecencias', icon: 'ni-calendar-grid-58 text-yellow'},
         ]
       },
       { path: '#', title: 'Herramientas', icon: 'ni-settings text-purple', id:'rh_herramientas', band: true, tipo : "collapse",
@@ -88,6 +91,7 @@ export class SidebarComponent implements OnInit {
       this.foto_empresa = "./assets/img/defaults/imagen-empresa-default.png";
     }
   }
+  
   eleccion(id_cliente : any){
     window.sessionStorage["cliente"] = id_cliente;
     this.closeModal();
