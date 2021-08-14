@@ -378,6 +378,7 @@ export class CatalogoUsuarioComponent implements OnInit {
       }
     }
   }
+
   convertirImagenAB64(fileInput : any){
     return new Promise(function(resolve, reject) {
       let b64 = "";
@@ -429,6 +430,7 @@ export class CatalogoUsuarioComponent implements OnInit {
   get nextWebcamObservable(): Observable<boolean | string> {
     return this.nextWebcam.asObservable();
   }
+  
   confirmar(title : any ,texto : any ,tipo_alert : any,json : any,tipo : number){
     Swal.fire({
       title: title,

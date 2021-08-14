@@ -3,6 +3,8 @@ import { FormControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ClienteService } from 'src/app/services/Cliente/cliente.service';
 import { CompartidoService } from 'src/app/services/Compartido/Compartido.service';
+import { SucursalService } from 'src/app/services/Sucursal/sucursal.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-catalogo-sucursal',
@@ -22,6 +24,7 @@ export class CatalogoSucursalComponent implements OnInit {
   public empresa = parseInt(window.sessionStorage.getItem("empresa")+"");
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   public json = {
+    id_empresa : this.empresa,
     id_sucursal : "",
     id_cliente : "",
     sucursal : "",
@@ -32,11 +35,13 @@ export class CatalogoSucursalComponent implements OnInit {
     prima_riesgo : "",
     usuario : this.usuario
   };
+  public tipo_modal = 1;
 
   constructor(
     private modalService: NgbModal,
     private compartido_service : CompartidoService,
-    private cliente_service : ClienteService
+    private cliente_service : ClienteService,
+    private sucursal_service : SucursalService
     ) { }
 
   ngOnInit(): void {
@@ -45,9 +50,16 @@ export class CatalogoSucursalComponent implements OnInit {
 
   mostrarSucursales(){
     this.sucursales = [];
+    this.sucursal_service.obtenerSucursales(this.empresa)
+    .subscribe( (object : any) => {
+      if(object.ok){
+        this.sucursales = object.data;
+      }
+    });
   }
 
   guardar(){
+    this.tipo_modal = 1;
     this.openModal();
   }
 
@@ -80,16 +92,85 @@ export class CatalogoSucursalComponent implements OnInit {
   }
 
   altaSucursal(){
-    console.log(this.json);
+    this.confirmar("Confirmación","¿Seguro que deseas dar de alta esta sucursal?","info",null,1);
+  }
+
+  editar(id : any){
+    this.sucursal_service.obtenerSucursalPorIdSucursal(id)
+    .subscribe( (object : any) =>{
+      if(object.ok){
+        this.openModal();
+        this.tipo_modal = 2;
+        let sucursal = object.data[0];
+        this.json.id_cliente = sucursal.id_cliente;
+        this.json.sucursal = sucursal.sucursal;
+        this.json.zona = sucursal.zona;
+        this.json.tasa_estatal = sucursal.tasaimpuestoestatal;
+        this.json.tasa_especial = sucursal.tasaimpuestoespecial;
+        this.json.prima_riesgo = sucursal.prima_riesgotrabajo;
+        this.json.estado = sucursal.id_estado;
+      }else{
+        Swal.fire("Ha ocurrido un error","No se ha encontrado la sucursal","error");
+      }
+    });
+  }
+
+  modificarSucursal(){
+
   }
 
   openModal() {
     this.mostrarEstados();
     this.mostrarClientes();
+    this.limpiarCampos();
     this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
   }
 
   cerrarModal(){
     this.modal.close();
+  }
+
+  limpiarCampos(){
+    this.json = {
+      id_empresa : this.empresa,
+      id_sucursal : "",
+      id_cliente : "",
+      sucursal : "",
+      tasa_estatal : "",
+      tasa_especial : "",
+      zona : "",
+      estado : 0,
+      prima_riesgo : "",
+      usuario : this.usuario
+    };
+  }
+
+  confirmar(title : any ,texto : any ,tipo_alert : any,json : any,tipo : number){
+    Swal.fire({
+      title: title,
+      text: texto,
+      icon: tipo_alert,
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if(tipo == 1){  //Guardar
+          this.sucursal_service.crearSucursal(this.json)
+          .subscribe( (object : any) => {
+            if(object.ok){
+              this.mostrarSucursales();
+              this.cerrarModal();
+              Swal.fire("Buen trabajo","Se ha agregado la sucursal con éxito","success");
+            }
+          });
+        }
+        if(tipo == 2){  //Editar
+          
+        }
+      }
+    });
   }
 }

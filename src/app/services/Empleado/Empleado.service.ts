@@ -20,6 +20,11 @@ export class EmpleadoService {
     return this.http.get(url);
   }
   
+  obtenerEmpleadoPorId(id : any){
+    let url = SERVER_API+"empleado/obtenerEmpleadoPorId/"+id;
+    return this.http.get(url);
+  }
+
   obtenerCandidatoPorEmpresa(json : any){
     let url = SERVER_API+"empleado/obtenerCandidatoPorEmpresa";
     return this.http.post( url, json )
@@ -66,6 +71,28 @@ export class EmpleadoService {
 
   crearNuevoEmpleadoConCandidatoExistente(empleado : Empleado){
     let url = SERVER_API+"empleado/crearNuevoEmpleadoConCandidatoExistente";
+    return this.http.post( url, empleado )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
+        return throwError(err);
+      }));
+  }
+
+  crearNuevoEmpleado(empleado : Empleado){
+    let url = SERVER_API+"empleado/crearNuevoEmpleado";
+    return this.http.post( url, empleado )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
+        return throwError(err);
+      }));
+  }
+
+  modificarEmpleado(empleado : Empleado){
+    let url = SERVER_API+"empleado/modificarEmpleadoAnt";
     return this.http.post( url, empleado )
       .pipe(map( (resp: any) => {
         return resp;

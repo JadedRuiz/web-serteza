@@ -1,0 +1,126 @@
+<div class="header {{color}} pb-5 pt-5 pt-md-7">
+</div>
+<div class="container-fluid mt--5">
+  <div class="row">
+    <div class="col">
+      <div class="card border-info">
+        <div class="card-header">
+           ASIGNAR PERMISOS A EMPRESAS
+        </div>
+        <div class="card-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="buscador">
+                            <input [(ngModel)]="palabra" type="search" placeholder="Buscar">
+                            <a title="Buscar" (click)="busqueda()"><i class="fas fa-search"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-lg-5 col-sm-12">
+                        <ul class="list-group" style="max-height: 450px;overflow: auto;">
+                            <li *ngFor="let empresa of empresas" id="empresa_{{empresa.folio}}" (click)="seleccionar(empresa.folio,empresa.nombre)" class="list-group-item" style="cursor: pointer;">{{empresa.nombre}}</li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-7 mt-lg-0 col-sm-12 mt-sm-4" style="height: 500px;overflow: auto;">
+                        <div class="card my-0 py-0">
+                            <div class="card-body text-center">
+                                <div *ngIf="id_seleccionado; else pintaBody">
+                                    <ul class="nav nav-tabs profile-tab" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-toggle="tab" href="#empresa" role="tab" aria-selected="true">Clientes  de la empresa</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link " data-toggle="tab" href="#cliente" role="tab" aria-selected="false">Departamentos</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content" id="myTabContent">
+                                        <div class="tab-pane active" id="empresa" role="tabpanel">
+                                            <div *ngIf="band_cliente">
+                                                <ul class="list-group" style="text-align: start;">
+                                                    <li *ngFor="let cliente of clientes_empresa" class="list-group-item" style="cursor: pointer;">{{cliente.nombre}}
+                                                    <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning float-right" (click)="eliminarLigaCliente(cliente.folio)"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a>
+                                                    </li>
+                                                </ul>
+                                                <div class="div mb-2 mt-2" style="text-align: center;">
+                                                    <button class="btn btn-success mt-2" (click)="nuevoCliente()">Agregar nuevas empresas al usuario</button>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="!band_cliente" class="mt-2 text-center">
+                                                <p>Esta empresa aún no cuenta con clientes permitidos</p>
+                                                <button class="btn btn-success" (click)="nuevoCliente()">Agregar nuevo cliente a la empresa</button>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="cliente" role="tabpanel">
+                                            <div *ngIf="band_puesto">
+                                                <div class="div mb-2 mt-2" style="text-align: end;">
+                                                    <button class="btn btn-success mt-2" (click)="nuevoPuesto()">Agregar nuevo departamento a la empresa</button>
+                                                </div>
+                                                <ul class="list-group" style="text-align: start;">
+                                                    <li *ngFor="let puesto of puestos_empresa"  class="list-group-item" style="cursor: pointer;">{{puesto.nombre}}
+                                                    <!-- <a title="Eliminar"  style="cursor: pointer;" class="btn btn-warning float-right" (click)="eliminarLigaCliente(puesto.folio)"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a> -->
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div *ngIf="!band_puesto" class="mt-2 text-center">
+                                                <p>Esta empresa aún no cuenta con departamentos</p>
+                                                <button class="btn btn-success" (click)="nuevoPuesto()">Agregar nuevo departamento a la empresa</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ng-template #pintaBody >Para poder visualizar los permisos, primero debes seleccionar una empresa</ng-template>
+                            </div>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
+    <div class="modal-header">
+        <h2 class="modal-title" id="tituloModal">{{titulo_modal}}</h2>
+    </div>
+    <div class="modal-body">
+        <div *ngIf="buscador; else pintaForm" >
+            <p class="py-0 my-0">{{subtitulo_modal}}</p>
+            <div class="buscador">
+                <input [(ngModel)]="palabra" type="search" placeholder="Buscar">
+                <a title="Buscar" (click)="busqueda()"><i class="fas fa-search"></i></a>
+            </div>
+            <small class="text-warning">{{aviso_modal}}</small>
+            <ul *ngIf="arreglo; else pintaInfo" class="list-group mt-2" style="max-height: 350px;">
+                <li *ngFor="let row of arreglo" id="arreglo{{row.folio}}" (click)="seleccionarEnModal(row.folio)" class="list-group-item list-arreglo {{row.atributo}}" style="cursor: pointer;">{{row.nombre}}</li>
+            </ul>
+            <ng-template #pintaInfo ><p class="text-center mt-2">{{aviso_vacio}}</p></ng-template>
+        </div>
+        <ng-template #pintaForm >
+            <div class="form">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="nombre_puesto">Nombre</label>
+                      <input  name="nombre_puesto" type="text" class="form-control" id="nombre_puesto">
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="disponibilidad">Puestos disponibles</label>
+                      <input  name="disponibilidad" type="number" class="form-control" id="disponibilidad" placeholder="">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                      <label for="desc">Descripción</label>
+                      <textarea  name="desc" type="text" class="form-control" id="desc"></textarea>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="btn btn-success" (click)="altaRegistro()" id="guardar">Guardar</button>
+    </div>
+</ng-template>

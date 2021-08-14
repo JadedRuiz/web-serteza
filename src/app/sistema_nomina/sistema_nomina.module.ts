@@ -13,6 +13,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
+import { WebcamModule } from 'ngx-webcam';
 import { MatNativeDateModule } from '@angular/material/core'; 
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { CatalogoDepartamentoComponent } from './catalogo_departamento/catalogo_departamento.component';
@@ -59,6 +60,7 @@ import { ProcedimientoCierreComponent } from './procedimiento_cierre/procedimien
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    WebcamModule
   ]
 })
 export class SistemaNominaModule { }

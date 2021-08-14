@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-catalogo-periodo',
@@ -9,11 +10,16 @@ import { FormControl } from '@angular/forms';
 export class CatalogoPeriodoComponent implements OnInit {
 
   public taken = 5;
-  public status = -1;
+  public anio = 1;
+  public tipo_modal = 1;
+  public tipo_nomina= 1;
   myControl = new FormControl();
   public periodos : any;
+  public modal : any;
+  @ViewChild('content', {static: false}) contenidoDelModal : any;
 
-  constructor() { }
+  constructor(
+    private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.mostrarPeriodos();
@@ -24,7 +30,13 @@ export class CatalogoPeriodoComponent implements OnInit {
   }
 
   guardar(){
+    this.tipo_modal = 1;
+    this.openModal();
+  }
 
+  editar(){
+    this.tipo_modal = 2;
+    this.openModal();
   }
 
   busqueda(value : any){
@@ -33,6 +45,18 @@ export class CatalogoPeriodoComponent implements OnInit {
 
   getPeriodo(event : any){
 
+  }
+
+  cambioDeAño(event : any){
+   
+  }
+
+  openModal() {
+    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop'});
+  }
+
+  cerrarModal(){
+    this.modal.close();
   }
 
 }

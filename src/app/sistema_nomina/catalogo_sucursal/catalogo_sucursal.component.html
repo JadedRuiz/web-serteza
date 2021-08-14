@@ -50,26 +50,26 @@
                           <tr>
                               <th scope="col" class="text-center">No. sucursal</th>
                               <th scope="col">Sucursal</th>
-                              <th scope="col" class="text-center">Status</th>
+                              <th scope="col" class="text-center">Cliente</th>
+                              <th scope="col" class="text-center">Zona</th>
                               <th scope="col" class="text-center">Acciones</th>
                           </tr>
                       </thead>
-                      <tbody *ngIf="sucursales.lenght > 0; else pintaVacio" class="">
-                          <!-- <tr *ngFor="let departamento of departamentos">
-                              <td colspan="1" style="vertical-align: middle;" class="text-center">{{departamento.folio}}</td>
-                              <td colspan="1" style="vertical-align: middle;">{{departamento.departamento}}</td>
-                              <td colspan="1" style="vertical-align: middle;" class="text-center">{{departamento.vacantes}}</td>
-                              <td colspan="1" style="vertical-align: middle;" class="text-center">{{departamento.autorizados}}</td>
-                              <td colspan="1" style="vertical-align: middle;" class="text-center">{{departamento.status}}</td>
+                      <tbody *ngIf="sucursales.length > 0; else pintaVacio" class="">
+                          <tr *ngFor="let sucursal of sucursales">
+                              <td colspan="1" style="vertical-align: middle;" class="text-center">{{sucursal.id_sucursal}}</td>
+                              <td colspan="1" style="vertical-align: middle;">{{sucursal.sucursal}}</td>
+                              <td colspan="1" style="vertical-align: middle;" class="text-center">{{sucursal.cliente}}</td>
+                              <td colspan="1" style="vertical-align: middle;" class="text-center">{{sucursal.zona}}</td>
                               <td colspan="1" style="width: 20%;" class="text-center">
-                                  <a title="Editar" (click)="editar(departamento.folio)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                                  <a title="Editar" (click)="editar(sucursal.id_sucursal)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
                               </td>
-                          </tr> -->
+                          </tr>
                       </tbody>
                       <ng-template #pintaVacio>
                           <tbody>
                               <tr>
-                                  <td colspan="4" class="text-center">No existen sucursales</td>
+                                  <td colspan="5" class="text-center">No existen sucursales</td>
                               </tr>
                           </tbody>
                       </ng-template>
@@ -119,14 +119,15 @@
     </div>
   </div>
 
-  <ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
+<ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
     <div class="modal-header">
-        <h2 class="modal-title" id="tituloModal">Nueva sucursal</h2>
+        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nueva sucursal</h2>
+        <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Editar sucursal</h2>
     </div>
     <div class="modal-body">
         <div class="form">
             <div class="form-row">
-                <div class="form-group col-3">
+                <div class="form-group col-lg-3 col-sm-12">
                     <mat-form-field class="w-100">
                         <mat-label>Clientes</mat-label>
                         <mat-select [(ngModel)]="json.id_cliente">
@@ -134,29 +135,34 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
-                <div class="form-group col-3">
+                <div class="form-group col-lg-3 col-sm-12">
                     <label for="sucursal">Sucursal *</label>
                     <input [(ngModel)]="json.sucursal" type="text" class="form-control text-uppercase" id="sucursal">
                 </div>
-                <div class="form-group col-3">
-                    <label for="zona">Zona</label>
-                    <input [(ngModel)]="json.zona" type="text" class="form-control text-uppercase" id="zona">
+                <div class="form-group col-lg-3 col-sm-12">
+                    <mat-form-field class="w-100">
+                        <mat-label>Zona</mat-label>
+                        <mat-select [(ngModel)]="json.zona">
+                            <mat-option value="A">Zona A</mat-option>   
+                            <mat-option value="B">Zona B</mat-option>
+                        </mat-select>
+                    </mat-form-field>
                 </div>
-                <div class="form-group col-3">
+                <div class="form-group col-lg-3 col-sm-12">
                     <label for="impuesto_estatal">Tasa de impuesto estatal</label>
                     <input [(ngModel)]="json.tasa_estatal" type="text" class="form-control text-uppercase" id="impuesto_estatal">
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-4">
+                <div class="form-group col-lg-4 col-sm-12">
                     <label for="impuesto_especial">Tasa de impuesto especial</label>
                     <input [(ngModel)]="json.tasa_especial" type="text" class="form-control text-uppercase" id="impuesto_especial">
                 </div>
-                <div class="form-group col-4">
+                <div class="form-group col-lg-4 col-sm-12">
                     <label for="prima_riesgo">Prima de riesgo</label>
                     <input [(ngModel)]="json.prima_riesgo" type="text" class="form-control text-uppercase" id="prima_riesgo">
                 </div>
-                <div class="form-group col-4">
+                <div class="form-group col-lg-4 col-sm-12">
                     <mat-form-field class="w-100">
                         <mat-label>Estado</mat-label>
                         <mat-select [(ngModel)]="json.estado">
@@ -169,7 +175,8 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
-        <button type="button" class="btn btn-success" (click)="altaSucursal()" id="guardar">Guardar</button>
+        <button *ngIf="tipo_modal == 1" type="button" class="btn btn-success" (click)="altaSucursal()" id="guardar">Guardar</button>
+        <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success" (click)="modificarSucursal()" id="guardar">Guardar</button>
         <!-- <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button> -->
     </div>
 </ng-template>

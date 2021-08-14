@@ -50,6 +50,7 @@
                           <tr>
                               <th scope="col" class="text-center">No. cuenta</th>
                               <th scope="col">Cuenta bancaria</th>
+                              <th scope="col" class="text-center">Banco</th>
                               <th scope="col" class="text-center">Status</th>
                               <th scope="col" class="text-center">Acciones</th>
                           </tr>
@@ -69,7 +70,22 @@
                       <ng-template #pintaVacio>
                           <tbody>
                               <tr>
-                                  <td colspan="4" class="text-center">No existen cuentas bancarias</td>
+                                  <td class="text-center">1</td>
+                                  <td >0049 1500 05 1234567892</td>
+                                  <td class="text-center">SANTANDER</td>
+                                  <td class="text-center">Activo</td>
+                                  <td class="text-center">
+                                    <a title="Editar" (click)="editar()" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                                  </td>
+                              </tr>
+                              <tr>
+                                <td class="text-center">2</td>
+                                <td >0024 6912 50 1234567892</td>
+                                <td class="text-center">HSBC</td>
+                                <td class="text-center">Activo</td>
+                                <td class="text-center">
+                                <a title="Editar" (click)="editar()" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                                </td>
                               </tr>
                           </tbody>
                       </ng-template>
@@ -118,3 +134,52 @@
       </div>
     </div>
   </div>
+<ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
+    <div class="modal-header">
+        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nueva cuenta bancaria</h2>
+        <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Editar cuenta bancaria</h2>
+    </div>
+    <div class="modal-body">
+        <div class="form">
+            <div class="form-row">
+                <div class="form-group col-lg-4 col-sm-12">
+                    <label for="banco">Banco</label>
+                    <mat-form-field class="w-100" id="banco">
+                        <mat-label>Selecciona el banco</mat-label>
+                        <mat-select [(ngModel)]="banco">
+                            <mat-option *ngFor="let banco of bancos" [value]="banco.id_bancosat">{{banco.descripcion}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="form-group col-lg-4 col-sm-12">
+                    <label for="cuenta">Cuenta de banco</label>
+                    <input type="text" name="" id="cuenta" class="form-control">
+                </div>
+                <div class="form-group col-lg-4 col-sm-12">
+                    <label for="cuenta">Núm. de tarjeta</label>
+                    <input type="text" name="" id="cuenta" class="form-control">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-lg-4 col-sm-12">
+                    <label for="clabe">Clabe</label>
+                    <input type="text" name="" id="clabe" class="form-control">
+                </div>
+                <div class="form-group col-lg-4 col-sm-12">
+                    <label for="contrato">Contrato</label>
+                    <input type="text" name="" id="contrato" class="form-control">
+                </div>
+                <div class="form-group col-lg-4 col-sm-12">
+                    <label for="cuenta_con">Cuenta contable</label>
+                    <input type="text" name="" id="cuenta_con" class="form-control">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+        <button *ngIf="tipo_modal == 1" type="button" class="btn btn-success" id="guardar">Guardar</button>
+        <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success" id="guardar">Guardar</button>
+        <!-- <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button> -->
+    </div>
+</ng-template>

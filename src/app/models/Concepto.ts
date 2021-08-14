@@ -4,6 +4,9 @@ export class Concepto {
         public id_empleado : number,
         public empleado : string,
         public fotografia : string,
+        public unidades : string,
+        public importe : string,
+        public saldo : string,
         public conceptos : Array<ConceptoUnitario>
     ){}
     
