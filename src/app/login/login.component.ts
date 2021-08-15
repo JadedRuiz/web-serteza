@@ -175,9 +175,15 @@ export class LoginComponent implements OnInit {
       });
     }
     if(this.sistema_elegido == "4"){
-      this.closeModal();
       window.sessionStorage["empresa"] = id;
       this.router.navigate(["sistema_control/dashboard"]);
+      this.closeModal();
+      let json = {
+        id_empresa : id,
+        id_status : 1
+      };
+      
+      
     }
     if(this.sistema_elegido == "6"){
       this.closeModal();
