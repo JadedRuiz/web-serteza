@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Concepto, ConceptoUnitario } from 'src/app/models/Concepto';
-import { Incidencia } from 'src/app/models/Incidencia';
+import { Incidencia, Concepto } from 'src/app/models/Incidencia';
+import { Incidencias } from 'src/app/models/Incidencias';
 import { ConceptoService } from 'src/app/services/Concepto/concepto.service';
 import { EmpleadoService } from 'src/app/services/Empleado/Empleado.service';
 import { NominaService } from 'src/app/services/Nomina/Nomina.service';
@@ -17,38 +17,34 @@ import * as XLSX from 'ts-xlsx';
 })
 export class ProcedimientoCapturaComponent implements OnInit {
 
-  public id_nomina = window.sessionStorage.getItem("tipo_nomina");
+  public id_nomina = parseInt(window.sessionStorage.getItem("tipo_nomina")+"");
   public empresa_seleccionado = parseInt(window.sessionStorage["empresa"]);
+  public usuario_logueado = window.sessionStorage.getItem("user");
+  public id_periodo = 1;
   public nominas : any;
-  public tb_row = {
-    id_concepto : 0,
-    concepto : "",
-    unidades : "",
-    importe : "",
-    saldo : "",
-    ajuste : ""
-  };
-  public tb_row_dos = {
-    id_concepto : 0,
-    concepto : "",
-    unidades : "",
-    importe : "",
-    saldo : "",
-    ajuste : ""
-  };
   public cat_conceptos : any;
-  public conceptos = new Array<Concepto>();
-  public concepto_agreagado = new Array<ConceptoUnitario>();
-  public band_botones = false;
+  public band_editar = false;
   public modal : any;
+  public modal_visual : any;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
-  public capturas = new Incidencia(parseInt(this.id_nomina+""),this.conceptos);
+  @ViewChild('visualizar', {static: false}) contenidoDelModalVisual : any;
   myControl = new FormControl();
   public empleados : any;
   public config = [true,true,true];
   public tipo_modal = 1;
+  public concepto_diabled = false;
   public empleado_seleccionado = 0;
+  public concepto_seleccionado = 0;
   public indice_seleccionado = 0;
+  public incidencias = new Incidencias(this.id_nomina,1,[]);
+  public concepto = {
+    id_concepto : "",
+    concepto : "",
+    unidades : "",
+    saldo : "",
+    importe : "",
+    ajuste : ""
+  };
   arrayBuffer:any;
   file:any;
   data : any;
@@ -56,13 +52,13 @@ export class ProcedimientoCapturaComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     public nomina_service : NominaService,
-    private empleado_service : EmpleadoService,
-    private concepto_service : ConceptoService
+    private concepto_service : ConceptoService,
+    private empleado_service : EmpleadoService
   ) { }
 
   ngOnInit(): void {
     this.obtenerNomina();
-    this.mostrarCapturas();
+    this.mostrarEmpleadosParaIncidencias();
   }
   obtenerNomina(){
     this.nominas = [];
@@ -82,7 +78,7 @@ export class ProcedimientoCapturaComponent implements OnInit {
     });
   }
 
-  guardar(id : any){
+  adminConcepto(id : any){
     this.tipo_modal = 1;
     this.empleado_seleccionado = id;
     this.limpiarCampos();
@@ -97,28 +93,20 @@ export class ProcedimientoCapturaComponent implements OnInit {
       id_status : -1,
       nombre_candidato : value
     };
-    this.empleado_service.autocompleteEmpleado(json)
-    .subscribe( (object : any) => {
-      if(object.ok){
-        this.empleados = object.data;
-      }
-    });
   }
 
-  mostrarCapturas(){
-    this.capturas.registros = [];
+  visualizarEmpleado(id : any){
+    this.openModalVisualizar();
+  }
+
+  mostrarEmpleadosParaIncidencias(){
     let json = {
-      id_empresa : this.empresa_seleccionado,
-      id_nomina : this.capturas.id_nomina
+      id_nomina : this.id_nomina,
+      id_empresa : this.empresa_seleccionado
     };
     this.empleado_service.obtenerEmpleadoPorTipoNomina(json)
-    .subscribe( (object : any) =>{
-      if(object.ok){
-        object.data.forEach((element : any) => {
-          let capturas_row = new Concepto(element.id_empleado,element.id_empleado,element.nombre,element.fotografia,"","","",JSON.parse(JSON.stringify(this.concepto_agreagado)));
-          this.capturas.registros.push(capturas_row);
-        });
-      }
+    .subscribe((object : any) =>{
+      this.incidencias.incidencias = object.data;
     });
   }
 
@@ -134,7 +122,6 @@ export class ProcedimientoCapturaComponent implements OnInit {
 
   mostrarConfig(event : any){
     let object = this.cat_conceptos.filter((x : any) => x.id_concepto === parseInt(event.value))[0];
-    this.tb_row.concepto = object.concepto;
     if(object.utiliza_unidade){
       this.config[0] = false;
       // this.concepto_seleccionado.unidades = "";
@@ -149,19 +136,10 @@ export class ProcedimientoCapturaComponent implements OnInit {
     }
   }
 
-  mostrarAcciones(id : any){
-    this.capturas.registros.forEach((element : any) => {
-      if(element.id_empleado = id){
-        element.conceptos.forEach((conceptos : any) => {
-          if(conceptos.id_concepto == this.tb_row_dos.id_concepto){
-            element.unidades =  conceptos.unidades;
-            element.importe =  conceptos.importe;
-            element.saldo =  conceptos.saldo;
-          }
-        });
-      }
-    });
-    this.tb_row_dos.id_concepto
+  mostrarAcciones(id : any, event : any){
+    let object_empleado = this.incidencias.incidencias.filter((x : any) => x.id_empleado === parseInt(id))[0];
+    object_empleado.editar = true;
+    object_empleado.concepto_seleccionado = event.value;
   }
 
   getEmpleado(event : any){
@@ -170,56 +148,70 @@ export class ProcedimientoCapturaComponent implements OnInit {
     // this.concepto_seleccionado.empleado = event.option.value;
   }
 
-  agregarCalculo(){
-    if(this.tb_row.id_concepto != 0){
-      this.capturas.registros.forEach( (element : any) => {
-        if(element.id_empleado == this.empleado_seleccionado){
-          element.conceptos.push(JSON.parse(JSON.stringify(this.tb_row)));
-        }
-        Swal.fire("Buen trabajo","Se ha agregado el concepto","success");
-        this.cerrarModal();
-      });
-    }else{
-      Swal.fire("Ha ocurrido un error","No se puede agregar un concepto vacio","info");
-    }
+  agregarConceptoAEmpleado(){
+    let json = {
+      usuario : this.usuario_logueado,
+      id_empleado : this.empleado_seleccionado,
+      id_periodo : this.id_periodo,
+      concepto : this.concepto
+    };
+    this.confirmar("Confirmación","¿Seguro que desea agregar este concepto al empleado?","info",json,1);
   }
 
   editar(id : any){
+    let object_empleado = this.incidencias.incidencias.filter((x : any) => x.id_empleado === parseInt(id))[0];
+    this.empleado_seleccionado = id;
     this.tipo_modal = 2;
-    this.band_botones = false;
-    this.openModal();
-    // this.calculos.registros.forEach((element : any) => {
-    //   if(element.folio == id){
-    //     this.concepto_seleccionado.folio = id;
-    //     this.concepto_seleccionado.id_concepto = element.id_concepto;
-    //     this.concepto_seleccionado.concepto = element.concepto;
-    //     this.concepto_seleccionado.unidades = element.unidades;
-    //     this.concepto_seleccionado.importe = element.importe;
-    //     this.concepto_seleccionado.ajuste = element.ajuste;
-    //     this.concepto_seleccionado.saldo = element.saldo;
-    //   }
-    // });
+    this.concepto_service.obtenerConceptoPorIdMovNomina(object_empleado.concepto_seleccionado)
+    .subscribe((object : any) =>{
+      if(object.ok){
+        this.mostrarConceptos();
+        this.concepto_diabled = true;
+        let concept = object.data[0];
+        this.concepto.id_concepto = concept.id_concepto;
+        this.concepto.unidades = concept.unidad;
+        this.concepto.importe = concept.importe;
+        this.concepto.saldo = concept.saldo;
+        this.concepto.ajuste = concept.ajuste;
+        if(this.concepto.unidades == "0"){
+          this.config[0] = true;
+        }else{
+          this.config[0] = false;
+        }
+        if(this.concepto.importe == "0"){
+          this.config[1] = true;
+        }else{
+          this.config[1] = false;
+        }
+        if(this.concepto.saldo == "0"){
+          this.config[2] = true;
+        }else{
+          this.config[2] = false;
+        }
+        this.openModal();
+      }
+    });
   }
 
-  // editarIncidencia(){
-  //   this.calculos.registros.forEach((element : any) => {
-  //     if(element.folio == this.concepto_seleccionado.folio){
-  //       element.id_concepto = this.concepto_seleccionado.id_concepto;
-  //       element.concepto = this.concepto_seleccionado.concepto;
-  //       element.unidades = this.concepto_seleccionado.unidades;
-  //       element.importe = this.concepto_seleccionado.importe;
-  //       element.saldo = this.concepto_seleccionado.saldo;
-  //       element.ajuste = this.concepto_seleccionado.ajuste;
-  //       Swal.fire("Buen trabajo","Se ha editado el concepto","success");
-  //       this.cerrarModal();
-  //     }
-  //   });
-  // }
+  modificarConcepto(){
+    let object_empleado = this.incidencias.incidencias.filter((x : any) => x.id_empleado === this.empleado_seleccionado)[0];
+    let json = {
+      id_concepto : object_empleado.concepto_seleccionado,
+      usuario : this.usuario_logueado,
+      concepto : this.concepto
+    };
+    this.confirmar("Confirmación","¿Seguro que deseas modificar el concepto de este empleado?","info",json,2);
+  }
 
   eliminar(id : any){
-    this.confirmar("Confirmación","¿Seguro que deseas eliminar la incidencia","info",id,2);
+    let object_empleado = this.incidencias.incidencias.filter((x : any) => x.id_empleado === parseInt(id))[0];
+    let json = {
+      id_concepto : object_empleado.concepto_seleccionado,
+      usuario : this.usuario_logueado
+    };
+    this.confirmar("Confirmación","¿Seguro que deseas eliminar el concepto al empleado?","info",json,3);
   }
-  
+
   openModal() {
     // this.mostrarConceptos();
     this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
@@ -229,17 +221,27 @@ export class ProcedimientoCapturaComponent implements OnInit {
     this.modal.close();
   }
 
+  openModalVisualizar() {
+    // this.mostrarConceptos();
+    this.modal_visual = this.modalService.open(this.contenidoDelModalVisual,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+  }
+
+  cerrarModalVisualizar(){
+    this.modal_visual.close();
+  }
+
   limpiarCampos(){
-    this.config = [true,true,true];
-    this.tb_row = {
-      id_concepto : 0,
+    this.concepto = {
+      id_concepto : "",
       concepto : "",
       unidades : "",
-      importe : "",
       saldo : "",
+      importe : "",
       ajuste : ""
     };
-    // this.concepto_seleccionado = new Concepto(0,0,0,"","",[]);
+    this.band_editar = false;
+    this.config = [true,true,true];
+    this.concepto_diabled = false;
   }
   incomingfile(event : any) 
   {
@@ -333,15 +335,48 @@ export class ProcedimientoCapturaComponent implements OnInit {
       cancelButtonText : "Cancelar"
     }).then((result) => {
       if (result.isConfirmed) {
-        if(tipo == 1){  //Guardar
-          
-        }
-        if(tipo == 2){  //Eliminar
-          this.capturas.registros.forEach((element : any, index : any) => {
-            if(element.folio == json){
-              this.capturas.registros.splice(index,1);
-              Swal.fire("Buen trabajo","Se ha editado el concepto","success");
+        if(tipo == 1){  //nuevo concepto de empleado
+          this.concepto_service.altaConceptoAEmpleado(json)
+          .subscribe( (object : any) =>{
+            if(object.ok){
+              //Notificar
+              Swal.fire("Buen trabajo",object.data.message,"success");
               this.cerrarModal();
+              //Actualizar los conceptos del empleado
+              let object_empleado = this.incidencias.incidencias.filter((x : any) => x.id_empleado === parseInt(json.id_empleado))[0];
+              object_empleado.conceptos = object.data.conceptos_actuales;
+            }else{
+              Swal.fire("Ha ocurrido un error",object.data,"error");
+            }
+          });
+        }
+        if(tipo == 2){  //modificar concepto de empleaod
+          this.concepto_service.modificarConceptoAEmpleado(json)
+          .subscribe((object : any) => {
+            if(object.ok){
+              Swal.fire("Buen trabajo",object.data,"success");
+              this.cerrarModal();
+            }else{
+              Swal.fire("Ha ocurrido un error",object.data,"error");
+            }
+          });
+        }
+        if(tipo == 3){  //eliminar concepto de empleado
+          this.concepto_service.eliminarConceptoAEmpleado(json)
+          .subscribe((object : any) => {
+            if(object.ok){
+              Swal.fire("Buen trabajo",object.data,"success");
+              this.incidencias.incidencias.forEach((element : any) => {
+                element.conceptos.forEach((concepto_row : any, row : any) => {
+                  if(concepto_row.id_concepto == json.id_concepto){
+                    element.conceptos.splice(row,1);
+                    element.editar = false;
+                  }
+                });
+              });
+              this.cerrarModal();
+            }else{
+              Swal.fire("Ha ocurrido un error",object.data,"error");
             }
           });
         }

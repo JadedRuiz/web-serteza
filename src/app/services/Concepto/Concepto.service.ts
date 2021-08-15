@@ -80,4 +80,47 @@ export class ConceptoService {
       }));
   }
 
+  altaConceptoAEmpleado(json : any){
+    let url = SERVER_API+"concepto/altaConceptoAEmpleado";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      return throwError(err);
+    }));
+  }
+
+  modificarConceptoAEmpleado(json : any){
+    let url = SERVER_API+"concepto/modificarConceptoAEmpleado";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      return throwError(err);
+    }));
+  }
+
+  obtenerConceptoPorIdMovNomina(id : any){
+    let url = SERVER_API+"concepto/obtenerConceptoPorIdMovNomina/"+id;
+    return this.http.get(url)
+    .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        return throwError(err);
+      }));
+  }
+
+  eliminarConceptoAEmpleado(json : any){
+    let url = SERVER_API+"concepto/eliminarConceptoAEmpleado";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      return throwError(err);
+    }));
+  }
 }
