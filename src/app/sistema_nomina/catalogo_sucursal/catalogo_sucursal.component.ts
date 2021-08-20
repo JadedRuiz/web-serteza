@@ -28,13 +28,14 @@ export class CatalogoSucursalComponent implements OnInit {
     id_sucursal : "",
     id_cliente : "",
     sucursal : "",
-    tasa_estatal : "",
-    tasa_especial : "",
+    tasa_estatal : 0.00,
+    tasa_especial : 0.00,
     zona : "",
     estado : 0,
-    prima_riesgo : "",
+    prima_riesgo : 0.00,
     usuario : this.usuario
   };
+  public sucursales_bus : any;
   public tipo_modal = 1;
 
   constructor(
@@ -64,11 +65,28 @@ export class CatalogoSucursalComponent implements OnInit {
   }
 
   busqueda(value : any){
-
+    if(value.length > 2){
+      this.sucursales_bus = [];
+      let json = {
+        nombre_tabla : "nom_sucursales",
+        nombre_columna : "sucursal",
+        busqueda : value,
+        select : ["id_sucursal","sucursal"],
+        filtros : []
+      };
+      this.compartido_service.obtenerCatalogoAutoComplete(json)
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.sucursales_bus = object.data;
+        }
+      })
+    }
   }
 
   getSucursal(event : any){
-
+    this.editar(event.option.id);
+    this.myControl.reset('');
+    this.sucursales_bus = [];
   }
   
   mostrarEstados(){
@@ -136,11 +154,11 @@ export class CatalogoSucursalComponent implements OnInit {
       id_sucursal : "",
       id_cliente : "",
       sucursal : "",
-      tasa_estatal : "",
-      tasa_especial : "",
+      tasa_estatal : 0.00,
+      tasa_especial : 0.00,
       zona : "",
       estado : 0,
-      prima_riesgo : "",
+      prima_riesgo : 0.00,
       usuario : this.usuario
     };
   }

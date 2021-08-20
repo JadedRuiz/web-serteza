@@ -13,12 +13,12 @@
                   <div class="col-lg-4 col-sm-12 mb-2">
                       <div class="buscador">
                           <mat-form-field class="w-100">
-                              <mat-label>Buscar periodo</mat-label>
+                              <mat-label>Buscar por ejercicio</mat-label>
                               <input #input
                                      type="text"
                                      placeholder="Buscar..."
                                      (keyup)="busqueda(input.value)"
-                                     aria-label="Buscar concepto"
+                                     aria-label="Buscar ejercicio"
                                      matInput
                                      [formControl]="myControl"
                                      [matAutocomplete]="auto">
@@ -31,12 +31,7 @@
                       </div>
                   </div>
                   <div class="col-lg-4 col-sm-12">
-                    <mat-form-field class="w-100">
-                        <mat-label>Año</mat-label>
-                        <input matInput [matDatepicker]="picker">
-                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                        <mat-datepicker #picker></mat-datepicker>
-                    </mat-form-field>
+                    
                   </div>
                   <div class="col-lg-4 col-sm-12" style="text-align: end;">
                       <a class="btn btn-info" (click)="guardar()" title="Nuevo periodo"><img src="./assets/iconos/agregar.svg" style="width: 24px;"></a>
@@ -46,34 +41,28 @@
                   <table class="table table-striped">
                       <thead>
                           <tr>
-                              <th scope="col" class="text-center">No. periodo</th>
-                              <th scope="col">Año</th>
-                              <th scope="col" class="text-center">Periodo actual</th>
+                              <th scope="col" class="text-center">No. ejercicio</th>
+                              <th scope="col">Ejercicio</th>
+                              <th scope="col" class="text-center">Fecha inicial</th>
+                              <th scope="col" class="text-center">Fecha final</th>
                               <th scope="col" class="text-center">Acciones</th>
                           </tr>
                       </thead>
-                      <tbody *ngIf="periodos.lenght > 0; else pintaVacio" class="">
-                          <!-- <tr *ngFor="let departamento of departamentos">
-                              <td colspan="1" style="vertical-align: middle;" class="text-center">{{departamento.folio}}</td>
-                              <td colspan="1" style="vertical-align: middle;">{{departamento.departamento}}</td>
-                              <td colspan="1" style="vertical-align: middle;" class="text-center">{{departamento.vacantes}}</td>
-                              <td colspan="1" style="vertical-align: middle;" class="text-center">{{departamento.autorizados}}</td>
-                              <td colspan="1" style="vertical-align: middle;" class="text-center">{{departamento.status}}</td>
+                      <tbody *ngIf="periodos.length > 0; else pintaVacio" class="">
+                          <tr *ngFor="let periodo of periodos">
+                              <td colspan="1" style="vertical-align: middle;" class="text-center">{{periodo.id_periodo}}</td>
+                              <td colspan="1" style="vertical-align: middle;">{{periodo.ejercicio}}</td>
+                              <td colspan="1" style="vertical-align: middle;" class="text-center">{{periodo.fecha_inicial}}</td>
+                              <td colspan="1" style="vertical-align: middle;" class="text-center">{{periodo.fecha_final}}</td>
                               <td colspan="1" style="width: 20%;" class="text-center">
-                                  <a title="Editar" (click)="editar(departamento.folio)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 15px;"></a>
+                                  <a title="Editar"  style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 15px;"></a>
                               </td>
-                          </tr> -->
+                          </tr>
                       </tbody>
                       <ng-template #pintaVacio>
                           <tbody>
                               <tr class="text-center">
-                                  <!-- <td colspan="4" class="text-center">No existen periodos</td> -->
-                                  <td>1</td>
-                                  <td>2021</td>
-                                  <td>16/07/2021 al 30/07/2021</td>
-                                  <td>
-                                    <a title="Editar" (click)="editar()" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 15px;"></a>
-                                  </td>
+                                  <td colspan="5">No se cuenta con ejercicios actualmente</td>
                               </tr>
                           </tbody>
                       </ng-template>
@@ -133,13 +122,9 @@
             <div class="form row">
                 <div class="form-group col-lg-4 col-sm-12">
                     <mat-form-field class="w-100">
-                        <mat-label>Seleccione el año</mat-label>
+                        <mat-label>Seleccione el ejercicio</mat-label>
                         <mat-select [(ngModel)]="anio">
-                            <mat-option [value]="1">2021</mat-option>
-                            <mat-option>2023</mat-option>
-                            <mat-option>2024</mat-option>
-                            <mat-option>2025</mat-option>
-                            <mat-option>2026</mat-option>
+                            <mat-option *ngFor="let anio_option of anios" [value]="anio_option">{{anio_option}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
@@ -147,13 +132,12 @@
                     <mat-form-field class="w-100">
                         <mat-label>Tipo de nómina</mat-label>
                         <mat-select [(ngModel)]="tipo_nomina"> 
-                            <mat-option [value]="1">Quincenal</mat-option>
-                            <mat-option [value]="2">Quincenal</mat-option>
+                            <mat-option *ngFor="let tipo of nominas" [value]="tipo.id_nomina">{{tipo.nomina}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
                 <div class="form-group col-lg-4 col-sm-12">
-                    <button class="btn btn-info btn-sm mt-3">Generar periodos</button>
+                    <button class="btn btn-info btn-sm mt-3" (click)="generarEjercicio()">Generar</button>
                 </div>
             </div>
             <div class="form-row">
@@ -174,322 +158,73 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th colspan="1">Nómina</th>
-                                            <th colspan="1">Ejercicio</th>
-                                            <th colspan="1">Actual</th>
-                                            <th colspan="1">Cerrado</th>
-                                            <th colspan="1">Fecha Incial</th>
-                                            <th colspan="1">Fecha final</th>
-                                            <th colspan="1">Fin de mes</th>
-                                            <th colspan="1">Dias desface</th>
+                                            <th colspan="col">Mes</th>
+                                            <th colspan="col">Fecha inicial</th>
+                                            <th colspan="col">Fecha final</th>
+                                            <th colspan="col">Actual</th>
+                                            <th colspan="col">Cerrado</th>
+                                            <th colspan="col">Timbrado</th>
+                                            <th colspan="col">Fin de mes</th>
+                                            <th colspan="col">Dias desface</th>
+                                            <th colspan="col">Fecha poliza</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
+                                    <tbody *ngIf="periodo_generado.periodo_array.length > 0; else pintaEjercicio">
+                                        <tr *ngFor="let periodo of periodo_generado.periodo_array">
+                                            <td style="vertical-align: middle;">{{periodo.mes_completo}}</td>
+                                            <td style="vertical-align: middle;" *ngIf="periodo.tipo == 1 && periodo.band">
+                                                <mat-form-field id="fecha_ant" style="max-width: 100px;">
+                                                    <input matInput [(ngModel)]="periodo.fecha_inicial" [matDatepicker]="pickertres" placeholder="MM/DD/YYYY" (dateInput)="generar(3,$event.value)">
+                                                    <mat-datepicker-toggle matSuffix [for]="pickertres"></mat-datepicker-toggle>
+                                                    <mat-datepicker #pickertres></mat-datepicker>
+                                                  </mat-form-field>
+                                            </td>
+                                            <td style="vertical-align: middle;" *ngIf="periodo.tipo == 1 && !periodo.band">{{periodo.fecha_inicial}}</td>
+                                            <td style="vertical-align: middle;" *ngIf="periodo.tipo != 1">{{periodo.fecha_inicial}}</td>
+                                            <td style="vertical-align: middle;">{{periodo.fecha_final}}</td>
+                                            <td style="vertical-align: middle;">
+                                                <div class="custom-control custom-switch">
+                                                    <input [(ngModel)]="periodo.actual" name="activo" type="checkbox" class="custom-control-input" id="actual{{periodo.id_periodo}}" (click)="btn_actual(periodo.id_periodo)">
+                                                    <label class="custom-control-label" for="actual{{periodo.id_periodo}}"></label>
                                                 </div>
                                             </td>
-                                            <td>No</td>
-                                            <td>01/01/2021</td>
-                                            <td>15/01/2021</td>
-                                            <td>No</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
+                                            <td style="vertical-align: middle;">
+                                                <div class="custom-control custom-switch">
+                                                    <input [(ngModel)]="periodo.cerrado" name="activo" type="checkbox" class="custom-control-input" id="cerrado{{periodo.cerrado}}" (click)="btn_actual(periodo.id_periodo)" disabled>
+                                                    <label class="custom-control-label" for="cerrado{{periodo.id_periodo}}"></label>
                                                 </div>
                                             </td>
-                                            <td>No</td>
-                                            <td>05/01/2021</td>
-                                            <td>30/01/2021</td>
-                                            <td>Si</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
+                                            <td style="vertical-align: middle;">
+                                                <div class="custom-control custom-switch">
+                                                    <input [(ngModel)]="periodo.timbrado" name="activo" type="checkbox" class="custom-control-input" id="timbrado{{periodo.cerrado}}" disabled>
+                                                    <label class="custom-control-label" for="timbrado{{periodo.id_periodo}}"></label>
                                                 </div>
                                             </td>
-                                            <td>No</td>
-                                            <td>01/02/2021</td>
-                                            <td>15/02/2021</td>
-                                            <td>No</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
+                                            <td style="vertical-align: middle;">
+                                                <div class="custom-control custom-switch">
+                                                    <input [(ngModel)]="periodo.fin_de_mes" name="activo" type="checkbox" class="custom-control-input" id="fin{{periodo.cerrado}}"  disabled>
+                                                    <label class="custom-control-label" for="fin{{periodo.id_periodo}}"></label>
                                                 </div>
                                             </td>
-                                            <td>No</td>
-                                            <td>16/02/2021</td>
-                                            <td>30/02/2021</td>
-                                            <td>Si</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
-                                                </div>
+                                            <td style="vertical-align: middle;">
+                                                <input type="number" [(ngModel)]="periodo.dias_desface" class="form-control" style="max-width: 100px;">
                                             </td>
-                                            <td>No</td>
-                                            <td>01/03/2021</td>
-                                            <td>15/03/2021</td>
-                                            <td>No</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
-                                                </div>
+                                            <td style="vertical-align: middle;">
+                                                <mat-form-field id="fecha_ant" style="max-width: 100px;">
+                                                    <input matInput [(ngModel)]="periodo.fecha_poliza" [matDatepicker]="pickertres" placeholder="MM/DD/YYYY">
+                                                    <mat-datepicker-toggle matSuffix [for]="pickertres"></mat-datepicker-toggle>
+                                                    <mat-datepicker #pickertres></mat-datepicker>
+                                                  </mat-form-field>
                                             </td>
-                                            <td>No</td>
-                                            <td>16/03/2021</td>
-                                            <td>30/03/2021</td>
-                                            <td>Si</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>No</td>
-                                            <td>01/04/2021</td>
-                                            <td>15/04/2021</td>
-                                            <td>No</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>No</td>
-                                            <td>16/04/2021</td>
-                                            <td>30/04/2021</td>
-                                            <td>Si</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>No</td>
-                                            <td>01/05/2021</td>
-                                            <td>15/05/2021</td>
-                                            <td>No</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>No</td>
-                                            <td>16/05/2021</td>
-                                            <td>30/05/2021</td>
-                                            <td>Si</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>No</td>
-                                            <td>01/06/2021</td>
-                                            <td>15/06/2021</td>
-                                            <td>No</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>No</td>
-                                            <td>16/06/2021</td>
-                                            <td>30/06/2021</td>
-                                            <td>Si</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>No</td>
-                                            <td>01/07/2021</td>
-                                            <td>15/07/2021</td>
-                                            <td>No</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>No</td>
-                                            <td>16/07/2021</td>
-                                            <td>30/07/2021</td>
-                                            <td>Si</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>No</td>
-                                            <td>01/08/2021</td>
-                                            <td>15/08/2021</td>
-                                            <td>No</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Quincenal</td>
-                                            <td>2021</td>
-                                            <td>
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-secondary btn-sm">
-                                                        <input type="radio" name="options" id="option1" autocomplete="off" checked> Si
-                                                    </label>
-                                                    <label class="btn btn-secondary btn-sm active">
-                                                        <input type="radio" name="options" id="option2" autocomplete="off"> No
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>No</td>
-                                            <td>16/08/2021</td>
-                                            <td>30/08/2021</td>
-                                            <td>Si</td>
-                                            <td>0</td>
                                         </tr>
                                     </tbody>
+                                    <ng-template #pintaEjercicio>
+                                        <tbody>
+                                            <tr class="text-center">
+                                                <td colspan="9">Aún no se ha generado el periodo</td>
+                                            </tr>
+                                        </tbody>
+                                    </ng-template>
                                 </table>
                             </div>
                         </div>
@@ -505,8 +240,9 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
-        <button *ngIf="tipo_modal == 1" type="button" class="btn btn-success" id="guardar">Agregar periodo</button>
-        <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success" id="guardar">Editar Periodo</button>
+        <button *ngIf="tipo_modal == 1" type="button" class="btn btn-success" id="guardar" (click)="guardarPeriodo()">Guardar</button>
+        <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success" id="editar">Editar Periodo</button>
         <!-- <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button> -->
     </div>
 </ng-template>
+

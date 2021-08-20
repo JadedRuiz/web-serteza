@@ -10,25 +10,34 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-lg-4 col-sm-12">
-                            <mat-form-field class="w-100">
-                                <mat-label>Buscar empleado</mat-label>
-                                <input #input
-                                       type="text"
-                                       placeholder="Buscar por nombre, rfc o curp"
-                                       (keyup)="busqueda(input.value)"
-                                       aria-label="Buscar empleado"
-                                       matInput
-                                       [formControl]="myControl"
-                                       [matAutocomplete]="auto">
-                                <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getEmpleado($event)'>
-                                  <!-- <mat-option *ngFor="let option of candidatos_busqueda" [value]="option.nombre" [id]="option.id_candidato+''">
-                                    {{option.nombre}}
-                                  </mat-option> -->
-                                </mat-autocomplete>
-                              </mat-form-field>
+                        <div class="col-lg-3 col-sm-12">
+                          <mat-form-field class="w-100">
+                            <mat-label>Buscar empleado</mat-label>
+                            <input #input
+                                    type="text"
+                                    placeholder="Buscar por nombre, rfc o curp"
+                                    (keyup)="busqueda(input.value)"
+                                    aria-label="Buscar empleado"
+                                    matInput
+                                    [formControl]="myControl"
+                                    [matAutocomplete]="auto">
+                            <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getEmpleado($event)'>
+                              <mat-option *ngFor="let option of empleados_busqueda" [value]="option.nombre" [id]="option.id_empleado+''">
+                                {{option.nombre}}
+                              </mat-option>
+                            </mat-autocomplete>
+                          </mat-form-field>
                         </div>
-                        <div class="col-lg-4 col-sm-12">
+                        <div class="col-lg-3 col-sm-12">
+                          <mat-form-field class="w-100">
+                            <mat-label>Tiipo de nómina</mat-label>
+                            <mat-select [(ngModel)]="tipo_nomina" (selectionChange)="mostrarEmpleados()">
+                                <mat-option [value]="-1">Todos</mat-option>
+                                <mat-option *ngFor="let nomina of nominas" [value]="nomina.id_nomina">{{nomina.nomina}}</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </div>
+                        <div class="col-lg-3 col-sm-12">
                             <mat-form-field class="w-100">
                                 <mat-label>Status</mat-label>
                                 <mat-select [(ngModel)]="status" (selectionChange)="mostrarEmpleados()">
@@ -41,7 +50,7 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <div class="col-lg-4 col-sm-12">
+                        <div class="col-lg-3 col-sm-12">
                             <a class="btn btn-info float-right" (click)="nuevoEmpleado()" title="Nuevo empleado"><i class="fas fa-user-plus text-white"></i></a>
                         </div>
                     </div>
@@ -207,7 +216,7 @@
                                   <div class="col-lg-4" col-sm-12>
                                     <div class="form-group">
                                       <label for="numero_social">Número de seguro social</label>
-                                      <input [(ngModel)]="candidato.numero_social" name="numero_social" type="text" class="form-control" id="numero_social">
+                                      <input [(ngModel)]="candidato.numero_social" name="numero_social" type="text" class="form-control" id="numero_social" style="text-transform: uppercase;">
                                     </div>
                                   </div>
                                 </div>
@@ -220,7 +229,12 @@
                           <div class="col-lg-4 col-sm-12">
                             <div class="form-group">
                               <label for="fecha_nacimiento">Fecha de nacimiento</label>
-                              <input [(ngModel)]="candidato.fecha_nacimiento" name="fecha_nacimiento" type="date" class="form-control" id="fecha_nacimiento" (change)="generarEdad()">
+                              <mat-form-field class="w-100" id="fecha_ant">
+                                <input matInput [(ngModel)]="candidato.fecha_nacimiento" (change)="generarEdad()" [matDatepicker]="pickertres" placeholder="MM/DD/YYYY">
+                                <mat-datepicker-toggle matSuffix [for]="pickertres"></mat-datepicker-toggle>
+                                <mat-datepicker #pickertres></mat-datepicker>
+                              </mat-form-field>
+                              <!-- <input [(ngModel)]="candidato.fecha_nacimiento" name="fecha_nacimiento" type="date" class="form-control" id="fecha_nacimiento" > -->
                             </div>
                           </div>
                           <div class="col-lg-2 col-sm-12">
@@ -254,7 +268,7 @@
                             <div class="col-12">
                                 <div class="form-group"> 
                                     <label for="desc_cempresa">Descripción del puesto</label>
-                                    <textarea [(ngModel)]="candidato.descripcion" name="desc_cempresa" class="form-control" rows="5" id="desc_cempresa"></textarea>
+                                    <textarea [(ngModel)]="candidato.descripcion" name="desc_cempresa" class="form-control" rows="5" id="desc_cempresa" style="text-transform: uppercase;"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -264,59 +278,52 @@
                 <div class="form-row">
                   <div class="form-group col-md-2">
                     <label for="calle">Calle</label>
-                    <input [(ngModel)]="candidato.direccion.calle" name="calle" type="text" class="form-control" id="calle" required>
+                    <input [(ngModel)]="candidato.direccion.calle" name="calle" type="text" class="form-control" id="calle" required style="text-transform: uppercase;">
                   </div>
                   <div class="form-group col-md-2">
                     <label for="num_ext">Número ext.</label>
-                    <input [(ngModel)]="candidato.direccion.numero_exterior" name="num_exterior" type="text" class="form-control" id="num_ext" placeholder="">
+                    <input [(ngModel)]="candidato.direccion.numero_exterior" name="num_exterior" type="text" class="form-control" id="num_ext" placeholder="" style="text-transform: uppercase;">
                   </div>
                   <div class="form-group col-md-2">
                     <label for="num_int">Número int.</label>
-                    <input [(ngModel)]="candidato.direccion.numero_interior" name="num_interior" type="text" class="form-control" id="num_int" placeholder="">
+                    <input [(ngModel)]="candidato.direccion.numero_interior" name="num_interior" type="text" class="form-control" id="num_int" placeholder="" style="text-transform: uppercase;">
                   </div>
                   <div class="form-group col-md-3">
                     <label for="cruzamientos_form">Cruzamientos</label>
                     <div class="form-inline form-row align-items-center" id="cruzamientos_form">
-                      <input [(ngModel)]="candidato.direccion.cruzamiento_uno" name="cruzamiento_ext" type="text" class="form-control col-5" id="cruzamientos_int" placeholder="">
+                      <input [(ngModel)]="candidato.direccion.cruzamiento_uno" name="cruzamiento_ext" type="text" class="form-control col-5" id="cruzamientos_int" placeholder="" style="text-transform: uppercase;">
                       <p class="text-center col-2"> y </p>
-                      <input [(ngModel)]="candidato.direccion.cruzamiento_dos" name="cruzamiento_int" type="text" class="form-control col-5" id="cruzamientos_ext" placeholder="">
+                      <input [(ngModel)]="candidato.direccion.cruzamiento_dos" name="cruzamiento_int" type="text" class="form-control col-5" id="cruzamientos_ext" placeholder="" style="text-transform: uppercase;">
                     </div>
                   </div>
                   <div class="form-group col-md-2">
                     <label for="codigo_postal">Código postal</label>
-                    <div class="input-group mb-3">
-                      <input [(ngModel)]="candidato.direccion.codigo_postal" name="codigo_postal" id="codigo_postal" type="text" class="form-control" aria-describedby="icono" maxlength="5">
-                      <div class="input-group-append">
-                        <span class="input-group-text" id="icono" style="cursor:pointer;" (click)="getDatos()"><i class="ni ni-fat-add"></i></span>
-                      </div>
-                    </div>
+                    <input [(ngModel)]="candidato.direccion.codigo_postal" name="codigo_postal" id="codigo_postal" type="text" class="form-control" aria-describedby="icono" maxlength="5">
                   </div>
                 </div>
                 <div class="form-row">
                   <div class="form-group col-md-3">
                     <label for="colonia">Colonia</label>
-                    <select [(ngModel)]="candidato.direccion.colonia" name="colonia" type="text" class="form-control" (change)="modificarMunicipio()" id="colonia" placeholder="">
-                      <option *ngFor="let colonia of colonias">{{colonia}}</option>
-                    </select>
+                    <input type="text" [(ngModel)]="candidato.direccion.colonia" class="form-control" id="colonia" style="text-transform: uppercase;">
                   </div>
                   <div class="form-group col-md-3">
                     <label for="localidad">Localidad</label>
-                    <input [(ngModel)]="candidato.direccion.localidad" name="localidad" type="text" class="form-control" id="localidad" placeholder="">
+                    <input [(ngModel)]="candidato.direccion.localidad" name="localidad" type="text" class="form-control" id="localidad" placeholder="" style="text-transform: uppercase;">
                   </div>
                   <div class="form-group col-md-3">
                     <label for="municipio">Municipio</label>
-                    <input [(ngModel)]="candidato.direccion.municipio" name="municipio" type="text" class="form-control" id="municipio">
+                    <input [(ngModel)]="candidato.direccion.municipio" name="municipio" type="text" class="form-control" id="municipio" style="text-transform: uppercase;">
                   </div>
                   <div class="form-group col-md-3">
                     <label for="estado">Estado</label>
-                    <input [(ngModel)]="candidato.direccion.estado" name="estado" type="text" class="form-control" id="estado">
+                    <input [(ngModel)]="candidato.direccion.estado" name="estado" type="text" class="form-control" id="estado" style="text-transform: uppercase;">
                   </div>
                 </div>
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group"> 
                             <label for="desc_dir_empresa">Descripción</label>
-                            <textarea [(ngModel)]="candidato.direccion.descripcion" name="desc_dir_empresa" class="form-control" rows="5" id="desc_dir_empresa"></textarea>
+                            <textarea [(ngModel)]="candidato.direccion.descripcion" name="desc_dir_empresa" class="form-control" rows="5" id="desc_dir_empresa" style="text-transform: uppercase;"></textarea>
                         </div>
                     </div>
                 </div>
@@ -327,7 +334,7 @@
                         <label for="tipo_nomina">Tipo de nómina</label>
                         <mat-form-field class="w-100">
                             <mat-label>Tiipo de nómina seleccionado</mat-label>
-                            <mat-select [(ngModel)]="empleado.id_nomina" disabled>
+                            <mat-select [(ngModel)]="empleado.id_nomina">
                                 <mat-option *ngFor="let nomina of nominas" [value]="nomina.id_nomina">{{nomina.nomina}}</mat-option>
                             </mat-select>
                         </mat-form-field>
@@ -370,7 +377,7 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="form-group col-lg-3 col-sm-12">
+                    <div class="form-group col-lg-5 col-sm-12">
                         <label for="tipo_con">Tipo de contrato</label>
                         <mat-form-field class="w-100" id="tipo_con">
                             <mat-label>Selecciona el tipo de contrato</mat-label>
@@ -379,18 +386,18 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="form-group col-lg-3 col-sm-12">
-                        <label for="fecha_ing">Fecha de ingreso</label>
+                    <div class="form-group col-lg-2 col-sm-12">
+                        <label for="fecha_ing">Fecha ingreso</label>
                         <mat-form-field class="w-100" id="fecha_ing">
-                            <input matInput [(ngModel)]="empleado.fecha_ingreso" [matDatepicker]="picker" placeholder="Selecciona la fecha de ingreso">
+                            <input matInput [(ngModel)]="empleado.fecha_ingreso" [matDatepicker]="picker" placeholder="MM/DD/YYYY">
                             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                             <mat-datepicker #picker></mat-datepicker>
                         </mat-form-field>
                     </div>
-                    <div class="form-group col-lg-3 col-sm-12">
-                        <label for="fecha_ant">Fecha de antiguedad</label>
+                    <div class="form-group col-lg-2 col-sm-12">
+                        <label for="fecha_ant">Fecha antiguedad</label>
                         <mat-form-field class="w-100" id="fecha_ant">
-                            <input matInput [(ngModel)]="empleado.fecha_antiguedad" [matDatepicker]="pickerdos" placeholder="Selecciona la fecha de antiguedad">
+                            <input matInput [(ngModel)]="empleado.fecha_antiguedad" [matDatepicker]="pickerdos" placeholder="MM/DD/YYYY">
                             <mat-datepicker-toggle matSuffix [for]="pickerdos"></mat-datepicker-toggle>
                             <mat-datepicker #pickerdos></mat-datepicker>
                         </mat-form-field>
@@ -470,6 +477,7 @@
         <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success" (click)="modificarEmpleado()" id="guardar">Guardar</button>
     </div>
 </ng-template>
+
 <ng-template #modal_camera let-c="close" let-d="dismiss">
   <div class="modal-header">
       <h2 class="modal-title" id="tituloModal">Tomar fotografia</h2>

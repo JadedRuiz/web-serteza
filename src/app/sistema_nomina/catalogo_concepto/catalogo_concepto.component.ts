@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CompartidoService } from 'src/app/services/Compartido/Compartido.service';
-import { ConceptoService } from 'src/app/services/Concepto/concepto.service';
+import { ConceptoService } from 'src/app/services/Concepto/Concepto.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,9 +15,11 @@ export class CatalogoConceptoComponent implements OnInit {
   public taken = 5;
   public status = -1;
   myControl = new FormControl();
+  myControlConcepto = new FormControl();
   public conceptos : any;
   public conceptos_busqueda : any;
   public cat_conceptos : any;
+  public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
   public conceptos_sat : any;
   public modal : any;
   public id_empresa = parseInt(window.sessionStorage["empresa"]);
@@ -37,13 +39,15 @@ export class CatalogoConceptoComponent implements OnInit {
     imprimir : false,
     impuesto_estatal : false,
     especie : false,
-    parametro_uno : "",
-    parametro_dos : "",
-    cuenta_contable : "",
-    imprime : false
+    parametro_uno : 0.00,
+    parametro_dos : 0.00,
+    cuenta_contable : "0",
+    imprime : false,
+    usuario : this.usuario_logueado
   };
   public tipo_modal = 1;
   public band_sat = true;
+  public tipo_concept = "";
 
   constructor(
     private modalService: NgbModal,
@@ -87,20 +91,25 @@ export class CatalogoConceptoComponent implements OnInit {
       }
     })
   }
+
   mostrarTipos(event : any){
     this.band_sat = false;
+    this.myControlConcepto.reset('');
+    this.conceptos_sat = [];
     switch(event.value){
       case "1" : 
-      this.mostrarConceptosSat("P");
+      this.tipo_concept = "P";
       break;
       case "2" : 
-      this.mostrarConceptosSat("D");
+      this.tipo_concept = "D";
       break;
     }
   }
 
   guardar(){
     this.tipo_modal = 1;
+    this.tipo_concept = "";
+    this.limpiar();
     this.mostrarCatalogoConceptos();
     this.openModal();
   }
@@ -167,6 +176,35 @@ export class CatalogoConceptoComponent implements OnInit {
     });
   }
 
+  busquedaConcepto(value : any){
+    this.conceptos_sat = [];
+    if(value.length > 2){
+      let json = {
+        nombre_tabla : "sat_conceptossat",
+        nombre_columna : "conceptosat",
+        busqueda : value,
+        select : ["conceptosat","id_conceptosat"],
+        filtros : [
+          {
+            tipo : "whereIn",
+            columna : "tipo",
+            datos : [this.tipo_concept,"O"]
+          }
+        ]
+      }
+      this.compartido_service.obtenerCatalogoAutoComplete(json)
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.conceptos_sat = object.data;
+        }
+      });
+    }
+  }
+
+  setTipoConcepto(event : any){
+    this.concepto.tipo_concepto_sat = event.option.id;
+  }
+
   getConcepto(event : any){
     this.editar(event.option.id);
     this.conceptos_busqueda = [];
@@ -174,7 +212,7 @@ export class CatalogoConceptoComponent implements OnInit {
   }
 
   openModal() {
-    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop'});
+    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
   }
 
   cerrarModal(){
@@ -225,5 +263,31 @@ export class CatalogoConceptoComponent implements OnInit {
       }
     });
   }
-
+  limpiar(){
+    this.conceptos_sat = [];
+    this.concepto = {
+      id_concepto : 0,
+      id_empresa : this.id_empresa,
+      tipo_concepto_sat : 0,
+      tipo_concepto : 0,
+      tipo : "",
+      concepto : "",
+      unidades : false,
+      importe : false,
+      saldo : false,
+      incrementable : false,
+      automatico : false,
+      imprimir : false,
+      impuesto_estatal : false,
+      especie : false,
+      parametro_uno : 0.00,
+      parametro_dos : 0.00,
+      cuenta_contable : "0",
+      imprime : false,
+      usuario : this.usuario_logueado
+    };
+    this.tipo_modal = 1;
+    this.band_sat = true;
+    this.myControl.reset('');
+  }
 }

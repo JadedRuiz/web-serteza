@@ -42,6 +42,8 @@ export class CatalogoEmpleadoComponent implements OnInit {
   public contratos : any;
   public puestos : any;
   public sucursales : any;
+  public empleados_busqueda : any;
+  public tipo_nomina = -1;
   //Paginacion
   public total_registros = 0;
   public mostrar_pagination = false;
@@ -78,12 +80,14 @@ export class CatalogoEmpleadoComponent implements OnInit {
 
   ngOnInit(): void {
     this.mostrarEmpleados();
+    this.mostrarCatalogoNomina();
   }
 
   mostrarEmpleados(){ 
     this.empleados = [];
     let json = {
       id_status : this.status,
+      id_nomina : this.tipo_nomina,
       pagina : this.pagina_actual,
       take : this.taken,
       id_empresa : this.empresa
@@ -171,7 +175,6 @@ export class CatalogoEmpleadoComponent implements OnInit {
     
   }
   nuevoEmpleado(){
-    this.mostrarCatalogoNomina();
     this.mostrarPuestos();
     this.mostrarCatalogoBancos();
     this.mostrarCatalogoContratos();
@@ -183,7 +186,6 @@ export class CatalogoEmpleadoComponent implements OnInit {
    this.empleado_serice.obtenerEmpleadoPorId(id)
    .subscribe( (onject : any) =>{
     if(onject.ok){
-      this.mostrarCatalogoNomina();
       this.mostrarPuestos();
       this.mostrarCatalogoBancos();
       this.mostrarCatalogoContratos();
@@ -200,15 +202,31 @@ export class CatalogoEmpleadoComponent implements OnInit {
     this.confirmar("Confirmación","¿Seguro que deseas modificar el empleado?","info",3,null);
   }
   getEmpleado(event : any){
-
+    this.editar(event.option.id);
+    this.myControl.reset('');
   }
 
-  busqueda(event : any){
-
+  busqueda(value : string){
+    if(value.length > 0){
+      this.empleados_busqueda = [];
+      let json = {
+        nombre_candidato : value,
+        id_empresa : this.empresa
+      };
+      this.empleado_serice.autocompleteEmpleado(json)
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.empleados_busqueda = object.data;
+        }
+      });
+    }
   }
 
   generarEdad(){
-
+    let convertAge = new Date(this.empleado.candidato.fecha_nacimiento+"");
+    const timeDiff = Math.abs(Date.now() - convertAge.getTime());
+    let edad = Math.floor((timeDiff / (1000 * 3600 * 24))/365);
+    this.empleado.candidato.edad = edad;
   }
 
   openModal() {
@@ -351,6 +369,8 @@ export class CatalogoEmpleadoComponent implements OnInit {
   limpiarCampos(){
     this.direccion = new Direccion(0,0,"","","","","","","","","","");
     this.fotografia = new Fotografia(0,"","","");
+    this.docB64 = "";
+    this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
     this.candidato = new Candidato(0,0,6,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia);
     this.empleado = new Empleado(0,0,this.id_nomina,0,0,0,0,0,0,this.candidato,"","","","","","","","","","",false,false,false,this.usuario_logueado);
   }
@@ -445,6 +465,7 @@ export class CatalogoEmpleadoComponent implements OnInit {
 
   openModalCamera(){
     this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+    this.showWebcam = true;
   }
 
   cerrarModalCamera(){

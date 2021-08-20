@@ -124,100 +124,157 @@
     <div class="modal-body">
         <div class="form">
             <div class="form-row">
-                <div class="form-group col-3">
-                    <label for="concepto">Concepto</label>
-                    <input type="text" [(ngModel)]="concepto.concepto" class="form-control" placeholder="Ingresa el nombre del concepto">
+                <div class="form-group col-12">
+                    <h3 class="font-weight-bold">Datos del concepto</h3>
+                </div>  
+                <div class="tab-pane active col-12" id="conceptos" role="tabpanel">
+                    <div class="container">
+                        <div class="row">
+                            <div class="form-group col-lg-6 col-sm-12">
+                                <label for="concepto">Concepto</label>
+                                <input type="text" [(ngModel)]="concepto.concepto" class="form-control" placeholder="Ingresa el nombre del concepto" style="text-transform: uppercase;">
+                            </div>
+                            <div class="form-group col-lg-6 col-sm-12">
+                                <label for="tipo_concepto">Tipo de concepto</label>
+                                <mat-form-field class="w-100" id="tipo_concepto">
+                                    <mat-select [(ngModel)]="concepto.tipo_concepto">
+                                        <mat-option *ngFor="let cat_concepto of cat_conceptos" [value]="cat_concepto.id_tipoconceptos">{{cat_concepto.tipo_concepto}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div class="form-group col-lg-3 col-sm-12">
+                                <label for="tipo">Tipo</label>
+                                <mat-form-field class="w-100" id="tipo">
+                                    <mat-select [(ngModel)]="concepto.tipo" (selectionChange)="mostrarTipos($event)">
+                                        <mat-option value="1">Percepción</mat-option>
+                                        <mat-option value="2">Deducción</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div class="form-group col-lg-9 col-sm-12">
+                                <label for="tipo_concepto_sat">Concepto SAT</label>
+                                <mat-form-field class="w-100">
+                                    <mat-label>Buscar concepto</mat-label>
+                                    <input #input
+                                        type="text"
+                                        placeholder="Buscar por nombre de concepto"
+                                        (keyup)="busquedaConcepto(input.value)"
+                                        aria-label="Buscar concepto"
+                                        matInput
+                                        [formControl]="myControlConcepto"
+                                        [matAutocomplete]="autoConcepto"
+                                        [readonly]="band_sat"
+                                        style="text-transform: uppercase;">
+                                    <mat-autocomplete #autoConcepto="matAutocomplete" (optionSelected)='setTipoConcepto($event)'>
+                                        <mat-option *ngFor="let option of conceptos_sat" [value]="option.conceptosat" [id]="option.id_conceptosat+''">
+                                        {{option.conceptosat}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-lg-3 col-sm-6">
+                                <label for="parametro_uno" class="label">Parametro 1</label>
+                                <input type="number" class="form-control" [(ngModel)]="concepto.parametro_uno" id="parametro_uno">
+                            </div>
+                            <div class="form-group col-lg-3 col-sm-6">
+                                <label for="parametro_dos" class="label">Parametro 2</label>
+                                <input type="number" class="form-control" [(ngModel)]="concepto.parametro_dos" id="parametro_dos">
+                            </div>
+                            <div class="form-group col-lg-6 col-sm-12">
+                                <label for="cuenta_contable" class="label">Cuenta contable</label>
+                                <input type="text" class="form-control" [(ngModel)]="concepto.cuenta_contable" id="cuenta_contable">
+                            </div>
+                            <div class="form-group col-lg-3 col-sm-6">
+                                <div class="custom-control custom-switch">
+                                    <input [(ngModel)]="concepto.especie" name="activo" type="checkbox" class="custom-control-input" id="especie">
+                                    <label class="custom-control-label" for="especie">En especie</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-3 col-sm-6">
+                                <div class="custom-control custom-switch">
+                                    <input [(ngModel)]="concepto.automatico" name="activo" type="checkbox" class="custom-control-input" id="automatico">
+                                    <label class="custom-control-label" for="automatico">Automatico</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-3 col-sm-6">
+                                <div class="custom-control custom-switch">
+                                    <input [(ngModel)]="concepto.imprime" name="activo" type="checkbox" class="custom-control-input" id="imprime">
+                                    <label class="custom-control-label" for="imprime">Imprimir</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-3 col-sm-6">
+                                <div class="custom-control custom-switch">
+                                    <input [(ngModel)]="concepto.impuesto_estatal" name="activo" type="checkbox" class="custom-control-input" id="impuesto_estatal">
+                                    <label class="custom-control-label" for="impuesto_estatal">Impuesto estatal</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group col-3">
-                    <label for="tipo_concepto">Tipo de concepto</label>
-                    <mat-form-field class="w-100" id="tipo_concepto">
-                        <mat-select [(ngModel)]="concepto.tipo_concepto">
-                            <mat-option *ngFor="let cat_concepto of cat_conceptos" [value]="cat_concepto.id_tipoconceptos">{{cat_concepto.tipo_concepto}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                <div class="form-group col-12">
+                    <h3 class="font-weight-bold">Configuración de captura</h3>
+                </div>  
+                <div class="tab-pane col-12" id="config" role="tabpanel">
+                    <div class="container col-12">
+                        <div class="row">
+                            <div class="form-group col-lg-4 col-sm-6">
+                                <div class="custom-control custom-switch">
+                                    <input [(ngModel)]="concepto.unidades" name="activo" type="checkbox" class="custom-control-input" id="unidades">
+                                    <label class="custom-control-label" for="unidades">Unidades</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-4 col-sm-6">
+                                <div class="custom-control custom-switch">
+                                    <input [(ngModel)]="concepto.importe" name="activo" type="checkbox" class="custom-control-input" id="customSwitch2">
+                                    <label class="custom-control-label" for="customSwitch2">Importe</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-4 col-sm-12">
+                                <div class="custom-control custom-switch">
+                                    <input [(ngModel)]="concepto.saldo" name="activo" type="checkbox" class="custom-control-input" id="saldo">
+                                    <label class="custom-control-label" for="saldo">Saldo</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-4 col-sm-12">
+                                <div class="custom-control custom-switch">
+                                    <input [(ngModel)]="concepto.imprimir" name="activo" type="checkbox" class="custom-control-input" id="imprimir" [disabled]="!concepto.saldo">
+                                    <label class="custom-control-label" for="imprimir">Imprimir saldo</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-4 col-sm-12">
+                                <div class="custom-control custom-switch">
+                                    <input [(ngModel)]="concepto.incrementable" name="activo" type="checkbox" class="custom-control-input" id="incrementable" [disabled]="!concepto.saldo">
+                                    <label class="custom-control-label" for="incrementable">Incrementable</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-4 col-sm-12">
+                                <div class="custom-control custom-switch">
+                                    <input [(ngModel)]="concepto.incrementable" name="activo" type="checkbox" class="custom-control-input" id="decrementable" [disabled]="!concepto.saldo">
+                                    <label class="custom-control-label" for="decrementable">Decrementable</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group col-3">
-                    <label for="tipo">Tipo</label>
-                    <mat-form-field class="w-100" id="tipo">
-                        <mat-select [(ngModel)]="concepto.tipo" (selectionChange)="mostrarTipos($event)">
-                            <mat-option value="1">Percepción</mat-option>
-                            <mat-option value="2">Deducción</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                <div class="form-group col-3">
-                    <label for="tipo_concepto_sat">Concepto SAT</label>
-                    <mat-form-field class="w-100" id="tipo_concepto_sat">
-                        <mat-select [(ngModel)]="concepto.tipo_concepto_sat" [disabled]="band_sat">
-                            <mat-option *ngFor="let concepto_sat of conceptos_sat" [value]="concepto_sat.id_conceptosat">{{concepto_sat.conceptosat}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
+                
             </div>
-            <div class="form-row">
-                <div class="form-group col-2">
-                    <div class="form-check">
-                        <input class="form-check-input" [(ngModel)]="concepto.unidades" type="checkbox" id="unidades">
-                        <label class="form-check-label" for="unidades">
-                          Unidades
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group col-2">
-                    <div class="form-check">
-                        <input class="form-check-input" [(ngModel)]="concepto.importe" type="checkbox" id="importe">
-                        <label class="form-check-label" for="importe">
-                          Importe
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group col-2">
-                    <div class="form-check">
-                        <input class="form-check-input" [(ngModel)]="concepto.saldo" type="checkbox" id="saldo">
-                        <label class="form-check-label" for="saldo">
-                          Saldo
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group col-2">
-                    <div class="form-check">
-                        <input class="form-check-input" [(ngModel)]="concepto.incrementable" type="checkbox" id="increment">
-                        <label class="form-check-label" for="increment">
-                          Incrementable
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group col-2">
-                    <div class="form-check">
-                        <input class="form-check-input" [(ngModel)]="concepto.automatico" type="checkbox" id="automatico">
-                        <label class="form-check-label" for="automatico">
-                          Automatico
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group col-2">
-                    <div class="form-check">
-                        <input class="form-check-input" [(ngModel)]="concepto.imprimir" type="checkbox" id="imprimir">
-                        <label class="form-check-label" for="imprimir">
-                          Imprimir
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-2">
+            
+            <!-- <div class="form-row">
+                <div class="form-group col-lg-2 col-sm-6">
                     <label for="parametro_uno" class="label">Parametro 1</label>
                     <input type="text" class="form-control" [(ngModel)]="concepto.parametro_uno" id="parametro_uno">
                 </div>
-                <div class="form-group col-2">
+                <div class="form-group col-lg-2 col-sm-6">
                     <label for="parametro_dos" class="label">Parametro 2</label>
                     <input type="text" class="form-control" [(ngModel)]="concepto.parametro_dos" id="parametro_dos">
                 </div>
-                <div class="form-group col-3">
+                <div class="form-group col-lg-3 col-sm-12">
                     <label for="cuenta_contable" class="label">Cuenta contable</label>
                     <input type="text" class="form-control" [(ngModel)]="concepto.cuenta_contable" id="cuenta_contable">
                 </div>
-                <div class="form-group col-2" style="display:flex; justify-content: center;align-items: center;">
+                <div class="form-group col-lg-2 col-sm-6" style="display:flex; justify-content: center;align-items: center;">
                     <div class="form-check">
                         <input class="form-check-input" [(ngModel)]="concepto.impuesto_estatal" type="checkbox" id="impuesto_estatal">
                         <label class="form-check-label" for="impuesto_estatal">
@@ -225,7 +282,7 @@
                         </label>
                     </div>
                 </div>
-                <div class="form-group col-2" style="display:flex; justify-content: center;align-items: center;">
+                <div class="form-group col-lg-2 col-sm-6" style="display:flex; justify-content: center;align-items: center;">
                     <div class="form-check">
                         <input class="form-check-input" [(ngModel)]="concepto.especie" type="checkbox" id="especie">
                         <label class="form-check-label" for="especie">
@@ -233,7 +290,7 @@
                         </label>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
     <div class="modal-footer">

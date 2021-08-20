@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Incidencia, Concepto } from 'src/app/models/Incidencia';
 import { Incidencias } from 'src/app/models/Incidencias';
-import { ConceptoService } from 'src/app/services/Concepto/concepto.service';
+import { ConceptoService } from 'src/app/services/Concepto/Concepto.service';
 import { EmpleadoService } from 'src/app/services/Empleado/Empleado.service';
 import { NominaService } from 'src/app/services/Nomina/Nomina.service';
 import Swal from 'sweetalert2';

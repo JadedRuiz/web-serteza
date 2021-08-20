@@ -23,4 +23,15 @@ export class CompartidoService {
     let url = SERVER_API+"obtenerMovimientos/"+id_empresa;
     return this.http.get(url);
   }
+
+  obtenerCatalogoAutoComplete(json : any){
+    let url = SERVER_API+"obtenerCatalogoAutoComplete";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      return throwError(err);
+    }));
+  }
 }
