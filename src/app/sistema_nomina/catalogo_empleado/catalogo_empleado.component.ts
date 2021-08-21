@@ -42,6 +42,7 @@ export class CatalogoEmpleadoComponent implements OnInit {
   public contratos : any;
   public puestos : any;
   public sucursales : any;
+  public estados : any;
   public empleados_busqueda : any;
   public tipo_nomina = -1;
   //Paginacion
@@ -126,6 +127,15 @@ export class CatalogoEmpleadoComponent implements OnInit {
       }
     });
   }
+  mostrarEstados(){
+    this.estados = [];
+    this.compartido_service.obtenerCatalogo("gen_cat_estados")
+    .subscribe( (object : any) =>{
+      if(object.length > 0){
+        this.estados = object;
+      }
+    });
+  }
   mostrarSucursales(){
     this.sucursales = [];
     this.sucursal_service.obtenerSucursales(this.empresa)
@@ -179,6 +189,7 @@ export class CatalogoEmpleadoComponent implements OnInit {
     this.mostrarCatalogoBancos();
     this.mostrarCatalogoContratos();
     this.mostrarSucursales();
+    this.mostrarEstados();
     this.tipo_modal = 1;
     this.openModal();
   }
@@ -190,6 +201,7 @@ export class CatalogoEmpleadoComponent implements OnInit {
       this.mostrarCatalogoBancos();
       this.mostrarCatalogoContratos();
       this.mostrarSucursales();
+      this.mostrarEstados();
       this.tipo_modal = 2;
       this.openModal();
       this.empleado.candidato.id_candidato = onject.data[0].id_candidato;

@@ -316,7 +316,11 @@
                   </div>
                   <div class="form-group col-md-3">
                     <label for="estado">Estado</label>
-                    <input [(ngModel)]="candidato.direccion.estado" name="estado" type="text" class="form-control" id="estado" style="text-transform: uppercase;">
+                    <mat-form-field class="w-100" id="estado">
+                        <mat-select [(ngModel)]="candidato.direccion.estado">
+                            <mat-option *ngFor="let estado of estados" [value]="estado.id_estado">{{estado.estado}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
                   </div>
                 </div>
                 <div class="row">
