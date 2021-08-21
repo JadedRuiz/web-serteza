@@ -42,27 +42,29 @@
                       <thead>
                           <tr>
                               <th scope="col" class="text-center">No. ejercicio</th>
-                              <th scope="col">Ejercicio</th>
+                              <th scope="col" class="text-center">Nómina</th>
+                              <th scope="col" class="text-center">Ejercicio</th>
                               <th scope="col" class="text-center">Fecha inicial</th>
                               <th scope="col" class="text-center">Fecha final</th>
                               <th scope="col" class="text-center">Acciones</th>
                           </tr>
                       </thead>
                       <tbody *ngIf="periodos.length > 0; else pintaVacio" class="">
-                          <tr *ngFor="let periodo of periodos">
+                          <tr *ngFor="let periodo of periodos" class="text-center">
                               <td colspan="1" style="vertical-align: middle;" class="text-center">{{periodo.id_periodo}}</td>
+                              <td colspan="1" style="vertical-align: middle;">{{periodo.nomina}}</td>
                               <td colspan="1" style="vertical-align: middle;">{{periodo.ejercicio}}</td>
                               <td colspan="1" style="vertical-align: middle;" class="text-center">{{periodo.fecha_inicial}}</td>
                               <td colspan="1" style="vertical-align: middle;" class="text-center">{{periodo.fecha_final}}</td>
                               <td colspan="1" style="width: 20%;" class="text-center">
-                                  <a title="Editar"  style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 15px;"></a>
+                                  <a title="Editar" (click)="editar(periodo.id_real)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 15px;"></a>
                               </td>
                           </tr>
                       </tbody>
                       <ng-template #pintaVacio>
                           <tbody>
                               <tr class="text-center">
-                                  <td colspan="5">No se cuenta con ejercicios actualmente</td>
+                                  <td colspan="6">No se cuenta con ejercicios actualmente</td>
                               </tr>
                           </tbody>
                       </ng-template>
@@ -121,17 +123,29 @@
         <div class="form">
             <div class="form row">
                 <div class="form-group col-lg-4 col-sm-12">
-                    <mat-form-field class="w-100">
+                    <mat-form-field *ngIf="tipo_modal == 1" class="w-100">
                         <mat-label>Seleccione el ejercicio</mat-label>
                         <mat-select [(ngModel)]="anio">
                             <mat-option *ngFor="let anio_option of anios" [value]="anio_option">{{anio_option}}</mat-option>
                         </mat-select>
                     </mat-form-field>
+                    <mat-form-field *ngIf="tipo_modal == 2" class="w-100">
+                        <mat-label>Seleccione el ejercicio</mat-label>
+                        <mat-select [(ngModel)]="anio" disabled>
+                            <mat-option *ngFor="let anio_option of anios" [value]="anio_option">{{anio_option}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
                 </div>
                 <div class="form-group col-lg-4 col-sm-12">
-                    <mat-form-field class="w-100">
+                    <mat-form-field *ngIf="tipo_modal == 1" class="w-100">
                         <mat-label>Tipo de nómina</mat-label>
                         <mat-select [(ngModel)]="tipo_nomina"> 
+                            <mat-option *ngFor="let tipo of nominas" [value]="tipo.id_nomina">{{tipo.nomina}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="tipo_modal == 2" class="w-100">
+                        <mat-label>Tipo de nómina</mat-label>
+                        <mat-select [(ngModel)]="tipo_nomina" disabled> 
                             <mat-option *ngFor="let tipo of nominas" [value]="tipo.id_nomina">{{tipo.nomina}}</mat-option>
                         </mat-select>
                     </mat-form-field>
@@ -165,6 +179,7 @@
                                             <th colspan="col">Cerrado</th>
                                             <th colspan="col">Timbrado</th>
                                             <th colspan="col">Fin de mes</th>
+                                            <th colspan="col">Septimo día</th>
                                             <th colspan="col">Dias desface</th>
                                             <th colspan="col">Fecha poliza</th>
                                         </tr>
@@ -196,7 +211,7 @@
                                             </td>
                                             <td style="vertical-align: middle;">
                                                 <div class="custom-control custom-switch">
-                                                    <input [(ngModel)]="periodo.timbrado" name="activo" type="checkbox" class="custom-control-input" id="timbrado{{periodo.cerrado}}" disabled>
+                                                    <input [(ngModel)]="periodo.timbrado" name="activo" type="checkbox" class="custom-control-input" id="timbrado{{periodo.id_periodo}}">
                                                     <label class="custom-control-label" for="timbrado{{periodo.id_periodo}}"></label>
                                                 </div>
                                             </td>
@@ -207,7 +222,10 @@
                                                 </div>
                                             </td>
                                             <td style="vertical-align: middle;">
-                                                <input type="number" [(ngModel)]="periodo.dias_desface" class="form-control" style="max-width: 100px;">
+                                                <input type="number" [(ngModel)]="periodo.septimo" class="form-control" style="max-width: 100px;" min="0" max="30">
+                                            </td>
+                                            <td style="vertical-align: middle;">
+                                                <input type="number" [(ngModel)]="periodo.dias_desface" class="form-control" style="max-width: 100px;" min="0" max="30">
                                             </td>
                                             <td style="vertical-align: middle;">
                                                 <mat-form-field id="fecha_ant" style="max-width: 100px;">
@@ -241,7 +259,7 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
         <button *ngIf="tipo_modal == 1" type="button" class="btn btn-success" id="guardar" (click)="guardarPeriodo()">Guardar</button>
-        <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success" id="editar">Editar Periodo</button>
+        <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success" id="editar" (click)="modificarPeriodo()">Editar</button>
         <!-- <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button> -->
     </div>
 </ng-template>

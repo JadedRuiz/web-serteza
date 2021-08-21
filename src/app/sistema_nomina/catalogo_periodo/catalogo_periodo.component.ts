@@ -57,7 +57,9 @@ export class CatalogoPeriodoComponent implements OnInit {
     };
     this.periodo_service.obtenerPeriodos(json)
     .subscribe((object : any) => {
-      this.periodos = object.data;
+      if(object.ok){
+        this.periodos = object.data;
+      }
     });
   }
 
@@ -77,18 +79,34 @@ export class CatalogoPeriodoComponent implements OnInit {
 
   guardar(){
     this.tipo_modal = 1;
+    this.tipo_nomina = this.id_nomina;
+    this.anio = 0;
     this.pintarAnios();
     this.mostrarNominasDisp();
     this.openModal();
   }
 
-  editar(){
+  editar(id_periodo : any){
     this.tipo_modal = 2;
-    this.openModal();
+    this.periodo_service.obtenerPeriodoPorId(id_periodo)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.openModal();
+        this.pintarAnios();
+        this.mostrarNominasDisp();
+        this.periodo_generado.usuario = this.usuario_logueado;
+        this.periodo_generado.id_nomina = object.data.id_nomina;
+        this.periodo_generado.ejercicio = object.data.ejercicio;
+        this.tipo_nomina = object.data.id_nomina;
+        this.anio = object.data.ejercicio;
+        this.periodo_generado.periodo_array = object.data.periodo_array[0];
+      }
+    });
   }
 
   busqueda(value : any){
-
+    this.palabra = value;
+    this.mostrarPeriodos();
   }
 
   getPeriodo(event : any){
@@ -110,7 +128,7 @@ export class CatalogoPeriodoComponent implements OnInit {
 
   generarEjercicio(){
     if(this.anio > 0 && this.tipo_nomina > 0){
-      this.periodo_service.fechaFinalEjercicio(this.anio,this.empresa,this.id_nomina)
+      this.periodo_service.fechaFinalEjercicio(this.anio,this.empresa,this.tipo_nomina)
       .subscribe((object : any) => {
         if(object.ok){
           if(object.data.first){
@@ -176,9 +194,6 @@ export class CatalogoPeriodoComponent implements OnInit {
           if(tipo_genera == 3){
             fecha_inicial = new Date(event);
             this.fecha_final_genera = new Date(event);
-          }
-          if(tipo_genera == 2){
-            fecha_inicial = new Date(this.fecha_final_genera.setDate(this.fecha_final_genera.getDate()+1));
           }
           let mes_completo = this.replaceMes(fecha_inicial.getMonth()+1);
           let id_periodo = 1;
@@ -335,6 +350,10 @@ export class CatalogoPeriodoComponent implements OnInit {
     }
   }
 
+  modificarPeriodo(){
+    this.confirmar("Confirmación","¿Seguro que deseas modificar el periodo?","info",2,null);
+  }
+
   confirmar(title : any ,texto : any ,tipo_alert : any,tipo : number, data : any){
     Swal.fire({
       title: title,
@@ -351,6 +370,7 @@ export class CatalogoPeriodoComponent implements OnInit {
           this.periodo_service.crearNuevoPeriodo(this.periodo_generado)
           .subscribe((object : any) => {
             if(object.ok){
+              this.mostrarPeriodos();
               this.cerrarModal();
               Swal.fire("Buen trabajo","El periodo se ha guardado con éxito","success");
             }else{
@@ -358,7 +378,13 @@ export class CatalogoPeriodoComponent implements OnInit {
             }
           });
         }
-        if(tipo == 2){  //Crear nuevo empleado
+        if(tipo == 2){  //Editar periodo
+          this.periodo_service.modificarPeriodo(this.periodo_generado)
+          .subscribe((object : any) => {
+            if(object.ok){
+              Swal.fire("Buen trabajo","El periodo se ha modificado con éxito","success");
+            }
+          });
         }
         if(tipo == 3){
         }
@@ -367,6 +393,7 @@ export class CatalogoPeriodoComponent implements OnInit {
   }
 
   openModal() {
+    this.periodo_generado.periodo_array = [];
     this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop'});
   }
 
