@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SistemaAdminComponent } from './sistema_super_admin.component';
 import { CatalogoUsuarioComponent } from './catalogo_usuario/catalogo_usuario.component';
 import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.component';
+import { CatalogoTopeConceptosComponent } from './catalogo_tope_conceptos/catalogo_tope_conceptos.component';
 import { ProcedimientoUsuarioComponent } from './procedimiento_usuario/procedimiento_usuario.component';
 import { WebcamModule } from 'ngx-webcam';
 import { ProcedimientoEmpresaComponent } from './procedimiento_empresa/procedimiento_empresa.component';
@@ -23,6 +24,7 @@ import {MatSelectModule} from '@angular/material/select';
     CatalogoClienteComponent,
     CatalogoUsuarioComponent,
     CatalogoEmpresaComponent,
+    CatalogoTopeConceptosComponent,
     ProcedimientoUsuarioComponent,
     ProcedimientoEmpresaComponent
   ],

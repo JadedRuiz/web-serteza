@@ -13,6 +13,7 @@ import { SucursalService } from 'src/app/services/Sucursal/sucursal.service';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import Swal from 'sweetalert2';
 import { DomSanitizer } from '@angular/platform-browser';
+import { SERVER_API } from 'src/config/config';
 
 @Component({
   selector: 'app-catalogo-empleado',
@@ -255,6 +256,11 @@ export class CatalogoEmpleadoComponent implements OnInit {
   }
   getDatos(){
 
+  }
+  consumeReporte(id_empleado : number, tipo : number){
+    if(tipo == 1){
+      window.open(SERVER_API+"reporte/reporteEmpleado/"+id_empleado+"/"+this.empresa);
+    }
   }
   altaCandidatoAEmpleado(){
     if(this.empleado.aplicarsueldoneto){

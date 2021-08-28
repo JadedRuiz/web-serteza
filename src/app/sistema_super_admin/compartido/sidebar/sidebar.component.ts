@@ -52,7 +52,8 @@ export class SidebarComponent implements OnInit {
         submenu : [
           {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08  text-orange'},
           {path: 'catalogo_empresa', title: 'Empresas', icon: 'ni-building  text-orange'},
-          {path: 'catalogo_cliente', title: 'Clientes', icon: 'ni-collection  text-orange'}
+          {path: 'catalogo_cliente', title: 'Clientes', icon: 'ni-collection  text-orange'},
+          {path: 'catalogo_tope_conceptos', title: 'Tope conceptos', icon: 'ni-collection  text-orange'}
         ]
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",

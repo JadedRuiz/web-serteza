@@ -9,6 +9,8 @@ import { NominaService } from 'src/app/services/Nomina/Nomina.service';
 import Swal from 'sweetalert2';
 import { SERVER_API } from 'src/config/config';
 import * as XLSX from 'ts-xlsx';
+import { SucursalService } from 'src/app/services/Sucursal/sucursal.service';
+import { DepartamentoService } from 'src/app/services/Departamento/Departamento.service';
 
 @Component({
   selector: 'app-procedimiento-captura',
@@ -18,17 +20,20 @@ import * as XLSX from 'ts-xlsx';
 export class ProcedimientoCapturaComponent implements OnInit {
 
   public id_nomina = parseInt(window.sessionStorage.getItem("tipo_nomina")+"");
+  public tipo_nomina = -1;
   public empresa_seleccionado = parseInt(window.sessionStorage["empresa"]);
   public usuario_logueado = window.sessionStorage.getItem("user");
   public id_periodo = 1;
   public nominas : any;
   public cat_conceptos : any;
+  public conceptos_empleado : any;
   public band_editar = false;
   public modal : any;
   public modal_visual : any;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   @ViewChild('visualizar', {static: false}) contenidoDelModalVisual : any;
   myControl = new FormControl();
+  public empleados_captura : any;
   public empleados : any;
   public config = [true,true,true];
   public tipo_modal = 1;
@@ -48,18 +53,28 @@ export class ProcedimientoCapturaComponent implements OnInit {
   arrayBuffer:any;
   file:any;
   data : any;
+  public sucursales : any;
+  public tipo_sucursal = -1;
+  public departamentos : any;
+  public tipo_depa = -1;
+  public palabra = "";
 
   constructor(
     private modalService: NgbModal,
     public nomina_service : NominaService,
     private concepto_service : ConceptoService,
-    private empleado_service : EmpleadoService
+    private empleado_service : EmpleadoService,
+    private sucursal_service : SucursalService,
+    private departamento_service : DepartamentoService
   ) { }
 
   ngOnInit(): void {
     this.obtenerNomina();
-    this.mostrarEmpleadosParaIncidencias();
+    this.obtenerSucursales();
+    this.obtenerDepartamentos();
+    this.mostrarEmpleadosParaIncidencias(1);
   }
+
   obtenerNomina(){
     this.nominas = [];
     let json = {
@@ -78,6 +93,33 @@ export class ProcedimientoCapturaComponent implements OnInit {
     });
   }
 
+  obtenerSucursales(){
+    this.sucursales = [];
+    this.sucursal_service.obtenerSucursales(this.empresa_seleccionado)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.sucursales = object.data;
+      }
+    });
+  }
+
+  obtenerDepartamentos(){
+    this.departamentos = [];
+    let json = {
+      taken : 999,
+      pagina : 0,
+      status : 1,
+      palabra : "",
+      id_empresa : this.empresa_seleccionado
+    };
+    this.departamento_service.obtenerDepartamentos(json)
+    .subscribe((object  :any) => {
+      if(object.ok){
+        this.departamentos = object.data.registros;
+      }
+    });
+  }
+
   adminConcepto(id : any){
     this.tipo_modal = 1;
     this.empleado_seleccionado = id;
@@ -88,25 +130,40 @@ export class ProcedimientoCapturaComponent implements OnInit {
 
   busqueda(value : any){
     this.empleados = [];
-    let json = {
-      id_empresa : this.empresa_seleccionado,
-      id_status : -1,
-      nombre_candidato : value
-    };
+    if(value.length > 0){
+      this.palabra = value;
+      this.mostrarEmpleadosParaIncidencias(2);
+    }else{
+      this.palabra = "";
+    }
   }
 
   visualizarEmpleado(id : any){
     this.openModalVisualizar();
   }
 
-  mostrarEmpleadosParaIncidencias(){
+  mostrarEmpleadosParaIncidencias(tipo : number){
+    if(tipo == 1){
+      this.empleados_captura = [];
+    }
     let json = {
-      id_nomina : this.id_nomina,
-      id_empresa : this.empresa_seleccionado
+      id_nomina : this.tipo_nomina,
+      id_empresa : this.empresa_seleccionado,
+      id_sucursal : this.tipo_sucursal,
+      id_departamento : this.tipo_depa,
+      palabra : this.palabra,
+      tipo : tipo
     };
     this.empleado_service.obtenerEmpleadoPorTipoNomina(json)
     .subscribe((object : any) =>{
-      this.incidencias.incidencias = object.data;
+      if(object.ok){
+        if(tipo == 1){
+          this.empleados_captura = object.data;
+        }
+        if(tipo == 2){
+          this.empleados = object.data;
+        }
+      }
     });
   }
 
@@ -142,10 +199,50 @@ export class ProcedimientoCapturaComponent implements OnInit {
     object_empleado.concepto_seleccionado = event.value;
   }
 
+  mostrarConceptosEmpleado(id : any){
+    this.conceptos_empleado = [];
+    this.empleado_seleccionado = id;
+    this.concepto_service.obtenerConceptosPorIdEmpleado(id,this.empresa_seleccionado)
+    .subscribe((object : any) => {
+      if(object.ok){
+        object.data.conceptos_automaticos.forEach((element : any) => {
+          this.conceptos_empleado.push({
+            id_concepto : element.id_concepto,
+            concepto : element.concepto,
+            complemento : 0,
+            unidades : "",
+            importe : "",
+            saldo : "",
+            automatico : true
+          });
+        });
+        object.data.conceptos_empleado.forEach((element : any) => {
+          this.conceptos_empleado.push({
+            id_concepto : element.id_concepto,
+            concepto : element.concepto,
+            complemento : 0,
+            unidades : element.unidad,
+            importe : element.importe,
+            saldo : element.saldo,
+            automatico : false
+          });
+        });
+      }
+    });
+  }
+
   getEmpleado(event : any){
-    // this.concepto_seleccionado.id_empleado = parseInt(event.option.id);
-    // this.band_botones = true;
-    // this.concepto_seleccionado.empleado = event.option.value;
+    this.empleado_seleccionado = parseInt(event.option.id);
+    this.editar(parseInt(event.option.id));
+    this.myControl.reset("");
+    this.empleados = [];
+  }
+
+  nuevoConcepto(){
+    this.tipo_modal = 1;
+    this.mostrarConceptos();
+    this.concepto_diabled = false;
+    this.openModal();
   }
 
   agregarConceptoAEmpleado(){
@@ -159,13 +256,17 @@ export class ProcedimientoCapturaComponent implements OnInit {
   }
 
   editar(id : any){
-    let object_empleado = this.incidencias.incidencias.filter((x : any) => x.id_empleado === parseInt(id))[0];
-    this.empleado_seleccionado = id;
-    this.tipo_modal = 2;
-    this.concepto_service.obtenerConceptoPorIdMovNomina(object_empleado.concepto_seleccionado)
+    this.mostrarConceptosEmpleado(id);
+    this.openModalVisualizar();
+  }
+  
+  editarConcepto(id : any){
+    this.concepto_seleccionado = id;
+    this.concepto_service.obtenerConceptoPorIdMovNomina(id)
     .subscribe((object : any) =>{
       if(object.ok){
         this.mostrarConceptos();
+        this.tipo_modal = 2;
         this.concepto_diabled = true;
         let concept = object.data[0];
         this.concepto.id_concepto = concept.id_concepto;
@@ -194,9 +295,8 @@ export class ProcedimientoCapturaComponent implements OnInit {
   }
 
   modificarConcepto(){
-    let object_empleado = this.incidencias.incidencias.filter((x : any) => x.id_empleado === this.empleado_seleccionado)[0];
     let json = {
-      id_concepto : object_empleado.concepto_seleccionado,
+      id_concepto : this.concepto_seleccionado,
       usuario : this.usuario_logueado,
       concepto : this.concepto
     };
@@ -341,6 +441,7 @@ export class ProcedimientoCapturaComponent implements OnInit {
             if(object.ok){
               //Notificar
               Swal.fire("Buen trabajo",object.data.message,"success");
+              this.mostrarConceptosEmpleado(this.empleado_seleccionado);
               this.cerrarModal();
               //Actualizar los conceptos del empleado
               let object_empleado = this.incidencias.incidencias.filter((x : any) => x.id_empleado === parseInt(json.id_empleado))[0];
@@ -355,6 +456,7 @@ export class ProcedimientoCapturaComponent implements OnInit {
           .subscribe((object : any) => {
             if(object.ok){
               Swal.fire("Buen trabajo",object.data,"success");
+              this.mostrarConceptosEmpleado(this.empleado_seleccionado);
               this.cerrarModal();
             }else{
               Swal.fire("Ha ocurrido un error",object.data,"error");

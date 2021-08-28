@@ -123,4 +123,15 @@ export class ConceptoService {
       return throwError(err);
     }));
   }
+
+  obtenerConceptosPorIdEmpleado(id_empleado : any, id_empresa : any){
+    let url = SERVER_API+"concepto/obtenerConceptosPorIdEmpleado/"+id_empleado+"/"+id_empresa;
+    return this.http.get(url)
+    .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        return throwError(err);
+      }));
+  }
 }
