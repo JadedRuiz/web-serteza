@@ -51,8 +51,8 @@ export class SidebarComponent implements OnInit {
   }
   pintarMenu(){
     this.menuItems = [
-      { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
-      { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
+      { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_sidebar", band: false, tipo : ""},
+      { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"catalogo_sidebar", band: true, tipo : "collapse",
         submenu : [
           {path: 'catalogo_empleado', title: 'Mis empleados', icon: 'ni-circle-08 text-orange'},
           {path: 'catalogo_concepto', title: 'Mis conceptos', icon: 'ni-box-2 text-orange'},
@@ -65,7 +65,7 @@ export class SidebarComponent implements OnInit {
 
         ]
       },
-      { path: '#', title: 'Procedimientos', icon: 'ni-app text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
+      { path: '#', title: 'Procedimientos', icon: 'ni-app text-yellow', id:'procesos_sidebar', band: true, tipo : "collapse",
         submenu : [
           {path: 'procedimiento_solicitudes', title: 'Aplicar solicitudes de Recursos Humanos', icon: 'ni-button-play text-yellow'},
           {path: 'procedimiento_captura', title: 'Captura de incidencias', icon: 'ni-ruler-pencil text-yellow'},
@@ -73,14 +73,14 @@ export class SidebarComponent implements OnInit {
           {path: 'procedimiento_cierre', title: 'Cierre de nómina', icon: 'ni-fat-remove text-yellow'},
         ]
       },
-      { path: '#', title: 'Herramientas', icon: 'ni-settings text-purple', id:'rh_herramientas', band: true, tipo : "collapse",
+      { path: '#', title: 'Herramientas', icon: 'ni-settings text-purple', id:'herramientas_sidebar', band: true, tipo : "collapse",
         submenu : [
           {path: 'procedimiento_contratacion', title: 'Exportar movimientos IDSE/SUA', icon: 'ni-bold-up text-purple'},
           {path: 'procedimiento_modificacion', title: 'Dispersión de bancos', icon: 'ni-shop text-purple'},
           {path: 'procedimiento_baja', title: 'Activar empleado', icon: 'ni-key-25 text-purple'},
         ]
       },
-      { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: true, tipo : "collapse",
+      { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'reportes_sidebar', band: true, tipo : "collapse",
         submenu : [
           {path: 'reporte_general', title: 'Reporte de nómina', icon: 'ni-book-bookmark text-green'},
           {path: 'reporte_general', title: 'Cifras de control', icon: 'ni-book-bookmark text-green'},
@@ -91,6 +91,7 @@ export class SidebarComponent implements OnInit {
     }
     ];
   }
+
   mostrarLogo(){
     if(window.sessionStorage.getItem("empresa") != null){
       let id_empresa = parseInt(window.sessionStorage.getItem("empresa")+"");
