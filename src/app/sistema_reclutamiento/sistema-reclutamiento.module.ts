@@ -20,12 +20,18 @@ import {MatSelectModule} from '@angular/material/select';
 import { MatNativeDateModule } from '@angular/material/core'; 
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { CompartidoModuleGeneral } from 'src/app/compartido/compartido.module';
+import { CatalogoDepartamentoComponent } from './catalogo_departamento/catalogo_departamento.component';
+import { CatalogoUsuarioComponent } from './catalogo_usuario/catalogo_usuario.component';
+import { ProcedimientoCapturaComponent } from './procedimiento_captura/procedimiento_captura.component';
 
 @NgModule({
   declarations: [
     SistemaReclutamientoComponent,
     DashboardComponent,
     CatalogoCandidatosComponent,
+    CatalogoDepartamentoComponent,
+    CatalogoUsuarioComponent,
+    ProcedimientoCapturaComponent,
     ProcedimientoContratacionComponent,
     ProcedimientoBajaComponent,
     ProcedimientoModificacionComponent

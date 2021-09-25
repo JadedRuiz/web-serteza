@@ -61,7 +61,8 @@ export class LoginComponent implements OnInit {
             for(let i=0; i<resp.data.info_usuario.sistemas.length; i++){
               let json = {
                 sistema : resp.data.info_usuario.sistemas[i].sistema+"",
-                id : resp.data.info_usuario.sistemas[i].id+""
+                id : resp.data.info_usuario.sistemas[i].id+"",
+                id_perfil : resp.data.info_usuario.sistemas[i].id_perfil
               };
               this.sistemas.push(json);
             } 
@@ -69,7 +70,8 @@ export class LoginComponent implements OnInit {
           }else{
             this.sistema_elegido = resp.data.info_usuario.sistemas[0].id;
             window.sessionStorage["sistema"] = this.sistema_elegido;
-            this.eleccion(this.sistema_elegido);
+            window.sessionStorage["perfil"] = resp.data.info_usuario.sistemas[0].id_perfil;
+            this.eleccion(this.sistema_elegido,resp.data.info_usuario.sistemas[0].id_perfil,1);
           }
         }else{
           Swal.fire("Ha ocurrio un error",resp.data,"error");
@@ -77,7 +79,7 @@ export class LoginComponent implements OnInit {
       });      
     }
   }
-  eleccion(id : any){
+  eleccion(id : any,id_perfil : number, tipo : any){
     this.sistema_elegido = id;
     window.sessionStorage["sistema"] = this.sistema_elegido;
     if(this.sistema_elegido == "5"){
@@ -101,7 +103,7 @@ export class LoginComponent implements OnInit {
             this.openModal();
           }else{
             window.sessionStorage["empresa"] = object.data[0].id_empresa;
-            this.redirigirPrincipal(object.data[0].id_empresa);
+            this.redirigirPrincipal(object.data[0].id_empresa,1);
           }
         }else{
           Swal.fire("Ha ocurrido un error","Este usuario no cuenta empresas para administrar","error");
@@ -109,7 +111,13 @@ export class LoginComponent implements OnInit {
       });
     }
     if(this.sistema_elegido == "2"){
-      this.closeModal();
+      if(id_perfil == 0 || id_perfil == null){
+        Swal.fire("Ha ocurrido un error","Este usuario no cuenta con un perfil asignado","error");
+        return;
+      }
+      if(tipo != 1){
+        this.closeModal();
+      }
       this.clientes = [];
       this.cliente_service.obtenerClientePorIdUsuario(window.sessionStorage["user"])
       .subscribe( (object : any) => {
@@ -125,7 +133,7 @@ export class LoginComponent implements OnInit {
             this.openModal();
           }else{
             window.sessionStorage["cliente"] = object.data[0].id_cliente;
-            this.redirigirPrincipal(object.data[0].id_cliente);
+            this.redirigirPrincipal(object.data[0].id_cliente,1);
           }
         }else{
           Swal.fire("Ha ocurrido un error","Este usuario no cuenta con clientes","error");
@@ -139,7 +147,7 @@ export class LoginComponent implements OnInit {
   closeModal(){
     this.modal.close();
   }
-  redirigirPrincipal(id : any){
+  redirigirPrincipal(id : any, tipo : any){
     if(this.sistema_elegido == "1"){
       window.sessionStorage["empresa"] = id;
       this.closeModal();
@@ -147,7 +155,9 @@ export class LoginComponent implements OnInit {
     }
     if(this.sistema_elegido == "2"){
       window.sessionStorage["cliente"] = id;
-      this.closeModal();
+      if(tipo != 1){
+        this.closeModal();
+      }
       this.router.navigate(["sistema_reclutamiento/dashboard"]);
     }
     if(this.sistema_elegido == "3"){

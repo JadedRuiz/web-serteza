@@ -51,8 +51,25 @@
                             </mat-form-field>
                         </div>
                         <div class="col-lg-3 col-sm-12">
-                            <a class="btn btn-info float-right" (click)="nuevoEmpleado()" title="Nuevo empleado"><i class="fas fa-user-plus text-white"></i></a>
-                            <a class="btn btn-gray float-right mr-2" (click)="consumeReporte(1,1)" title="Imprimir reporte general"><i class="fas fa-print"></i></a>
+                          <div ngbDropdown class="d-inline-block float-right">
+                            <button class="btn btn-info" id="dropdownBasic1" ngbDropdownToggle>
+                              <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                              <button ngbDropdownItem (click)="nuevoEmpleado()">
+                                <i class="fas fa-user-plus"></i>
+                                Nuevo empleado
+                              </button>
+                              <button ngbDropdownItem (click)="consumeReporte(1,1)">
+                                <i class="fas fa-print"></i>
+                                Reporte de empleados
+                              </button>
+                              <button ngbDropdownItem (click)="openModalImporte()">
+                                <i class="fas fa-file-excel"></i>
+                                Importar movimientos
+                              </button>
+                            </div>
+                          </div>
                         </div>
                     </div>
                     <div class="row">
@@ -76,11 +93,12 @@
                                           </div>
                                         </td>
                                         <td colspan="1" style="vertical-align: middle;">{{empleado.nombre}}</td>
-                                        <td *ngIf="empleado.id_status == 1" colspan="1" style="vertical-align: middle;">Activo</td>
-                                        <td *ngIf="empleado.id_status == 2" colspan="1" style="vertical-align: middle;">Baja</td>
+                                        <td *ngIf="empleado.id_estatus == 1" colspan="1" style="vertical-align: middle;">Activo</td>
+                                        <td *ngIf="empleado.id_estatus == 2" colspan="1" style="vertical-align: middle;">Baja</td>
                                         <td colspan="1" style="width: 20%;vertical-align: middle;" class="text-center">
-                                            <a title="Editar" (click)="editar(empleado.id_empleado)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
                                             <a title="Reporte" style="cursor: pointer;" class="btn btn-gray btn-sm" (click)="consumeReporte(empleado.id_empleado,1)"><img src="./assets/iconos/reporte.svg" style="width: 14px;"></a>
+                                            <a title="Editar" (click)="editar(empleado.id_empleado)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                                            <a title="Baja" (click)="bajaEmpleado(empleado.id_empleado)" style="cursor: pointer;" class="btn btn-danger btn-sm"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -96,23 +114,23 @@
                                 <div class="row">
                                     <div class="col-lg-2 col-sm-12"></div>
                                     <div class="col-lg-8 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
-                                        <nav *ngIf="mostrar_pagination" aria-label="Page navigation example">
-                                            <ul class="pagination">
-                                              <li class="page-item" *ngIf="previous">
-                                                <a class="page-link" href="#" aria-label="Previous">
-                                                  <span aria-hidden="true">&laquo;</span>
-                                                  <span class="sr-only">Previous</span>
-                                                </a>
-                                              </li>
-                                              <li *ngFor="let pagina of paginas" class="page-item {{pagina.active}}" (click)="irPagina(pagina.valor_pagina)"><a class="page-link" style="cursor: pointer;">{{pagina.numero}}</a></li>
-                                              <li class="page-item" *ngIf="next">
-                                                <a class="page-link" href="#" aria-label="Next">
-                                                  <span aria-hidden="true">&raquo;</span>
-                                                  <span class="sr-only">Next</span>
-                                                </a>
-                                              </li>
-                                            </ul>
-                                          </nav>
+                                      <nav *ngIf="mostrar_pagination" aria-label="Page navigation example">
+                                        <ul class="pagination">
+                                          <li class="page-item" *ngIf="previous">
+                                            <a class="page-link" href="#" aria-label="Previous">
+                                              <span aria-hidden="true">&laquo;</span>
+                                              <span class="sr-only">Previous</span>
+                                            </a>
+                                          </li>
+                                          <li *ngFor="let pagina of paginas" class="page-item {{pagina.active}}" (click)="irPagina(pagina.valor_pagina)"><a class="page-link" style="cursor: pointer;">{{pagina.numero}}</a></li>
+                                          <li class="page-item" *ngIf="next">
+                                            <a class="page-link" href="#" aria-label="Next">
+                                              <span aria-hidden="true">&raquo;</span>
+                                              <span class="sr-only">Next</span>
+                                            </a>
+                                          </li>
+                                        </ul>
+                                      </nav>
                                     </div>
                                     <div class="col-lg-2 col-sm-12" style="text-align: end;">
                                       <mat-form-field class="w-100">
@@ -483,7 +501,18 @@
         <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success" (click)="modificarEmpleado()" id="guardar">Guardar</button>
     </div>
 </ng-template>
-
+<ng-template #baja let-c="close" let-d="dismiss" class="modal-lg">
+  <div class="modal-header">
+      <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Baja del empleado</h2>
+  </div>
+  <div class="modal-body">
+      
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="cerrarModalBaja()">Cerrar</button>
+      <button *ngIf="candidato.id_candidato == 0 && tipo_modal == 1" type="button" class="btn btn-success" (click)="altaEmpleado()" id="guardar">Guardar</button>
+  </div>
+</ng-template>
 <ng-template #modal_camera let-c="close" let-d="dismiss">
   <div class="modal-header">
       <h2 class="modal-title" id="tituloModal">Tomar fotografia</h2>
@@ -520,5 +549,54 @@
   <div class="modal-footer">
       <button type="button" class="btn btn-warning" (click)="cerrarModalCamera()">Cerrar</button>
       <button *ngIf="isCameraExist" type="button" class="btn btn-success" (click)="takeSnapshot()">Tomar foto</button>
+  </div>
+</ng-template>
+<ng-template #importe let-c="close" let-d="dismiss" class="modal-lg">
+  <div class="modal-header">
+      <h2 class="modal-title" id="tituloModal">Importar movimientos</h2>
+  </div>
+  <div class="modal-body">
+    <div class="form">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <input type="file" id="file_import" class="form-control" (change)="subirExcel($event)" placeholder="Importar excel" accept=".xlsx">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <small class="text-warning">Descargue el formato de movimientos 
+              <div ngbDropdown class="d-inline-block">
+                <a class="text-link" style="cursor: pointer;" id="dropdownBasic1" ngbDropdownToggle>aquí</a>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                  <button ngbDropdownItem (click)="descargarFormato(1)"><i class="fas fa-user-edit"></i> Formato de alta y modificación</button>
+                  <button ngbDropdownItem (click)="descargarFormato(2)"><i class="fas fa-user-minus"></i> Formato de bajas</button>
+                </div>
+              </div>
+            </small>
+          </div>
+        </div>
+        <div *ngIf="space_bar" class="row mt-2">
+          <div class="col-12">
+            <small class="text-info">Importando...</small>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" [style.width]="porcentaje+'%'" [attr.aria-valuenow]="porcentaje" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <small class="text-info">Guardando {{empleado_bar}}/{{total_bar}}</small>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div *ngIf="errores.length > 0" class="errores" style="overflow-y: scroll;height: 150px;">
+              <p class="text-danger my-0">Errores : </p>
+              <p class="text-danger my-0" *ngFor="let error of errores">{{error}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="cerrarModalImporte()">Cerrar</button>
   </div>
 </ng-template>

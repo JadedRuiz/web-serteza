@@ -383,7 +383,8 @@ export class CatalogoClienteComponent implements OnInit {
       let archivos = event.target.files[0];
       let extension = archivos.name.split(".")[1];
       this.fotografia.extension = extension;
-      if(extension == "jpg" || extension == "png"){
+      console.log(extension); 
+      if(extension == "jpg" || extension == "png" || extension == "jpeg"){
         this.convertirImagenAB64(archivos).then( respuesta => {
           let img = "data:image/"+extension+";base64, "+respuesta;
           this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);

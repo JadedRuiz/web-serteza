@@ -137,17 +137,17 @@
       <div class="form-row">
         <div class="form-group col-md-12">
           <div *ngIf="tipo_arreglo == 0" class="list-group">
-            <a *ngFor="let sistema of sistemas" style="cursor: pointer;" (click)="eleccion(sistema.id)" class="list-group-item list-group-item-action" aria-current="true">
+            <a *ngFor="let sistema of sistemas" style="cursor: pointer;" (click)="eleccion(sistema.id,sistema.id_perfil,2)" class="list-group-item list-group-item-action" aria-current="true">
               {{sistema.sistema}}
             </a>
           </div>
           <div *ngIf="tipo_arreglo == 1" class="list-group">
-            <a *ngFor="let empresa of empresas" style="cursor: pointer;" (click)="redirigirPrincipal(empresa.id_empresa)" class="list-group-item list-group-item-action" aria-current="true">
+            <a *ngFor="let empresa of empresas" style="cursor: pointer;" (click)="redirigirPrincipal(empresa.id_empresa,2)" class="list-group-item list-group-item-action" aria-current="true">
               {{empresa.empresa}}
             </a>
           </div>
           <div *ngIf="tipo_arreglo == 2" class="list-group">
-            <a *ngFor="let cliente of clientes" style="cursor: pointer;" (click)="redirigirPrincipal(cliente.id_cliente)" class="list-group-item list-group-item-action" aria-current="true">
+            <a *ngFor="let cliente of clientes" style="cursor: pointer;" (click)="redirigirPrincipal(cliente.id_cliente,2)" class="list-group-item list-group-item-action" aria-current="true">
               {{cliente.cliente}}
             </a>
           </div>

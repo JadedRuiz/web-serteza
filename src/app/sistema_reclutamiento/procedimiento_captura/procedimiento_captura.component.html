@@ -1,0 +1,217 @@
+<div class="header {{color}}" style="height: 250px;">
+  <div class="container-fluid">
+  </div>
+</div>
+<div class="container-fluid mt--9">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card shadow" style="height: 550px;">
+        <div class="card-header border-0">
+            <div class="row align-items-center">
+                <div class="col">
+                <h3 class="mb-0">CAPTURA DE INCIDENCIAS</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="form">
+              <div class="form-row">
+                <div class="form-group col-lg-6 col-sm-6">
+                  <mat-form-field class="w-100">
+                    <mat-label>Buscar empleado</mat-label>
+                    <input #input
+                           type="text"
+                           placeholder="Buscar..."
+                           (keyup)="busqueda(input.value)"
+                           aria-label="Buscar empleado"
+                           matInput
+                           [formControl]="myControl"
+                           [matAutocomplete]="auto">
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getEmpleado($event)'>
+                      <mat-option *ngFor="let empleado of empleados" [value]="empleado.nombre" [id]="empleado.id_empleado">
+                        {{empleado.nombre}}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </div>
+                <div class="form-group col-lg-2 col-sm-12">
+                  <mat-form-field class="w-100" id="tipo">
+                    <mat-label>Tipo de sucursal</mat-label>
+                    <mat-select  [(ngModel)]="tipo_sucursal" (selectionChange)="mostrarEmpleadosParaIncidencias(1)">
+                      <mat-option [value]="-1">Todos</mat-option>
+                      <mat-option *ngFor="let sucursal of sucursales" [value]="sucursal.id_sucursal" [id]="sucursal.sucursal">
+                        {{sucursal.sucursal}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="form-group col-lg-2 col-sm-12">
+                  <mat-form-field class="w-100" id="tipo">
+                    <mat-label>Deparmento</mat-label>
+                    <mat-select [(ngModel)]="tipo_depa" (selectionChange)="mostrarEmpleadosParaIncidencias(1)">
+                      <mat-option [value]="-1">Todos</mat-option>
+                      <mat-option *ngFor="let departamento of departamentos" [value]="departamento.id_departamento">
+                        {{departamento.departamento}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="form-group col-lg-2 col-sm-12">
+                  <a class="btn btn-success" title="Descargar formato excel" (click)="descargarExcel()"><i class="fas fa-file-download"></i></a>
+                  <a class="btn btn-warning" (click)="subirExcel()" title="Importar formato excel"><i class="fas fa-file-upload"></i>
+                  </a>
+                  <input type="file" id="subir" style="display: none;" (change)="incomingfile($event)" accept=".xlsx">
+                </div>
+                <!-- <div class="form-group col-lg-4 col-sm-12">
+                  <a *ngIf="band_botones" class="btn btn-info" (click)="guardar()" title="Capturar incidencia"><img src="./assets/iconos/agregar.svg" style="width: 24px;"></a>
+                </div> -->
+              </div>
+            </div>
+              
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th colspan="1" class="text-center" style="width: auto;vertical-align: middle;">Folio</th>
+                    <th colspan="1" style="width: auto;vertical-align: middle;">Empleado</th>
+                    <th colspan="1" style="width: auto;vertical-align: middle;">Cliente</th>
+                    <th colspan="1" style="width: auto;vertical-align: middle;">Sucursal</th>
+                    <th colspan="1" style="width: auto;vertical-align: middle;">Departamento</th>
+                    <th colspan="1" style="width: auto;vertical-align: middle;">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="empleados_captura.length > 0; else pintaVacio">
+                  <tr *ngFor="let incidencia of empleados_captura">
+                      <td style="vertical-align: middle;cursor: pointer;" class="text-center" (click)="editar(incidencia.id_empleado)">{{incidencia.id_empleado}}</td>
+                      <td style="vertical-align: middle;cursor: pointer;" (click)="editar(incidencia.id_empleado)">
+                        <div class="img mr-2" style="height: 40px; width: 60px;display: inline-block;">
+                          <img [src]="incidencia.fotografia" alt="" style="width: 100%; height: 100%;">
+                        </div>
+                        {{incidencia.nombre}}
+                      </td>
+                      <td style="width: auto;vertical-align: middle;cursor: pointer;" (click)="editar(incidencia.id_empleado)">{{incidencia.cliente}}</td>
+                      <td style="width: auto;vertical-align: middle;cursor: pointer;" (click)="editar(incidencia.id_empleado)">{{incidencia.sucursal}}</td>
+                      <td style="width: auto;vertical-align: middle;cursor: pointer;" (click)="editar(incidencia.id_empleado)">{{incidencia.departamento}}</td>
+                      <!-- <td style="vertical-align: middle;width: auto;">
+                        <mat-form-field class="w-90 mr-1" id="tipo">
+                          <mat-label>Concepto</mat-label>
+                          <mat-select  (selectionChange)="mostrarAcciones(incidencia.id_empleado,$event)">
+                            <mat-option *ngIf="incidencia.conceptos.length == 0">Aún sin conceptos</mat-option>
+                            <mat-option *ngFor="let concep of incidencia.conceptos" [value]="concep.id_concepto">{{concep.concepto}}</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <button type="button" class="btn btn-info btn-circle btn-sm" title="Agregar concepto a empleado" (click)="adminConcepto(incidencia.id_empleado)"><i class="far fa-plus-square"></i></button>
+                        <a *ngIf="incidencia.editar" class="btn btn-yellow btn-sm" (click)="editar(incidencia.id_empleado)" title="Editar concepto"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                        <a *ngIf="incidencia.editar" class="btn btn-danger btn-sm" (click)="eliminar(incidencia.id_empleado)" title="Eliminar concepto"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
+                      </td> -->
+                      <td style="width: auto;vertical-align: middle;">
+                        <a class="btn btn-yellow btn-sm" (click)="editar(incidencia.id_empleado)" title="Administrar los conceptos del empleado"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                      </td>
+                  </tr>
+                </tbody>
+                <ng-template #pintaVacio>
+                  <tbody>
+                      <tr>
+                          <td colspan="6" class="text-center">No se cuentan con empleados para un captura de incidencias</td>
+                      </tr>
+                  </tbody>
+                </ng-template>
+              </table>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-header">
+      <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nuevo concepto</h2>
+      <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Editar concepto</h2>
+  </div>
+  <div class="modal-body">
+      <div class="form">
+        <div class="form-group row">
+          <label for="concepto" class="col-sm-3 col-form-label">Concepto</label>
+          <div class="col-sm-9">
+            <mat-form-field class="w-100" id="concepto">
+              <mat-select [(ngModel)]="concepto.id_concepto" (selectionChange)="mostrarConfig($event)" [disabled]="concepto_diabled">
+                  <mat-option *ngFor="let concepto_row of cat_conceptos" [value]="concepto_row.id_concepto">{{concepto_row.concepto}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="unidades" class="col-sm-3 col-form-label">Unidades</label>
+          <div class="col-sm-9">
+            <input type="text" [(ngModel)]="concepto.unidades" class="form-control" id="unidades" [disabled]="config[0]">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="importe" class="col-sm-3 col-form-label">Importe</label>
+          <div class="col-sm-9">
+            <input type="text" [(ngModel)]="concepto.importe" class="form-control" id="importe" [disabled]="config[1]">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="saldo" class="col-sm-3 col-form-label">Saldo</label>
+          <div class="col-sm-9">
+            <input type="text" [(ngModel)]="concepto.saldo" class="form-control" id="saldo" [disabled]="config[2]">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="ajustes" class="col-sm-3 col-form-label">Ajuste</label>
+          <div class="col-sm-9">
+            <input type="text" [(ngModel)]="concepto.ajuste" class="form-control" id="ajustes">
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+      <button *ngIf="tipo_modal == 1" class="btn btn-success" (click)="agregarConceptoAEmpleado()">Agregar</button>
+      <button *ngIf="tipo_modal == 2" class="btn btn-success" (click)="modificarConcepto()">Editar</button>
+  </div>
+</ng-template>
+
+<ng-template #visualizar let-c="close" let-d="dismiss">
+  <div class="modal-header">
+      <h2  class="modal-title" id="tituloModal">Captura lo conceptos del empleado</h2>
+  </div>
+  <div class="modal-body">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr class="text-center">
+              <th scope="1" class="text-center">Id</th>
+              <th scope="1" class="text-center">Unidades</th>
+              <th scope="1" class="text-left">Descripcion</th>
+              <th scope="1" class="text-center">Complemento</th>
+              <th scope="1" class="text-center">Importe</th>
+              <th scope="1" class="text-center">Saldo</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="conceptos_empleado.length > 0; else pintaVacioDos">
+            <tr *ngFor="let concepto of conceptos_empleado"  style="cursor:pointer;" title="Editar concepto" (click)=editarConcepto(concepto.id_concepto)>
+              <td>{{concepto.id_concepto}}</td>
+              <td class="text-center">{{concepto.unidades}}</td>
+              <td>{{concepto.concepto}}</td>
+              <td class="text-center">{{concepto.complemento}}</td>
+              <td class="text-center">{{concepto.importe}}</td>
+              <td class="text-center">{{concepto.saldo}}</td>
+            </tr>
+          </tbody>
+          <ng-template #pintaVacioDos>
+            <tbody>
+                <tr>
+                    <td colspan="6" class="text-center">Este empleado no cuenta con conceptos</td>
+                </tr>
+            </tbody>
+          </ng-template>
+        </table>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="cerrarModalVisualizar()">Cerrar</button>
+      <button type="button" class="btn btn-success" (click)="nuevoConcepto()">Nuevo</button>
+  </div>
+</ng-template>

@@ -14,6 +14,7 @@ import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import Swal from 'sweetalert2';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SERVER_API } from 'src/config/config';
+import * as XLSX from 'ts-xlsx';
 
 @Component({
   selector: 'app-catalogo-empleado',
@@ -68,6 +69,18 @@ export class CatalogoEmpleadoComponent implements OnInit {
   private trigger: Subject<void> = new Subject<void>();
   private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
   public tipo_modal = 1;
+  public modal_baja : any;
+  @ViewChild('baja', {static: false}) contenidoModalBaja : any;
+  public importe_empleados : any;
+  @ViewChild('importe', {static: false}) contenidoModalExcel : any;
+  arrayBuffer:any;
+  file:any;
+  data : any;
+  public space_bar = false;
+  public porcentaje = 0;
+  public total_bar = 0;
+  public empleado_bar = 0;
+  public errores = Array();
 
   constructor(
     private empleado_serice : EmpleadoService, 
@@ -97,7 +110,15 @@ export class CatalogoEmpleadoComponent implements OnInit {
     this.empleado_serice.obtenerEmpleadosPorEmpresa(json)
     .subscribe( (object : any) =>{
       if(object.ok){
-        this.empleados = object.data;
+        //Mostrar si los registros son mayores a los registros que se muestran
+        this.total_registros = object.data.total;
+        if(this.total_registros > this.taken){
+          this.mostrar_pagination = true;
+          this.paginar();
+        }else{
+          this.mostrar_pagination = false;
+        }
+        this.empleados = object.data.data;
       }
     });
   }
@@ -283,6 +304,9 @@ export class CatalogoEmpleadoComponent implements OnInit {
   altaEmpleado(){
     this.confirmar("Confirmación","¿Seguro que deseas agregar al empleado a esta empresa?","info",2,null);
   }
+  bajaEmpleado(id : number){
+    this.openModalBaja();
+  }
   confirmar(title : any ,texto : any ,tipo_alert : any,tipo : number, data : any){
     Swal.fire({
       title: title,
@@ -327,6 +351,98 @@ export class CatalogoEmpleadoComponent implements OnInit {
         }
       }
     });
+  }
+  descargarFormato(tipo : number){
+    if(tipo == 1){
+      location.href = SERVER_API+"excel/formatoEmpleados/"+this.empresa+"/"+this.id_nomina;
+    }
+    if(tipo == 2){
+      location.href = SERVER_API+"excel/formatoEmpleados/"+this.empresa+"/"+this.id_nomina;
+    }
+  }
+  subirExcel(event : any){
+    this.total_bar = 0;
+    this.empleado_bar = 0;
+    this.porcentaje = 0;
+    this.space_bar = true;
+    this.errores = [];
+    this.data = [];
+    this.file= event.target.files[0]; 
+    let fileReader = new FileReader();
+      fileReader.onload = (e : any) => {
+          this.arrayBuffer = fileReader.result;
+          var data = new Uint8Array(this.arrayBuffer);
+          var arr = new Array();
+          for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+          var bstr = arr.join("");
+          var workbook = XLSX.read(bstr, {type:"binary"});
+          var first_sheet_name = workbook.SheetNames[0];
+          var worksheet = workbook.Sheets[first_sheet_name];
+          // XLSX.utils.sheet_to_json(worksheet)
+          this.data = (XLSX.utils.sheet_to_json(worksheet, { header: 1}));
+          //Se arma el JSON
+          if(this.data[0][3] == "CONTROL DE ALTAS DE EMPLEADOS"){
+            for(let i=2;i<this.data.length;i++){
+              let json = {
+                tipo : 1,
+                usuario : this.usuario_logueado,
+                empresa : this.data[i][0],
+                cliente : this.data[i][1],
+                sucursal : this.data[i][2],
+                registro_patronal : 1,
+                nomina : this.data[i][4],
+                apellido_paterno : this.data[i][5],
+                apellido_materno : this.data[i][6],
+                nombre : this.data[i][7],
+                rfc : this.data[i][8],
+                curp : this.data[i][9],
+                numero_seguro : this.data[i][10],
+                fecha_ingreso : this.data[i][11],
+                puesto : this.data[i][12],
+                departamento : this.data[i][13],
+                cuenta : this.data[i][14],
+                sueldo_diario : this.data[i][15],
+                sueldo_integrado : this.data[i][16],
+                sueldo_complemento : this.data[i][17],
+                calle : this.data[i][18],
+                numero_interior : this.data[i][19],
+                numero_exterior : this.data[i][20],
+                cruzamiento_uno : this.data[i][21],
+                cruzamiento_dos : this.data[i][22],
+                colonia : this.data[i][23],
+                municipio : this.data[i][24],
+                estado : this.data[i][25],
+                codigo_postal : this.data[i][26],
+                telefono : this.data[i][27]
+              };
+              this.empleado_serice.cargaEmpleado(json)
+              .subscribe((object : any) =>{
+                if(!object.ok){
+                  this.errores.push(object.data);
+                }
+              });
+              this.barra_espera(this.data.length-2,i-1);
+              this.space_bar = false;
+              $("#file_import").val("");
+              this.mostrarEmpleados();
+            }
+          }else{
+            if(this.data[0][1] == "CONTROL DE BAJA DE EMPLEADOS"){
+              for(let i=2;i<this.data.length;i++){
+                this.barra_espera(this.data.length-2,i-1);
+              }
+            }else{
+              Swal.fire("Ha ocurrido un error","Formato no compatible","error");
+            }
+          }
+      }
+      fileReader.readAsArrayBuffer(this.file);
+  }
+  barra_espera(total : number,actual : number){
+    this.total_bar = total;
+    let unidad = 100/total;
+    this.empleado_bar = actual;
+    this.porcentaje = Math.round(actual*unidad);
   }
   insertarCandidato(arreglo : any){
     //Datos de direccion
@@ -525,5 +641,16 @@ export class CatalogoEmpleadoComponent implements OnInit {
   get nextWebcamObservable(): Observable<boolean | string> {
     return this.nextWebcam.asObservable();
   }
-  
+  openModalBaja() {
+    this.modal_baja = this.modalService.open(this.contenidoModalBaja,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+  }
+  cerrarModalBaja(){
+    this.modal_baja.close();
+  }
+  openModalImporte() {
+    this.importe_empleados = this.modalService.open(this.contenidoModalExcel,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+  }
+  cerrarModalImporte(){
+    this.importe_empleados.close();
+  }
 }

@@ -51,6 +51,7 @@
                         <tr>
                             <th scope="col">Folio</th>
                             <th scope="col">Nombre</th>
+                            <th scope="col">Empresa</th>
                             <th scope="col">Status</th>
                             <th scope="col" class="text-center">Acciones</th>
                         </tr>
@@ -59,6 +60,7 @@
                         <tr *ngFor="let usuario of usuarios">
                             <td colspan="1" style="vertical-align: middle;">{{usuario.folio}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{usuario.nombre}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{usuario.empresa}}</td>
                             <td colspan="1" style="vertical-align: middle;">{{usuario.status}}</td>
                             <td colspan="1" style="width: 20%;" class="text-center">
                                 <a title="Editar" (click)="editar(usuario.folio)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
@@ -185,15 +187,80 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <h5>Agregue los sistemas y perfiles al usuario</h5>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <mat-form-field class="w-100">
+                        <mat-label>Sistema</mat-label>
+                        <mat-select [(ngModel)]="sistema_option.id_sistema" name="sistema" (selectionChange)='setSistema($event)'>
+                            <mat-option *ngFor="let sistema of sistemas"  [value]="sistema.id_sistema"><span id="option{{sistema.id_sistema}}">{{sistema.sistema}}</span></mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-4">
+                    <mat-form-field class="w-100">
+                        <mat-label>Perfil</mat-label>
+                        <mat-select [(ngModel)]="sistema_option.id_perfil" name="perfil" (selectionChange)='setPerfil($event)'>
+                            <mat-option *ngFor="let perfil of perfiles" [value]="perfil.id_perfil"><span id="option{{perfil.id_perfil}}">{{perfil.perfil}}</span></mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-4">
+                    <mat-form-field class="w-100">
+                        <mat-label>Empresa</mat-label>
+                        <mat-select [(ngModel)]="sistema_option.id_empresa" name="empresa" (selectionChange)='setEmpresa($event)'>
+                            <mat-option *ngFor="let empresa of empresas" [value]="empresa.id_empresa"><span id="option{{empresa.id_empresa}}">{{empresa.empresa}}</span></mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-12 text-right">
+                    <a class="btn btn-success" (click)="agregarAUsuario()">Agregar</a>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th colspan="1">Sistema</th>
+                                    <th colspan="1">Perfil</th>
+                                    <th colspan="1">Empresa</th>
+                                    <th colspan="1">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngIf="sistemas_seleccionados.length > 0 else irElse">
+                                <tr *ngFor="let seleccion of sistemas_seleccionados">
+                                    <td>{{seleccion.sistema}}</td>
+                                    <td>{{seleccion.perfil}}</td>
+                                    <td>{{seleccion.empresa}}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning" (click)="eliminarAUsuario(seleccion.id_sistema)"><i class="fas fa-trash-alt"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <ng-template #irElse>
+                                <tbody>
+                                    <tr class="text-center">
+                                        <td colspan="3">Aún no se cuentan con sistemas/perfiles agregados</td>
+                                    </tr>
+                                </tbody>
+                            </ng-template>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="form-row">
+        <!-- <div class="form-row">
             <p>Seleccione los sistemas que administrará este usuario :</p>
             <div class="form-group col-12 m-auto">
                 <ul class="list-group">
                     <li *ngFor="let sistema of sistemas" id="sistema_{{sistema.id_sistema}}" (click)="seleccionar(sistema.id_sistema)" style="cursor:pointer;" class="list-group-item {{sistema.active}}">{{sistema.sistema}}</li>
                     </ul>
             </div>
-        </div>
+        </div> -->
         
         </form>
     </div>

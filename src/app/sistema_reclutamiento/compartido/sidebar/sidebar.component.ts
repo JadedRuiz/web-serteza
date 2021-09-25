@@ -29,6 +29,7 @@ export class SidebarComponent implements OnInit {
   public isCollapsed = true;
   public foto_empresa : any //
   public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
+  public perfil = parseInt(window.sessionStorage.getItem("perfil")+""); 
 
   constructor(
     private router: Router,
@@ -51,19 +52,43 @@ export class SidebarComponent implements OnInit {
    this.url_foto = window.sessionStorage["foto"];
   }
   pintarMenu(){
+    let catalogos = [];
+    let procesos = [];
+    if(this.perfil == 2 || this.perfil == 1){ //Admin, superadmin
+      catalogos.push(
+        {path: 'catalogo_usuario', title: 'Mis usuarios', icon: 'ni-circle-08  text-orange'},
+        {path: 'catalogo_departamento', title: 'Mis departamentos', icon: 'ni-archive-2  text-orange'},
+        {path: 'catalogo_candidato', title: 'Mis candidatos', icon: 'ni-badge text-orange'}
+      );
+      procesos.push(
+        {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17 text-yellow'},
+        {path: 'procedimiento_modificacion', title: 'Modificaciónes', icon: 'ni-curved-next text-yellow'},
+        {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove text-yellow'}
+      );
+    }
+    if(this.perfil == 4 || this.perfil == 2 || this.perfil == 1 ){ //Supervisor, admin, superadmin
+      catalogos.push(
+        {path: 'catalogo_capturas', title: 'Capturas', icon: 'ni-archive-2  text-orange'},
+      );
+      procesos.push(
+        {path: 'procedimiento_captura', title: 'Captura de incidencias', icon: 'ni-ruler-pencil text-yellow'}
+      );
+    }
+    if(this.perfil == 3){ //Gerente, admin, superadmin
+      catalogos.push(
+        {path: 'catalogo_capturas', title: 'Capturas', icon: 'ni-archive-2  text-orange'},
+      );
+      procesos.push(
+        {path: 'procedimiento_captura', title: 'Captura de incidencias', icon: 'ni-ruler-pencil text-yellow'}
+      );
+    }
     this.menuItems = [
       { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
-        submenu : [
-          {path: 'catalogo_candidato', title: 'Mis candidatos', icon: 'ni-badge text-orange'},
-        ]
+        submenu : catalogos
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
-        submenu : [
-          {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17 text-yellow'},
-          {path: 'procedimiento_modificacion', title: 'Modificaciónes', icon: 'ni-curved-next text-yellow'},
-          {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove text-yellow'},
-        ]
+        submenu : procesos
       },
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: true, tipo : "collapse",
         submenu : [

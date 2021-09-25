@@ -149,7 +149,7 @@
                             </div>
                         </div>
                         <img id="imagen_perfil" class="img-fluid" [src]="foto_user">
-                        <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
+                        <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg,.jpeg" (change)="cambiarImagen($event)">
                     </div>
                 </div>
                 <div class="col-lg-9 col-sm-12">
@@ -185,35 +185,88 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- <div class="form-row">
-            <div class="form-group col-4">
-                <p>Usuario : *</p>
-                <div class="input-group input-group-alternative">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
-                    </div>
-                    <input [(ngModel)]="usuario.usuario" name="usuario" class="form-control" placeholder="Usuario" type="text" required>
+            <div class="row">
+                <h5>Agregue los sistemas y perfiles al usuario</h5>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <mat-form-field class="w-100">
+                        <mat-label>Sistema</mat-label>
+                        <mat-select [(ngModel)]="sistema_option.id_sistema" name="sistema" (selectionChange)='setSistema($event)'>
+                            <mat-option *ngFor="let sistema of sistemas"  [value]="sistema.id_sistema"><span id="option{{sistema.id_sistema}}">{{sistema.sistema}}</span></mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-6">
+                    <mat-form-field class="w-100">
+                        <mat-label>Perfil</mat-label>
+                        <mat-select [(ngModel)]="sistema_option.id_perfil" name="perfil" (selectionChange)='setPerfil($event)'>
+                            <mat-option *ngFor="let perfil of perfiles" [value]="perfil.id_perfil"><span id="option{{perfil.id_perfil}}">{{perfil.perfil}}</span></mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-12 text-right">
+                    <a class="btn btn-success" (click)="agregarAUsuario()">Agregar</a>
                 </div>
             </div>
-            <div class="form-group col-4">
-                <p>Contraseña : *</p>
-                <div class="input-group input-group-alternative">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" style="cursor: pointer;" title="mostrar contraseña" (click)="mostrarPassword()"><i class="ni ni-lock-circle-open"></i></span>
+            <div class="row mt-1">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th colspan="1">Sistema</th>
+                                    <th colspan="1">Perfil</th>
+                                    <th colspan="1">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngIf="sistemas_seleccionados.length > 0 else irElse">
+                                <tr *ngFor="let seleccion of sistemas_seleccionados">
+                                    <td>{{seleccion.sistema}}</td>
+                                    <td>{{seleccion.perfil}}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning" (click)="eliminarAUsuario(seleccion.id_sistema)"><i class="fas fa-trash-alt"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <ng-template #irElse>
+                                <tbody>
+                                    <tr class="text-center">
+                                        <td colspan="3">Aún no se cuentan con sistemas/perfiles agregados</td>
+                                    </tr>
+                                </tbody>
+                            </ng-template>
+                        </table>
                     </div>
-                    <input [(ngModel)]="usuario.password" name="password" class="form-control" placeholder="Contraseña" [type]="show ? 'text' : 'password'" required>
-                  </div>
+                </div>
             </div>
-        </div> -->
-        <div class="form-row">
-            <p>Seleccione los sistemas que administrará este usuario :</p>
-            <div class="form-group col-12 m-auto">
+        </div>
+        <!-- <div class="form-row">
+            <p>Agregue los sistemas y perfiles al usuario</p>
+            <div class="col-6">
+                <mat-form-field class="w-100">
+                    <mat-label>Sistemas</mat-label>
+                    <mat-select [(ngModel)]="status" (selectionChange)="mostrarUsuarios()">
+                        <mat-option *ngFor="let sistema of sistemas" [value]="sistema.id_sistema">{{sistema.sistema}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-6">
+                <mat-form-field class="w-100">
+                    <mat-label>Perfiles</mat-label>
+                    <mat-select [(ngModel)]="status" (selectionChange)="mostrarUsuarios()">
+                        <mat-option [value]="2">Todos</mat-option>
+                        <mat-option [value]="1">Activos</mat-option>
+                        <mat-option [value]="0">Inactivos</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div> -->
+            <!-- <div class="form-group col-12 m-auto">
                 <ul class="list-group">
                     <li *ngFor="let sistema of sistemas" id="sistema_{{sistema.id_sistema}}" (click)="seleccionar(sistema.id_sistema)" style="cursor:pointer;" class="list-group-item {{sistema.active}}">{{sistema.sistema}}</li>
                     </ul>
-            </div>
-        </div>
+            </div> -->
+        <!-- </div> -->
         
         </form>
     </div>
