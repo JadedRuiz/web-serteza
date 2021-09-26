@@ -11,6 +11,7 @@ import { ContratoService } from 'src/app/services/Contrato/Contrato.service';
 import { SERVER_API } from 'src/config/config';
 import { FormControl, FormGroup } from '@angular/forms';
 import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
+import { SucursalService } from 'src/app/services/Sucursal/sucursal.service';
 
 
 @Component({
@@ -27,7 +28,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
   public bandera = [true, true, true];
   public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
-  public contrato = new Contrato(0,"",0,"",0,"",0,0,"",0,"","0","");
+  public contrato = new Contrato(0,"",0,"",0,0,"","",0,0,"",0,"","0","","");
   public contratos : any;
   public modal : any;
   public taken = 5;
@@ -52,6 +53,8 @@ export class ProcedimientoContratacionComponent implements OnInit {
   public candidatos : any;
   //Empresa
   public empresas : any;
+  //Sucursales
+  public sucursales : any;
   //Departamento
   public departamentos : any;
   //Puesto
@@ -73,7 +76,8 @@ export class ProcedimientoContratacionComponent implements OnInit {
     private departamento_service : DepartamentoService,
     private puesto_service : PuestoService,
     private contrato_service : ContratoService,
-    private usuario_service : UsuarioService
+    private usuario_service : UsuarioService,
+    private sucursal_service : SucursalService
   ) {
     this.modal = NgbModalRef;
    }
@@ -204,11 +208,29 @@ export class ProcedimientoContratacionComponent implements OnInit {
     });
   }
 
+  mostrarSucursales(id_empresa : any){
+    this.sucursales = [];
+    this.sucursal_service.obtenerSucursales(id_empresa)
+    .subscribe( (object : any) => {
+      if(object.ok){
+        this.sucursales = object.data;
+      }else{
+        Swal.fire("Ha ocurrido un error","No existen sucursales para esta empresa","info");
+      }
+    });
+  }
+  setSucursal(){
+    let valor = this.contrato.sucursal.split(" ")[1];
+    let object = this.sucursales.filter( (x : any) => x.id_sucursal === parseInt(valor))[0];
+    this.contrato.sucursal = object.sucursal;
+    this.contrato.id_sucursal = object.id_sucursal;
+  }
   mostrarDepartamentos(){
     let valor = this.contrato.empresa.split(" ")[1];
     let object = this.empresas.filter( (x : any) => x.id_empresa === parseInt(valor))[0];
     this.contrato.empresa = object.empresa;
-    this.contrato.id_empresa = object.id_empresa
+    this.contrato.id_empresa = object.id_empresa;
+    this.mostrarSucursales(object.id_empresa);
     this.departamentos = [];
     let json = {
       "taken" : 999,
@@ -228,7 +250,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
           });
         }
       }else{
-        this.departamentos = [];
+        Swal.fire("Ha ocurrido un error","No existen departamentos para esta empresa","info");
       }
     });
   }
@@ -259,6 +281,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
         }
       }else{
         this.puestos = [];
+        Swal.fire("Ha ocurrido un error","No existen puestos para este departamento","info");
       }
     });
   }
@@ -292,13 +315,13 @@ export class ProcedimientoContratacionComponent implements OnInit {
           });
           if(band_contrato){
             this.solicitud_contratos.push(this.contrato);
-            this.contrato = new Contrato(0,"",0,"",0,"",0,0,"",0,"","0","");
+            this.contrato = new Contrato(0,"",0,"",0,0,"","",0,0,"",0,"","0","","");
           }else{
             Swal.fire("Tenemos un problema","El candidato no puede repetirse","warning");
           }
          }else{
           this.solicitud_contratos.push(this.contrato);
-          this.contrato = new Contrato(0,"",0,"",0,"",0,0,"",0,"","0","");
+          this.contrato = new Contrato(0,"",0,"",0,0,"","",0,0,"",0,"","0","","");
          }
        }else{
         Swal.fire("Tenemos un problema","Primero llena los campos requeridos","warning");
@@ -330,6 +353,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
             solicitud.id_puesto = this.contrato.id_puesto;
             solicitud.id_nomina = this.contrato.id_nomina;
             solicitud.sueldo = this.contrato.sueldo;
+            solicitud.sueldo_neto = this.contrato.sueldo_neto;
             solicitud.descripcion = this.contrato.descripcion;
           }
         });
@@ -445,6 +469,8 @@ export class ProcedimientoContratacionComponent implements OnInit {
             parseInt(object.data[i].id_departamento),
             object.data[i].empresa,
             parseInt(object.data[i].id_empresa),
+            parseInt(object.data[i].id_sucursal),
+            object.data[i].sucursal,
             object.data[i].apellido_paterno+" "+object.data[i].apellido_materno+" "+object.data[i].nombre,
             parseInt(object.data[i].id_candidato),
             parseInt(object.data[0].id_nomina),
@@ -452,6 +478,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
             parseInt(object.data[i].id_puesto),
             object.data[i].fecha_alta,
             object.data[i].sueldo,
+            object.data[i].sueldo_neto,
             object.data[i].observacion
           );
           this.btn_delete = true;
@@ -477,6 +504,8 @@ export class ProcedimientoContratacionComponent implements OnInit {
           solicitud.id_departamento,
           solicitud.empresa,
           solicitud.id_empresa,
+          solicitud.id_sucursal,
+          solicitud.sucursal,
           solicitud.candidato,
           solicitud.id_candidato,
           solicitud.id_nomina,
@@ -484,6 +513,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
           solicitud.id_puesto,
           "",
           solicitud.sueldo,
+          solicitud.sueldo_neto,
           solicitud.descripcion
         );
         this.bandera = [false,false,false];
@@ -524,7 +554,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
 
   resetearModal(){
     this.solicitud_contratos = new Array<Contrato>();
-    this.contrato = new Contrato(0,"",0,"",0,"",0,0,"",0,"","0","");
+    this.contrato = new Contrato(0,"",0,"",0,0,"","",0,0,"",0,"","0","","");
     this.bandera = [true, true, true];
     this.sueldos = ["","",""]
   }

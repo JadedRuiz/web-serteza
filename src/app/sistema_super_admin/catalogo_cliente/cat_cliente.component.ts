@@ -20,7 +20,7 @@ import { FormControl} from '@angular/forms';
 export class CatalogoClienteComponent implements OnInit {
   //Variables globales
   public color = COLOR;
-  public direccion : Direccion = new Direccion(0,0,"","","","","","","","","","");
+  public direccion : Direccion = new Direccion(0,"","","","","","","","","","","");
   public clientes : any;
   public sistemas : any;
   public band = true;
@@ -139,7 +139,7 @@ export class CatalogoClienteComponent implements OnInit {
       Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
     }else{
       if(
-        this.direccion.calle == 0 && this.direccion.codigo_postal == "" &&
+        this.direccion.calle == "" && this.direccion.codigo_postal == "" &&
         this.direccion.colonia == "" && this.direccion.cruzamiento_dos == "" &&
         this.direccion.cruzamiento_uno == "" && this.direccion.descripcion ==  "" &&
         this.direccion.estado == "" && this.direccion.localidad == "" &&
@@ -179,7 +179,7 @@ export class CatalogoClienteComponent implements OnInit {
       Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
     }else{
       if(
-        this.direccion.calle == 0 && this.direccion.codigo_postal == "" &&
+        this.direccion.calle == "" && this.direccion.codigo_postal == "" &&
         this.direccion.colonia == "" && this.direccion.cruzamiento_dos == "" &&
         this.direccion.cruzamiento_uno == "" && this.direccion.descripcion ==  "" &&
         this.direccion.estado == "" && this.direccion.localidad == "" &&
@@ -269,7 +269,7 @@ export class CatalogoClienteComponent implements OnInit {
   limpiarCampos(){
     this.fotografia = new Fotografia(0,"","","");
     this.foto_user = "./assets/img/defaults/imagen-no-disponible.png";
-    this.direccion = new Direccion(0,0,"","","","","","","","","","");
+    this.direccion = new Direccion(0,"","","","","","","","","","","");
     this.cliente = new Cliente(0,"","","",0,0,this.direccion,1,this.fotografia);
     this.sistemas_seleccionados = [];
   }

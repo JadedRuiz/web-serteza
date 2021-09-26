@@ -26,7 +26,7 @@ export class CatalogoEmpleadoComponent implements OnInit {
   myControl = new FormControl();
   public status = -1;
   public taken = 5;
-  public direccion : Direccion = new Direccion(0,0,"","","","","","","","","","");
+  public direccion : Direccion = new Direccion(0,"","","","","","","","","","","");
   public fotografia = new Fotografia(0,"","","");
   public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
   public id_nomina = parseInt(window.sessionStorage.getItem("tipo_nomina")+"");
@@ -501,7 +501,7 @@ export class CatalogoEmpleadoComponent implements OnInit {
     this.empleado.prestaciones_antiguedad = dato.prestaciones_antiguedad;
   }
   limpiarCampos(){
-    this.direccion = new Direccion(0,0,"","","","","","","","","","");
+    this.direccion = new Direccion(0,"","","","","","","","","","","");
     this.fotografia = new Fotografia(0,"","","");
     this.docB64 = "";
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";

@@ -54,11 +54,16 @@ export class SidebarComponent implements OnInit {
   pintarMenu(){
     let catalogos = [];
     let procesos = [];
+    if(this.perfil == 4 || this.perfil == 2 || this.perfil == 1 ){ //Supervisor, admin, superadmin
+      procesos.push(
+        {path: 'procedimiento_captura', title: 'Captura de incidencias', icon: 'ni-ruler-pencil text-yellow'}
+      );
+    }
     if(this.perfil == 2 || this.perfil == 1){ //Admin, superadmin
       catalogos.push(
-        {path: 'catalogo_usuario', title: 'Mis usuarios', icon: 'ni-circle-08  text-orange'},
-        {path: 'catalogo_departamento', title: 'Mis departamentos', icon: 'ni-archive-2  text-orange'},
-        {path: 'catalogo_candidato', title: 'Mis candidatos', icon: 'ni-badge text-orange'}
+        {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08  text-orange'},
+        {path: 'catalogo_departamento', title: 'Departamentos', icon: 'ni-archive-2  text-orange'},
+        {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge text-orange'}
       );
       procesos.push(
         {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17 text-yellow'},
@@ -66,17 +71,9 @@ export class SidebarComponent implements OnInit {
         {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove text-yellow'}
       );
     }
-    if(this.perfil == 4 || this.perfil == 2 || this.perfil == 1 ){ //Supervisor, admin, superadmin
-      catalogos.push(
-        {path: 'catalogo_capturas', title: 'Capturas', icon: 'ni-archive-2  text-orange'},
-      );
-      procesos.push(
-        {path: 'procedimiento_captura', title: 'Captura de incidencias', icon: 'ni-ruler-pencil text-yellow'}
-      );
-    }
     if(this.perfil == 3){ //Gerente, admin, superadmin
       catalogos.push(
-        {path: 'catalogo_capturas', title: 'Capturas', icon: 'ni-archive-2  text-orange'},
+        {path: '#', title: 'No cuentas con catálogos', icon: 'text-orange'},
       );
       procesos.push(
         {path: 'procedimiento_captura', title: 'Captura de incidencias', icon: 'ni-ruler-pencil text-yellow'}

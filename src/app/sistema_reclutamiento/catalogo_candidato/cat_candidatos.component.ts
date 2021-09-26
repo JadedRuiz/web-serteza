@@ -23,7 +23,7 @@ export class CatalogoCandidatosComponent implements OnInit {
 
   //Variables globales
   public color = COLOR;
-  public direccion : Direccion = new Direccion(0,0,"","","","","","","","","","");
+  public direccion : Direccion = new Direccion(0,"","","","","","","","","","","");
   public fotografia = new Fotografia(0,"","","");
   public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
@@ -76,7 +76,7 @@ export class CatalogoCandidatosComponent implements OnInit {
     public cp_service: LocalidadService,
     private candidato_service: CandidatoService,
     private sanitizer: DomSanitizer,
-    private modalService: NgbModal,
+    private modalService: NgbModal
   ) {
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
     this.modal_camera = NgbModalRef;
@@ -149,7 +149,7 @@ export class CatalogoCandidatosComponent implements OnInit {
       Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
     }else{
       if(
-        this.direccion.calle == 0 && this.direccion.codigo_postal == "" &&
+        this.direccion.calle == "" && this.direccion.codigo_postal == "" &&
         this.direccion.colonia == "" && this.direccion.cruzamiento_dos == "" &&
         this.direccion.cruzamiento_uno == "" && this.direccion.descripcion ==  "" &&
         this.direccion.estado == "" && this.direccion.localidad == "" &&
@@ -267,7 +267,7 @@ export class CatalogoCandidatosComponent implements OnInit {
       Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
     }else{
       if(
-        this.direccion.calle == 0 && this.direccion.codigo_postal == "" &&
+        this.direccion.calle == "" && this.direccion.codigo_postal == "" &&
         this.direccion.colonia == "" && this.direccion.cruzamiento_dos == "" &&
         this.direccion.cruzamiento_uno == "" && this.direccion.descripcion ==  "" &&
         this.direccion.estado == "" && this.direccion.localidad == "" &&
@@ -343,7 +343,7 @@ export class CatalogoCandidatosComponent implements OnInit {
     });
   }
   limpiarCampos(){
-    this.direccion  = new Direccion(0,0,"","","","","","","","","","");
+    this.direccion  = new Direccion(0,"","","","","","","","","","","");
     this.fotografia = new Fotografia(0,"","",""); 
     this.candidato = new Candidato(0,this.id_cliente,6,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia);
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";

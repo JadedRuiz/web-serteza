@@ -33,9 +33,13 @@ export class CandidatoService {
       }), catchError(err => {
         if(err.error.message.includes("String data, right truncated: 1406 Data too long for column 'fotografia'")){
           Swal.fire("Ha ocurrido un error", "La imagen que deseas cargar es demasiado pesada para ser almacenada", 'error');
-        }else{
-          Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+          return throwError(err);
         }
+        if(err.error.message.includes("Validation rule unique requires at least 1 parameters")){
+          Swal.fire("Ha ocurrido un error", "El RFC o CURP ya se encuentran registrados", 'error');
+          return throwError(err);
+        }
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }

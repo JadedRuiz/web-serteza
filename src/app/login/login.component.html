@@ -1,8 +1,5 @@
-<nav class="navbar navbar-top navbar-horizontal navbar-expand-md navbar-dark {{color}}">
+<nav class="navbar navbar-top navbar-horizontal navbar-expand-md navbar-dark" style="background-color: white;">
     <div class="container px-4">
-      <a class="navbar-brand" routerLinkActive="active" [routerLink]="['/login']">
-        <img src="assets/img/brand/argon-white.png" />
-      </a>
       <!-- <button class="navbar-toggler" type="button" (click)="isCollapsed=!isCollapsed"
          aria-controls="sidenav-collapse-main">
         <span class="navbar-toggler-icon"></span>
@@ -36,27 +33,23 @@
       </div>
     </div>
   </nav>
-  <div class="header {{color}} py-7 py-lg-8">
+  <div class="header py-3 py-lg-7" style="background-color: white;">
     <div class="container">
       <div class="header-body text-center mb-7">
         <div class="row justify-content-center">
           <div class="col-lg-12 col-md-6">
-            <h1 class="text-white">Enterprise Resourcing Sources</h1>
+            <img src="assets/img/brand/argon-white.png" style="width: 100px"/>
+            <h1 class="text-dark">SISTEMA ADMINISTRATIVO</h1>
           </div>
         </div>
       </div>
     </div>
-    <div class="separator separator-bottom separator-skew zindex-100">
-      <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
-        <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
-      </svg>
-    </div>
   </div>
   <!-- Page content -->
-  <div class="container-fluid mt--9 pb-5 bg-default">
+  <div class="container-fluid mt--9 pb-4"  style="background-color: white;">
     <div class="row justify-content-center">
       <div class="col-lg-4 col-md-6">
-        <div class="card bg-secondary shadow border-0">
+        <div class="card {{color}} shadow border-0 text-dark">
           <div class="card-body px-lg-5 py-lg-5">
             <form role="form" #f="ngForm" ngNativeValidate (ngSubmit)="login(f)">
               <div class="form-group mb-3">
@@ -78,7 +71,7 @@
               <div class="custom-control custom-control-alternative custom-checkbox">
                 <input class="custom-control-input" id=" customCheckLogin" type="checkbox">
                 <label class="custom-control-label" for=" customCheckLogin">
-                  <span class="text-muted">Recordar</span>
+                  <span class="text-dark">Recordar</span>
                 </label>
               </div>
               <div class="text-center">
@@ -98,27 +91,27 @@
       </div>
     </div>
   </div>
-<footer class="py-5 bg-default">
+<footer class="py-4"  style="background-color: white;">
   <div class="container">
     <div class="row align-items-center justify-content-xl-between">
       <div class="col-xl-6">
-        <div class="copyright text-center text-xl-left text-muted">
-          &copy;<a href="https://www.serteza.com" class="font-weight-bold ml-1" target="_blank">Serteza</a>
+        <div class="copyright text-center text-xl-left text-dark">
+          <a style="text-decoration: none;color: black;" href="https://www.serteza.com" class="font-weight-bold ml-1" target="_blank" >Serteza</a>&copy;
         </div>
       </div>
       <div class="col-xl-6">
-        <ul class="nav nav-footer justify-content-center justify-content-xl-end">
+        <ul class="nav nav-footer justify-content-center justify-content-xl-end text-white">
           <li class="nav-item">
-            <a href="https://www.creative-tim.com?ref=ada-footer-auth-layout" class="nav-link" target="_blank">Serteza</a>
+            <a style="text-decoration: none;color: black;" href="https://www.creative-tim.com?ref=ada-footer-auth-layout" class="nav-link" target="_blank">Serteza</a>
           </li>
           <li class="nav-item">
-            <a href="https://www.creative-tim.com/presentation?ref=ada-footer-auth-layout" class="nav-link" target="_blank">Acerca de nosotros</a>
+            <a style="text-decoration: none;color: black;" href="https://www.creative-tim.com/presentation?ref=ada-footer-auth-layout" class="nav-link" target="_blank">Acerca de nosotros</a>
           </li>
           <li class="nav-item">
-            <a href="http://blog.creative-tim.com?ref=ada-footer-auth-layout" class="nav-link" target="_blank">Nuestro blog</a>
+            <a style="text-decoration: none;color: black;" href="http://blog.creative-tim.com?ref=ada-footer-auth-layout" class="nav-link" target="_blank">Nuestro blog</a>
           </li>
           <li class="nav-item">
-            <a href="https://github.com/creativetimofficial/argon-dashboard-angular/blob/master/LICENSE.md" class="nav-link" target="_blank">MIT License</a>
+            <a style="text-decoration: none;color: black;" href="https://github.com/creativetimofficial/argon-dashboard-angular/blob/master/LICENSE.md" class="nav-link" target="_blank">MIT License</a>
           </li>
         </ul>
       </div>
