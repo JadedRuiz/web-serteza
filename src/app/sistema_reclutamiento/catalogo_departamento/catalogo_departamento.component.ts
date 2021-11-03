@@ -32,6 +32,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
   public band_puestos = false;
   public cont = 0;
   public tipo_modal = 1;
+  public puesto_seleccionado = 0;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   //Paginacion
   public total_registros = 0;
@@ -140,6 +141,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
 
   guardar(){
     this.empresas = [];
+    this.puesto_seleccionado = 0;
     this.empresa_service.obtenerEmpresasPorIdCliente(this.cliente_seleccionado)
     .subscribe((object : any) => {
       if(object.ok){
@@ -151,25 +153,43 @@ export class CatalogoDepartamentoComponent implements OnInit {
     this.band_puestos = false;
   }
 
-  agregarPuesto(){
-    //validar la sumatoria de los puestos
-    let sumatoria = 0;
-    for(let i=0;i<this.puestos.length;i++){
-      sumatoria += parseInt(""+this.puestos[i].autorizados);
+  agregarPuesto(tipo : number){
+    if(this.puesto.puesto == ""){
+      Swal.fire("Ha ocurrido un error","El campo puesto no puede ser vacio","info");
+      return;
     }
-    this.departamento.disponibilidad = sumatoria + parseInt(""+this.puesto.autorizados);
-      this.band_puestos = true;
-      this.puestos.push({
-        "id_puesto" : this.cont,
-        "puesto" : this.puesto.puesto.toUpperCase(),
-        "descripcion" : this.puesto.descripcion,
-        "autorizados" : this.puesto.autorizados,
-        "sueldo_tipo_a" : this.puesto.sueldo_tipo_a,
-        "sueldo_tipo_b" : this.puesto.sueldo_tipo_b,
-        "sueldo_tipo_c" : this.puesto.sueldo_tipo_c
+    if(tipo == 1){
+      //validar la sumatoria de los puestos
+      let sumatoria = 0;
+      for(let i=0;i<this.puestos.length;i++){
+        sumatoria += parseInt(""+this.puestos[i].autorizados);
+      }
+      this.departamento.disponibilidad = sumatoria + parseInt(""+this.puesto.autorizados);
+        this.band_puestos = true;
+        this.puestos.push({
+          "id_puesto" : this.cont,
+          "puesto" : this.puesto.puesto.toUpperCase(),
+          "descripcion" : this.puesto.descripcion,
+          "autorizados" : this.puesto.autorizados,
+          "sueldo_tipo_a" : this.puesto.sueldo_tipo_a,
+          "sueldo_tipo_b" : this.puesto.sueldo_tipo_b,
+          "sueldo_tipo_c" : this.puesto.sueldo_tipo_c
+        });
+        this.cont++;
+        this.puesto = new Puesto(0,"","","","","1","",this.usuario,1);
+      }
+    if(tipo == 2){
+      this.puestos.forEach( (element : any) => {
+        if(element.id_puesto == this.puesto_seleccionado){
+          element.puesto =  this.puesto.puesto.toUpperCase();
+          element.autorizados = this.puesto.autorizados;
+          element.descripcion =this.puesto.descripcion.toUpperCase();
+          element.sueldo_tipo_a = this.puesto.sueldo_tipo_a ;
+          element.sueldo_tipo_b = this.puesto.sueldo_tipo_b;
+          element.sueldo_tipo_c = this.puesto.sueldo_tipo_c;
+        }
       });
-      this.cont++;
-      this.puesto = new Puesto(0,"","","","","1","",this.usuario,1);
+    }
   }
 
   eliminarPuesto(folio : any){
@@ -257,6 +277,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
         this.puesto.sueldo_tipo_c = element.sueldo_tipo_c;
       }
     });
+    this.puesto_seleccionado = id;
   }
 
   limpiaTexto(){

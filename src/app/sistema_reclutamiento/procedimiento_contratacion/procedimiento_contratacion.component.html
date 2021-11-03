@@ -53,9 +53,9 @@
                           <td colspan="1" style="vertical-align: middle;">{{contrato.status}}</td>
                           <td colspan="1" style="width: 20%;">
                               <a title="Reporte de contratación" style="cursor: pointer;" class="btn btn-gray btn-sm" (click)="consumoReporte(1,contrato.folio)"><img src="./assets/iconos/reporte.svg" style="width: 14px;"></a>
-                              <a *ngIf="contrato.band" title="Editar" (click)="editar(contrato.folio)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
-                              <a *ngIf="!contrato.band" title="Ver movimiento" (click)="editar(contrato.folio)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/ver.svg" style="width: 14px;"></a>
-                              <a *ngIf="aplicar && contrato.band" title="Aplicar solicitud" style="cursor: pointer;" class="btn btn-success btn-sm" (click)="aplicarContrato(contrato.folio)"><img src="./assets/iconos/aplicar.svg" style="width: 14px;"></a>
+                              <a *ngIf="contrato.band" title="Editar" (click)="editar(contrato.folio,1)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                              <a *ngIf="!contrato.band" title="Ver movimiento" (click)="editar(contrato.folio,2)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/ver.svg" style="width: 14px;"></a>
+                              <!-- <a *ngIf="aplicar && contrato.band" title="Aplicar solicitud" style="cursor: pointer;" class="btn btn-success btn-sm" (click)="aplicarContrato(contrato.folio)"><img src="./assets/iconos/aplicar.svg" style="width: 14px;"></a> -->
                           </td>
                       </tr>
                   </tbody>
@@ -122,18 +122,25 @@
         <div class="form">
           <div *ngIf="btn_delete">
             <div class="form-row">
-            <div class="form-group col-lg-5 col-sm-12">
+            <div class="form-group col-lg-3 col-sm-12">
               <label for="candidato">Candidato</label>
               <input [(ngModel)]="contrato.candidato" type="text"  list="candidato"  class="form-control" (change)="mostrarCandidato()" id="input_candidato" placeholder="Seleccione el candidato">
               <datalist  id="candidato">
                 <option *ngFor="let candidato of candidatos" value="Candidato {{candidato.folio}}" label="{{candidato.nombre}}">
               </datalist>
             </div>
-            <div class="form-group col-lg-4 col-sm-12">
+            <div class="form-group col-lg-3 col-sm-12">
               <label for="empresa">Empresa</label>
               <input type="text" list="empresa" [(ngModel)]="contrato.empresa" class="form-control" (change)="mostrarDepartamentos()" placeholder="Seleccione la empresa">
               <datalist id="empresa">
                 <option *ngFor="let empresa of empresas" value="Empresa {{empresa.id_empresa}}" label="{{empresa.empresa}}">
+              </datalist>
+            </div>
+            <div class="form-group col-lg-3 col-sm-12">
+              <label for="sucursal">Sucursal</label>
+              <input type="text" list="sucursal" [(ngModel)]="contrato.sucursal" class="form-control" placeholder="Seleccione la sucursal" (change)="setSucursal()">
+              <datalist id="sucursal">
+                <option *ngFor="let sucursal of sucursales" value="Sucursal {{sucursal.id_sucursal}}" label="{{sucursal.sucursal}}">
               </datalist>
             </div>
             <div class="form-group col-lg-3 col-sm-12">
@@ -152,18 +159,21 @@
                 <option *ngFor="let puesto of puestos" value="Puesto {{puesto.id_puesto}}" label="{{puesto.puesto}}">
               </datalist>
             </div>
-            <div class="form-group col-lg-3 col-sm-12">
+            <div class="form-group col-lg-4 col-sm-12">
               <div class="row">
-                <label for="sueldo" class="col 4">Sueldo</label>
+                <label for="sueldo" class="col 4">Sueldo diario</label>
                 <div class="col 8">
                   <div class="row">
-                    <div class="form-inline col-4">
-                      <input type="radio" id="radio_c" title="sueldo tipo c" name="radios" value="{{sueldos[2]}}" (click)="cambiarSueldo(sueldos[2])" [disabled]="bandera[2]">
+                    <div class=" col-4 d-flex" style="justify-content: center; align-items: center;">
+                      <a>C</a>
+                      <input  type="radio" id="radio_c" title="sueldo tipo c" name="radios" value="{{sueldos[2]}}" (click)="cambiarSueldo(sueldos[2])" [disabled]="bandera[2]">
                     </div>
-                    <div class="form-inline col-4">
-                      <input type="radio" id="radio_b" title="sueldo tipo b" name="radios" value="{{sueldos[1]}}" (click)="cambiarSueldo(sueldos[1])" [disabled]="bandera[2]">
+                    <div class=" col-4 d-flex" style="justify-content: center; align-items: center;">
+                      <a>B</a>
+                      <input  type="radio" id="radio_b" title="sueldo tipo b" name="radios" value="{{sueldos[1]}}" (click)="cambiarSueldo(sueldos[1])" [disabled]="bandera[2]">
                     </div>
-                    <div class="form-inline col-4">
+                    <div class=" col-4 d-flex" style="justify-content: center; align-items: center;">
+                      <a>A</a>
                       <input type="radio" id="radio_a" title="sueldo tipo a" name="radios" value="{{sueldos[0]}}" (click)="cambiarSueldo(sueldos[0])" [disabled]="bandera[2]">
                     </div>
                   </div>
@@ -171,22 +181,26 @@
               </div>
               <input type="text" [(ngModel)]="contrato.sueldo" class="form-control" id="sueldo" [disabled]="bandera[2]">
             </div>
-            <div class="form-group col-lg-3 col-sm-12">
+            <div class="form-group col-lg-4 col-sm-12">
+              <label for="fecha">Sueldo neto</label>
+              <input type="text" [(ngModel)]="contrato.sueldo_neto" class="form-control" id="sueldo_neto" [disabled]="bandera[2]">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-lg-4 col-sm-12">
               <label for="fecha">Tipo nómina</label>
               <select name="" id="nomina" class="form-control" [(ngModel)]="contrato.id_nomina">
                 <option *ngFor="let nomina of nominas" value="{{nomina.id_nomina}}">{{nomina.nomina}}</option>
               </select>
             </div>
-            <div class="form-group col-lg-2 col-sm-12">
+            <div class="form-group col-lg-3 col-sm-12">
               <label for="fecha">Fecha de ingreso</label>
               <input [(ngModel)]="contrato.fecha_ingreso" type="date" name="fecha_ingreso" id="fecha" class="form-control">
             </div>
-          </div>
-          <div class="form-row">
-            <div class="col-12">
+            <div class="col-5">
               <div class="form-group"> 
                   <label for="desc_cempresa">Observaciones</label>
-                  <textarea [(ngModel)]="contrato.descripcion" name="desc_cempresa" class="form-control" rows="5" id="desc_cempresa"></textarea>
+                  <input [(ngModel)]="contrato.descripcion" name="desc_cempresa" class="form-control" type="text" id="desc_cempresa" style="text-transform: uppercase;">
               </div>
             </div> 
           </div>
@@ -203,6 +217,7 @@
                   <tr class="text-center">
                     <th colspan="1">Candidato</th>
                     <th colspan="1">Empresa</th>
+                    <th colspan="1">Sucursal</th>
                     <th colspan="1">Departamento</th>
                     <th colspan="1">Puesto</th>
                     <th colspan="1">Acciones</th>
@@ -212,6 +227,7 @@
                   <tr *ngFor="let solicitud of solicitud_contratos" style="cursor: pointer;" class="text-center">
                     <td style="vertical-align: middle;" (click)="editarDetalle(solicitud.id_detalle)">{{solicitud.candidato}}</td>
                     <td style="vertical-align: middle;" (click)="editarDetalle(solicitud.id_detalle)">{{solicitud.empresa}}</td>
+                    <td style="vertical-align: middle;" (click)="editarDetalle(solicitud.id_detalle)">{{solicitud.sucursal}}</td>
                     <td style="vertical-align: middle;" (click)="editarDetalle(solicitud.id_detalle)">{{solicitud.departamento}}</td>
                     <td style="vertical-align: middle;" (click)="editarDetalle(solicitud.id_detalle)">{{solicitud.puesto}}</td>
                     <td style="vertical-align: middle;">
@@ -228,6 +244,6 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()" >Cerrar</button>
         <button type="button" class="btn btn-success" (click)="crearMov()" id="guardar">Crear contratación</button>
-        <button type="button" class="btn btn-success" (click)="actualizarMov()" id="editar" style="display: none;">Actualizar contratación</button>
+        <button  *ngIf="band_actualizar == 1" type="button" class="btn btn-success" (click)="actualizarMov()" id="editar" style="display: none;">Actualizar contratación</button>
     </div>
 </ng-template>

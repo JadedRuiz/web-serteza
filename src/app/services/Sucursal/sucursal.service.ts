@@ -14,7 +14,7 @@ export class SucursalService {
     public http: HttpClient
     ) { }
 
-    crearSucursal(json : any){
+  crearSucursal(json : any){
     let url = SERVER_API+"sucursal/crearSucursal";
     return this.http.post( url, json )
       .pipe(map( (resp: any) => {
@@ -27,6 +27,16 @@ export class SucursalService {
   obtenerSucursales(id : any){
     let url = SERVER_API+"sucursal/obtenerSucursales/"+id;
     return this.http.get(url);
+  }
+  modificarSucursal(json : any){
+    let url = SERVER_API+"sucursal/modificarSucursal";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
+        return throwError(err);
+      }));
   }
   obtenerSucursalPorIdSucursal(id : any){
     let url = SERVER_API+"sucursal/obtenerSucursalPorIdSucursal/"+id;

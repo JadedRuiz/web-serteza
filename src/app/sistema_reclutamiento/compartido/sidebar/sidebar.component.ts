@@ -54,46 +54,43 @@ export class SidebarComponent implements OnInit {
   pintarMenu(){
     let catalogos = [];
     let procesos = [];
-    if(this.perfil == 2 || this.perfil == 1){ //Admin, superadmin
-      catalogos.push(
-        {path: 'catalogo_usuario', title: 'Mis usuarios', icon: 'ni-circle-08  text-orange'},
-        {path: 'catalogo_departamento', title: 'Mis departamentos', icon: 'ni-archive-2  text-orange'},
-        {path: 'catalogo_candidato', title: 'Mis candidatos', icon: 'ni-badge text-orange'}
-      );
+    if(this.perfil == 4 || this.perfil == 2 || this.perfil == 1 ){ //Supervisor, admin, superadmin
       procesos.push(
-        {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17 text-yellow'},
-        {path: 'procedimiento_modificacion', title: 'Modificaciónes', icon: 'ni-curved-next text-yellow'},
-        {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove text-yellow'}
+        {path: 'procedimiento_captura', title: 'Captura de incidencias', icon: 'ni-ruler-pencil'}
       );
     }
-    if(this.perfil == 4 || this.perfil == 2 || this.perfil == 1 ){ //Supervisor, admin, superadmin
+    if(this.perfil == 2 || this.perfil == 1){ //Admin, superadmin
       catalogos.push(
-        {path: 'catalogo_capturas', title: 'Capturas', icon: 'ni-archive-2  text-orange'},
+        {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08'},
+        {path: 'catalogo_departamento', title: 'Departamentos', icon: 'ni-archive-2'},
+        {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'}
       );
       procesos.push(
-        {path: 'procedimiento_captura', title: 'Captura de incidencias', icon: 'ni-ruler-pencil text-yellow'}
+        {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17'},
+        {path: 'procedimiento_modificacion', title: 'Modificaciónes', icon: 'ni-curved-next'},
+        {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove'}
       );
     }
     if(this.perfil == 3){ //Gerente, admin, superadmin
       catalogos.push(
-        {path: 'catalogo_capturas', title: 'Capturas', icon: 'ni-archive-2  text-orange'},
+        {path: '#', title: 'No cuentas con catálogos', icon: 'text-orange'},
       );
       procesos.push(
         {path: 'procedimiento_captura', title: 'Captura de incidencias', icon: 'ni-ruler-pencil text-yellow'}
       );
     }
     this.menuItems = [
-      { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
+      { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-yellow', id:"dashboard_header", band: false, tipo : "", bg : "red"},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
-        submenu : catalogos
+        submenu : catalogos, bg : "orange"
       },
-      { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
-        submenu : procesos
+      { path: '#', title: 'Procedimientos', icon: 'ni-settings text-red', id:'rh_procesos', band: true, tipo : "collapse",
+        submenu : procesos, bg : "red"
       },
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: true, tipo : "collapse",
         submenu : [
-          {path: 'reporte_general', title: 'Reporte General', icon: 'ni-archive-2 text-green'},
-        ]
+          {path: 'reporte_general', title: 'Reporte General', icon: 'ni-archive-2 text-white'},
+        ], bg : "green"
     }
     ];
   }

@@ -81,30 +81,19 @@
                 </thead>
                 <tbody *ngIf="empleados_captura.length > 0; else pintaVacio">
                   <tr *ngFor="let incidencia of empleados_captura">
-                      <td style="vertical-align: middle;cursor: pointer;" class="text-center" (click)="editar(incidencia.id_empleado)">{{incidencia.id_empleado}}</td>
-                      <td style="vertical-align: middle;cursor: pointer;" (click)="editar(incidencia.id_empleado)">
+                      <td style="vertical-align: middle;cursor: pointer;" class="text-center" (click)="editar(incidencia.id_empleado, incidencia.id_empresa)">{{incidencia.id_empleado}}</td>
+                      <td style="vertical-align: middle;cursor: pointer;" (click)="editar(incidencia.id_empleado, incidencia.id_empresa)">
                         <div class="img mr-2" style="height: 40px; width: 60px;display: inline-block;">
                           <img [src]="incidencia.fotografia" alt="" style="width: 100%; height: 100%;">
                         </div>
                         {{incidencia.nombre}}
                       </td>
-                      <td style="width: auto;vertical-align: middle;cursor: pointer;" (click)="editar(incidencia.id_empleado)">{{incidencia.cliente}}</td>
-                      <td style="width: auto;vertical-align: middle;cursor: pointer;" (click)="editar(incidencia.id_empleado)">{{incidencia.sucursal}}</td>
-                      <td style="width: auto;vertical-align: middle;cursor: pointer;" (click)="editar(incidencia.id_empleado)">{{incidencia.departamento}}</td>
-                      <!-- <td style="vertical-align: middle;width: auto;">
-                        <mat-form-field class="w-90 mr-1" id="tipo">
-                          <mat-label>Concepto</mat-label>
-                          <mat-select  (selectionChange)="mostrarAcciones(incidencia.id_empleado,$event)">
-                            <mat-option *ngIf="incidencia.conceptos.length == 0">Aún sin conceptos</mat-option>
-                            <mat-option *ngFor="let concep of incidencia.conceptos" [value]="concep.id_concepto">{{concep.concepto}}</mat-option>
-                          </mat-select>
-                        </mat-form-field>
-                        <button type="button" class="btn btn-info btn-circle btn-sm" title="Agregar concepto a empleado" (click)="adminConcepto(incidencia.id_empleado)"><i class="far fa-plus-square"></i></button>
-                        <a *ngIf="incidencia.editar" class="btn btn-yellow btn-sm" (click)="editar(incidencia.id_empleado)" title="Editar concepto"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
-                        <a *ngIf="incidencia.editar" class="btn btn-danger btn-sm" (click)="eliminar(incidencia.id_empleado)" title="Eliminar concepto"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
-                      </td> -->
+                      <td style="width: auto;vertical-align: middle;cursor: pointer;" (click)="editar(incidencia.id_empleado, incidencia.id_empresa)">{{incidencia.cliente}}</td>
+                      <td style="width: auto;vertical-align: middle;cursor: pointer;" (click)="editar(incidencia.id_empleado, incidencia.id_empresa)">{{incidencia.sucursal}}</td>
+                      <td style="width: auto;vertical-align: middle;cursor: pointer;" (click)="editar(incidencia.id_empleado, incidencia.id_empresa)">{{incidencia.departamento}}</td>
+                      
                       <td style="width: auto;vertical-align: middle;">
-                        <a class="btn btn-yellow btn-sm" (click)="editar(incidencia.id_empleado)" title="Administrar los conceptos del empleado"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                        <a class="btn btn-yellow btn-sm" (click)="editar(incidencia.id_empleado, incidencia.id_empresa)" title="Administrar los conceptos del empleado"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
                       </td>
                   </tr>
                 </tbody>
@@ -123,7 +112,7 @@
   </div>
 </div>
 
-<ng-template #content let-c="close" let-d="dismiss">
+<!-- <ng-template #content let-c="close" let-d="dismiss">
   <div class="modal-header">
       <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nuevo concepto</h2>
       <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Editar concepto</h2>
@@ -171,19 +160,22 @@
       <button *ngIf="tipo_modal == 1" class="btn btn-success" (click)="agregarConceptoAEmpleado()">Agregar</button>
       <button *ngIf="tipo_modal == 2" class="btn btn-success" (click)="modificarConcepto()">Editar</button>
   </div>
-</ng-template>
+</ng-template> -->
 
 <ng-template #visualizar let-c="close" let-d="dismiss">
   <div class="modal-header">
-      <h2  class="modal-title" id="tituloModal">Captura lo conceptos del empleado</h2>
+      <h2  class="modal-title" id="tituloModal">CONCEPTOS DEL EMPLEADO</h2>
   </div>
   <div class="modal-body">
+      <!-- <div class="text-right my-1">
+        <button class="btn btn-info btn-sm" title="Agregar concepto" (click)="nuevoConcepto()"><i class="fas fa-plus-circle"></i></button>
+      </div> -->
       <div class="table-responsive">
         <table class="table">
           <thead>
-            <tr class="text-center">
+            <tr class="text-center" editable>
               <th scope="1" class="text-center">Id</th>
-              <th scope="1" class="text-center">Unidades</th>
+              <th scope="1" class="text-left">Unidades</th>
               <th scope="1" class="text-left">Descripcion</th>
               <th scope="1" class="text-center">Complemento</th>
               <th scope="1" class="text-center">Importe</th>
@@ -191,13 +183,13 @@
             </tr>
           </thead>
           <tbody *ngIf="conceptos_empleado.length > 0; else pintaVacioDos">
-            <tr *ngFor="let concepto of conceptos_empleado"  style="cursor:pointer;" title="Editar concepto" (click)=editarConcepto(concepto.id_concepto)>
-              <td>{{concepto.id_concepto}}</td>
-              <td class="text-center">{{concepto.unidades}}</td>
-              <td>{{concepto.concepto}}</td>
-              <td class="text-center">{{concepto.complemento}}</td>
-              <td class="text-center">{{concepto.importe}}</td>
-              <td class="text-center">{{concepto.saldo}}</td>
+            <tr *ngFor="let concepto of conceptos_empleado">
+              <td style="vertical-align: middle;">{{concepto.folio}}</td>
+              <td class="text-center" style="vertical-align: middle;"><input type="number" [(ngModel)]="concepto.unidades" class="form-control" style="width: 80px;" min="0" [disabled]="concepto.utiliza_unidade"></td>
+              <td style="vertical-align: middle;">{{concepto.concepto}}</td>
+              <td class="text-center" style="vertical-align: middle;">{{concepto.complemento}}</td>
+              <td class="text-left" style="vertical-align: middle;"><a style="display: inline-block;">$ &nbsp;</a><input type="number" min="0" [(ngModel)]="concepto.importe" class="form-control" style="width: 100px;display: inline-block;" min="0" [disabled]="concepto.utiliza_importe"></td>
+              <td class="text-center" style="vertical-align: middle;"><a style="display: inline-block;">$ &nbsp;</a><input type="number" [(ngModel)]="concepto.saldo" class="form-control" style="width: 100px;display: inline-block;" min="0" [disabled]="concepto.utiliza_saldo"></td>
             </tr>
           </tbody>
           <ng-template #pintaVacioDos>
@@ -209,9 +201,15 @@
           </ng-template>
         </table>
       </div>
+      <div class="form-row">
+        <div class="form-group col-12">
+          <label for="observaciones">Observaciones</label>
+          <textarea class="form-control w-100 my-0" id="observaciones"></textarea>
+        </div>
+      </div>
   </div>
   <div class="modal-footer">
       <button type="button" class="btn btn-warning" (click)="cerrarModalVisualizar()">Cerrar</button>
-      <button type="button" class="btn btn-success" (click)="nuevoConcepto()">Nuevo</button>
+      <button type="button" class="btn btn-success" (click)="agregarConceptosAEmpleado()">Guardar conceptos</button>
   </div>
 </ng-template>

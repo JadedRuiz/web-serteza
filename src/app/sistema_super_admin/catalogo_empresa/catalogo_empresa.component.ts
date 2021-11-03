@@ -21,7 +21,7 @@ export class CatalogoEmpresaComponent implements OnInit {
   //Variables globales
   public color = COLOR;
   public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
-  public direccion : Direccion = new Direccion(0,0,"","","","","","","","","","");
+  public direccion : Direccion = new Direccion(0,"","","","","","","","","","","");
   public fotografia = new Fotografia(0,"","","");
   public empresa = new Empresa(0,1,"","","","",this.usuario_creacion,this.direccion,this.fotografia,1);
   public empresas : any;
@@ -136,7 +136,7 @@ export class CatalogoEmpresaComponent implements OnInit {
       Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
     }else{
       if(
-        this.direccion.calle == 0 && this.direccion.codigo_postal == "" &&
+        this.direccion.calle == "" && this.direccion.codigo_postal == "" &&
         this.direccion.colonia == "" && this.direccion.cruzamiento_dos == "" &&
         this.direccion.cruzamiento_uno == "" && this.direccion.descripcion ==  "" &&
         this.direccion.estado == "" && this.direccion.localidad == "" &&
@@ -198,7 +198,7 @@ export class CatalogoEmpresaComponent implements OnInit {
       Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
     }else{
       if(
-        this.direccion.calle == 0 && this.direccion.codigo_postal == "" &&
+        this.direccion.calle == "" && this.direccion.codigo_postal == "" &&
         this.direccion.colonia == "" && this.direccion.cruzamiento_dos == "" &&
         this.direccion.cruzamiento_uno == "" && this.direccion.descripcion ==  "" &&
         this.direccion.estado == "" && this.direccion.localidad == "" &&
@@ -302,7 +302,7 @@ export class CatalogoEmpresaComponent implements OnInit {
   }
 
   limpiarCampos(){
-    this.direccion  = new Direccion(0,0,"","","","","","","","","","");
+    this.direccion  = new Direccion(0,"","","","","","","","","","","");
     this.fotografia = new Fotografia(0,"","",""); 
     this.empresa = new Empresa(0,1,"","","","",this.usuario_creacion,this.direccion,this.fotografia,1);
     this.foto_user = "./assets/img/defaults/imagen-no-disponible.png";

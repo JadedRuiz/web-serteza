@@ -20,6 +20,12 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies" : [
+              "xml2js",
+              "chart.js",
+              "jquery",
+              "lodash"
+            ],
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",

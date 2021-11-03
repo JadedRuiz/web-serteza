@@ -29,6 +29,8 @@ export class LoginComponent implements OnInit {
   modal: any;
   active:string = "";
   public tipo_arreglo = 0;
+  public busqueda = "";
+  public empresas_copy : any;
 
   constructor( 
     public usuario_service : UsuarioService,
@@ -69,8 +71,8 @@ export class LoginComponent implements OnInit {
             this.openModal();
           }else{
             this.sistema_elegido = resp.data.info_usuario.sistemas[0].id;
-            window.sessionStorage["sistema"] = this.sistema_elegido;
-            window.sessionStorage["perfil"] = resp.data.info_usuario.sistemas[0].id_perfil;
+            window.sessionStorage.setItem("sistema",this.sistema_elegido);
+            window.sessionStorage.setItem("perfil",resp.data.info_usuario.sistemas[0].id_perfil);
             this.eleccion(this.sistema_elegido,resp.data.info_usuario.sistemas[0].id_perfil,1);
           }
         }else{
@@ -81,14 +83,15 @@ export class LoginComponent implements OnInit {
   }
   eleccion(id : any,id_perfil : number, tipo : any){
     this.sistema_elegido = id;
-    window.sessionStorage["sistema"] = this.sistema_elegido;
+    window.sessionStorage.setItem("sistema",this.sistema_elegido);
     if(this.sistema_elegido == "5"){
       this.router.navigate(["sistema_super_admin/dashboard"]);
     }
     if(this.sistema_elegido == "1" || this.sistema_elegido == "6" || this.sistema_elegido == "3" || this.sistema_elegido == "4"){
       this.closeModal();
       this.empresas = [];
-      this.empresa.obtenerEmpresaPorIdUsuario(window.sessionStorage["user"])
+      this.empresas_copy = [];
+      this.empresa.obtenerEmpresaPorIdUsuario(window.sessionStorage.getItem("user"))
       .subscribe( (object : any) => {
         if(object.ok){
           this.tipo_arreglo = 1;
@@ -99,10 +102,14 @@ export class LoginComponent implements OnInit {
                 "id_empresa" : dato.id_empresa,
                 "empresa" : dato.empresa
               });
+              this.empresas_copy.push({
+                "id_empresa" : dato.id_empresa,
+                "empresa" : dato.empresa
+              });
             });
             this.openModal();
           }else{
-            window.sessionStorage["empresa"] = object.data[0].id_empresa;
+            window.sessionStorage.setItem("empresa",object.data[0].id_empresa);
             this.redirigirPrincipal(object.data[0].id_empresa,1);
           }
         }else{
@@ -117,9 +124,10 @@ export class LoginComponent implements OnInit {
       }
       if(tipo != 1){
         this.closeModal();
+        window.sessionStorage.setItem("perfil",id_perfil+"");
       }
       this.clientes = [];
-      this.cliente_service.obtenerClientePorIdUsuario(window.sessionStorage["user"])
+      this.cliente_service.obtenerClientePorIdUsuario(window.sessionStorage.getItem("user"))
       .subscribe( (object : any) => {
         if(object.ok){
           if(object.data.length > 1){
@@ -132,7 +140,7 @@ export class LoginComponent implements OnInit {
             });
             this.openModal();
           }else{
-            window.sessionStorage["cliente"] = object.data[0].id_cliente;
+            window.sessionStorage.setItem("cliente",object.data[0].id_cliente);
             this.redirigirPrincipal(object.data[0].id_cliente,1);
           }
         }else{
@@ -154,7 +162,7 @@ export class LoginComponent implements OnInit {
       this.router.navigate(["sistema_admin/dashboard"]);
     }
     if(this.sistema_elegido == "2"){
-      window.sessionStorage["cliente"] = id;
+      window.sessionStorage.setItem("cliente",id);
       if(tipo != 1){
         this.closeModal();
       }
@@ -206,5 +214,25 @@ export class LoginComponent implements OnInit {
     this.closeModal();
     window.sessionStorage["tipo_nomina"] = id;
     this.router.navigate(["sistema_nomina/dashboard"]); 
+  }
+  buscarEmpresa(){
+    this.empresas = [];
+    this.empresas_copy.forEach((element : any) => {
+      this.empresas.push({
+        "empresa" : element.empresa,
+        "id_empresa" : element.id_empresa
+      });
+    });
+    if(this.busqueda.length > 0){
+      this.empresas = [];
+      this.empresas_copy.forEach((element : any) => {
+        if(element.empresa.includes(this.busqueda.toUpperCase())){ 
+          this.empresas.push({
+            "empresa" : element.empresa,
+            "id_empresa" : element.id_empresa
+          })
+        }
+      });
+    }
   }
 }

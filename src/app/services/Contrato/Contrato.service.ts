@@ -32,7 +32,7 @@ export class ContratoService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
@@ -43,20 +43,10 @@ export class ContratoService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
-  // actualizarDepartamento(departamento : Departamento){
-  //   let url = SERVER_API+"departamento/actualizarDepartamento";
-  //   return this.http.post( url, departamento )
-  //   .pipe(map( (resp: any) => {
-  //     return resp;
-  //   }), catchError(err => {
-  //     Swal.fire("Ha ocurrido un error", err.error.data, 'error');
-  //     return throwError(err);
-  //   }));
-  // }
   
   obtenerMoviemientosContratacionPorId(id : any){
     let url = SERVER_API+"contratacion/obtenerMoviemientosContratacionPorId/"+id;
@@ -64,7 +54,7 @@ export class ContratoService {
     .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }
@@ -75,7 +65,7 @@ export class ContratoService {
     .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }
@@ -86,7 +76,7 @@ export class ContratoService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
@@ -97,7 +87,7 @@ export class ContratoService {
     .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }

@@ -137,7 +137,14 @@
                 </tr>
             </thead>
             <tbody>
-                
+                <tr *ngFor="let alta of table_body">
+                    <td>{{alta.nombre}}</td>
+                    <td>{{alta.empresa}}</td>
+                    <td>{{alta.departamento}}</td>
+                    <td>{{alta.puesto}}</td>
+                    <td>{{alta.nomina}}</td>
+                    <td>{{alta.sueldo}}</td>
+                </tr>
             </tbody>
         </table>
         <table *ngIf="tipo_titulo == 2" class="table">
@@ -180,8 +187,6 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
-        <button *ngIf="tipo_titulo == 1" type="button" class="btn btn-success" id="guardar">Aceptar alta</button>
-        <button *ngIf="tipo_titulo == 2" type="button" class="btn btn-success" id="guardar">Aceptar modificación</button>
-        <button *ngIf="tipo_titulo == 3" type="button" class="btn btn-success" id="guardar">Aceptar baja</button>
+        <button *ngIf="tipo_titulo == 1" type="button" class="btn btn-success" id="guardar" (click)="aplicarSolicitud()">Aplicar solicitud</button>
     </div>
   </ng-template>

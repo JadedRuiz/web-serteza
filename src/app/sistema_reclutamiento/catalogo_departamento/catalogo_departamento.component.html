@@ -126,7 +126,8 @@
 </div>
 <ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
     <div class="modal-header">
-        <h2 class="modal-title" id="tituloModal">Nuevo departamento</h2>
+        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nuevo departamento</h2>
+        <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Editar departamento</h2>
     </div>
     <div class="modal-body">
         <div class="form-row col-12 mb-2" style="display: flex;justify-content: flex-end;">
@@ -161,7 +162,8 @@
             </div>
         </div>
         <div class="form-row">
-            <h2>Nuevo puesto</h2>
+            <h2  *ngIf="tipo_modal == 1" >Nuevo puesto</h2>
+            <h2  *ngIf="tipo_modal == 2" >Agregar puesto</h2>
         </div>
         <div class="form-row">
             <div class="form-group col-sm-9">
@@ -194,9 +196,9 @@
             </div>
         </div>
         <div class="form-row float-right">
-            <button class="btn btn-success" (click)=agregarPuesto() id="agregarPuesto">Agregar</button>
+            <button class="btn btn-success" (click)=agregarPuesto(1) id="agregarPuesto">Agregar</button>
             <button class="btn btn-warning" (click)=limpiaTexto() id="limpiaTexto" style="display: none;">Limpiar</button>
-            <button class="btn btn-success" (click)=agregarPuesto() id="guardaPuesto" style="display: none;">Guardar</button>
+            <button class="btn btn-success" (click)=agregarPuesto(2) id="guardaPuesto" style="display: none;">Guardar</button>
         </div>
         <div class="form-row mt-5">
             <div class="table-responsive col-sm-12">
@@ -206,17 +208,17 @@
                             <th scope="col">Puestos</th>
                             <th scope="col">Descripcion</th>
                             <th scope="col" style="width: 5%;text-align: center;">Autorizados</th>
-                            <th scope="col" style="width: 5%;text-align: center;">Acciones</th>
+                            <th  *ngIf="tipo_modal == 1" scope="col" style="width: 5%;text-align: center;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody *ngIf="band_puestos">
-                        <tr *ngFor="let puesto_array of puestos">
+                        <tr *ngFor="let puesto_array of puestos" (click)="editarPuesto(puesto_array.id_puesto)">
                             <td style="vertical-align: middle;">{{puesto_array.puesto}}</td>
                             <td style="vertical-align: middle;">{{puesto_array.descripcion}}</td>
                             <td style="vertical-align: middle;" style="width: 5%;text-align: center;">
                                 <input type="number" name="" id="valor_{{puesto_array.id_puesto}}" value="{{puesto_array.autorizados}}" class="form-control" (change)="cambiarValor(puesto_array.id_puesto,puesto_array.autorizados)">
                             </td>
-                            <td style="vertical-align: middle;" ><a class="btn btn-info" (click)="eliminarPuesto(puesto_array.id_puesto)" title="Eliminar puesto"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a></td>
+                            <td style="vertical-align: middle;" *ngIf="tipo_modal == 1"><a class="btn btn-info" (click)="eliminarPuesto(puesto_array.id_puesto)" title="Eliminar puesto"><img src="./assets/iconos/delete.svg" style="width: 24px;"></a></td>
                         </tr>
                     </tbody>
                     <tbody *ngIf="!band_puestos">

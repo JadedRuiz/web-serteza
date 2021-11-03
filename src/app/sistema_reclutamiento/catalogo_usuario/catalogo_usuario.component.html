@@ -191,7 +191,7 @@
                 <h5>Agregue los sistemas y perfiles al usuario</h5>
             </div>
             <div class="row">
-                <div class="col-4">
+                <div class="col-3">
                     <mat-form-field class="w-100">
                         <mat-label>Sistema</mat-label>
                         <mat-select [(ngModel)]="sistema_option.id_sistema" name="sistema" (selectionChange)='setSistema($event)'>
@@ -199,7 +199,7 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
-                <div class="col-4">
+                <div class="col-3">
                     <mat-form-field class="w-100">
                         <mat-label>Perfil</mat-label>
                         <mat-select [(ngModel)]="sistema_option.id_perfil" name="perfil" (selectionChange)='setPerfil($event)'>
@@ -207,11 +207,19 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
-                <div class="col-4">
+                <div class="col-3">
                     <mat-form-field class="w-100">
                         <mat-label>Empresa</mat-label>
                         <mat-select [(ngModel)]="sistema_option.id_empresa" name="empresa" (selectionChange)='setEmpresa($event)'>
                             <mat-option *ngFor="let empresa of empresas" [value]="empresa.id_empresa"><span id="option{{empresa.id_empresa}}">{{empresa.empresa}}</span></mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-3">
+                    <mat-form-field class="w-100">
+                        <mat-label>Sucursal</mat-label>
+                        <mat-select [(ngModel)]="sistema_option.id_sucursal" name="sucursal" (selectionChange)='setSucursal($event)' [disabled]="band_disabled">
+                            <mat-option *ngFor="let sucursal of sucursales" [value]="sucursal.id_sucursal"><span id="option{{sucursal.id_sucursal}}">{{sucursal.sucursal}}</span></mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
@@ -228,6 +236,7 @@
                                     <th colspan="1">Sistema</th>
                                     <th colspan="1">Perfil</th>
                                     <th colspan="1">Empresa</th>
+                                    <th colspan="1" *ngIf="!band_disabled">Sucursal</th>
                                     <th colspan="1">Acciones</th>
                                 </tr>
                             </thead>
@@ -235,7 +244,8 @@
                                 <tr *ngFor="let seleccion of sistemas_seleccionados">
                                     <td>{{seleccion.sistema}}</td>
                                     <td>{{seleccion.perfil}}</td>
-                                    <td>{{seleccion.empresa}}</td>
+                                    <td *ngIf="!band_disabled">{{seleccion.empresa}}</td>
+                                    <td>{{seleccion.sucursal}}</td>
                                     <td>
                                         <button class="btn btn-sm btn-warning" (click)="eliminarAUsuario(seleccion.id_sistema)"><i class="fas fa-trash-alt"></i></button>
                                     </td>
@@ -244,7 +254,7 @@
                             <ng-template #irElse>
                                 <tbody>
                                     <tr class="text-center">
-                                        <td colspan="3">Aún no se cuentan con sistemas/perfiles agregados</td>
+                                        <td colspan="5">Aún no se cuentan con sistemas/perfiles agregados</td>
                                     </tr>
                                 </tbody>
                             </ng-template>

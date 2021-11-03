@@ -69,7 +69,7 @@
                             <td colspan="1" style="vertical-align: middle;">{{candidato.status}}</td>
                             <td colspan="1" style="width: 20%;vertical-align: middle;" class="text-center">
                                 <a title="Editar" (click)="editar(candidato.folio)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
-                                <a title="Eliminar" (click)="eliminar(candidato.folio)" style="cursor: pointer;" class="btn btn-warning btn-sm"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
+                                <!-- <a title="Eliminar" (click)="eliminar(candidato.folio)" style="cursor: pointer;" class="btn btn-warning btn-sm"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a> -->
                             </td>
                         </tr>
                     </tbody>
@@ -261,7 +261,7 @@
                             <div class="col-12">
                                 <div class="form-group"> 
                                     <label for="desc_cempresa">Descripción del puesto</label>
-                                    <textarea [(ngModel)]="candidato.descripcion" name="desc_cempresa" class="form-control" rows="5" id="desc_cempresa"></textarea>
+                                    <textarea [(ngModel)]="candidato.descripcion" name="desc_cempresa" class="form-control" rows="5" id="desc_cempresa" style="text-transform: uppercase;"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -271,22 +271,22 @@
                 <div class="form-row">
                   <div class="form-group col-md-2">
                     <label for="calle">Calle</label>
-                    <input [(ngModel)]="candidato.direccion.calle" name="calle" type="text" class="form-control" id="calle" required>
+                    <input [(ngModel)]="candidato.direccion.calle" style="text-transform: uppercase;" name="calle" type="text" class="form-control" id="calle" required>
                   </div>
                   <div class="form-group col-md-2">
                     <label for="num_ext">Número ext.</label>
-                    <input [(ngModel)]="candidato.direccion.numero_exterior" name="num_exterior" type="text" class="form-control" id="num_ext" placeholder="">
+                    <input [(ngModel)]="candidato.direccion.numero_exterior" style="text-transform: uppercase;" name="num_exterior" type="text" class="form-control" id="num_ext" placeholder="">
                   </div>
                   <div class="form-group col-md-2">
                     <label for="num_int">Número int.</label>
-                    <input [(ngModel)]="candidato.direccion.numero_interior" name="num_interior" type="text" class="form-control" id="num_int" placeholder="">
+                    <input [(ngModel)]="candidato.direccion.numero_interior" style="text-transform: uppercase;" name="num_interior" type="text" class="form-control" id="num_int" placeholder="">
                   </div>
                   <div class="form-group col-md-3">
                     <label for="cruzamientos_form">Cruzamientos</label>
                     <div class="form-inline form-row align-items-center" id="cruzamientos_form">
-                      <input [(ngModel)]="candidato.direccion.cruzamiento_uno" name="cruzamiento_ext" type="text" class="form-control col-5" id="cruzamientos_int" placeholder="">
+                      <input [(ngModel)]="candidato.direccion.cruzamiento_uno" style="text-transform: uppercase;" name="cruzamiento_ext" type="text" class="form-control col-5" id="cruzamientos_int" placeholder="">
                       <p class="text-center col-2"> y </p>
-                      <input [(ngModel)]="candidato.direccion.cruzamiento_dos" name="cruzamiento_int" type="text" class="form-control col-5" id="cruzamientos_ext" placeholder="">
+                      <input [(ngModel)]="candidato.direccion.cruzamiento_dos" style="text-transform: uppercase;" name="cruzamiento_int" type="text" class="form-control col-5" id="cruzamientos_ext" placeholder="">
                     </div>
                   </div>
                   <div class="form-group col-md-2">
@@ -305,26 +305,26 @@
                     <!-- <select [(ngModel)]="candidato.direccion.colonia" name="colonia" type="text" class="form-control" (change)="modificarMunicipio()" id="colonia" placeholder="">
                       <option *ngFor="let colonia of colonias">{{colonia}}</option>
                     </select> -->
-                    <input [(ngModel)]="candidato.direccion.colonia" name="colonia" id="colonia" type="text" class="form-control">
+                    <input [(ngModel)]="candidato.direccion.colonia" style="text-transform: uppercase;" name="colonia" id="colonia" type="text" class="form-control">
                   </div>
                   <div class="form-group col-md-3">
                     <label for="localidad">Localidad</label>
-                    <input [(ngModel)]="candidato.direccion.localidad" name="localidad" type="text" class="form-control" id="localidad" placeholder="">
+                    <input [(ngModel)]="candidato.direccion.localidad" style="text-transform: uppercase;" name="localidad" type="text" class="form-control" id="localidad" placeholder="">
                   </div>
                   <div class="form-group col-md-3">
                     <label for="municipio">Municipio</label>
-                    <input [(ngModel)]="candidato.direccion.municipio" name="municipio" type="text" class="form-control" id="municipio">
+                    <input [(ngModel)]="candidato.direccion.municipio" style="text-transform: uppercase;" name="municipio" type="text" class="form-control" id="municipio">
                   </div>
                   <div class="form-group col-md-3">
                     <label for="estado">Estado</label>
-                    <input [(ngModel)]="candidato.direccion.estado" name="estado" type="text" class="form-control" id="estado">
+                    <input [(ngModel)]="candidato.direccion.estado" style="text-transform: uppercase;" name="estado" type="text" class="form-control" id="estado">
                   </div>
                 </div>
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group"> 
                             <label for="desc_dir_empresa">Descripción</label>
-                            <textarea [(ngModel)]="candidato.direccion.descripcion" name="desc_dir_empresa" class="form-control" rows="5" id="desc_dir_empresa"></textarea>
+                            <textarea [(ngModel)]="candidato.direccion.descripcion" name="desc_dir_empresa" class="form-control" rows="5" id="desc_dir_empresa" style="text-transform: uppercase;"></textarea>
                         </div>
                     </div>
                 </div>

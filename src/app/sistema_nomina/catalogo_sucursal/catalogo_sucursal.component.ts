@@ -31,6 +31,7 @@ export class CatalogoSucursalComponent implements OnInit {
     tasa_estatal : 0.00,
     tasa_especial : 0.00,
     zona : "",
+    region : "",
     estado : 0,
     prima_riesgo : 0.00,
     usuario : this.usuario
@@ -120,9 +121,11 @@ export class CatalogoSucursalComponent implements OnInit {
         this.openModal();
         this.tipo_modal = 2;
         let sucursal = object.data[0];
+        this.json.id_sucursal = id;
         this.json.id_cliente = sucursal.id_cliente;
         this.json.sucursal = sucursal.sucursal;
         this.json.zona = sucursal.zona;
+        this.json.region = sucursal.region;
         this.json.tasa_estatal = sucursal.tasaimpuestoestatal;
         this.json.tasa_especial = sucursal.tasaimpuestoespecial;
         this.json.prima_riesgo = sucursal.prima_riesgotrabajo;
@@ -134,7 +137,7 @@ export class CatalogoSucursalComponent implements OnInit {
   }
 
   modificarSucursal(){
-
+    this.confirmar("Confirmación","¿Seguro que deseas modificar esta sucursal?","info",null,2);
   }
 
   openModal() {
@@ -157,6 +160,7 @@ export class CatalogoSucursalComponent implements OnInit {
       tasa_estatal : 0.00,
       tasa_especial : 0.00,
       zona : "",
+      region : "",
       estado : 0,
       prima_riesgo : 0.00,
       usuario : this.usuario
@@ -186,7 +190,14 @@ export class CatalogoSucursalComponent implements OnInit {
           });
         }
         if(tipo == 2){  //Editar
-          
+          this.sucursal_service.modificarSucursal(this.json)
+          .subscribe((object : any) => {
+            if(object.ok){
+              this.mostrarSucursales();
+              this.cerrarModal();
+              Swal.fire("Buen trabajo","Se ha modificado la sucursal con éxito","success");
+            }
+          });
         }
       }
     });

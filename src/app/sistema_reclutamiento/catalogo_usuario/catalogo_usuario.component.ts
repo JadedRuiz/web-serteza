@@ -12,6 +12,7 @@ import { Observable, Subject } from 'rxjs';
 import { FormControl} from '@angular/forms';
 import { CompartidoService } from 'src/app/services/Compartido/Compartido.service';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
+import { SucursalService } from 'src/app/services/Sucursal/sucursal.service';
 
 @Component({
   selector: 'app-catalogo-usuario',
@@ -36,6 +37,8 @@ export class CatalogoUsuarioComponent implements OnInit {
     "id_sistema" : 0,
     "id_perfil" : 0,
     "id_empresa" : 0,
+    "id_sucursal" : 0,
+    "sucursal" : "",
     "empresa" : "",
     "sistema" : "",
     "perfil" : ""
@@ -46,6 +49,8 @@ export class CatalogoUsuarioComponent implements OnInit {
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   public activo = true;
   public perfil = parseInt(window.sessionStorage.getItem("perfil")+"");
+  public band_disabled = true;
+  public sucursales : any;
   //Filtros
   public taken = 5; //Registros por default
   public status = 2; //Status default
@@ -81,7 +86,8 @@ export class CatalogoUsuarioComponent implements OnInit {
     private modalService: NgbModal,
     private sanitizer: DomSanitizer,
     private compartido_service : CompartidoService,
-    private empresa_service :  EmpresaService
+    private empresa_service :  EmpresaService,
+    private sucursal_service : SucursalService
   ) {
     this.sistemas_seleccionados = [];
     this.modal = NgbModalRef;
@@ -162,7 +168,8 @@ export class CatalogoUsuarioComponent implements OnInit {
         let json = {
           nombre :  this.usuario.nombre,
           usuario : this.usuario.usuario,
-          password : this.usuario.usuario,
+          password : this.usuario.password,
+          cliente : this.cliente_seleccionado,
           sistemas : this.sistemas_seleccionados,
           usuario_creacion : this.usuario_creacion,
           activo : active,
@@ -185,8 +192,24 @@ export class CatalogoUsuarioComponent implements OnInit {
   setEmpresa(event : any){
     this.sistema_option.id_empresa = event.value;
     this.sistema_option.empresa = $("#option"+event.value).html();
+    if(this.sistema_option.id_perfil == 3 || this.sistema_option.id_perfil == 4){
+      this.band_disabled = false;
+      this.sucursales = [];
+      this.sucursal_service.obtenerSucursales(event.value)
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.sucursales = object.data;
+        }
+      });
+    }else{
+      this.band_disabled = true;
+    }
   }
-
+  setSucursal(event : any){
+    this.sistema_option.id_sucursal = event.value;
+    console.log($("#option"+event.value).html());
+    this.sistema_option.sucursal = $("#option"+event.value).html();
+  }
   agregarAUsuario(){
     if(this.sistema_option.id_perfil == 0 || this.sistema_option.id_perfil == 0){
       Swal.fire("Ha ocurrido un problema","No se puede agregar sin antes seleccionar el sistema y perfil","error");
@@ -207,7 +230,9 @@ export class CatalogoUsuarioComponent implements OnInit {
       "id_sistema" : 0,
       "id_perfil" : 0,
       "id_empresa" : 0,
+      "id_sucursal" : 0,
       "empresa" : "",
+      "sucursal" : "",
       "sistema" : "",
       "perfil" : ""
     };
@@ -253,6 +278,8 @@ export class CatalogoUsuarioComponent implements OnInit {
       "id_sistema" : 0,
       "id_perfil" : 0,
       "id_empresa" : 0,
+      "id_sucursal" : 0,
+      "sucursal" : "",
       "empresa" : "",
       "sistema" : "",
       "perfil" : ""
@@ -285,10 +312,15 @@ export class CatalogoUsuarioComponent implements OnInit {
         //Se llenan los sistemas
         this.sistemas_seleccionados = [];
         for(let i=0;i<object.data[0].sistemas.length; i++){
+          if(object.data[0].sistemas[i].id_sistema == 2){
+            this.band_disabled = false;
+          }
           this.sistemas_seleccionados.push({
             "id_sistema" : object.data[0].sistemas[i].id_sistema,
             "id_perfil" : object.data[0].sistemas[i].id_perfil,
             "id_empresa" : object.data[0].sistemas[i].id_empresa,
+            "id_sucursal" : object.data[0].sistemas[i].id_sucursal,
+            "sucursal" : object.data[0].sistemas[i].sucursal,
             "empresa" : object.data[0].sistemas[i].empresa,
             "sistema" : object.data[0].sistemas[i].sistema,
             "perfil" : object.data[0].sistemas[i].perfil

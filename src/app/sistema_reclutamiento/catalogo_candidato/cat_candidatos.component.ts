@@ -23,7 +23,7 @@ export class CatalogoCandidatosComponent implements OnInit {
 
   //Variables globales
   public color = COLOR;
-  public direccion : Direccion = new Direccion(0,0,"","","","","","","","","","");
+  public direccion : Direccion = new Direccion(0,"","","","","","","","","","","");
   public fotografia = new Fotografia(0,"","","");
   public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
@@ -76,7 +76,7 @@ export class CatalogoCandidatosComponent implements OnInit {
     public cp_service: LocalidadService,
     private candidato_service: CandidatoService,
     private sanitizer: DomSanitizer,
-    private modalService: NgbModal,
+    private modalService: NgbModal
   ) {
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
     this.modal_camera = NgbModalRef;
@@ -149,7 +149,7 @@ export class CatalogoCandidatosComponent implements OnInit {
       Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
     }else{
       if(
-        this.direccion.calle == 0 && this.direccion.codigo_postal == "" &&
+        this.direccion.calle == "" && this.direccion.codigo_postal == "" &&
         this.direccion.colonia == "" && this.direccion.cruzamiento_dos == "" &&
         this.direccion.cruzamiento_uno == "" && this.direccion.descripcion ==  "" &&
         this.direccion.estado == "" && this.direccion.localidad == "" &&
@@ -267,7 +267,7 @@ export class CatalogoCandidatosComponent implements OnInit {
       Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
     }else{
       if(
-        this.direccion.calle == 0 && this.direccion.codigo_postal == "" &&
+        this.direccion.calle == "" && this.direccion.codigo_postal == "" &&
         this.direccion.colonia == "" && this.direccion.cruzamiento_dos == "" &&
         this.direccion.cruzamiento_uno == "" && this.direccion.descripcion ==  "" &&
         this.direccion.estado == "" && this.direccion.localidad == "" &&
@@ -319,31 +319,8 @@ export class CatalogoCandidatosComponent implements OnInit {
     }
   }
 
-  eliminar(folio : any){
-    Swal.fire({
-      title: '¿Estas seguro que deseas eliminar este candidato?',
-      text: "Una vez eliminado, ya no lo podrás visualizar de nuevo",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, estoy seguro',
-      cancelButtonText : "Cancelar"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.candidato_service.eliminarCandidato(folio)
-        .subscribe( (object : any)=>{
-          if(object.ok){
-            this.mostrarCandidatos();
-          }else{
-            Swal.fire("Ha ocurrido un error",object.message,"error");
-          }
-        });
-      }
-    });
-  }
   limpiarCampos(){
-    this.direccion  = new Direccion(0,0,"","","","","","","","","","");
+    this.direccion  = new Direccion(0,"","","","","","","","","","","");
     this.fotografia = new Fotografia(0,"","",""); 
     this.candidato = new Candidato(0,this.id_cliente,6,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia);
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
@@ -433,7 +410,7 @@ export class CatalogoCandidatosComponent implements OnInit {
   
   openModal() {
     this.bandera_activo = false;
-    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop'});
+    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop', backdrop: 'static', keyboard: false});
   }
 
   cerrarModal(){
@@ -530,7 +507,7 @@ export class CatalogoCandidatosComponent implements OnInit {
   }
 
   openModalCamera(){
-    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop', backdrop: 'static', keyboard: false});
     // this.showWebcam = true;
   }
 
@@ -556,7 +533,6 @@ export class CatalogoCandidatosComponent implements OnInit {
 
   handleImage(webcamImage: WebcamImage) {
     this.getPicture.emit(webcamImage);
-    this.showWebcam = false;
     this.foto_user = webcamImage.imageAsDataUrl;
     let docB64 = this.foto_user.split(",");
     this.fotografia.docB64 = docB64[1];
