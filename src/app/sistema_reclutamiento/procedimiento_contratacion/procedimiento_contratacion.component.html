@@ -232,6 +232,7 @@
                     <td style="vertical-align: middle;" (click)="editarDetalle(solicitud.id_detalle)">{{solicitud.puesto}}</td>
                     <td style="vertical-align: middle;">
                       <a *ngIf="tipo_movimiento == 1" title="Reporte para el contratado" style="cursor: pointer;" class="btn btn-gray btn-sm" (click)="consumoReporte(2,solicitud.id_detalle)"><img src="./assets/iconos/reporte.svg" style="width: 14px;"></a>
+                      <a *ngIf="tipo_movimiento == 1" title="Descargar Contrato" style="cursor: pointer;" class="btn btn-dark btn-sm" (click)="descargarReporte(solicitud.id_detalle)"><i class="fas fa-file-contract" style="width: 14px;"></i></a>
                       <a *ngIf="btn_delete" title="Eliminar" (click)="eliminarDetalle(solicitud.id_detalle)" style="cursor: pointer;" class="btn btn-warning btn-sm"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
                     </td>
                   </tr>

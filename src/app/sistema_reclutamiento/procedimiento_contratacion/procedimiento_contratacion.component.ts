@@ -211,7 +211,9 @@ export class ProcedimientoContratacionComponent implements OnInit {
       }
     });
   }
-
+  descargarReporte(id : number){
+    location.href = SERVER_API+"contratacion/obtenerDocContratacion/"+id;
+  }
   mostrarSucursales(id_empresa : any){
     this.sucursales = [];
     this.sucursal_service.obtenerSucursales(id_empresa)

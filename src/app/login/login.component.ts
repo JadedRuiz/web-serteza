@@ -76,7 +76,7 @@ export class LoginComponent implements OnInit {
             this.eleccion(this.sistema_elegido,resp.data.info_usuario.sistemas[0].id_perfil,1);
           }
         }else{
-          Swal.fire("Ha ocurrio un error",resp.data,"error");
+          Swal.fire("Ha ocurrio un error",resp.message,"error");
         }
       });      
     }

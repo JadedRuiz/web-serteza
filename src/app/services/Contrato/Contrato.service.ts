@@ -69,7 +69,16 @@ export class ContratoService {
         return throwError(err);
       }));
   }
-
+  descargarContrato(id : number){
+    let url = SERVER_API+"contratacion/obtenerDocContratacion/"+id;
+    return this.http.get(url)
+    .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+        return throwError(err);
+      }));
+  }
   eliminarDetalleContratacion(json : any){
     let url = SERVER_API+"contratacion/eliminarDetalleContratacion";
     return this.http.post( url, json )

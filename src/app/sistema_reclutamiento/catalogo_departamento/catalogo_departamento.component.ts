@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+ import { Component, OnInit, ViewChild } from '@angular/core';
 import { COLOR } from 'src/config/config';
 import { DepartamentoService } from 'src/app/services/Departamento/Departamento.service';
 import { PuestoService } from 'src/app/services/Puesto/Puesto.service';
