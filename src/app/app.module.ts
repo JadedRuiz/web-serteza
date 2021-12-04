@@ -16,6 +16,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { SistemaNominaModule } from './sistema_nomina/sistema_nomina.module';
 import { SistemaControlModule } from './sistema_control/sistema_control.module';
+import { SistemaFacturacionModule } from './sistema_facturacion/sistema_facturacion.module';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { SistemaControlModule } from './sistema_control/sistema_control.module';
     SitemaPrestasoftModule,
     SistemaNominaModule,
     SistemaControlModule,
+    SistemaFacturacionModule,
     NgbModule,
     FormsModule,
     ReactiveFormsModule,

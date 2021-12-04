@@ -72,8 +72,8 @@ export class LoginComponent implements OnInit {
           }else{
             this.sistema_elegido = resp.data.info_usuario.sistemas[0].id;
             window.sessionStorage.setItem("sistema",this.sistema_elegido);
-            window.sessionStorage.setItem("perfil",resp.data.info_usuario.sistemas[0].id_perfil);
-            this.eleccion(this.sistema_elegido,resp.data.info_usuario.sistemas[0].id_perfil,1);
+            // window.sessionStorage.setItem("perfil",resp.data.info_usuario.sistemas[0].id_perfil);
+            this.eleccion(this.sistema_elegido,1);
           }
         }else{
           Swal.fire("Ha ocurrio un error",resp.message,"error");
@@ -81,7 +81,7 @@ export class LoginComponent implements OnInit {
       });      
     }
   }
-  eleccion(id : any,id_perfil : number, tipo : any){
+  eleccion(id : any, tipo : any){
     this.sistema_elegido = id;
     window.sessionStorage.setItem("sistema",this.sistema_elegido);
     if(this.sistema_elegido == "5"){
@@ -117,14 +117,10 @@ export class LoginComponent implements OnInit {
         }
       });
     }
-    if(this.sistema_elegido == "2"){
-      if(id_perfil == 0 || id_perfil == null){
-        Swal.fire("Ha ocurrido un error","Este usuario no cuenta con un perfil asignado","error");
-        return;
-      }
+    if(this.sistema_elegido == "2" || this.sistema_elegido == "7"){
       if(tipo != 1){
         this.closeModal();
-        window.sessionStorage.setItem("perfil",id_perfil+"");
+        // window.sessionStorage.setItem("perfil",id_perfil+"");
       }
       this.clientes = [];
       this.cliente_service.obtenerClientePorIdUsuario(window.sessionStorage.getItem("user"))
@@ -167,6 +163,13 @@ export class LoginComponent implements OnInit {
         this.closeModal();
       }
       this.router.navigate(["sistema_reclutamiento/dashboard"]);
+    }
+    if(this.sistema_elegido == "7"){
+      window.sessionStorage.setItem("cliente",id);
+      if(tipo != 1){
+        this.closeModal();
+      }
+      this.router.navigate(["sistema_facturacion/inicio"]);
     }
     if(this.sistema_elegido == "3"){
       window.sessionStorage["empresa"] = id;

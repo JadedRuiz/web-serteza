@@ -15,7 +15,7 @@ export class UsuarioService {
   constructor(
     private cookies: CookieService,
     public http: HttpClient
-    ) { }
+  ) { }
 
   login(usuario : Usuario){
     let url = SERVER_API+"usuario/login";

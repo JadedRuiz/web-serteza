@@ -13,6 +13,9 @@ import * as jQuery from 'jquery';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import { Observable, Subject } from 'rxjs';
 import { FormControl} from '@angular/forms';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { filter } from 'rxjs/operators';
   
 @Component({
   selector: 'app-candidatos-original',
@@ -40,31 +43,26 @@ export class CatalogoCandidatosComponent implements OnInit {
   public foto_user : any;
   public docB64 = "";
   public bandera_activo = false;
+  public band_persiana = true;
+  //Modelo tabla
+  displayedColumns: string[] = ['id_candidato', 'fotografia', "candidato", "descripcion", 'estatus', 'accion'];
+  dataSource  = new MatTableDataSource();
+  @ViewChild(MatPaginator) paginator : any;
+  //Buscador
+  filterControl = new FormControl();
+  candidatos_busqueda : any;
+  // webcam snapshot trigger
+  private trigger: Subject<void> = new Subject<void>();
+  private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
   @Output() getPicture = new EventEmitter<WebcamImage>();
   showWebcam = true;
   isCameraExist = true;
   errors: WebcamInitError[] = [];
-  // webcam snapshot trigger
-  private trigger: Subject<void> = new Subject<void>();
-  private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
   //Filtros
-  public taken = 5; //Registros por default
   public status = -1; //Status default
   public palabra = "";
-  //Paginacion
-  public total_registros = 0;
-  public mostrar_pagination = false;
-  public paginas_a_mostrar = 5;
-  public paginas : any;
-  public pagina_actual = 0;
-  public limite_inferior = 0;
-  public limite_superior = this.paginas_a_mostrar;
-  public next = false;
-  public previous = false;
-  public band_persiana = true;
   //Autocomplete
   myControl = new FormControl();
-  candidatos_busqueda : any;
 
   colonias = [
     "Primero ingresa el Codigo Postal"
@@ -81,6 +79,8 @@ export class CatalogoCandidatosComponent implements OnInit {
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
     this.modal_camera = NgbModalRef;
     this.modal = NgbModalRef;
+    this.paginator = MatPaginator;
+    this.candidatos_busqueda = [];
    }
 
   ngOnInit(): void {
@@ -90,12 +90,11 @@ export class CatalogoCandidatosComponent implements OnInit {
       this.isCameraExist = mediaDevices && mediaDevices.length > 0;
     });
   }
+
   mostrarCandidatos(){
     let json = {
       palabra : this.palabra.toUpperCase(),
-      taken : this.taken,
       status : this.status,
-      pagina : this.pagina_actual,
       id_cliente : this.id_cliente,
       tipo : 1 
     };
@@ -103,41 +102,36 @@ export class CatalogoCandidatosComponent implements OnInit {
     this.candidato_service.obtenerCandidatos(json)
     .subscribe( (object : any) =>{
         if(object.ok){
-          //Mostrar si los registros son mayores a los registros que se muestran
-          this.total_registros = object.data.total;
-          if(this.total_registros > this.taken){
-            this.mostrar_pagination = true;
-            this.paginar();
-          }else{
-            this.mostrar_pagination = false;
-          }
-          //Mostrar usuarios
-          this.band = true;
-          //LLenar los usuarios en la tabla
-          for(let i =0; i<object.data.registros.length; i++){
-            let nombre = object.data.registros[i].nombre;
-            let apellidos = object.data.registros[i].apellido_paterno + " " + object.data.registros[i].apellido_materno;
-            this.candidatos.push({
-              "folio" : object.data.registros[i].id_candidato,
-              "fotografia" : ""+object.data.registros[i].fotografia,
-              "nombre" : apellidos + " " + nombre,
-              "status" : object.data.registros[i].status
-            });
-          }
-        }else{
-          this.band = false;
+          this.dataSource.data = object.data;
+          this.dataSource.paginator = this.paginator;
+          this.candidatos_busqueda= object.data;
         }
     });
   }
+
+  buscarCandidato(){
+    this.palabra = this.filterControl.value;
+    if(this.filterControl.value.length < 1){
+      this.mostrarCandidatos();
+    }
+    if(this.filterControl.value.length > 2){
+      this.autocomplete(this.filterControl.value);
+    }
+  }
+
   autocomplete(palabra : string){
     this.candidatos_busqueda = [];
-    if(palabra.length > 3){
-      this.candidato_service.autoCompleteCandidato({"nombre_candidato":palabra,"id_cliente":this.id_cliente})
+    if(palabra.length > 2){
+      let json = {
+        nombre_candidato : this.palabra.toUpperCase(),
+        status : this.status,
+        id_cliente : this.id_cliente
+      };
+      this.candidato_service.autoCompleteCandidato(json)
       .subscribe((object : any) => {
         if(object.ok){
-          this.candidatos_busqueda = object.data;
-        }else{
-          this.candidatos_busqueda = [];
+          this.dataSource.data = object.data;
+          this.dataSource.paginator = this.paginator;
         }
       })
     }
@@ -364,6 +358,15 @@ export class CatalogoCandidatosComponent implements OnInit {
       this.estatus_color = "bg-success";
     }
   }
+  
+
+  mostrarPersiana(){
+    this.band_persiana = false;
+  }
+
+  ocultarPersiana(){
+    this.band_persiana = true;
+  }
 
   subirImagen(){
     document.getElementById("foto_user")?.click();
@@ -399,14 +402,6 @@ export class CatalogoCandidatosComponent implements OnInit {
       }
     }
   }
-
-  mostrarPersiana(){
-    this.band_persiana = false;
-  }
-
-  ocultarPersiana(){
-    this.band_persiana = true;
-  }
   
   openModal() {
     this.bandera_activo = false;
@@ -417,48 +412,6 @@ export class CatalogoCandidatosComponent implements OnInit {
     this.modal.close();
   }
 
-  paginar(){
-    this.paginas = [];
-    let paginas_a_pintar = parseInt(this.total_registros+"")%parseInt(this.taken+"");
-    if(paginas_a_pintar == 0){
-      paginas_a_pintar = (parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+"");
-    }else{
-      paginas_a_pintar = ((parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+""))+1;
-    }
-    //Pintamos las flechas
-    if(paginas_a_pintar > this.paginas_a_mostrar){
-      this.next = true;
-    }
-    if(this.pagina_actual == paginas_a_pintar){
-      this.next = false;
-    }
-    if(this.pagina_actual > this.paginas_a_mostrar){
-      this.previous = true;
-    }
-    if(this.pagina_actual == 0){
-      this.previous = false;
-    }
-    //Pintamos las paginas
-    for(let i =0;i<this.paginas_a_mostrar;i++){
-      let pagina_inicial = this.limite_inferior;
-      if(i<paginas_a_pintar){
-        if(this.pagina_actual == pagina_inicial+i){
-          this.paginas.push({
-            numero : (pagina_inicial+i)+1,
-            valor_pagina : pagina_inicial+i,
-            active : "active"
-          });
-        }else{
-          this.paginas.push({
-            numero : (pagina_inicial+i)+1,
-            valor_pagina : pagina_inicial+i,
-            active : ""
-          });
-        }
-      }
-    }
-  }
-
   guardar(){
     this.limpiarCampos();
     this.openModal();
@@ -466,12 +419,7 @@ export class CatalogoCandidatosComponent implements OnInit {
     jQuery("#editar").hide();
   }
 
-  irPagina(pagina : any){
-    this.pagina_actual = pagina;
-    this.mostrarCandidatos();
-  }
-
-  getCandidato(event : any) {
+  optionCandidato(event : any) {
     this.editar(event.option.id);
     this.candidatos_busqueda.splice(0,this.candidatos_busqueda.length);
     this.myControl.reset('');

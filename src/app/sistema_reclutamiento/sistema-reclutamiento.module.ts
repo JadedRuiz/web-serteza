@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { SistemaReclutamientoComponent } from './sistema-reclutamiento.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -19,10 +19,17 @@ import { MatInputModule } from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import { MatNativeDateModule } from '@angular/material/core'; 
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import { CompartidoModuleGeneral } from 'src/app/compartido/compartido.module';
 import { CatalogoDepartamentoComponent } from './catalogo_departamento/catalogo_departamento.component';
 import { CatalogoUsuarioComponent } from './catalogo_usuario/catalogo_usuario.component';
-import { ProcedimientoCapturaComponent } from './procedimiento_captura/procedimiento_captura.component';
+import {MatIconModule} from '@angular/material/icon';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatTabsModule} from '@angular/material/tabs';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatListModule} from '@angular/material/list';
+import { MovimientoComponent } from './movimiento/movimiento.component';
 
 @NgModule({
   declarations: [
@@ -31,10 +38,10 @@ import { ProcedimientoCapturaComponent } from './procedimiento_captura/procedimi
     CatalogoCandidatosComponent,
     CatalogoDepartamentoComponent,
     CatalogoUsuarioComponent,
-    ProcedimientoCapturaComponent,
     ProcedimientoContratacionComponent,
     ProcedimientoBajaComponent,
-    ProcedimientoModificacionComponent
+    ProcedimientoModificacionComponent,
+    MovimientoComponent
   ],
   imports: [
     CompartidoModule,
@@ -52,7 +59,15 @@ import { ProcedimientoCapturaComponent } from './procedimiento_captura/procedimi
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    CompartidoModuleGeneral
-  ]
+    CompartidoModuleGeneral,
+    MatTableModule,
+    MatPaginatorModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTabsModule,
+    BrowserAnimationsModule,
+    MatListModule
+  ],
+  providers: [CurrencyPipe]
 })
 export class SistemaReclutamientoModule { }

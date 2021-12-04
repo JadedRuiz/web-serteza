@@ -23,7 +23,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
   public usuario = parseInt(window.sessionStorage.getItem("user")+"");
   public empresa = parseInt(window.sessionStorage.getItem("empresa")+"");
   public departamento = new Departamento(0,this.empresa,"","",1,this.usuario,1,[]);
-  public puesto = new Puesto(0,"","","","","1","",this.usuario,1);
+  public puesto = new Puesto(0,0,"","","","",true,"1","",this.usuario,1);
   public puestos : any;
   public activo = true;
   public modal : any;
@@ -158,7 +158,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
         "sueldo_tipo_c" : this.puesto.sueldo_tipo_c
       });
       this.cont++;
-      this.puesto = new Puesto(0,"","","","","1","",this.usuario,1);
+      this.puesto = new Puesto(0,0,"","","","",true,"1","",this.usuario,1);
   }
 
   eliminarPuesto(folio : any){
@@ -244,7 +244,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
     jQuery("#guardaPuesto").hide();
     jQuery("#limpiaTexto").hide();
     jQuery("#agregarPuesto").show();
-    this.puesto = new Puesto(0,"","","","","1","",this.usuario,1);
+    this.puesto = new Puesto(0,0,"","","","",true,"1","",this.usuario,1);
   }
 
   getDepartamento(event : any) {
@@ -261,7 +261,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
 
   limpiarCampos(){
     this.departamento = new Departamento(0,this.empresa,"","",0,this.usuario,1,[]);
-    this.puesto = new Puesto(0,"","","","","1","",this.usuario,1);
+    this.puesto = new Puesto(0,0,"","","","",true,"1","",this.usuario,1);
     this.puestos = [];
     this.cont = 0;
   }

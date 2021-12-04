@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, Output, EventEmitter} from '@angular/core';
 import { COLOR } from 'src/config/config';
-import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 import { Usuario } from 'src/app/models/Usuario';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
@@ -10,63 +9,32 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import { Observable, Subject } from 'rxjs';
 import { FormControl} from '@angular/forms';
-import { CompartidoService } from 'src/app/services/Compartido/Compartido.service';
-import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
-import { SucursalService } from 'src/app/services/Sucursal/sucursal.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { UsuarioService } from 'src/app/services/Reclutamiento/Usuario.service';
 
 @Component({
   selector: 'app-catalogo-usuario',
   templateUrl: './catalogo_usuario.component.html',
   styleUrls: ['./catalogo_usuario.component.css']
 })
+
 export class CatalogoUsuarioComponent implements OnInit {
 
   public color = COLOR;
   public cliente_seleccionado = window.sessionStorage.getItem("cliente");
-  public usuario = new Usuario(0,"","","","",0);
-  public usuarios : any;
-  public sistemas : any;
-  public perfiles : any;
-  public empresas : any;
+  displayedColumns: string[] = ['id', 'fotografia', 'nombre', 'usuario', "estatus", "accion"];
+  dataSource  = new MatTableDataSource();
   public band = true;
   public show = false;
   public band_persiana = true;
   public foto_user : any;
-  public sistemas_seleccionados : any;
-  public sistema_option = {
-    "id_sistema" : 0,
-    "id_perfil" : 0,
-    "id_empresa" : 0,
-    "id_sucursal" : 0,
-    "sucursal" : "",
-    "empresa" : "",
-    "sistema" : "",
-    "perfil" : ""
-  };
-  public usuario_creacion = window.sessionStorage.getItem("user");
+  public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
   public modal : any;
-  public texto_modal = "";
   @ViewChild('content', {static: false}) contenidoDelModal : any;
-  public activo = true;
-  public perfil = parseInt(window.sessionStorage.getItem("perfil")+"");
-  public band_disabled = true;
-  public sucursales : any;
-  //Filtros
-  public taken = 5; //Registros por default
-  public status = 2; //Status default
-  public palabra = "";
-  //Paginacion
-  public total_registros = 0;
-  public mostrar_pagination = false;
-  public paginas_a_mostrar = 5;
-  public paginas : any;
-  public pagina_actual = 0;
-  public limite_inferior = 0;
-  public limite_superior = this.paginas_a_mostrar;
-  public next = false;
-  public previous = false;
   //Camera
   @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
+  @ViewChild(MatPaginator) paginator : any;
   @Output() getPicture = new EventEmitter<WebcamImage>();
   showWebcam = true;
   isCameraExist = true;
@@ -74,403 +42,149 @@ export class CatalogoUsuarioComponent implements OnInit {
   public modal_camera : any;
   public fotografia = new Fotografia(0,"","","");
   public docB64 = "";
+  public usuario = {
+    id_usuario : "",
+    fotografia : {},
+    nombre : "",
+    usuario : "",
+    password : "",
+    activo : 1,
+    sistemas : [{"id_sistema" : 2}],
+    cliente : this.cliente_seleccionado,
+    usuario_creacion : this.usuario_creacion
+  };
   // webcam snapshot trigger
   private trigger: Subject<void> = new Subject<void>();
   private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
   //Autocomplete
-  myControl = new FormControl();
+  filterControl = new FormControl();
   usuarios_busqueda : any;
-
+  usuarios : any;
+  tipo_modal = 0;
+  
   constructor(
     private usuario_service : UsuarioService,
     private modalService: NgbModal,
-    private sanitizer: DomSanitizer,
-    private compartido_service : CompartidoService,
-    private empresa_service :  EmpresaService,
-    private sucursal_service : SucursalService
+    private sanitizer: DomSanitizer
   ) {
-    this.sistemas_seleccionados = [];
     this.modal = NgbModalRef;
+    this.paginator = MatPaginator;
     this.modal_camera = NgbModalRef;
-    this.paginas = [];
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
    }
 
   ngOnInit(): void {
     this.mostrarUsuarios();
-    this.obtenerSistemas();
-  }
-  mostrarUsuarios(){
-    let json = {
-      palabra : this.palabra,
-      taken : this.taken,
-      status : this.status,
-      pagina : this.pagina_actual,
-      id_entidad : this.cliente_seleccionado,
-      tipo_entidad : 2
-    };
-    this.usuarios = [];
-    this.usuario_service.obtenerUsuariosDeEntidad(json)
-    .subscribe( (object : any) =>{
-        if(object.ok){
-          //Mostrar si los registros son mayores a los registros que se muestran
-          this.total_registros = object.data.total;
-          if(this.total_registros > this.taken){
-            this.mostrar_pagination = true;
-            this.paginar();
-          }else{
-            this.mostrar_pagination = false;
-          }
-          //Mostrar usuarios
-          this.band = true;
-          //LLenar los usuarios en la tabla
-          for(let i =0; i<object.data.registros.length; i++){
-            let status = "Activo";
-            if(object.data.registros[i].activo == 0){
-              status = "Desactivado";
-            }
-            this.usuarios.push({
-              "folio" : object.data.registros[i].id_usuario,
-              "nombre" : object.data.registros[i].nombre,
-              "empresa" : object.data.registros[i].empresa,
-              "status" : status
-            });
-          }
-        }else{
-          this.band = false;
-        }
-    });
-  }
-  autocomplete(palabra : string){
-    this.usuarios_busqueda = [];
-    if(palabra.length > 3){
-      this.usuario_service.autoCompletePorIdEmpresa({"nombre_usuario":palabra,"id_cliente" : this.cliente_seleccionado})
-      .subscribe((object : any) => {
-        if(object.ok){
-          this.usuarios_busqueda = object.data;
-        }else{
-          this.usuarios_busqueda = [];
-        }
-      })
-    }
-  }
-  altaUsuario(){
-    if(this.usuario.nombre == "" || this.usuario.usuario == "" || this.usuario.password == ""){
-      Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
-    }else{
-      if(this.sistemas_seleccionados.length == 0){
-        Swal.fire("Ha ocurrido un error","Debes seleccionar almenos un sistema","error");
-      }else{
-        let active = 1;
-        if(!this.activo){
-          active = 0;
-        }
-        let json = {
-          nombre :  this.usuario.nombre,
-          usuario : this.usuario.usuario,
-          password : this.usuario.password,
-          cliente : this.cliente_seleccionado,
-          sistemas : this.sistemas_seleccionados,
-          usuario_creacion : this.usuario_creacion,
-          activo : active,
-          fotografia : this.fotografia
-        };
-        this.confirmar("Confirmación","¿Seguro que desea guardar la información?","info",json,1);
-      }
-    }
-  }
-  setSistema(event : any){
-    this.sistema_option.id_sistema = event.value;
-    this.sistema_option.sistema = $("#option"+event.value).html();
-  }
-  
-  setPerfil(event : any){
-    this.sistema_option.id_perfil = event.value;
-    this.sistema_option.perfil = $("#option"+event.value).html();
   }
 
-  setEmpresa(event : any){
-    this.sistema_option.id_empresa = event.value;
-    this.sistema_option.empresa = $("#option"+event.value).html();
-    if(this.sistema_option.id_perfil == 3 || this.sistema_option.id_perfil == 4){
-      this.band_disabled = false;
-      this.sucursales = [];
-      this.sucursal_service.obtenerSucursales(event.value)
-      .subscribe((object : any) => {
-        if(object.ok){
-          this.sucursales = object.data;
+  mostrarUsuarios(){
+    this.usuario_service.obtenerUsuariosReclutamiento(this.cliente_seleccionado)
+    .subscribe((object : any)  => {
+      if(object.ok){
+        this.dataSource.data = object.data;
+        this.dataSource.paginator = this.paginator;
+        this.usuarios = object.data;
+        this.usuarios_busqueda = object.data;
+      }
+    });
+  }
+
+  buscarUsuario(){
+    this.usuarios_busqueda = [];
+    this.usuarios.forEach((element : any) => {
+      this.usuarios_busqueda.push({
+        "nombre" : element.nombre,
+        "id_usuario" : element.id_usuario
+      });
+    });
+    if(this.filterControl.value.length > 0){
+      this.usuarios_busqueda = [];
+      this.usuarios.forEach((element : any) => {
+        if(element.nombre.includes(this.filterControl.value.toUpperCase())){ 
+          this.usuarios_busqueda.push({
+            "nombre" : element.nombre,
+            "id_usuario" : element.id_usuario
+          })
         }
       });
-    }else{
-      this.band_disabled = true;
     }
   }
-  setSucursal(event : any){
-    this.sistema_option.id_sucursal = event.value;
-    console.log($("#option"+event.value).html());
-    this.sistema_option.sucursal = $("#option"+event.value).html();
+
+  optionUsuario(value : any){
+    this.editar(value.option.id);
   }
-  agregarAUsuario(){
-    if(this.sistema_option.id_perfil == 0 || this.sistema_option.id_perfil == 0){
-      Swal.fire("Ha ocurrido un problema","No se puede agregar sin antes seleccionar el sistema y perfil","error");
-      return;
-    }
-    let band = false;
-    this.sistemas_seleccionados.forEach((element : any) => {
-      if(element.id_sistema == this.sistema_option.id_sistema){
-        band = true;
-      }
-    });
-    if(band){
-      Swal.fire("Ha ocurrido un problema","No se puede agregar dos sistemas iguales al mismo usuario","error");
-      return;
-    }
-    this.sistemas_seleccionados.push(this.sistema_option);
-    this.sistema_option = {
-      "id_sistema" : 0,
-      "id_perfil" : 0,
-      "id_empresa" : 0,
-      "id_sucursal" : 0,
-      "empresa" : "",
-      "sucursal" : "",
-      "sistema" : "",
-      "perfil" : ""
-    };
-  }
-  
-  eliminarAUsuario(id : number){
-    this.sistemas_seleccionados.forEach((element : any, index : any) => {
-      if(element.id_sistema == id){
-        this.sistemas_seleccionados.splice(index,1);
-      }
-    });
-  }
-  modificarUsuario(){
-    if(this.usuario.nombre == "" || this.usuario.usuario == ""){
-      Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
-    }else{
-      if(this.sistemas_seleccionados.length == 0){
-        Swal.fire("Ha ocurrido un error","Debes seleccionar almenos un sistema","error");
-      }else{
-        let active = 1;
-        if(!this.activo){
-          active = 0;
-        }
-        let json = {
-          id_usuario : this.usuario.id_usuario,
-          nombre :  this.usuario.nombre,
-          usuario : this.usuario.usuario,
-          password : this.usuario.password,
-          sistemas : this.sistemas_seleccionados,
-          usuario_creacion : this.usuario_creacion,
-          activo : active,
-          fotografia : this.fotografia
-        };
-        this.confirmar("Confirmación","¿Seguro que desea editar la información?","info",json,2);
-      }
-    }
-  }
-  guardar(){
-    this.texto_modal = "Nuevo usuario";
-    this.openModal();
-    this.sistemas_seleccionados = [];
-    this.sistema_option = {
-      "id_sistema" : 0,
-      "id_perfil" : 0,
-      "id_empresa" : 0,
-      "id_sucursal" : 0,
-      "sucursal" : "",
-      "empresa" : "",
-      "sistema" : "",
-      "perfil" : ""
-    };
-    jQuery("#editar").hide();
-    jQuery("#guardar").show();
-  }
-  editar(folio : any){
-    this.usuario_service.obtenerUsuarioPorId(folio)
-    .subscribe( (object : any) => {
-      if(object.ok){
-        this.texto_modal = "Editar usuario";
-        this.openModal();
-        //Se llena la informacion en el modal
-        this.usuario.id_usuario = parseInt(object.data[0].id_usuario);
-        this.usuario.nombre = object.data[0].nombre;
-        this.usuario.usuario = object.data[0].usuario;
-        this.usuario.password = object.data[0].password;
-        if(object.data[0].activo == 1){
-          this.activo = true;
-        }else{
-          this.activo = false;
-        }
-        //Funcionalidad de modal
-        jQuery("#guardar").hide();
-        jQuery("#editar").show();
-        //Se pinta la imagen
-        this.fotografia.id_fotografia = object.data[0].id_fotografia;
-        this.foto_user = object.data[0].fotografia;
-        //Se llenan los sistemas
-        this.sistemas_seleccionados = [];
-        for(let i=0;i<object.data[0].sistemas.length; i++){
-          if(object.data[0].sistemas[i].id_sistema == 2){
-            this.band_disabled = false;
-          }
-          this.sistemas_seleccionados.push({
-            "id_sistema" : object.data[0].sistemas[i].id_sistema,
-            "id_perfil" : object.data[0].sistemas[i].id_perfil,
-            "id_empresa" : object.data[0].sistemas[i].id_empresa,
-            "id_sucursal" : object.data[0].sistemas[i].id_sucursal,
-            "sucursal" : object.data[0].sistemas[i].sucursal,
-            "empresa" : object.data[0].sistemas[i].empresa,
-            "sistema" : object.data[0].sistemas[i].sistema,
-            "perfil" : object.data[0].sistemas[i].perfil
-          });
-          for(let o=0; o<this.sistemas.length;o++){
-            if(this.sistemas[o].id_sistema == object.data[0].sistemas[i].id_sistema){
-              this.sistemas[o].active = "active";
-            }
-          }
-        }
-      }else{
-        Swal.fire("Ha ocurrido un error",object.message,"error");
-      }
-    });
-  }
-  seleccionar(id_sistema : any){
-    if(this.sistemas_seleccionados.includes(id_sistema)){
-      this.sistemas_seleccionados.splice(this.sistemas_seleccionados.indexOf(id_sistema),1);
-      jQuery("#sistema_"+id_sistema).removeClass("active");
-    }else{
-      this.sistemas_seleccionados.push(id_sistema);
-      jQuery("#sistema_"+id_sistema).addClass("active");
-    }
-  }
-  limpiarActive(){
-    for(let o=0; o<this.sistemas.length;o++){
-      this.sistemas[o].active = " ";
-    }
-  }
-  obtenerSistemas(){
-    this.perfiles = [];
-    this.compartido_service.obtenerPerfiles()
-    .subscribe((object : any) => {
-      if(object.length > 0){
-        object.forEach((element : any) => {
-          if(this.perfil == 1 || this.perfil == 2){   //admin
-            if(element.id_perfil == 2 || element.id_perfil == 3 || element.id_perfil == 4){
-              this.perfiles.push(element);
-            }
-          }
-        });
-      }
-    });
-    this.sistemas = [];
-    this.usuario_service.obtenerSistemasAdmin(this.usuario_creacion)
-    .subscribe( (object : any) =>{
-      if(object.ok){
-        if(object.data.length > 0){
-          for(let i=0;i<object.data.length;i++){
-            this.sistemas.push({
-              "id_sistema" : object.data[i].id_sistema,
-              "sistema" : object.data[i].sistema,
-              "active" : "",
-            });
-          }
-        }
-      }
-    });
-    this.empresas = [];
-    this.empresa_service.obtenerEmpresasPorIdCliente(this.cliente_seleccionado)
-    .subscribe((object : any) => {
-      if(object.ok){
-        this.empresas = object.data;
-      }
-    });
-  }
-  limpiarCampos(){
-    this.fotografia = new Fotografia(0,"","","");
-    this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
-    this.usuario = new Usuario(0,"","","","",0);
-    this.sistemas_seleccionados = [];
-  }
-  openModal() {
+
+  nuevoUsuario(){
+    this.tipo_modal = 1;
     this.limpiarCampos();
-    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
-    this.limpiarActive();
+    this.openModal(1);
   }
-  openModalCamera(){
-    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+
+  altaUsuario(){
+    this.usuario.fotografia = this.fotografia;
+    this.confirmar("Confirmación","¿Seguro que deseas crear un nuevo usuario?","info",null,1);
   }
-  cerrarModal(){
-    this.modal.close();
-  }
-  cerrarModalCamera(){
-    this.modal_camera.close();
-  }
-  paginar(){
-    this.paginas = [];
-    let paginas_a_pintar = parseInt(this.total_registros+"")%parseInt(this.taken+"");
-    if(paginas_a_pintar == 0){
-      paginas_a_pintar = (parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+"");
-    }else{
-      paginas_a_pintar = ((parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+""))+1;
-    }
-    //Pintamos las flechas
-    if(paginas_a_pintar > this.paginas_a_mostrar){
-      this.next = true;
-    }
-    if(this.pagina_actual == paginas_a_pintar){
-      this.next = false;
-    }
-    if(this.pagina_actual > this.paginas_a_mostrar){
-      this.previous = true;
-    }
-    if(this.pagina_actual == 0){
-      this.previous = false;
-    }
-    //Pintamos las paginas
-    for(let i =0;i<this.paginas_a_mostrar;i++){
-      let pagina_inicial = this.limite_inferior;
-      if(i<paginas_a_pintar){
-        if(this.pagina_actual == pagina_inicial+i){
-          this.paginas.push({
-            numero : (pagina_inicial+i)+1,
-            valor_pagina : pagina_inicial+i,
-            active : "active"
-          });
-        }else{
-          this.paginas.push({
-            numero : (pagina_inicial+i)+1,
-            valor_pagina : pagina_inicial+i,
-            active : ""
-          });
-        }
+
+  editar(id : number){
+    this.limpiarCampos();
+    this.usuario_service.obtenerUsuariosReclutamientoPorId(id)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.fotografia.id_fotografia = object.data.id_fotografia;
+        this.usuario.id_usuario = object.data.id_usuario;
+        this.usuario.nombre = object.data.nombre;
+        this.usuario.usuario = object.data.usuario;
+        this.usuario.password = object.data.password;
+        this.foto_user = object.data.fotografia;
+        this.tipo_modal = 2;
+        this.openModal(1);
       }
+    });
+  }
+
+  modificarUsuario(){
+    this.usuario.fotografia = this.fotografia;
+    this.confirmar("Confirmación","¿Seguro que deseas modificar al usuario?","info",null,2);
+  }
+
+  activarDesactivar(id : number, activo : number){
+    let string = "desactivar";
+    if(activo == 1){
+      string = "activar";
+    }
+    this.confirmar("Confirmación","¿Seguro que deseas "+string+" a este usuario?","info",{id_usuario : id, activo : activo},3);
+  }
+
+  openModal(tipo : number) {
+    if(tipo == 1){
+      this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
+    if(tipo == 2){
+      this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
     }
   }
-  irPagina(pagina : any){
-    this.pagina_actual = pagina;
-    this.mostrarUsuarios();
-  }
-  getUsuario(event : any) {
-    this.editar(event.option.id);
-    this.usuarios_busqueda.splice(0,this.usuarios_busqueda.length);
-    this.myControl.reset('');
-  }
-  busqueda(value : string){
-    if(value.length > 3){
-      this.autocomplete(value);
+
+  cerrarModal(tipo : number){
+    if(tipo == 1){
+      this.modal.close();
+    }
+    if(tipo == 2){
+      this.modal_camera.close();
     }
   }
+
   mostrarPersiana(){
     this.band_persiana = false;
   }
+
   ocultarPersiana(){
     this.band_persiana = true;
   }
+
   subirImagen(){
     document.getElementById("foto_user")?.click();
   }
+
   cambiarImagen(event: any){
     if (event.target.files && event.target.files[0]) {
       let archivos = event.target.files[0];
@@ -489,6 +203,23 @@ export class CatalogoUsuarioComponent implements OnInit {
       }
     }
   }
+
+  limpiarCampos(){
+    this.usuario =  {
+      id_usuario : "",
+      fotografia : {},
+      nombre : "",
+      usuario : "",
+      password : "",
+      activo : 1,
+      sistemas : [{"id_sistema" : 2}],
+      cliente : this.cliente_seleccionado,
+      usuario_creacion : this.usuario_creacion
+    };
+    this.fotografia = new Fotografia(0,"","","");
+    this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
+  }
+
   convertirImagenAB64(fileInput : any){
     return new Promise(function(resolve, reject) {
       let b64 = "";
@@ -500,9 +231,11 @@ export class CatalogoUsuarioComponent implements OnInit {
       };
     });
   }
+
   mostrarPassword(){
     this.show = !this.show;
   }
+
   takeSnapshot(): void {
     let foto = this.trigger.next();
   }
@@ -523,7 +256,7 @@ export class CatalogoUsuarioComponent implements OnInit {
     this.fotografia.docB64 = docB64[1];
     this.fotografia.extension = "jpeg";
     this.fotografia.nombre = "foto_user";
-    this.cerrarModalCamera();
+    this.cerrarModal(2);
     // console.log(webcamImage.imageAsDataUrl)
   }
   get triggerObservable(): Observable<void> {
@@ -545,29 +278,34 @@ export class CatalogoUsuarioComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         if(tipo == 1){  //Guardar
-          this.usuario_service.altaUsuarioAdmin(json)
-          .subscribe( (object) =>{
+          this.usuario_service.altaUsuarioAdmin(this.usuario)
+          .subscribe((object : any) => {
             if(object.ok){
-              this.limpiarCampos();
               this.mostrarUsuarios();
-              Swal.fire("Buen trabajo","El usuario se ha dado de alta correctamente","success");
-              this.cerrarModal();
-            }else{
-              Swal.fire("Ha ocurrido un error",object.message,"error");
+              this.cerrarModal(1);
+              Swal.fire("Buen trabajo","Se ha agreado el usuario con exito","success");
             }
           });
         }
         if(tipo == 2){  //Editar
-          this.usuario_service.modificarUsuario(json)
-          .subscribe( (object) =>{
+          this.usuario_service.modificarUsuario(this.usuario)
+          .subscribe((object : any) => {
             if(object.ok){
               this.mostrarUsuarios();
-              Swal.fire("Buen trabajo","El usuario se ha modificado correctamente","success");
-            }else{
-              Swal.fire("Ha ocurrido un error",object.message,"error");
+              this.cerrarModal(1);
+              Swal.fire("Buen trabajo","Se ha modificado el usuario con exito","success");
             }
           });
         }
+      }
+      if(tipo == 3){
+        this.usuario_service.activarDesactivarUsuario(json.id_usuario,json.activo)
+        .subscribe((object : any) => {
+          if(object.ok){
+            this.mostrarUsuarios();
+            Swal.fire("Buen trabajo","Se ha actualizado el estatus del usuario","success");
+          }
+        });
       }
     });
   }

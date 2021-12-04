@@ -1,6 +1,5 @@
  import { Component, OnInit, ViewChild } from '@angular/core';
 import { COLOR } from 'src/config/config';
-import { DepartamentoService } from 'src/app/services/Departamento/Departamento.service';
 import { PuestoService } from 'src/app/services/Puesto/Puesto.service';
 import { Departamento } from 'src/app/models/Departamento';
 import { Puesto } from 'src/app/models/Puesto';
@@ -8,6 +7,10 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { FormControl} from '@angular/forms';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { DepartamentoService } from 'src/app/services/Reclutamiento/Departamento.service';
+import { CommonModule, CurrencyPipe} from '@angular/common';
 
 @Component({
   selector: 'app-catalogo-departamento',
@@ -15,354 +18,269 @@ import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 })
 export class CatalogoDepartamentoComponent implements OnInit {
 
+  //Variables config
   public color = COLOR;
-  public palabra = "";
-  public status = 2;
-  public departamentos : any;
-  public taken = 5;
-  public band = false;
-  public empresas : any;
   public cliente_seleccionado = window.sessionStorage.getItem("cliente");
   public usuario = parseInt(window.sessionStorage.getItem("user")+"");
+  //Modelo tabla
+  displayedColumns: string[] = ['id_departamento', 'departamento', "estatus", 'autorizados', 'vacantes', "accion"];
+  dataSource  = new MatTableDataSource();
+  @ViewChild(MatPaginator) paginator : any;
+  //Buscador
+  filterControlDepartamento = new FormControl();
+  filterControlEmpresa = new FormControl();
+  departamentos_busqueda : any;
+  departamentos : any;
+  empresas : any;
+  empresas_busqueda : any;
+  busqueda = {
+    id_cliente : this.cliente_seleccionado,
+    id_empresa : null
+  };
+  //Tipo_modal
+  tipo_modal = 1;
+  tipo_modal_puesto = 1;
+  //Variables
+  autorizados = 0;
+  vacantes = 0;
   public departamento = new Departamento(0,0,"","",1,this.usuario,1,[]);
-  public puesto = new Puesto(0,"","","","","1","",this.usuario,1);
-  public puestos : any;
-  public activo = true;
+  public puesto = new Puesto(0,0,"","","","",false,"1","",this.usuario,1);
   public modal : any;
-  public band_puestos = false;
-  public cont = 0;
-  public tipo_modal = 1;
+  public modal_puesto : any;
   public puesto_seleccionado = 0;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
-  //Paginacion
-  public total_registros = 0;
-  public mostrar_pagination = false;
-  public paginas_a_mostrar = 5;
-  public paginas : any;
-  public pagina_actual = 0;
-  public limite_inferior = 0;
-  public limite_superior = this.paginas_a_mostrar;
-  public next = false;
-  public previous = false;
+  @ViewChild('content_puesto', {static: false}) contenidoDelModalPuesto : any;
   //Autocomplete
-  myControl = new FormControl();
-  departamentos_busqueda : any;
 
   constructor(
-    private departamento_service : DepartamentoService,
+    // private departamento_service : DepartamentoService,
     private modalService: NgbModal,
+    private departamento_service : DepartamentoService,
     private puesto_service : PuestoService,
-    private empresa_service : EmpresaService
+    private empresa_service : EmpresaService,
+    private currencyPipe : CurrencyPipe
   ) {
-    this.puestos = []; 
     this.modal = NgbModalRef;
+    this.departamento.puestos = [];
+    this.paginator = MatPaginator;
   }
 
   ngOnInit(): void {
     this.mostrarDepartamentos();
+    this.mostrarEmpresas();
+  }
+
+  transformAmount(element : any, tipo : number){
+    if(tipo == 1){
+      this.puesto.sueldo_tipo_a = this.currencyPipe.transform(this.puesto.sueldo_tipo_a, '$');
+      element.target.value = this.puesto.sueldo_tipo_a;
+    }
+    if(tipo == 2){
+      this.puesto.sueldo_tipo_b = this.currencyPipe.transform(this.puesto.sueldo_tipo_b, '$');
+      element.target.value = this.puesto.sueldo_tipo_b;
+    }
+    if(tipo == 3){
+      this.puesto.sueldo_tipo_c = this.currencyPipe.transform(this.puesto.sueldo_tipo_c, '$');
+      element.target.value = this.puesto.sueldo_tipo_c;
+    }
   }
 
   mostrarDepartamentos(){
-    this.departamentos = [];
-    let json = {
-      "taken" : this.taken,
-      "pagina" : this.pagina_actual,
-      "status" : this.status,
-      "palabra" : this.palabra,
-      "id_cliente" : 1
-    };
-    this.departamento_service.obtenerDepartamentos(json)
-    .subscribe( (object : any)=>{
-      if(object.ok && object.data.registros.length > 0){
-        //Mostrar si los registros son mayores a los registros que se muestran
-        this.total_registros = object.data.total;
-        if(this.total_registros > this.taken){
-          this.mostrar_pagination = true;
-          this.paginar();
-        }else{
-          this.mostrar_pagination = false;
-        }
-        this.band = true;
-        for(let i =0; i<object.data.registros.length; i++){
-          status = "Inactivo";
-          if(object.data.registros[i].activo == "1"){
-            status = "Activo";
-          }
-          this.departamentos.push({
-            "folio" : object.data.registros[i].id_departamento,
-            "departamento" : object.data.registros[i].departamento,
-            "empresa" : object.data.registros[i].empresa,
-            "vacantes" : object.data.registros[i].vacantes,
-            "autorizados" : object.data.registros[i].autorizados,
-            "status" : status
-          });
-        }
-      }else{
-        this.band = false;
-      }
-    });
-  }
-
-  autocomplete(palabra : string){
     this.departamentos_busqueda = [];
-    if(palabra.length > 3){
-      this.departamento_service.autoCompleteDepartamento({"nombre_departamento":palabra,"id_empresa":0})
-      .subscribe((object : any) => {
-        if(object.ok){
-          this.departamentos_busqueda = object.data;
-        }else{
-          this.departamentos_busqueda = [];
-        }
-      })
-    }
-  }
-
-  altaDepartamento(){
-    this.departamento.puestos = this.puestos;
-    this.departamento.activo = 0;
-    if(this.activo){
-      this.departamento.activo = 1;
-    }
-    if(this.departamento.departamento != "" && this.departamento.disponibilidad > 0){
-      if(this.puestos.length > 0){
-        if(this.tipo_modal == 1){
-          this.confirmar("Confirmación","¿Seguro que desea guardar la información?","info",1);
-        }
-        if(this.tipo_modal == 2){
-          this.confirmar("Confirmación","¿Seguro que desea editar la información?","info",2);
-        }
-      }else{
-        Swal.fire("Ha ocurrido un error","El departamento debe tener almenos un puesto","error");
-      }
-    }else{
-      Swal.fire("Ha ocurrido un error","Debes llenar los campor obligatorios","error");
-    }
-  }
-
-  guardar(){
-    this.empresas = [];
-    this.puesto_seleccionado = 0;
-    this.empresa_service.obtenerEmpresasPorIdCliente(this.cliente_seleccionado)
+    this.departamento_service.obtenerDepartamentosPorIdCliente(this.busqueda)
     .subscribe((object : any) => {
-      if(object.ok){
-        this.empresas = object.data;
-      }
+      this.dataSource.data = object.data;
+      this.dataSource.paginator = this.paginator;
+      this.departamentos_busqueda = object.data;
+      this.departamentos = object.data;
     });
-    this.openModal();
-    this.tipo_modal = 1;
-    this.band_puestos = false;
   }
 
-  agregarPuesto(tipo : number){
-    if(this.puesto.puesto == ""){
-      Swal.fire("Ha ocurrido un error","El campo puesto no puede ser vacio","info");
-      return;
-    }
-    if(tipo == 1){
-      //validar la sumatoria de los puestos
-      let sumatoria = 0;
-      for(let i=0;i<this.puestos.length;i++){
-        sumatoria += parseInt(""+this.puestos[i].autorizados);
-      }
-      this.departamento.disponibilidad = sumatoria + parseInt(""+this.puesto.autorizados);
-        this.band_puestos = true;
-        this.puestos.push({
-          "id_puesto" : this.cont,
-          "puesto" : this.puesto.puesto.toUpperCase(),
-          "descripcion" : this.puesto.descripcion,
-          "autorizados" : this.puesto.autorizados,
-          "sueldo_tipo_a" : this.puesto.sueldo_tipo_a,
-          "sueldo_tipo_b" : this.puesto.sueldo_tipo_b,
-          "sueldo_tipo_c" : this.puesto.sueldo_tipo_c
-        });
-        this.cont++;
-        this.puesto = new Puesto(0,"","","","","1","",this.usuario,1);
-      }
-    if(tipo == 2){
-      this.puestos.forEach( (element : any) => {
-        if(element.id_puesto == this.puesto_seleccionado){
-          element.puesto =  this.puesto.puesto.toUpperCase();
-          element.autorizados = this.puesto.autorizados;
-          element.descripcion =this.puesto.descripcion.toUpperCase();
-          element.sueldo_tipo_a = this.puesto.sueldo_tipo_a ;
-          element.sueldo_tipo_b = this.puesto.sueldo_tipo_b;
-          element.sueldo_tipo_c = this.puesto.sueldo_tipo_c;
+  buscarDepartamento(){
+    this.departamentos_busqueda = [];
+    this.departamentos.forEach((element : any) => {
+      this.departamentos_busqueda.push({
+        "departamento_busqueda" : element.departamento_busqueda,
+        "id_departamento" : element.id_departamento
+      });
+    });
+    if(this.filterControlDepartamento.value.length > 0){
+      this.departamentos_busqueda = [];
+      this.departamentos.forEach((element : any) => {
+        if(element.departamento_busqueda.includes(this.filterControlDepartamento.value.toUpperCase())){ 
+          this.departamentos_busqueda.push({
+            "departamento_busqueda" : element.departamento_busqueda,
+            "id_departamento" : element.id_departamento
+          })
         }
       });
     }
   }
 
-  eliminarPuesto(folio : any){
-    Swal.fire({
-      title: '¿Estas seguro de eliminar el puesto?',
-      text: "El puesto eliminado, ya no podrá ser recuperado",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, estoy seguro',
-      cancelButtonText : "Cancelar"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        for(let i=0;i<this.puestos.length;i++){
-          if(this.puestos[i].id_puesto == folio){
-            this.departamento.disponibilidad -= this.puestos[i].disponibilidad;
-            this.puestos.splice(i,1);
-          }
-        }
-        if(this.tipo_modal == 2){
-          this.puesto_service.eliminarPuesto(folio)
-          .subscribe( (object : any)=>{
-            if(object.ok){
-              Swal.fire("Buen trabajo","Se ha eliminado el puesto éxitosamente","success");
-            }
-          });
-        }
-      }
-    });
-    
+  optionDepartamento(value : any){
+    this.editar(value.option.id);
   }
 
-  cambiarValor( folio : any, valor_original : any ){
-    let valor = jQuery("#valor_"+folio).val();
-    this.departamento.disponibilidad -= valor_original;
-    for(let i=0;i<this.puestos.length;i++){
-      if(this.puestos[i].id_puesto == folio){
-        this.puestos[i].disponibilidad = valor;
-        this.departamento.disponibilidad += parseInt(valor+"");
-      }
-    } 
-  }
-
-  editar(folio : any){
+  mostrarEmpresas(){
+    this.empresas_busqueda = [];
     this.empresas = [];
     this.empresa_service.obtenerEmpresasPorIdCliente(this.cliente_seleccionado)
     .subscribe((object : any) => {
       if(object.ok){
         this.empresas = object.data;
+        this.empresas_busqueda = object.data;
+        this.busqueda.id_empresa = object.data[0].id_empresa;
+        this.filterControlEmpresa.setValue(object.data[0].empresa);
       }
     });
-    this.tipo_modal = 2;
-    this.departamento_service.obtenerDepartamentoPorId(folio)
-    .subscribe( (object : any)=>{
-      if(object.ok){
-        this.openModal();
-        this.band_puestos = true;
-        this.puestos = object.data[0].puestos;
-        this.departamento.id_empresa = object.data[0].id_empresa;
-        this.departamento.id_departamento = object.data[0].id_departamento;
-        this.departamento.departamento = object.data[0].departamento;
-        this.departamento.descripcion = object.data[0].descripcion;
-        this.departamento.disponibilidad = object.data[0].autorizados;
-        if(object.data[0].activo == "1"){
-          this.activo = true;
-        }else{
-          this.activo = false;
+  }
+
+  buscarEmpresa(){
+    this.empresas_busqueda = [];
+    this.empresas.forEach((element : any) => {
+      this.empresas_busqueda.push({
+        "empresa" : element.empresa,
+        "id_empresa" : element.id_empresa
+      });
+    });
+    if(this.filterControlEmpresa.value.length > 0){
+      this.empresas_busqueda = [];
+      this.empresas.forEach((element : any) => {
+        if(element.empresa.includes(this.filterControlEmpresa.value.toUpperCase())){ 
+          this.empresas_busqueda.push({
+            "empresa" : element.empresa,
+            "id_empresa" : element.id_empresa
+          })
         }
-      }
-    });
-  }
-
-  editarPuesto(id : any){
-    jQuery("#guardaPuesto").show();
-    jQuery("#limpiaTexto").show();
-    jQuery("#agregarPuesto").hide();
-    this.puestos.forEach( (element : any) => {
-      if(element.id_puesto == id){
-        this.puesto.puesto = element.puesto;
-        this.puesto.autorizados = element.autorizados;
-        this.puesto.descripcion = element.descripcion;
-        this.puesto.sueldo_tipo_a = element.sueldo_tipo_a;
-        this.puesto.sueldo_tipo_b = element.sueldo_tipo_b;
-        this.puesto.sueldo_tipo_c = element.sueldo_tipo_c;
-      }
-    });
-    this.puesto_seleccionado = id;
-  }
-
-  limpiaTexto(){
-    jQuery("#guardaPuesto").hide();
-    jQuery("#limpiaTexto").hide();
-    jQuery("#agregarPuesto").show();
-    this.puesto = new Puesto(0,"","","","","1","",this.usuario,1);
-  }
-
-  getDepartamento(event : any) {
-    this.editar(event.option.id);
-    this.departamentos_busqueda.splice(0,this.departamentos_busqueda.length);
-    this.myControl.reset('');
-  }
-
-  busqueda(value : string){
-    if(value.length > 3){
-      this.autocomplete(value);
+      });
     }
   }
 
-  limpiarCampos(){
-    this.departamento = new Departamento(0,0,"","",0,this.usuario,1,[]);
-    this.puesto = new Puesto(0,"","","","","1","",this.usuario,1);
-    this.puestos = [];
-    this.cont = 0;
-  }
-
-  paginar(){
-    this.paginas = [];
-    let paginas_a_pintar = parseInt(this.total_registros+"")%parseInt(this.taken+"");
-    if(paginas_a_pintar == 0){
-      paginas_a_pintar = (parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+"");
-    }else{
-      paginas_a_pintar = ((parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+""))+1;
-    }
-    //Pintamos las flechas
-    if(paginas_a_pintar > this.paginas_a_mostrar){
-      this.next = true;
-    }
-    if(this.pagina_actual == paginas_a_pintar){
-      this.next = false;
-    }
-    if(this.pagina_actual > this.paginas_a_mostrar){
-      this.previous = true;
-    }
-    if(this.pagina_actual == 0){
-      this.previous = false;
-    }
-    //Pintamos las paginas
-    for(let i =0;i<this.paginas_a_mostrar;i++){
-      let pagina_inicial = this.limite_inferior;
-      if(i<paginas_a_pintar){
-        if(this.pagina_actual == pagina_inicial+i){
-          this.paginas.push({
-            numero : (pagina_inicial+i)+1,
-            valor_pagina : pagina_inicial+i,
-            active : "active"
-          });
-        }else{
-          this.paginas.push({
-            numero : (pagina_inicial+i)+1,
-            valor_pagina : pagina_inicial+i,
-            active : ""
-          });
-        }
-      }
-    }
-  }
-
-  irPagina(pagina : any){
-    this.pagina_actual = pagina;
+  optionEmpresa(value : any){
+    this.busqueda.id_empresa = value.option.id;
     this.mostrarDepartamentos();
   }
 
-  openModal() {
+  nuevoDepartamento(){
+    this.tipo_modal = 1;
     this.limpiarCampos();
-    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+    this.openModal(1);
   }
 
-  cerrarModal(){
-    this.modal.close();
+  altaDepartamento(){
+    if(this.departamento.departamento != ""){
+      this.departamento.id_empresa = parseInt(this.busqueda.id_empresa+"");
+      this.confirmar("Confirmación","¿Seguro que deseas dar de alta este departamento?","info",1,null);
+    }else{
+      Swal.fire("Aviso","El nombre del departamento no puede ser vacio","info");
+    }
   }
 
-  confirmar(title : any ,texto : any ,tipo_alert : any,tipo : number){
+  editar(id : number){
+    this.tipo_modal = 2;
+    this.departamento_service.obtenerDepartamentoPorId(id)
+    .subscribe((object : any) => {
+      this.departamento.id_departamento = object.data.id_departamento;
+      this.autorizados =  object.data.autorizados;
+      this.vacantes =  object.data.vacantes;
+      this.departamento.departamento = object.data.departamento;
+      this.departamento.descripcion = object.data.descripcion;
+      this.departamento.puestos = object.data.puestos;
+      this.resetearAutorizados();
+      this.openModal(1);
+    });
+  }
+
+  modificarDepartamento(){
+    this.confirmar("Confirmación","¿Seguro que deseas editar el departamento?","info",2,null);
+  }
+
+  nuevoPuesto(){
+    this.openModal(2);
+    this.puesto = new Puesto(0,0,"","","","",false,"1","",this.usuario,1);
+    this.tipo_modal_puesto = 1;
+  }
+
+  agregarPuesto(){
+    if(this.puesto.puesto != ""){
+      if(this.puesto.autorizados != "0"){
+        this.puesto.id_arreglo = this.departamento.puestos.length + 1;
+        this.puesto.puesto = this.puesto.puesto.toUpperCase();
+        this.puesto.descripcion = this.puesto.descripcion.toUpperCase();
+        this.departamento.puestos.push(this.puesto);
+        this.cerrarModal(2);
+        this.resetearAutorizados();
+      }else{
+        Swal.fire("Aviso","El valor del campo autorizados debe ser mayor a 0","info");
+      }
+    }else{
+      Swal.fire("Aviso","El nombre del puesto no puede ser vacio","info");
+    }
+  }
+
+  editarPuesto(id_arreglo : number){
+    this.departamento.puestos.forEach((element : Puesto) => {
+      if(element.id_arreglo == id_arreglo){
+        this.puesto = element;
+        this.tipo_modal_puesto = 2;
+        this.openModal(2);
+        this.puesto_seleccionado = id_arreglo;
+      }
+    });
+  }
+
+  modificarPuesto(){
+    this.puesto.puesto = this.puesto.puesto.toUpperCase();
+    this.puesto.descripcion = this.puesto.descripcion.toUpperCase();
+    this.cerrarModal(2);
+    this.resetearAutorizados();
+  }
+
+  eliminarPuesto(id_arreglo : number){
+    this.departamento.puestos.forEach((element : Puesto, indice : number) => {
+      if(element.id_arreglo == id_arreglo){
+        this.confirmar("Confirmación","¿Seguro que deseas eliminar el puesto?","success",3,{
+          indice : indice,
+          id : element.id_puesto
+        });
+      }
+    });
+    this.resetearAutorizados();
+  }
+
+  resetearAutorizados(){
+    this.autorizados = 0;
+    this.departamento.puestos.forEach((element : Puesto) => {
+      this.autorizados += parseInt(element.autorizados+"");
+    });
+  }
+
+  limpiarCampos(){
+    this.departamento.puestos = [];
+    this.departamento = new Departamento(0,0,"","",1,this.usuario,1,[]);
+    this.autorizados = 0;
+    this.vacantes = 0;
+  }
+
+  openModal(tipo :number) {
+    if(tipo == 1){
+      this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
+    if(tipo == 2){
+      this.modal_puesto = this.modalService.open(this.contenidoDelModalPuesto,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
+  }
+
+  cerrarModal(tipo : number){
+    if(tipo == 1){
+      this.modal.close();
+    }
+    if(tipo == 2){
+      this.modal_puesto.close();
+    }
+  }
+
+  confirmar(title : any ,texto : any ,tipo_alert : any,tipo : number,dato : any){
     Swal.fire({
       title: title,
       text: texto,
@@ -376,23 +294,47 @@ export class CatalogoDepartamentoComponent implements OnInit {
       if (result.isConfirmed) {
         if(tipo == 1){  //Guardar
           this.departamento_service.altaDepartamento(this.departamento)
-          .subscribe( (object : any)=>{
+          .subscribe((object : any) => {
             if(object.ok){
-              this.cerrarModal();
+              Swal.fire("Buen trabajo","El departamento ha sido dado de alta","success");
               this.mostrarDepartamentos();
-              Swal.fire("Buen trabajo","Se ha agregado el departamento con éxito","success");
-              this.limpiarCampos();
+              this.cerrarModal(1);
             }
           });
         }
         if(tipo == 2){  //Editar
-          this.departamento_service.actualizarDepartamento(this.departamento)
-          .subscribe( (object : any)=>{
+          this.departamento_service.modificarDepartamento(this.departamento)
+          .subscribe((object : any) => {
             if(object.ok){
-              this.mostrarDepartamentos();
-              Swal.fire("Buen trabajo","Se ha modificado el departamento con éxito","success");
+              if(object.data.tipo == 1){
+                let error = "";
+                object.data.data.forEach((element : any) => {
+                  error += element+"\n";
+                });
+                this.cerrarModal(1);
+                this.mostrarDepartamentos();
+                Swal.fire("Aviso",error,"info");
+              }
+              if(object.data.tipo == 2){
+                this.cerrarModal(1);
+                this.mostrarDepartamentos();
+                Swal.fire("Buen trabajo","Se ha actualizado el departamento","success");
+              }
             }
           });
+        }
+        if(tipo == 3){
+          this.departamento.puestos.splice(dato.indice,1);
+          if(this.tipo_modal == 2){
+            this.departamento_service.eliminarPuesto(dato.id)
+            .subscribe((object : any) => {
+              if(object.ok){
+                Swal.fire("Buen trabajo","Se ha eliminado el puesto","success");
+              }
+            });
+          }else{
+            Swal.fire("Buen trabajo","Se ha eliminado el puesto","success");
+          }
         }
       }
     });
