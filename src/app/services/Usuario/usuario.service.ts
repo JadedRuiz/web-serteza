@@ -23,12 +23,22 @@ export class UsuarioService {
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.message, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }
   altaUsuario(json : any){
     let url = SERVER_API+"usuario/altaUsuario";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", 'El campo "usuario" que se intenta dar de alta ya se encuentra utilizado.', 'error');
+        return throwError(err);
+      }));
+  }
+  altaUsuarioSuperAdmin(json : any){
+    let url = SERVER_API+"usuario/altaUsuarioSuperAdmin";
     return this.http.post( url, json )
       .pipe(map( (resp: any) => {
         return resp;

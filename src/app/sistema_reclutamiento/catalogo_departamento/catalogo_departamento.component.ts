@@ -11,6 +11,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { DepartamentoService } from 'src/app/services/Reclutamiento/Departamento.service';
 import { CommonModule, CurrencyPipe} from '@angular/common';
+import { ReporteService } from 'src/app/services/Reclutamiento/Reporte.service';
 
 @Component({
   selector: 'app-catalogo-departamento',
@@ -58,7 +59,8 @@ export class CatalogoDepartamentoComponent implements OnInit {
     private departamento_service : DepartamentoService,
     private puesto_service : PuestoService,
     private empresa_service : EmpresaService,
-    private currencyPipe : CurrencyPipe
+    private currencyPipe : CurrencyPipe,
+    private reporte_service : ReporteService
   ) {
     this.modal = NgbModalRef;
     this.departamento.puestos = [];
@@ -260,6 +262,20 @@ export class CatalogoDepartamentoComponent implements OnInit {
     this.departamento = new Departamento(0,0,"","",1,this.usuario,1,[]);
     this.autorizados = 0;
     this.vacantes = 0;
+  }
+
+  descagar(id_empresa : any){
+    this.reporte_service.reporteDepartamento(id_empresa,this.cliente_seleccionado)
+    .subscribe((object : any) => {
+      let win = window.open("","_blank");
+      let html = '';
+      html += '<html>';
+      html += '<body style="margin:0!important">';
+      html += '<embed width="100%" height="100%" src="data:application/pdf;base64,'+object.data+'" type="application/pdf" />';
+      html += '</body>';
+      html += '</html>';
+      win?.document.write(html);
+    });
   }
 
   openModal(tipo :number) {

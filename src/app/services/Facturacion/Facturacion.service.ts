@@ -30,6 +30,17 @@ export class FacturacionService {
       }));
   }
 
+  generarExcel(json : any){
+    let url = SERVER_API+"facturacion/generarExcel";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
+        return throwError(err);
+      }));
+  }
+  
   opcionesFactura(json : any){
     let url = SERVER_API+"facturacion/opcionesFactura";
     return this.http.post( url, json )

@@ -1,240 +1,262 @@
-
 <div class="header {{color}}" style="height: 250px;">
+  <div class="container-fluid">
+  </div>
 </div>
 <div class="container-fluid mt--9">
-    <div class="row">
-      <div class="col">
-        <div class="card border-info">
-          <div class="card-header">
-            BAJAS
-          </div>
-          <div class="card-body">
-            <div class="row mb-2">
-              <div class="col-lg-4 col-sm-12">
-                <mat-form-field class="w-100">
-                  <mat-label>Status</mat-label>
-                  <mat-select [(ngModel)]="status" (selectionChange)="mostrarBajas()">
-                      <mat-option [value]="-1">Todos</mat-option>
-                      <mat-option [value]="5">En solicitud</mat-option>
-                      <mat-option [value]="1">Aplicados</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-              <div class="col-lg-4 col-sm-12 mb-2">
-                <mat-form-field class="w-100">
-                  <mat-label>Filtrar por fechas</mat-label>
-                  <mat-date-range-input [rangePicker]="picker">
-                    <input matStartDate placeholder="Día inicial (mm/dd/yyyy)" [(ngModel)]="fecha_inicial">
-                    <input matEndDate placeholder="Día final (mm/dd/yyyy)" [(ngModel)]="fecha_final" (dateChange)="mostrarBajas()">
-                  </mat-date-range-input>
-                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                  <mat-date-range-picker #picker></mat-date-range-picker>
-                </mat-form-field>
-              </div>
-              <div class="col-lg-4 col-sm-12" style="text-align: end;">
-                  <a class="btn btn-info" title="Nuevo baja" (click)="openModal()"><img src="./assets/iconos/add-file.svg" style="width: 24px;"></a>
-              </div>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-striped">
-                  <thead>
-                      <tr>
-                          <th scope="col">Folio</th>
-                          <th scope="col">Fecha de la baja</th>
-                          <th scope="col">Estatus</th>
-                          <th scope="col">Acciones</th>
-                      </tr>
-                  </thead>
-                  <tbody *ngIf="bajas.length > 0; else pintaVacio" class="">
-                      <tr *ngFor="let baja of bajas">
-                          <td colspan="1" style="vertical-align: middle;">{{baja.id_movimiento}}</td>
-                          <td colspan="1" style="vertical-align: middle;">{{baja.fecha_movimiento}}</td>
-                          <td *ngIf="baja.id_status == 5" colspan="1" style="vertical-align: middle;">En solicitud</td>
-                          <td *ngIf="baja.id_status == 1" colspan="1" style="vertical-align: middle;">Aplicado</td>
-                          <td colspan="1" style="width: 20%;">
-                              <a *ngIf="baja.id_status == 5" title="Editar" (click)="editarMovimientoBaja(baja.id_movimiento,1)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
-                              <a *ngIf="aplicar && baja.id_status == 5" title="Aplicar solicitud" style="cursor: pointer;" class="btn btn-success btn-sm" (click)="aplicarBaja(baja.id_movimiento)"><img src="./assets/iconos/aplicar.svg" style="width: 14px;"></a>
-                              <a *ngIf="baja.id_status == 1" title="Editar" (click)="editarMovimientoBaja(baja.id_movimiento,2)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/ver.svg" style="width: 14px;"></a>
-                          </td>
-                      </tr>
-                  </tbody>
-                  <ng-template #pintaVacio>
-                      <tbody>
-                          <tr>
-                              <td colspan="4" class="text-center">No existen bajas</td>
-                          </tr>
-                      </tbody>
-                  </ng-template>
-              </table>
-              <div class="filtros container mt-3">
-                  <div class="row">
-                      <div class="col-lg-2 col-sm-12"></div>
-                      <div class="col-lg-8 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
-                          <nav *ngIf="mostrar_pagination" aria-label="Page navigation example">
-                              <ul class="pagination">
-                                <li class="page-item" *ngIf="previous">
-                                  <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                    <span class="sr-only">Previous</span>
-                                  </a>
-                                </li>
-                                <li *ngFor="let pagina of paginas" class="page-item {{pagina.active}}" (click)="irPagina(pagina.valor_pagina)"><a class="page-link" style="cursor: pointer;">{{pagina.numero}}</a></li>
-                                <li class="page-item" *ngIf="next">
-                                  <a class="page-link" href="#" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                    <span class="sr-only">Next</span>
-                                  </a>
-                                </li>
-                              </ul>
-                            </nav>
-                      </div>
-                      <div class="col-lg-2 col-sm-12" style="text-align: end;">
+  <div class="row">
+      <div class="col-lg-12 col-sm-12">
+          <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">BAJAS</h4>
+                <div class="card-category">
+                  <div class="row align-items-center">
+                      <div class="col-lg-4 col-sm-12">
                         <mat-form-field class="w-100">
-                          <mat-label>No. resultados</mat-label>
-                          <mat-select [(ngModel)]="taken" (selectionChange)="mostrarBajas()">
-                              <mat-option [value]="5">5</mat-option>
-                              <mat-option [value]="10">10</mat-option>
-                              <mat-option [value]="20">20</mat-option>
-                              <mat-option [value]="30">30</mat-option>
-                              <mat-option [value]="40">40</mat-option>
-                              <mat-option [value]="50">50</mat-option>
-                              <mat-option [value]="100">100</mat-option>
+                          <mat-label>Status</mat-label>
+                          <mat-select [(ngModel)]="status" (selectionChange)="obtenerMovimientos()">
+                              <mat-option [value]="-1">Todos</mat-option>
+                              <mat-option [value]="9">Capturando</mat-option>
+                              <mat-option [value]="8">Precaptura</mat-option>
+                              <mat-option [value]="1">Activos</mat-option>
                           </mat-select>
                         </mat-form-field>
                       </div>
+                      <div class="col-lg-4 col-sm-12">
+                          
+                      </div>
+                      <div class="col-lg-4 col-sm-12 text-right">
+                          <button class="btn btn-info" title="Nuevo movimiento" (click)="nuevaPrecaptura()"><i class="fas fa-plus"></i></button>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                  <div class="row">
+                      <div class="col-lg-12 col-sm-12" style="overflow-x: scroll;">
+                          <table mat-table [dataSource]="dataSource" class="w-100">
+                              
+                              <ng-container matColumnDef="id_movimiento">
+                                  <th mat-header-cell *matHeaderCellDef> Id </th>
+                                  <td mat-cell *matCellDef="let element"> {{element.id_movimiento}} </td>
+                              </ng-container>
+                              
+                              <ng-container matColumnDef="usuario_creacion">
+                                  <th mat-header-cell *matHeaderCellDef> Usuario </th>
+                                  <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                              </ng-container>
+                              
+                              <ng-container matColumnDef="fecha_movimiento">
+                                  <th mat-header-cell *matHeaderCellDef> Fecha movimiento </th>
+                                  <td mat-cell *matCellDef="let element"> {{element.fecha_movimiento}} </td>
+                              </ng-container>
+  
+                              <ng-container matColumnDef="tipo">
+                                <th mat-header-cell *matHeaderCellDef> Tipo movimiento </th>
+                                <td mat-cell *matCellDef="let element">
+                                    <i *ngIf="element.tipo == 'A'" class="fas fa-long-arrow-alt-up text-success"></i>
+                                    <i *ngIf="element.tipo == 'M'" class="fas fa-retweet text-warning"></i>
+                                    <i *ngIf="element.tipo == 'B'" class="fas fa-long-arrow-alt-down text-danger"></i>
+                                    {{element.tipo_movimiento}} 
+                                  </td>
+                              </ng-container>
+                            
+                              <!-- Name Column -->
+                              <ng-container matColumnDef="status">
+                                <th mat-header-cell *matHeaderCellDef> Estatus </th>
+                                <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+                              </ng-container>
+  
+                              <ng-container matColumnDef="accion">
+                                  <th mat-header-cell *matHeaderCellDef> Acción </th>
+                                  <td mat-cell *matCellDef="let element">  
+                                      <button [matMenuTriggerFor]="menu" class="btn btn-info btn-sm"><i class="fas fa-ellipsis-v"></i></button>
+                                      <mat-menu #menu="matMenu">
+                                          <button mat-menu-item *ngIf="element.id_status == 9" (click)="editarPrecaptura(element.id_movimiento)">
+                                              <mat-icon>edit</mat-icon>
+                                              <span>Editar</span>
+                                          </button>
+                                          <button mat-menu-item *ngIf="element.id_status == 9" (click)="cancelarPrecaptura(element.id_movimiento)">
+                                              <mat-icon><i class="far fa-times-circle"></i></mat-icon>
+                                              <span>Cancelar</span>
+                                          </button>
+                                          <button mat-menu-item *ngIf="element.id_status == 9" (click)="aplicarPrecatura(element.id_movimiento)">
+                                            <mat-icon><i class="fas fa-check"></i></mat-icon>
+                                            <span>Precapturar</span>
+                                        </button> 
+                                        <button mat-menu-item *ngIf="element.id_status == 8 || element.id_status == 1" (click)="visualizarDetalle(element.id_movimiento)">
+                                          <mat-icon><i class="far fa-eye"></i></mat-icon>
+                                          <span>Ver</span>
+                                        </button> 
+                                        <button *ngIf="element.id_status == 8" mat-menu-item (click)="consumoReporte(1,element.id_movimiento)">
+                                            <mat-icon><i class="fas fa-file-pdf"></i></mat-icon>
+                                            <span>Imprimir</span>
+                                        </button>
+                                        <button *ngIf="element.id_status == 8" mat-menu-item (click)="realizarContratacion(element.id_movimiento)">
+                                          <mat-icon><i class="fas fa-clipboard-list"></i></mat-icon>
+                                          <span>Realizar las contrataciónes</span>
+                                      </button>
+                                      </mat-menu>
+                                  </td>
+                              </ng-container>
+      
+                              <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                          </table>
+                          <mat-paginator 
+                              [pageSizeOptions]="[5, 10, 20]"
+                              showFirstLastButtons 
+                              aria-label="Selecciona la pagina">
+                          </mat-paginator>
+                      </div>
                   </div>
               </div>
-            </div>
           </div>
-        </div>
       </div>
-    </div>
   </div>
-
+</div>
 <ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-body" style="overflow-x: hidden;">
+      <mat-list class="w-100">
+          <div class="row align-items-center">
+              <div class="col-6">
+                  <div mat-subheader>
+                      Precaptura de contratación
+                  </div>
+              </div>
+              <div class="col-6 text-right">
+                  <button  (click)="nuevaContratacion()" class="btn btn-success btn-sm" title="Agregar baja"><i class="fas fa-user-minus"></i></button>
+              </div>
+          </div>
+          <div class="contenedor" *ngIf="movimientos.length > 0; else pintaVacio">
+              <div class="list" *ngFor="let movimiento of movimientos">
+                  <mat-list-item>
+                      <div mat-line><strong>{{movimiento.candidato}}</strong></div>
+                      <div mat-line>{{movimiento.puesto}}</div>
+                      <div mat-line>{{movimiento.empresa}}</div>
+                      <div mat-line><small>{{movimiento.descripcion}}</small></div>
+                      <div mat-line class="text-right">
+                          <button *ngIf="tipo_modal != 3" class="btn btn-info btn-sm" title="Editar puesto" (click)="editarContratacion(movimiento.id_registro)"><i class="fas fa-edit"></i></button>
+                          <button *ngIf="tipo_modal != 3" class="btn btn-danger btn-sm" title="Eliminar puesto" (click)="cancelarDetalle(movimiento.id_registro,movimiento.id_detalle)"><i class="far fa-trash-alt"></i></button>
+                          <button *ngIf="tipo_modal == 3" class="btn btn-info btn-sm" title="Generar reporte" (click)="consumoReporte(2,movimiento.id_detalle)"><i class="far fa-file-pdf"></i></button>
+                          <button *ngIf="tipo_modal == 3" class="btn btn-yellow btn-sm" title="Generar contrato" (click)="descargarReporte(movimiento.id_detalle)"><i class="fas fa-file-contract"></i></button>
+                      </div>
+                  </mat-list-item>
+                  <mat-divider></mat-divider>
+              </div>
+          </div>
+          <ng-template #pintaVacio>
+              <mat-list-item>
+                  <div mat-line class="text-center">Crea un nueva baja utilizando el botón <button class="btn btn-success btn-sm" disabled><i class="fas fa-user-minus"></i></button> en la esquina superior derecha.</div>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+          </ng-template>
+      </mat-list>
+  </div>
+  <div class="modal-footer">
+      <button type="button"class="btn btn-warning" (click)="cerrarModal(1)">Cerrar</button>
+      <button type="button" *ngIf="movimientos.length > 0 && tipo_modal != 3" class="btn btn-success" (click)="guardarMovimiento()" id="guardar">Guardar</button>
+      <!-- <button type="button" *ngIf="departamento.puestos.length > 0 && tipo_modal == 2"  class="btn btn-success" (click)="modificarDepartamento()" id="editar" >Editar</button> -->
+  </div>
+</ng-template>
+<ng-template #content_alta let-c="close" let-d="dismiss">
   <div class="modal-header">
       <h2 class="modal-title" id="tituloModal">Nueva baja</h2>
   </div>
   <div class="modal-body">
-    <mat-form-field class="w-100">
-      <mat-label>Buscar candidato</mat-label>
-      <input #input
-              type="text"
-              placeholder="Buscar..."
-              (keyup)="mostrarCandidatos(input.value)"
-              aria-label="Buscar candidato"
-              matInput
-              [formControl]="myControl"
-              [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getCandidato($event)'>
-        <mat-option *ngFor="let option of candidatos" [value]="option.nombre_completo" [id]="option.id_candidato" title="Agregar empleado">
-          {{option.nombre_completo}}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
-    <div class="table-responsive">
-      <table class="table">
-        <thead>
-          <tr>
-            <th colspan="1">Empleado</th>
-            <th colspan="1">Fecha de la baja</th>
-            <th colspan="1">Observacion</th>
-            <th colspan="1" class="text-center">Acciones</th>
-          </tr>
-        </thead>
-        <tbody *ngIf="candidatos_dos.candidatos.length > 0">
-          <tr *ngFor="let candidato of candidatos_dos.candidatos">
-            <td style="vertical-align: text-top;">{{candidato.nombre}}</td>
-            <td style="vertical-align: text-top;">
-              <mat-form-field class="w-100">
-                <input matInput [(ngModel)]="candidato.fecha_baja" [matDatepicker]="picker" placeholder="Ingrese la fecha de la baja">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-              </mat-form-field>
-            </td>
-            <td style="vertical-align: text-top;">
-              <textarea class="form-control" [(ngModel)]="candidato.observacion" cols="30" rows="1"></textarea>
-            </td>
-            <td style="vertical-align: text-top;" class="text-center">
-              <a title="Eliminar" style="cursor: pointer;" class="btn btn-warning btn-md" (click)="eliminarDetalleSolicitud(candidato.id_candidato)"><img src="./assets/iconos/delete.svg" style="width: 18px;"></a>
-            </td>
-          </tr>
-        </tbody>
-        <tbody *ngIf="candidatos_dos.candidatos.length == 0">
-          <tr class="text-center">
-            <td colspan="4">No se han agregado empleados</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <div class="form">
+          <div class="form-row">
+              <div class="col-lg-12 col-sm-12 form-group">
+                  <mat-form-field class="w-100">
+                      <mat-label>Buscar empleado a dar de baja</mat-label>
+                      <input type="text"
+                              placeholder="Ingrese el nombre o la descripción de habilidades"
+                              aria-label="Number"
+                              matInput
+                              (keyup)="buscarCandidato(1)"
+                              [formControl]="filterControl"
+                              [matAutocomplete]="auto"
+                              style="text-transform: uppercase;">
+                      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionCandidato($event,1)">
+                          <mat-option *ngFor="let candidato of candidatos" [value]="candidato.nombre" [id]="candidato.id_candidato">
+                              {{candidato.nombre}} ({{candidato.descripcion}})
+                          </mat-option>
+                      </mat-autocomplete>
+                  </mat-form-field>
+              </div>
+          </div>
+          <div class="form-row w-100">
+              <div class="form-group col-lg-2 col-sm-12 text-center">
+                  <img class="img-fluid" src="{{detalle.url_foto}}" style="max-width:100px;height:110px;object-fit: cover;
+                  object-position: center center;">
+              </div>
+              <div class="form-group col-lg-10 col-sm-12">
+                  <div class="row">
+                      <div class="col-lg-6 col-sm-12">
+                          <mat-form-field class="w-100">
+                            <mat-label>Empresa</mat-label>
+                            <input matInput [(ngModel)]="detalle.empresa" disabled>
+                          </mat-form-field>
+                      </div>
+                      <div class="col-lg-6 col-sm-12">
+                          <mat-form-field class="w-100">
+                            <mat-label>Departamento</mat-label>
+                            <input matInput [(ngModel)]="detalle.departamento" disabled>
+                          </mat-form-field>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-lg-6 col-sm-12">
+                        <mat-form-field class="w-100">
+                          <mat-label>Puesto</mat-label>
+                          <input matInput [(ngModel)]="detalle.puesto" disabled>
+                        </mat-form-field>
+                      </div>
+                      <div class="form-group col-sm-12 col-lg-6">
+                        <mat-form-field class="w-100">
+                          <mat-label>Sucursal</mat-label>
+                          <input matInput [(ngModel)]="detalle.sucursal" disabled>
+                        </mat-form-field>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="form-row w-100">
+              <div class="form-group col-sm-12 col-lg-4">
+                <mat-form-field class="w-100">
+                  <mat-label>Tipo de nómina</mat-label>
+                  <input matInput [(ngModel)]="detalle.nomina" disabled>
+                </mat-form-field>
+              </div>
+              <div class="form-group col-sm-12 col-lg-4">
+                  <mat-form-field class="w-100">
+                      <mat-label>Fecha de ingreso</mat-label>
+                      <input matInput [matDatepicker]="picker" [(ngModel)]="detalle.fecha_detalle" disabled>
+                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+              </div>
+              <div class="form-group col-lg-4 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Fecha de baja</mat-label>
+                  <input matInput [matDatepicker]="pickerDos" [(ngModel)]="detalle.fecha_baja">
+                  <mat-datepicker-toggle matSuffix [for]="pickerDos"></mat-datepicker-toggle>
+                  <mat-datepicker #pickerDos></mat-datepicker>
+                </mat-form-field>
+              </div> 
+          </div>
+          <div class="form-row">
+              <div class="form-group col-lg-12 col-sm-12">
+                <mat-form-field class="w-100">
+                    <mat-label>Descripción</mat-label>
+                    <textarea matInput [(ngModel)]="detalle.descripcion" style="text-transform: uppercase;" placeholder="Explica la razón de la baja"></textarea>
+                </mat-form-field>
+              </div>
+          </div>
+      </div>
   </div>
   <div class="modal-footer">
-      <button type="button" class="btn btn-warning" (click)="cerrarModal()" >Cerrar</button>
-      <button type="button" class="btn btn-success" (click)="crearBaja()" id="guardar">Crear baja</button>
-      <!-- <button type="button" class="btn btn-success" (click)="actualizarMov()" id="editar" style="display: none;">Actualizar contratación</button> -->
-  </div>
-</ng-template>
-<ng-template #editar let-c="close" let-d="dismiss">
-  <div class="modal-header">
-      <h2 *ngIf="tipo_titulo == 1" class="modal-title" id="tituloModal">Editar baja</h2>
-      <h2 *ngIf="tipo_titulo == 2" class="modal-title" id="tituloModal">Visualizar baja</h2>
-  </div>
-  <div class="modal-body">
-    <mat-form-field *ngIf="tipo_titulo == 1" class="w-100">
-      <mat-label>Buscar candidato</mat-label>
-      <input #input
-              type="text"
-              placeholder="Buscar..."
-              (keyup)="mostrarCandidatos(input.value)"
-              aria-label="Buscar candidato"
-              matInput
-              [formControl]="myControl"
-              [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getCandidato($event)'>
-        <mat-option *ngFor="let option of candidatos" [value]="option.nombre_completo" [id]="option.id_candidato" title="Agregar empleado">
-          {{option.nombre_completo}}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
-    <div class="table-responsive">
-      <table class="table">
-        <thead>
-          <tr>
-            <th colspan="1">Empleado</th>
-            <th colspan="1">Fecha de la baja</th>
-            <th colspan="1">Observacion</th>
-            <th *ngIf="tipo_titulo == 1" colspan="1" class="text-center">Acciones</th>
-          </tr>
-        </thead>
-        <tbody *ngIf="candidatos_dos.candidatos.length > 0">
-          <tr *ngFor="let candidato of candidatos_dos.candidatos">
-            <td style="vertical-align: text-top;">{{candidato.nombre}}</td>
-            <td style="vertical-align: text-top;">
-              <mat-form-field class="w-100">
-                <input matInput [(ngModel)]="candidato.fecha_baja" [matDatepicker]="picker" placeholder="Ingrese la fecha de la baja">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-              </mat-form-field>
-            </td>
-            <td style="vertical-align: text-top;">
-              <textarea class="form-control" [(ngModel)]="candidato.observacion" cols="30" rows="1"></textarea>
-            </td>
-            <td *ngIf="tipo_titulo == 1" style="vertical-align: text-top;" class="text-center">
-              <a title="Eliminar" style="cursor: pointer;" class="btn btn-warning btn-md" (click)="eliminarDetalle(candidato.id_detalle_baja,candidato.id_candidato)"><img src="./assets/iconos/delete.svg" style="width: 18px;"></a>
-            </td>
-          </tr>
-        </tbody>
-        <tbody *ngIf="candidatos_dos.candidatos.length == 0">
-          <tr class="text-center">
-            <td colspan="4">No se han agregado empleados</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="modal-footer">
-      <button type="button" class="btn btn-warning" (click)="cerrarModal()" >Cerrar</button>
-      <button *ngIf="tipo_titulo == 1" type="button" class="btn btn-success" (click)="modificarBaja()" id="guardar">Editar</button>
-      <!-- <button type="button" class="btn btn-success" (click)="actualizarMov()" id="editar" style="display: none;">Actualizar contratación</button> -->
+      <button type="button" class="btn btn-warning" (click)="cerrarModal(2)">Cerrar</button>
+      <button type="button" *ngIf="tipo_modal_alta == 1" class="btn btn-success" (click)="agregarContratacion()">Guardar</button>
+      <button type="button" *ngIf="tipo_modal_alta == 2" class="btn btn-success" (click)="modificarContratacion()">Guardar</button>
   </div>
 </ng-template>

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { DateAdapter } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
@@ -40,7 +41,8 @@ export class InicioComponent implements OnInit {
     ejercicio : ""
   }
   displayedColumns: string[] = ['codigo', 'nombre', 'rfc', "uuid", 'fecha_pago', 'fecha_timbrado', 'accion'];
-  dataSource  : any[] = [];
+  // dataSource  : any[] = [];
+  dataSource  = new MatTableDataSource();
   registros = 0;
   empresas : any;
   empresas_copy : any;
@@ -50,6 +52,7 @@ export class InicioComponent implements OnInit {
   emailFormControl = new FormControl('', [Validators.required, Validators.email]);
   id_timbrado = 0;
   correo = "";
+  @ViewChild(MatPaginator) paginator : any;
   descarga_masiva = false;
 
   constructor(
@@ -62,6 +65,7 @@ export class InicioComponent implements OnInit {
     private dateAdapter: DateAdapter<Date>
   ) { 
     this.dateAdapter.setLocale('en-GB');
+    this.paginator = MatPaginator;
   }
 
   ngOnInit(): void {
@@ -72,7 +76,7 @@ export class InicioComponent implements OnInit {
   }
 
   obtenerFacturas(){
-    this.dataSource = [];
+    this.dataSource.data = [];
     let json = {
       id_cliente : this.id_cliente,
       filtros : this.filtros
@@ -80,7 +84,8 @@ export class InicioComponent implements OnInit {
     this.factura_service.obtenerFacturas(json)
     .subscribe((object : any) => {
       if(object.ok){
-        this.dataSource = object.data.repuesta;
+        this.dataSource.data = object.data.repuesta;
+        this.dataSource.paginator = this.paginator;
         this.registros = object.data.total;
         this.descarga_masiva = true;
       }else{
@@ -248,8 +253,35 @@ export class InicioComponent implements OnInit {
     };
     this.factura_service.descargaMasiva(json)
     .subscribe((object : any) => {
-      if(!object.ok){
+      if(object.ok){
+          var arrayBuffer = this.base64ToArrayBuffer(object.data);
+          var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
+          var data = window.URL.createObjectURL(newBlob);
+          let link  = document.createElement('a');
+          link.href = data;
+          link.download = "archivos_factura.zip";
+          link.click();
+      }else{
         Swal.fire("Ha ocurrido un error","No se ha encontrado resultados","error");
+      }
+    });
+  }
+
+  descargaReporte(){
+    let json = {
+      id_cliente : this.id_cliente,
+      filtros : this.filtros
+    };
+    this.factura_service.generarExcel(json)
+    .subscribe((object : any) => {
+      if(object.ok){
+        var arrayBuffer = this.base64ToArrayBuffer(object.data);
+        var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
+        var data = window.URL.createObjectURL(newBlob);
+        let link  = document.createElement('a');
+        link.href = data;
+        link.download = "ReporteFacturas.xlsx";
+        link.click();
       }
     });
   }

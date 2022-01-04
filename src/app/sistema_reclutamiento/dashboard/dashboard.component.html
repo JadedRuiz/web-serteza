@@ -6,7 +6,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Empleados &nbsp;&nbsp; activos</h5>
+              <h5 class="card-title text-uppercase text-muted mb-0">Empleados &nbsp;&nbsp;&nbsp;&nbsp; activos</h5>
               <span class="h2 font-weight-bold mb-0">{{targeta[0]}}</span>
             </div>
             <div class="col-auto">
@@ -149,10 +149,9 @@
             <tbody *ngIf="band_mov; else sino">
               <tr *ngFor="let movimiento of movimientos">
                 <th scope="row" class="text-center">
-                  <i *ngIf="movimiento.id_movimiento == 1" class="fas fa-arrow-up text-success mr-3"></i>
-                  <i *ngIf="movimiento.id_movimiento == 2" class="fas fa-arrow-down text-danger mr-3"></i>
-                  <i *ngIf="movimiento.id_movimiento == 3" class="fas fa-arrow-up text-success mr-3"></i>
-                  <i *ngIf="movimiento.id_movimiento == 3" class="fas fa-arrow-down text-danger mr-3"></i>
+                  <i *ngIf="movimiento.id_movimiento == 1" class="fas fa-long-arrow-alt-up text-success mr-3"></i>
+                  <i *ngIf="movimiento.id_movimiento == 3" class="fas fa-retweet text-warning mr-3"></i>
+                  <i *ngIf="movimiento.id_movimiento == 2" class="fas fa-long-arrow-alt-down text-danger mr-3"></i>
                   {{movimiento.tipo_movimiento}}
                 </th>
                 <td>{{movimiento.nombre}}</td>

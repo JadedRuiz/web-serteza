@@ -19,12 +19,3 @@
 .mat-header-row {
     display: table-row;
 }
-.borde{
-    border: none;
-    border-right: 1px gray solid;
-}
-@media(max-width:767px){
-    .borde{
-        border: none;
-    }
-}

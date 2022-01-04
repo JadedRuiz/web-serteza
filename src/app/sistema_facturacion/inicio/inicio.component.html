@@ -128,7 +128,7 @@
     <div class="row mt-2" *ngIf="descarga_masiva">
         <div class="col-12  text-center">
             <button class="btn btn-info" (click)="descargaMasiva()"><i class="fas fa-download"></i> &nbsp; Descargar masiva</button>
-            <button class="btn btn-info"><i class="far fa-file-excel"></i> &nbsp; Descargar reporte</button>
+            <button class="btn btn-info" (click)="descargaReporte()"><i class="far fa-file-excel"></i> &nbsp; Descargar reporte</button>
         </div>
     </div>
 </div>
@@ -195,10 +195,10 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-    <mat-paginator [length]="registros"   
-            [pageSize]="10"
-            [pageSizeOptions]="[5, 10, 25, 100]"
-            aria-label="Select page"  >
+    <mat-paginator 
+        [pageSizeOptions]="[5, 10, 25, 100, 200, 300, 500, 1000]"
+        showFirstLastButtons 
+        aria-label="Selecciona la pagina de la factura">
     </mat-paginator>
 </div>
 <ng-template #content let-c="close" let-d="dismiss" class="modal-lg">

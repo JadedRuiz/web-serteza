@@ -29,7 +29,8 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatTabsModule} from '@angular/material/tabs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatListModule} from '@angular/material/list';
-import { MovimientoComponent } from './movimiento/movimiento.component';
+import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.component';
+import { CatalogoSucursalComponent } from './catalogo_sucursal/catalogo_sucursal.component';
 
 @NgModule({
   declarations: [
@@ -38,10 +39,11 @@ import { MovimientoComponent } from './movimiento/movimiento.component';
     CatalogoCandidatosComponent,
     CatalogoDepartamentoComponent,
     CatalogoUsuarioComponent,
+    CatalogoEmpresaComponent,
+    CatalogoSucursalComponent,
     ProcedimientoContratacionComponent,
     ProcedimientoBajaComponent,
-    ProcedimientoModificacionComponent,
-    MovimientoComponent
+    ProcedimientoModificacionComponent
   ],
   imports: [
     CompartidoModule,

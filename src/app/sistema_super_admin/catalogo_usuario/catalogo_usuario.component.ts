@@ -3,14 +3,18 @@ import { COLOR } from 'src/config/config';
 import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 import { Usuario } from 'src/app/models/Usuario';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { Fotografia } from 'src/app/models/Fotografia';
 import Swal from 'sweetalert2';
 import * as jQuery from 'jquery';
+import { Fotografia } from 'src/app/models/Fotografia';
 import { DomSanitizer } from '@angular/platform-browser';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import { Observable, Subject } from 'rxjs';
 import { FormControl} from '@angular/forms';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 import { CompartidoService } from 'src/app/services/Compartido/Compartido.service';
+import { ClienteService } from 'src/app/services/Cliente/cliente.service';
+import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 
 @Component({
   selector: 'app-catalogo-usuario',
@@ -20,197 +24,170 @@ import { CompartidoService } from 'src/app/services/Compartido/Compartido.servic
 export class CatalogoUsuarioComponent implements OnInit {
 
   public color = COLOR;
-  public usuario = new Usuario(0,"","","","",0);
+  public fotografia = new Fotografia(0,"","","");
+  public usuario = {
+    id_usuario : 0,
+    fotografia : this.fotografia,
+    nombre : "",
+    usuario : "",
+    password : "",
+    id_perfil : 0,
+    sistemas : [],
+    empresas : [],
+    clientes : []
+  };
   public usuarios : any;
   public sistemas : any;
-  public band = true;
-  public band_persiana = true;
   public show = false;
+  public band_persiana = true;
   public foto_user : any;
-  public sistema_option = {
-    "id_sistema" : 0,
-    "id_perfil" : 0,
-    "sistema" : "",
-    "perfil" : ""
-  };
   public sistemas_seleccionados : any;
-  public perfiles : any;
+  public perfiles_x_sistema : any;
+  public empresas : any;
+  public empresas_busqueda : any;
+  public empresas_seleccionadas : any;
+  public clientes : any;
+  public clientes_busqueda : any;
+  public clientes_seleccionados : any;
+  public busqueda : any;
   public usuario_creacion = window.sessionStorage.getItem("user");
   public modal : any;
-  public fotografia = new Fotografia(0,"","","");
   public texto_modal = "";
   @ViewChild('content', {static: false}) contenidoDelModal : any;
-  // webcam snapshot trigger
-  public modal_camera : any;
+  public activo = true;
+  public empresa_seleccionada = window.sessionStorage.getItem("empresa");
+  public tipo_modal = 0;
+  public sistema_config = 0;
+  public perfil = 0;
+  public filtros = {
+    taken : 1000,
+    status : 2,
+    palabra : ""
+  };
+  //Camera
   @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
   @Output() getPicture = new EventEmitter<WebcamImage>();
   showWebcam = true;
   isCameraExist = true;
   errors: WebcamInitError[] = [];
+  public modal_camera : any;
+  public docB64 = "";
+  // webcam snapshot trigger
   private trigger: Subject<void> = new Subject<void>();
   private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
-  public activo = true;
-  public docB64 = "";
-  public options : any;
-  //Filtros
-  public taken = 5; //Registros por default
-  public status = 2; //Status default
-  public palabra = "";
-  //Paginacion
-  public total_registros = 0;
-  public mostrar_pagination = false;
-  public paginas_a_mostrar = 5;
-  public paginas : any;
-  public pagina_actual = 0;
-  public limite_inferior = 0;
-  public limite_superior = this.paginas_a_mostrar;
-  public next = false;
-  public previous = false;
   //Autocomplete
   myControl = new FormControl();
   usuarios_busqueda : any;
+  displayedColumns: string[] = ['id', 'fotografia', 'nombre', 'usuario', "estatus", "accion"];
+  dataSource  = new MatTableDataSource();
+  @ViewChild(MatPaginator) paginator : any;
+  filterControl = new FormControl();
 
   constructor(
     private usuario_service : UsuarioService,
     private modalService: NgbModal,
     private sanitizer: DomSanitizer,
-    private compartido_service : CompartidoService
+    private compartido_service : CompartidoService,
+    private cliente_service : ClienteService,
+    private empresa_service : EmpresaService
   ) {
     this.sistemas_seleccionados = [];
+    this.empresas_seleccionadas = [];
+    this.clientes_seleccionados = [];
     this.modal = NgbModalRef;
     this.modal_camera = NgbModalRef;
-    this.paginas = [];
+    this.paginator = MatPaginator;
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
-    this.usuarios_busqueda = [];
    }
 
   ngOnInit(): void {
     this.mostrarUsuarios();
     this.obtenerSistemas();
-    WebcamUtil.getAvailableVideoInputs()
-    .then((mediaDevices: MediaDeviceInfo[]) => {
-      this.isCameraExist = mediaDevices && mediaDevices.length > 0;
-    });
+    this.mostrarPerfiles();
   }
 
   mostrarUsuarios(){
-    this.usuarios = [];
+    this.usuario_service.obtenerUsuarios(this.filtros)
+    .subscribe((object : any)  => {
+      if(object.ok){
+        this.dataSource.data = object.data.registros;
+        this.dataSource.paginator = this.paginator;
+        this.usuarios = object.data.registros;
+        this.usuarios_busqueda = object.data.registros;
+      }
+    });
+  }
+
+  mostrarPerfiles(){
+    this.perfiles_x_sistema = [];
+    this.compartido_service.obtenerPerfiles()
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.perfiles_x_sistema = object.data;
+      }
+    });
+  }
+
+  mostrarClientes(){
+    this.clientes = [];
+    this.clientes_busqueda = [];
     let json = {
-      palabra : this.palabra,
-      taken : this.taken,
-      status : this.status,
-      pagina : this.pagina_actual
-    };
-    this.usuario_service.obtenerUsuarios(json)
-    .subscribe( (object : any) =>{
-        if(object.ok){
-          //Mostrar si los registros son mayores a los registros que se muestran
-          this.total_registros = object.data.total;
-          if(this.total_registros > this.taken){
-            this.mostrar_pagination = true;
-            this.paginar();
-          }else{
-            this.mostrar_pagination = false;
-          }
-          //Mostrar usuarios
-          this.band = true;
-          //LLenar los usuarios en la tabla
-          for(let i =0; i<object.data.registros.length; i++){
-            let status = "Activo";
-            if(object.data.registros[i].activo == 0){
-              status = "Desactivado";
-            }
-            this.usuarios.push({
-              "folio" : object.data.registros[i].id_usuario,
-              "nombre" : object.data.registros[i].nombre,
-              "status" : status
-            });
-          }
-        }else{
-          this.band = false;
-        }
+      taken : 1000,
+      palabra : "",
+      status : "2",
+      pagina : 0
+    }
+    this.cliente_service.obtenerClientes(json)
+    .subscribe((object : any) =>{
+      this.clientes = object.data.registros;
+      this.clientes_busqueda = object.data.registros;
+      // this.pintarEntidades(this.sistema_config);
     });
   }
 
-  autocomplete(palabra : string){
+  mostrarEmpresas(){
+    this.empresas = [];
+    this.empresas_busqueda = [];
+    let json = {
+      taken : 1000,
+      palabra : "",
+      status : "2",
+      pagina : 0
+    }
+    this.empresa_service.obtenerEmpresas(json)
+    .subscribe((object : any) =>{
+      this.empresas = object.data.registros;
+      this.empresas_busqueda = object.data.registros;
+      // this.pintarEntidades(this.sistema_config);
+    });
+  }
+
+  buscarUsuario(){
     this.usuarios_busqueda = [];
-    if(palabra.length > 3){
-      this.usuario_service.autoCompleteUsuario({"nombre_usuario":palabra})
-      .subscribe((object : any) => {
-        if(object.ok){
-          this.usuarios_busqueda = object.data;
-        }else{
-          this.usuarios_busqueda = [];
+    this.usuarios.forEach((element : any) => {
+      this.usuarios_busqueda.push({
+        "usuario_completo" : element.usuario_completo,
+        "id_usuario" : element.id_usuario
+      });
+    });
+    if(this.filterControl.value.length > 0){
+      this.usuarios_busqueda = [];
+      this.usuarios.forEach((element : any) => {
+        if(element.usuario_completo.includes(this.filterControl.value.toUpperCase())){ 
+          this.usuarios_busqueda.push({
+            "usuario_completo" : element.usuario_completo,
+            "id_usuario" : element.id_usuario
+          })
         }
-      })
+      });
     }
   }
-
-  setSistema(event : any){
-    this.sistema_option.id_sistema = event.value;
-    this.sistema_option.sistema = $("#option"+event.value).html();
-  }
-
-  setPerfil(event : any){
-    this.sistema_option.id_perfil = event.value;
-    this.sistema_option.perfil = $("#option"+event.value).html();
-  }
-
-  agregarAUsuario(){
-    if(this.sistema_option.id_perfil == 0 || this.sistema_option.id_perfil == 0){
-      Swal.fire("Ha ocurrido un problema","No se puede agregar sin antes seleccionar el sistema y perfil","error");
-      return;
-    }
-    let band = false;
-    this.sistemas_seleccionados.forEach((element : any) => {
-      if(element.id_sistema == this.sistema_option.id_sistema){
-        band = true;
-      }
-    });
-    if(band){
-      Swal.fire("Ha ocurrido un problema","No se puede agregar dos sistemas iguales al mismo usuario","error");
-      return;
-    }
-    this.sistemas_seleccionados.push(this.sistema_option);
-    this.sistema_option = {
-      "id_sistema" : 0,
-      "id_perfil" : 0,
-      "sistema" : "",
-      "perfil" : ""
-    };
-  }
-
-  eliminarAUsuario(id : number){
-    this.sistemas_seleccionados.forEach((element : any, index : any) => {
-      if(element.id_sistema == id){
-        this.sistemas_seleccionados.splice(index,1);
-      }
-    });
-  }
-
+  
   altaUsuario(){
-    if(this.usuario.nombre == "" || this.usuario.usuario == "" || this.usuario.password == ""){
-      Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
-    }else{
-      if(this.sistemas_seleccionados.length == 0){
-        Swal.fire("Ha ocurrido un error","Debes seleccionar almenos un sistema","error");
-      }else{
-        let active = 1;
-        if(!this.activo){
-          active = 0;
-        }
-        let json = {
-          nombre :  this.usuario.nombre,
-          usuario : this.usuario.usuario,
-          password : this.usuario.password,
-          sistemas : this.sistemas_seleccionados,
-          fotografia : this.fotografia,
-          usuario_creacion : this.usuario_creacion,
-          activo : active
-        };
-        this.confirmar("Confirmación","¿Seguro que desea guardar la información?","info",json,1);
-      }
-    }
+    this.usuario.sistemas = this.sistemas_seleccionados;
+    this.usuario.empresas = this.empresas_seleccionadas;
+    this.usuario.clientes = this.clientes_seleccionados;
+    this.confirmar("Confirmación","¿Seguro que deseas dar de alta a un nuevo usuario?","info",this.usuario,1)
   }
 
   modificarUsuario(){
@@ -239,105 +216,217 @@ export class CatalogoUsuarioComponent implements OnInit {
     }
   }
 
-  guardar(){
-    this.openModal();
-    this.texto_modal = "Nuevo usuario";
-    this.sistemas_seleccionados = [];
-    this.sistema_option = {
-      "id_sistema" : 0,
-      "id_perfil" : 0,
-      "sistema" : "",
-      "perfil" : ""
-    };
-    jQuery("#editar").hide();
-    jQuery("#guardar").show();
+  nuevoUsuario(){
+    this.openModal(1);
+    this.tipo_modal = 1;
+  }
+
+  optionUsuario(value : any){
+    this.editar(value.option.id);
+  }
+
+  setSistema(value : any){
+    if(value.option.selected){
+      this.sistemas_seleccionados.push(value.option.value);
+      this.sistemas.forEach((element : any) =>{
+        if(element.id_sistema == value.option.value){
+          element.activo = false;
+        }
+      });
+    }else{
+      this.sistemas_seleccionados.forEach((element : any, index : any) => {
+        if(element == value.option.value){
+          this.sistemas_seleccionados.splice(index,1);
+        }
+      });
+      this.sistemas.forEach((element : any) =>{
+        if(element.id_sistema == value.option.value){
+          element.activo = true;
+        }
+      });
+    }
+  }
+
+  buscarEmpresa(){
+    this.empresas_busqueda = [];
+    this.empresas.forEach((element : any) => {
+      this.empresas_busqueda.push({
+        "empresa" : element.empresa,
+        "id_empresa" : element.id_empresa,
+        "activo" : element.activo
+      });
+    });
+    if(this.busqueda.length > 0){
+      this.empresas_busqueda = [];
+      this.empresas.forEach((element : any) => {
+        if(element.empresa.includes(this.busqueda.toUpperCase())){ 
+          this.empresas_busqueda.push({
+            "empresa" : element.empresa,
+            "id_empresa" : element.id_empresa,
+            "activo" : element.activo
+          })
+        }
+      });
+      // this.pintarEntidades(this.sistema_config);
+    }
+  }
+
+  buscarCliente(){
+    this.clientes_busqueda = [];
+    this.clientes.forEach((element : any) => {
+      this.clientes_busqueda.push({
+        "cliente" : element.cliente,
+        "id_cliente" : element.id_cliente,
+        "activo" : element.activo
+      });
+    });
+    if(this.busqueda.length > 0){
+      this.clientes_busqueda = [];
+      this.clientes.forEach((element : any) => {
+        if(element.cliente.includes(this.busqueda.toUpperCase())){ 
+          this.clientes_busqueda.push({
+            "cliente" : element.cliente,
+            "id_cliente" : element.id_cliente,
+            "activo" : element.activo
+          })
+        }
+      });
+      // this.pintarEntidades(this.sistema_config);
+    }
+  }
+
+  setEmpresa(event : any){
+    if(event.option.selected){
+      this.empresas_seleccionadas.push(event.option.value);
+    }else{
+      this.empresas_seleccionadas.forEach((element : any, index : any) => {
+        if(element == event.option.value){
+          this.empresas_seleccionadas.splice(index,1);
+        }
+      });
+    }
+  }
+
+  setCliente(event : any){
+    if(event.option.selected){
+      this.clientes_seleccionados.push(event.option.value);
+    }else{
+      this.clientes_seleccionados.forEach((element : any, index : any) => {
+        if(element == event.option.value){
+          this.clientes_seleccionados.splice(index,1);
+        }
+      });
+    }
+  }
+
+  pintarEntidades(tipo : any, arreglo : any){
+    arreglo.forEach((sistema : any) => {
+      if(tipo == 1){
+        this.sistemas.forEach((entidad : any) => {
+          if(entidad.id_sistema == sistema){
+            entidad.activo = true;
+          }
+        });
+      }
+      if(tipo == 2){
+        this.empresas_busqueda.forEach((entidad : any) => {
+          if(entidad.id_empresa == sistema){
+            entidad.activo = true;
+          }
+        });
+      }
+      if(tipo == 3){
+        this.sistemas.forEach((entidad : any) => {
+          if(entidad.id_cliente == sistema){
+            entidad.activo = true;
+          }
+        });
+      }
+    });
   }
 
   editar(folio : any){
-    this.sistemas_seleccionados = [];
-    this.texto_modal = "Editar usuario";
     this.usuario_service.obtenerUsuarioPorId(folio)
     .subscribe( (object : any) => {
       if(object.ok){
-        this.openModal();
-        //Se llena la informacion en el modal
-        this.usuario.id_usuario = parseInt(object.data[0].id_usuario);
-        this.usuario.nombre = object.data[0].nombre;
+        this.texto_modal = "Editar usuario";
+        this.openModal(1);
+        //Se pinta la imagen
+        this.fotografia.id_fotografia = object.data[0].id_fotografia;
+        this.docB64 = object.data[0].fotografia;
+        //Usuario
         this.usuario.usuario = object.data[0].usuario;
         this.usuario.password = object.data[0].password;
-        if(object.data[0].activo == 1){
-          this.activo = true;
-        }else{
-          this.activo = false;
-        }
-        //Agregar fotografia
-        this.fotografia.id_fotografia = object.data[0].id_fotografia;
-        this.foto_user = object.data[0].fotografia;
-        //Funcionalidad de modal
-        jQuery("#guardar").hide();
-        jQuery("#editar").show();
-        //Se llenan los sistemas
-        this.sistemas_seleccionados = [];
-        for(let i=0;i<object.data[0].sistemas.length; i++){
-          this.sistemas_seleccionados.push({
-            "id_sistema" : object.data[0].sistemas[i].id_sistema,
-            "sistema" : object.data[0].sistemas[i].sistema,
-            "id_perfil" : object.data[0].sistemas[i].id_perfil,
-            "perfil" : object.data[0].sistemas[i].perfil
-          });
-          for(let o=0; o<this.sistemas.length;o++){
-            if(this.sistemas[o].id_sistema == object.data[0].sistemas[i].id_sistema){
-              this.sistemas[o].active = "active";
-            }
-          }
-        }
+        this.usuario.nombre = object.data[0].nombre;
+        this.usuario.id_usuario = object.data[0].id_usuario;
+        this.sistemas_seleccionados = object.data[0].sistemas;
+        this.pintarEntidades(1,object.data[0].sistemas);
+        this.empresas_seleccionadas = object.data[0].empresas;
+        this.pintarEntidades(2,object.data[0].empresas);
+        this.clientes_seleccionados = object.data[0].clientes;
+        this.pintarEntidades(3,object.data[0].clientes);
       }else{
         Swal.fire("Ha ocurrido un error",object.message,"error");
       }
     });
   }
 
-  seleccionar(id_sistema : any){
-    if(this.sistemas_seleccionados.includes(id_sistema)){
-      this.sistemas_seleccionados.splice(this.sistemas_seleccionados.indexOf(id_sistema),1);
-      jQuery("#sistema_"+id_sistema).removeClass("active");
-    }else{
-      this.sistemas_seleccionados.push(id_sistema);
-      jQuery("#sistema_"+id_sistema).addClass("active");
+  activarDesactivar(id : number, activo : number){
+    let string = "desactivar";
+    if(activo == 1){
+      string = "activar";
     }
-  }
-  
-  limpiarActive(){
-    for(let o=0; o<this.sistemas.length;o++){
-      this.sistemas[o].active = " ";
-    }
+    this.confirmar("Confirmación","¿Seguro que deseas "+string+" a este usuario?","info",{id_usuario : id, activo : activo},3);
   }
 
   obtenerSistemas(){
-    this.perfiles = [];
-    this.compartido_service.obtenerPerfiles()
-    .subscribe((object : any) => {
-      if(object.length > 0){
-        this.perfiles = object;
-      }
-    });
     this.sistemas = [];
     this.usuario_service.obtenerSistemas()
     .subscribe( (object : any) =>{
-      if(object.length > 0){
-        for(let i=0;i<object.length;i++){
-          this.sistemas.push({
-            "id_sistema" : object[i].id_sistema,
-            "sistema" : object[i].sistema,
-            "active" : "",
-          });
-        }
+      if(object.ok){
+        this.sistemas = object.data;
       }
     });
   }
 
-  mostrarPassword(){
-    this.show = !this.show;
+  limpiarCampos(){
+    this.fotografia = new Fotografia(0,"","","");
+    this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
+    this.usuario = {
+      id_usuario : 0,
+      fotografia : this.fotografia,
+      usuario : "",
+      nombre : "",
+      password : "",
+      id_perfil : 0,
+      sistemas : [],
+      empresas : [],
+      clientes : []
+    };
+    this.sistemas_seleccionados = [];
+    this.empresas_seleccionadas = [];
+    this.clientes_seleccionados = [];
+  }
+
+  openModal(tipo : any) {
+    if(tipo == 1){
+      this.limpiarCampos();
+      this.mostrarEmpresas();
+      this.mostrarClientes();
+      this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
+    if(tipo == 2){
+      this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
+  }
+
+  cerrarModal(tipo : any){
+    if(tipo == 1){
+      this.modal.close();
+    }
+    if(tipo == 2){
+      this.modal_camera.close();
+    }
   }
 
   mostrarPersiana(){
@@ -346,93 +435,6 @@ export class CatalogoUsuarioComponent implements OnInit {
 
   ocultarPersiana(){
     this.band_persiana = true;
-  }
-
-  limpiarCampos(){
-    this.usuario = new Usuario(0,"","","","",0);
-    this.fotografia = new Fotografia(0,"","","");
-    this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
-    this.sistemas_seleccionados = [];
-    this.myControl.reset('');
-  }
-
-  openModal() {
-    this.show = false;
-    this.limpiarCampos();
-    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
-    this.limpiarActive();
-  }
-
-  openModalCamera(){
-    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
-    this.showWebcam = true;
-  }
-
-  cerrarModal(){
-    this.modal.close();
-  }
-  
-  cerrarModalCamera(){
-    this.modal_camera.close();
-  }
-
-  paginar(){
-    this.paginas = [];
-    let paginas_a_pintar = parseInt(this.total_registros+"")%parseInt(this.taken+"");
-    if(paginas_a_pintar == 0){
-      paginas_a_pintar = (parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+"");
-    }else{
-      paginas_a_pintar = ((parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+""))+1;
-    }
-    //Pintamos las flechas
-    if(paginas_a_pintar > this.paginas_a_mostrar){
-      this.next = true;
-    }
-    if(this.pagina_actual == paginas_a_pintar){
-      this.next = false;
-    }
-    if(this.pagina_actual > this.paginas_a_mostrar){
-      this.previous = true;
-    }
-    if(this.pagina_actual == 0){
-      this.previous = false;
-    }
-    //Pintamos las paginas
-    for(let i =0;i<this.paginas_a_mostrar;i++){
-      let pagina_inicial = this.limite_inferior;
-      if(i<paginas_a_pintar){
-        if(this.pagina_actual == pagina_inicial+i){
-          this.paginas.push({
-            numero : (pagina_inicial+i)+1,
-            valor_pagina : pagina_inicial+i,
-            active : "active"
-          });
-        }else{
-          this.paginas.push({
-            numero : (pagina_inicial+i)+1,
-            valor_pagina : pagina_inicial+i,
-            active : ""
-          });
-        }
-      }
-    }
-  }
-
-  irPagina(pagina : any){
-    this.pagina_actual = pagina;
-    this.mostrarUsuarios();
-  }
-
-  getUsuario(event : any) {
-    this.editar(event.option.id);
-    this.usuarios_busqueda.splice(0,this.usuarios_busqueda.length);
-    this.myControl.reset('');
-  }
-
-  busqueda(value : string){
-    if(value.length > 3){
-      this.autocomplete(value);
-    }
   }
 
   subirImagen(){
@@ -444,7 +446,7 @@ export class CatalogoUsuarioComponent implements OnInit {
       let archivos = event.target.files[0];
       let extension = archivos.name.split(".")[1];
       this.fotografia.extension = extension;
-      if(extension == "jpg" || extension == "png" || extension == "jpeg"){
+      if(extension == "jpg" || extension == "png"){
         this.convertirImagenAB64(archivos).then( respuesta => {
           let img = "data:image/"+extension+";base64, "+respuesta;
           this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
@@ -468,6 +470,10 @@ export class CatalogoUsuarioComponent implements OnInit {
           resolve(b64);
       };
     });
+  }
+
+  mostrarPassword(){
+    this.show = !this.show;
   }
 
   takeSnapshot(): void {
@@ -494,7 +500,7 @@ export class CatalogoUsuarioComponent implements OnInit {
     this.fotografia.docB64 = docB64[1];
     this.fotografia.extension = "jpeg";
     this.fotografia.nombre = "foto_user";
-    this.cerrarModalCamera();
+    this.cerrarModal(2);
     // console.log(webcamImage.imageAsDataUrl)
   }
 
@@ -505,7 +511,7 @@ export class CatalogoUsuarioComponent implements OnInit {
   get nextWebcamObservable(): Observable<boolean | string> {
     return this.nextWebcam.asObservable();
   }
-
+  
   confirmar(title : any ,texto : any ,tipo_alert : any,json : any,tipo : number){
     Swal.fire({
       title: title,
@@ -519,13 +525,13 @@ export class CatalogoUsuarioComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         if(tipo == 1){  //Guardar
-          this.usuario_service.altaUsuario(json)
+          this.usuario_service.altaUsuarioSuperAdmin(json)
           .subscribe( (object) =>{
             if(object.ok){
               this.limpiarCampos();
               this.mostrarUsuarios();
               Swal.fire("Buen trabajo","El usuario se ha dado de alta correctamente","success");
-              this.cerrarModal();
+              this.cerrarModal(1);
             }else{
               Swal.fire("Ha ocurrido un error",object.message,"error");
             }

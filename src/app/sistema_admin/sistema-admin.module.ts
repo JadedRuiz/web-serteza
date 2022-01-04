@@ -14,6 +14,10 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
+import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatIconModule} from '@angular/material/icon';
+import {MatMenuModule} from '@angular/material/menu';
 import { CatalogoNominaComponent } from './catalogo_nomina/catalogo_nomina.component';
 
 @NgModule({
@@ -36,7 +40,11 @@ import { CatalogoNominaComponent } from './catalogo_nomina/catalogo_nomina.compo
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatIconModule,
+    MatMenuModule
   ]
 })
 export class SistemaAdminModule { }

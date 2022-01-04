@@ -122,4 +122,8 @@ export class EmpleadoService {
         return throwError(err);
       }));
   }
+  obtenerEmpleadoPorIdCandidato(id : any){
+    let url = SERVER_API+"empleado/obtenerEmpleadoPorIdCandidato/"+id;
+    return this.http.get(url);
+  }
 }

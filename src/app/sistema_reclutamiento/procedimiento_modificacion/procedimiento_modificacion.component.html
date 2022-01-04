@@ -1,240 +1,397 @@
-
 <div class="header {{color}}" style="height: 250px;">
+  <div class="container-fluid">
+  </div>
 </div>
 <div class="container-fluid mt--9">
-    <div class="row">
-      <div class="col">
-        <div class="card border-info">
-          <div class="card-header">
-            MODIFICACIONES
-          </div>
-          <div class="card-body">
-            <div class="row mb-2">
-              <div class="col-lg-4 col-sm-12 mb-2">
-                  <div class="buscador">
-                    <mat-form-field class="w-100">
-                      <mat-label>Status</mat-label>
-                      <mat-select [(ngModel)]="status">
-                          <mat-option [value]="-1">Todos</mat-option>
-                          <mat-option [value]="5">En solicitud</mat-option>
-                          <mat-option [value]="1">Aplicados</mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                  </div>
-              </div>
-              <div class="col-lg-4 col-sm-12">
-                  <mat-form-field class="w-100">
-                    <mat-label>Ingrese un rango de fechas</mat-label>
-                    <mat-date-range-input [rangePicker]="picker">
-                      <input matStartDate placeholder="Día inicial (mm/dd/yyyy)" [(ngModel)]="fecha_inicial">
-                      <input matEndDate placeholder="Día final (mm/dd/yyyy)" [(ngModel)]="fecha_final">
-                    </mat-date-range-input>
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-date-range-picker #picker></mat-date-range-picker>
-                  </mat-form-field>
-              </div>
-              <div class="col-lg-4 col-sm-12" style="text-align: end;">
-                  <a class="btn btn-info" title="Nueva baja" (click)="nuevoModi()"><img src="./assets/iconos/delete_doc.svg" style="width: 24px;"></a>
-              </div>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-striped">
-                  <thead class="text-center">
-                      <tr>
-                          <th scope="col">Folio</th>
-                          <th scope="col">Fecha de modificación</th>
-                          <th scope="col">Status</th>
-                          <th scope="col">Acciones</th>
-                      </tr>
-                  </thead>
-                  <tbody *ngIf="band; else pintaVacio" class="text-center">
-                      <tr *ngFor="let modificacion of modificaciones">
-                          <td colspan="1" style="vertical-align: middle;">{{modificacion.id_movimiento}}</td>
-                          <td colspan="1" style="vertical-align: middle;">{{modificacion.fecha}}</td>
-                          <td colspan="1" style="vertical-align: middle;">{{modificacion.status}}</td>
-                          <td colspan="1" style="width: 20%;">
-                              <a *ngIf="aplicar && modificacion.id_status == 5" title="Aplicar solicitud" style="cursor: pointer;" class="btn btn-success btn-sm" (click)="aplicarModificacion(modificacion.id_movimiento)"><img src="./assets/iconos/aplicar.svg" style="width: 14px;"></a>
-                              <a *ngIf="modificacion.id_status == 5" title="Editar" (click)="editar(modificacion.id_movimiento,1)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
-                              <a *ngIf="modificacion.id_status == 1" title="Ver" (click)="editar(modificacion.id_movimiento,2)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/ver.svg" style="width: 14px;"></a>
-                              <!-- <a title="Reporte de contratación" style="cursor: pointer;" class="btn btn-info" (click)="consumoReporte(1,modificacion.id_movimiento)"><img src="./assets/iconos/reporte.svg" style="width: 24px;"></a> -->
-                          </td>
-                      </tr>
-                  </tbody>
-                  <ng-template #pintaVacio>
-                      <tbody>
-                          <tr>
-                              <td colspan="4" class="text-center">No existen modificaciones</td>
-                          </tr>
-                      </tbody>
-                  </ng-template>
-              </table>
-              <div class="filtros container mt-3">
-                  <div class="row">
-                      <div class="col-lg-2 col-sm-12"></div>
-                      <div class="col-lg-8 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
-                          <nav *ngIf="mostrar_pagination" aria-label="Page navigation example">
-                              <ul class="pagination">
-                                <li class="page-item" *ngIf="previous">
-                                  <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                    <span class="sr-only">Previous</span>
-                                  </a>
-                                </li>
-                                <li *ngFor="let pagina of paginas" class="page-item {{pagina.active}}" (click)="irPagina(pagina.valor_pagina)"><a class="page-link" style="cursor: pointer;">{{pagina.numero}}</a></li>
-                                <li class="page-item" *ngIf="next">
-                                  <a class="page-link" href="#" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                    <span class="sr-only">Next</span>
-                                  </a>
-                                </li>
-                              </ul>
-                            </nav>
-                      </div>
-                      <div class="col-lg-2 col-sm-12" style="text-align: end;">
+  <div class="row">
+      <div class="col-lg-12 col-sm-12">
+          <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">MODIFICACIONES</h4>
+                <div class="card-category">
+                  <div class="row align-items-center">
+                      <div class="col-lg-4 col-sm-12">
                         <mat-form-field class="w-100">
-                          <mat-label>No. resultados</mat-label>
-                          <mat-select [(ngModel)]="taken">
-                              <mat-option [value]="5">5</mat-option>
-                              <mat-option [value]="10">10</mat-option>
-                              <mat-option [value]="20">20</mat-option>
-                              <mat-option [value]="30">30</mat-option>
-                              <mat-option [value]="40">40</mat-option>
-                              <mat-option [value]="50">50</mat-option>
-                              <mat-option [value]="100">100</mat-option>
+                          <mat-label>Status</mat-label>
+                          <mat-select [(ngModel)]="status" (selectionChange)="obtenerMovimientos()">
+                              <mat-option [value]="-1">Todos</mat-option>
+                              <mat-option [value]="9">Capturando</mat-option>
+                              <mat-option [value]="8">Precaptura</mat-option>
+                              <mat-option [value]="1">Activos</mat-option>
                           </mat-select>
                         </mat-form-field>
                       </div>
+                      <div class="col-lg-4 col-sm-12">
+                          
+                      </div>
+                      <div class="col-lg-4 col-sm-12 text-right">
+                          <button class="btn btn-info" title="Nuevo movimiento" (click)="nuevaPrecaptura()"><i class="fas fa-plus"></i></button>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                  <div class="row">
+                      <div class="col-lg-12 col-sm-12" style="overflow-x: scroll;">
+                          <table mat-table [dataSource]="dataSource" class="w-100">
+                              
+                              <ng-container matColumnDef="id_movimiento">
+                                  <th mat-header-cell *matHeaderCellDef> Id </th>
+                                  <td mat-cell *matCellDef="let element"> {{element.id_movimiento}} </td>
+                              </ng-container>
+                              
+                              <ng-container matColumnDef="usuario_creacion">
+                                  <th mat-header-cell *matHeaderCellDef> Usuario </th>
+                                  <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                              </ng-container>
+                              
+                              <ng-container matColumnDef="fecha_movimiento">
+                                  <th mat-header-cell *matHeaderCellDef> Fecha movimiento </th>
+                                  <td mat-cell *matCellDef="let element"> {{element.fecha_movimiento}} </td>
+                              </ng-container>
+  
+                              <ng-container matColumnDef="tipo">
+                                <th mat-header-cell *matHeaderCellDef> Tipo movimiento </th>
+                                <td mat-cell *matCellDef="let element">
+                                    <i *ngIf="element.tipo == 'A'" class="fas fa-long-arrow-alt-up text-success"></i>
+                                    <i *ngIf="element.tipo == 'M'" class="fas fa-retweet text-warning"></i>
+                                    <i *ngIf="element.tipo == 'B'" class="fas fa-long-arrow-alt-down text-danger"></i>
+                                    {{element.tipo_movimiento}} 
+                                  </td>
+                              </ng-container>
+                            
+                              <!-- Name Column -->
+                              <ng-container matColumnDef="status">
+                                <th mat-header-cell *matHeaderCellDef> Estatus </th>
+                                <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+                              </ng-container>
+  
+                              <ng-container matColumnDef="accion">
+                                  <th mat-header-cell *matHeaderCellDef> Acción </th>
+                                  <td mat-cell *matCellDef="let element">  
+                                      <button [matMenuTriggerFor]="menu" class="btn btn-info btn-sm"><i class="fas fa-ellipsis-v"></i></button>
+                                      <mat-menu #menu="matMenu">
+                                          <button mat-menu-item *ngIf="element.id_status == 9" (click)="editarPrecaptura(element.id_movimiento)">
+                                              <mat-icon>edit</mat-icon>
+                                              <span>Editar</span>
+                                          </button>
+                                          <button mat-menu-item *ngIf="element.id_status == 9" (click)="cancelarPrecaptura(element.id_movimiento)">
+                                              <mat-icon><i class="far fa-times-circle"></i></mat-icon>
+                                              <span>Cancelar</span>
+                                          </button>
+                                          <button mat-menu-item *ngIf="element.id_status == 9" (click)="aplicarPrecatura(element.id_movimiento)">
+                                            <mat-icon><i class="fas fa-check"></i></mat-icon>
+                                            <span>Precapturar</span>
+                                        </button> 
+                                        <button mat-menu-item *ngIf="element.id_status == 8 || element.id_status == 1" (click)="visualizarDetalle(element.id_movimiento)">
+                                          <mat-icon><i class="far fa-eye"></i></mat-icon>
+                                          <span>Ver</span>
+                                        </button> 
+                                        <button *ngIf="element.id_status == 8" mat-menu-item (click)="consumoReporte(1,element.id_movimiento)">
+                                            <mat-icon><i class="fas fa-file-pdf"></i></mat-icon>
+                                            <span>Imprimir</span>
+                                        </button>
+                                        <button *ngIf="element.id_status == 8" mat-menu-item (click)="realizarContratacion(element.id_movimiento)">
+                                          <mat-icon><i class="fas fa-clipboard-list"></i></mat-icon>
+                                          <span>Realizar las contrataciónes</span>
+                                      </button>
+                                      </mat-menu>
+                                  </td>
+                              </ng-container>
+      
+                              <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                          </table>
+                          <mat-paginator 
+                              [pageSizeOptions]="[5, 10, 20]"
+                              showFirstLastButtons 
+                              aria-label="Selecciona la pagina">
+                          </mat-paginator>
+                      </div>
                   </div>
               </div>
-            </div>
           </div>
-        </div>
       </div>
-    </div>
   </div>
-
-  <ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
-    <div class="modal-header">
-        <h2 *ngIf="tipo_modal == 0" class="modal-title" id="tituloModal">Nueva modificación</h2>
-        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Editar modificación</h2>
-        <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Visualizar modificación</h2>
-    </div>
-    <div class="modal-body">
-        <div class="form">
-          <div class="form-row">
-            <div class="form-group col-12">
-              <mat-form-field class="w-100">
-                <mat-label>Buscar empleado</mat-label>
-                <input #input
-                       type="text"
-                       placeholder="Buscar..."
-                       (keyup)="mostrarCandidatos(input.value)"
-                       aria-label="Buscar candidato"
-                       matInput
-                       [formControl]="myControl"
-                       [matAutocomplete]="auto">
-                <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getCandidato($event)'>
-                  <mat-option *ngFor="let option of candidatos" [value]="option.nombre_completo" [id]="option.id_candidato" title="Agregar empleado">
-                    {{option.nombre_completo}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
-            </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-body" style="overflow-x: hidden;">
+      <mat-list class="w-100">
+          <div class="row align-items-center">
+              <div class="col-6">
+                  <div mat-subheader>
+                      Precaptura de contratación
+                  </div>
+              </div>
+              <div class="col-6 text-right">
+                  <button  (click)="nuevaContratacion()" class="btn btn-success btn-sm" title="Agregar contratación"><i class="fas fa-user-cog"></i></button>
+              </div>
           </div>
-          <div *ngIf="bandera" class="form-row">
-            <div class="col-4 form-group">
-              <mat-form-field class="w-100">
-                <mat-label>Empresas</mat-label>
-                <mat-select [(ngModel)]="json.id_empresa" (selectionChange)="cambiarEmpresa()">
-                  <mat-option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">{{empresa.empresa}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-            <div class="col-4 form-group">
-              <mat-form-field class="w-100">
-                <mat-label>Departamento</mat-label>
-                <mat-select [(ngModel)]="json.id_departamento"  (selectionChange)="cambiarDepartamento()">
-                  <mat-option *ngFor="let departamento of departamentos" [value]="departamento.id_departamento">{{departamento.departamento}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-            <div class="col-4 form-group">
-              <mat-form-field class="w-100">
-                <mat-label>Puesto</mat-label>
-                <mat-select [(ngModel)]="json.id_puesto" (selectionChange)="modificar = true">
-                  <mat-option *ngFor="let puesto of puestos" [value]="puesto.id_puesto">{{puesto.puesto}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
+          <div class="contenedor" *ngIf="movimientos.length > 0; else pintaVacio">
+              <div class="list" *ngFor="let movimiento of movimientos">
+                  <mat-list-item>
+                      <div mat-line><strong>{{movimiento.candidato}}</strong></div>
+                      <div mat-line>{{movimiento.puesto}}</div>
+                      <div mat-line>{{movimiento.empresa}}</div>
+                      <div mat-line><small>{{movimiento.descripcion}}</small></div>
+                      <div mat-line class="text-right">
+                          <button *ngIf="tipo_modal != 3" class="btn btn-info btn-sm" title="Editar puesto" (click)="editarModificacion(movimiento.id_registro)"><i class="fas fa-edit"></i></button>
+                          <button *ngIf="tipo_modal != 3" class="btn btn-danger btn-sm" title="Eliminar puesto" (click)="cancelarDetalle(movimiento.id_registro,movimiento.id_detalle)"><i class="far fa-trash-alt"></i></button>
+                          <button *ngIf="tipo_modal == 3" class="btn btn-info btn-sm" title="Generar reporte" (click)="consumoReporte(2,movimiento.id_detalle)"><i class="far fa-file-pdf"></i></button>
+                          <button *ngIf="tipo_modal == 3" class="btn btn-yellow btn-sm" title="Generar contrato" (click)="descargarReporte(movimiento.id_detalle)"><i class="fas fa-file-contract"></i></button>
+                      </div>
+                  </mat-list-item>
+                  <mat-divider></mat-divider>
+              </div>
           </div>
-          <div *ngIf="bandera" class="form-row">
-            <div class="form-group col-4">
-              <input type="number" class="form-control" placeholder="Sueldo" [(ngModel)]="json.sueldo" (change)="modificar = true">
+          <ng-template #pintaVacio>
+              <mat-list-item>
+                  <div mat-line class="text-center">Crea un nueva contratación utilizando el botón <button class="btn btn-success btn-sm" disabled><i class="fas fa-user-cog"></i></button> en la esquina superior derecha.</div>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+          </ng-template>
+      </mat-list>
+  </div>
+  <div class="modal-footer">
+      <button type="button"class="btn btn-warning" (click)="cerrarModal(1)">Cerrar</button>
+      <button type="button" *ngIf="movimientos.length > 0 && tipo_modal != 3" class="btn btn-success" (click)="guardarMovimiento()" id="guardar">Guardar</button>
+  </div>  
+</ng-template>
+<ng-template #content_alta let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h2 class="modal-title" id="tituloModal">Nueva modificación</h2>
+</div>
+<div class="modal-body">
+    <div class="form">
+        <div class="form-row align-items-center justify-content-center">
+            <div class="col-lg-10 col-sm-12">
+                <mat-form-field class="w-100">
+                    <mat-label>Buscar candidato a modificar</mat-label>
+                    <input type="text"
+                            placeholder="Ingrese el nombre del empleado activo"
+                            aria-label="Number"
+                            matInput
+                            (keyup)="buscarCandidato(1)"
+                            [formControl]="filterControl"
+                            [matAutocomplete]="auto"
+                            style="text-transform: uppercase;">
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionCandidato($event,2)">
+                        <mat-option *ngFor="let candidato of candidatos" [value]="candidato.nombre" [id]="candidato.id_candidato">
+                            {{candidato.nombre}} ({{candidato.descripcion}})
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
             </div>
-            <div class="form-group col-4">
-              <mat-form-field class="w-100">
-                <mat-label>Tipo de nómina</mat-label>
-                <mat-select [(ngModel)]="json.id_nomina" (selectionChange)="modificar = true">
-                    <mat-option *ngFor="let nomina of nominas" [value]="nomina.id_nomina">{{nomina.nomina}}</mat-option>
-                </mat-select>
-              </mat-form-field>
+        </div>
+        <div class="form-row d-flex">
+            <!-- //Datos actuales -->
+            <div class="form_group col-lg-6 col-sm-12 borde">
+                <div class="form-row justify-content-center align-items-center">
+                    <h4 class="text-center">DATOS DEL EMPLEADO</h4>
+                </div>
+                <div class="form-row w-100">
+                    <div class="form-group col-lg-3 col-sm-12 text-center">
+                        <img class="img-fluid" src="{{detalle_atiguo.url_foto}}" style="max-width:100px;height:110px;object-fit: cover;
+                        object-position: center center;">
+                    </div>
+                    <div class="form-group col-lg-9 col-sm-12">
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                                <mat-form-field class="w-100">
+                                    <mat-label>Empresa</mat-label>
+                                    <input matInput [(ngModel)]="detalle_atiguo.empresa" disabled>
+                                  </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                                <mat-form-field class="w-100">
+                                    <mat-label>Departamento</mat-label>
+                                    <input matInput [(ngModel)]="detalle_atiguo.departamento" disabled>
+                                  </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-lg-4 col-sm-12">
+                        <mat-form-field class="example-full-width w-100">
+                            <mat-label>Puesto</mat-label>
+                            <input matInput [(ngModel)]="detalle_atiguo.puesto" disabled>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-4 col-sm-12">
+                        <mat-form-field class="w-100">
+                            <mat-label>Sueldo diario</mat-label>
+                            <input matInput (blur)="transformAmount($event,1)" [(ngModel)]="detalle_atiguo.sueldo" type="text" min="0" disabled>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-4 col-sm-12">
+                        <mat-form-field class="w-100">
+                            <mat-label>Sueldo neto</mat-label>
+                            <input matInput (blur)="transformAmount($event,2)" [(ngModel)]="detalle_atiguo.sueldo_neto" type="text" min="0" disabled>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="form-row w-100">
+                    <div class="form-group col-sm-12 col-lg-4">
+                        <mat-form-field class="w-100">
+                            <mat-label>Tipo de nómina</mat-label>
+                            <mat-select [(ngModel)]="detalle_atiguo.id_nomina" disabled>
+                                <mat-option  *ngFor="let nomina of nominas" [value]="nomina.id_nomina">{{nomina.nomina}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-group col-sm-12 col-lg-4">
+                        <mat-form-field class="example-full-width w-100">
+                            <mat-label>Sucursal</mat-label>
+                            <input matInput [(ngModel)]="detalle_atiguo.sucursal" disabled>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-group col-sm-12 col-lg-4">
+                        <mat-form-field class="w-100">
+                            <mat-label>Fecha de ingreso</mat-label>
+                            <input matInput [matDatepicker]="picker" [(ngModel)]="detalle_atiguo.fecha_detalle" disabled>
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                          </mat-form-field>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-lg-12 col-sm-12">
+                        <mat-form-field class="w-100">
+                            <mat-label>Descripción</mat-label>
+                            <textarea matInput [(ngModel)]="detalle_atiguo.descripcion" disabled style="text-transform: uppercase;"></textarea>
+                          </mat-form-field>
+                    </div>
+                </div>
             </div>
-            <div class="form-group col-4">
-              <mat-form-field class="w-100">
-                <input matInput [(ngModel)]="json.fecha_modificacion" [matDatepicker]="picker" placeholder="Fecha de modificación">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-              </mat-form-field>
+            <!-- Datos a modificar -->
+            <div class="form_group col-lg-6 col-sm-12">
+                <div class="form-row justify-content-center align-items-center">
+                    <h4 class="text-center">MODIFICACIÓN</h4>
+                </div>
+                <div class="form-row w-100">
+                    <div class="form-group col-lg-3 col-sm-12 text-center">
+                        <img class="img-fluid" src="{{detalle.url_foto}}" style="max-width:100px;height:110px;object-fit: cover;
+                        object-position: center center;">
+                    </div>
+                    <div class="form-group col-lg-9 col-sm-12">
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                                <mat-form-field class="w-100">
+                                    <mat-label>Selccionar empresa</mat-label>
+                                    <input type="text"
+                                            placeholder="Ingrese el nombre o id de la empresa"
+                                            aria-label="Number"
+                                            matInput
+                                            (keyup)="buscarEmpresa()"
+                                            [formControl]="filterControlEmpresa"
+                                            [matAutocomplete]="autoDos"
+                                            style="text-transform: uppercase;">
+                                    <mat-autocomplete #autoDos="matAutocomplete" (optionSelected)="optionEmpresa($event)">
+                                        <mat-option *ngFor="let empresa of empresas_busqueda" [value]="empresa.empresa" [id]="empresa.id_empresa">
+                                            {{empresa.empresa}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                                <mat-form-field class="w-100">
+                                    <mat-label>Seleccionar departamento</mat-label>
+                                    <input type="text"
+                                            placeholder="Ingrese el nombre o id del departamento"
+                                            aria-label="Number"
+                                            matInput
+                                            (keyup)="buscarDepartamento()"
+                                            [formControl]="filterControlDepartamento"
+                                            [matAutocomplete]="autoTres"
+                                            style="text-transform: uppercase;">
+                                    <mat-autocomplete #autoTres="matAutocomplete" (optionSelected)="optionDepartamento($event)">
+                                        <mat-option *ngFor="let departamento of departamentos_busqueda" [value]="departamento.departamento_busqueda" [id]="departamento.id_departamento">
+                                            {{departamento.departamento_busqueda}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-lg-4 col-sm-12">
+                        <mat-form-field class="w-100">
+                            <mat-label>Seleccionar puesto</mat-label>
+                            <input type="text"
+                                    placeholder="Ingrese el nombre del puesto"
+                                    aria-label="Number"
+                                    matInput
+                                    (keyup)="buscarPuesto()"
+                                    [formControl]="filterControlPuestos"
+                                    [matAutocomplete]="autoCuatro"
+                                    style="text-transform: uppercase;">
+                            <mat-autocomplete #autoCuatro="matAutocomplete" (optionSelected)="optionPuesto($event)">
+                                <mat-option *ngFor="let puesto of puestos_busqueda" [value]="puesto.puesto" [id]="puesto.id_puesto">
+                                    {{puesto.puesto}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-4 col-sm-12">
+                        <mat-form-field class="w-100">
+                            <mat-label>Sueldo diario</mat-label>
+                            <input matInput (blur)="transformAmount($event,1)" [(ngModel)]="detalle.sueldo" type="text" min="0">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-4 col-sm-12">
+                        <mat-form-field class="w-100">
+                            <mat-label>Sueldo neto</mat-label>
+                            <input matInput (blur)="transformAmount($event,2)" [(ngModel)]="detalle.sueldo_neto" type="text" min="0">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="form-row w-100">
+                    <div class="form-group col-sm-12 col-lg-4">
+                        <mat-form-field class="w-100">
+                            <mat-label>Tipo de nómina</mat-label>
+                            <mat-select [(ngModel)]="detalle.id_nomina">
+                                <mat-option  *ngFor="let nomina of nominas" [value]="nomina.id_nomina">{{nomina.nomina}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-group col-sm-12 col-lg-4">
+                        <mat-form-field class="w-100">
+                            <mat-label>Selecciona la sucursal</mat-label>
+                            <mat-select [(ngModel)]="detalle.id_sucursal">
+                                <mat-option  *ngFor="let sucursal of sucursales" [value]="sucursal.id_sucursal">{{sucursal.sucursal}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-group col-sm-12 col-lg-4">
+                        <mat-form-field class="w-100">
+                            <mat-label>Fecha de ingreso</mat-label>
+                            <input matInput [matDatepicker]="pickerDos" [(ngModel)]="detalle.fecha_detalle">
+                            <mat-datepicker-toggle matSuffix [for]="pickerDos"></mat-datepicker-toggle>
+                            <mat-datepicker #pickerDos></mat-datepicker>
+                          </mat-form-field>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-lg-12 col-sm-12">
+                        <mat-form-field class="w-100">
+                            <mat-label>Descripción</mat-label>
+                            <textarea matInput [(ngModel)]="detalle.descripcion" style="text-transform: uppercase;"></textarea>
+                          </mat-form-field>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div *ngIf="bandera" class="row mb-2 mt-0">
-            <div class="col-12" style="text-align: end;">
-              <a class="btn btn-success" (click)="agregarModificacion()">Agregar</a>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="table-responsive">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th colspan="1">Empleado</th>
-                    <th colspan="1">Fecha modificación</th>
-                    <th colspan="1">Observación</th>
-                    <th colspan="1">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody *ngIf="this.modificacion.candidatos.length > 0">
-                  <tr *ngFor="let candidato of this.modificacion.candidatos">
-                    <td style="vertical-align: middle;">{{candidato.nombre}}</td>
-                    <td style="vertical-align: middle;">
-                      <mat-form-field class="w-100">
-                        <input matInput [(ngModel)]="candidato.fecha_modificacion" [matDatepicker]="picker" placeholder="Fecha de la modificación">
-                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                        <mat-datepicker #picker></mat-datepicker>
-                      </mat-form-field>
-                    </td>
-                    <td style="vertical-align: middle;">
-                      <textarea class="form-control" [(ngModel)]="candidato.observacion" cols="30" rows="1"></textarea>
-                    </td>
-                    <td style="vertical-align: middle;">
-                      <a *ngIf="tipo_modal == 0" title="Eliminar"  style="cursor: pointer;" class="btn btn-warning btn-sm" (click)="eliminarFilaDetalle(candidato.id_candidato)"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
-                      <a *ngIf="tipo_modal == 1" title="Eliminar"  style="cursor: pointer;" class="btn btn-warning btn-sm" (click)="eliminarDetalle(candidato.id_detalle_modificacion,candidato.id_candidato)"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
-                    </td>
-                  </tr>
-                </tbody>
-                <tbody *ngIf="this.modificacion.candidatos.length == 0">
-                  <tr class="text-center">
-                    <td colspan="3">Aún no se agregan empleados</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
         </div>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-warning" (click)="cerrarModal()" >Cerrar</button>
-        <button *ngIf="bandera && tipo_modal == 0" type="button" class="btn btn-success" (click)="crearModi()">Crear modificación</button>
-        <button *ngIf="bandera && tipo_modal == 1" type="button" class="btn btn-success" (click)="modificarModi()">Editar modificación</button>
-    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-warning" (click)="cerrarModal(2)">Cerrar</button>
+    <button type="button" *ngIf="tipo_modal_alta == 1" class="btn btn-success" (click)="agregarModificacion()">Guardar</button>
+    <button type="button" *ngIf="tipo_modal_alta == 2" class="btn btn-success" (click)="modificarModificacion()">Guardar</button>
+</div>
 </ng-template>

@@ -1,17 +1,23 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Modificacion } from 'src/app/models/Modificacion';
+import { MatPaginator } from '@angular/material/paginator';
+import { DateAdapter } from '@angular/material/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
-import { ContratoService } from 'src/app/services/Contrato/Contrato.service';
-import { DepartamentoService } from 'src/app/services/Departamento/Departamento.service';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
-import { PuestoService } from 'src/app/services/Puesto/Puesto.service';
-import { ModificacionService } from 'src/app/services/Modificacion/Modificacion.service';
+import { DepartamentoService } from 'src/app/services/Reclutamiento/Departamento.service';
+import { MovimientoService } from 'src/app/services/Reclutamiento/Movimiento.service';
 import { COLOR } from 'src/config/config';
+import { CommonModule, CurrencyPipe} from '@angular/common';
+import { ContratoService } from 'src/app/services/Contrato/Contrato.service';
 import Swal from 'sweetalert2';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
+import { SucursalService } from 'src/app/services/Sucursal/sucursal.service';
+import { SERVER_API } from 'src/config/config';
+import { element } from 'protractor';
+import { EmpleadoService } from 'src/app/services/Empleado/Empleado.service';
+import { CompartidoService } from 'src/app/services/Reclutamiento/Compartido.service';
+import { ReporteService } from 'src/app/services/Reclutamiento/Reporte.service';
 
 @Component({
   selector: 'app-procedimiento-modificacion',
@@ -20,117 +26,325 @@ import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 })
 export class ProcedimientoModificacionComponent implements OnInit {
 
+  //Variables config
   public color = COLOR;
-  public status = -1;
-  public palabra = "";
-  public fecha_inicial = "";
-  public fecha_final = "";
-  @ViewChild('content', {static: false}) contenidoDelModal : any;
-  public modal : any;
-  public candidatos : any;
-  public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
-  public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
-  public modificacion = new Modificacion(0,0,this.id_cliente,this.usuario_creacion,[]);
-  public bandera = false;
-  public band = false;
-  public modificaciones : any;
-  public tipo_modal = 0;
-  //Autocomplete
-  myControl = new FormControl();
-  candidatos_busqueda : any;
-  //Paginacion
-  public total_registros = 0;
-  public mostrar_pagination = false;
-  public paginas_a_mostrar = 5;
-  public paginas : any;
-  public pagina_actual = 0;
-  public limite_inferior = 0;
-  public limite_superior = this.paginas_a_mostrar;
-  public next = false;
-  public previous = false;
-  public taken = 5;
-  public modificar = false;
-  public aplicar = false;
-  //Modificacion
+  public cliente_seleccionado = window.sessionStorage.getItem("cliente");
+  public usuario = parseInt(window.sessionStorage.getItem("user")+"");
+  //Modelo tabla
+  displayedColumns: string[] = ['id_movimiento', 'usuario_creacion', "fecha_movimiento", 'tipo', 'status', "accion"];
+  dataSource  = new MatTableDataSource();
+  @ViewChild(MatPaginator) paginator : any;
+  //Modales
+  @ViewChild('content', {static: false}) modal_mov : any;
+  modal : any;
+  @ViewChild('content_alta', {static: false}) modal_alta : any;
+  modal_control_alta : any;
+  //Buscadores
+  filterControl = new FormControl();
+  candidatos : any;
+  filterControlEmpresa = new FormControl();
+  empresas : any;
+  empresas_busqueda : any;
+  filterControlDepartamento = new FormControl();
+  departamentos : any;
+  departamentos_busqueda : any;
+  filterControlPuestos = new FormControl();
+  puestos : any;
+  puestos_busqueda : any;
+  //Variables
   public nominas : any;
-  public empresas : any;
-  public departamentos : any;
-  public puestos : any;
-  public json = {
-    nombre : "",
-    id_candidato : 0,
-    id_empresa : 0,
-    id_departamento : 0,
+  sucursales : any;
+  status = -1;
+  tipo = "-1";
+  tipo_modal = 1;
+  tipo_modal_alta = 1;
+  movimientos : any; 
+  detalle = {
+    id_registro : 0,
+    id_detalle : 0,
+    id_candidato : "",
+    candidato : "",
     id_puesto : 0,
+    puesto : "",
     id_nomina : 0,
+    nomina : "",
+    id_sucursal : 0,
+    empresa : "",
+    id_empresa : 0,
+    sucursal : "",
     sueldo : "",
-    fecha_modificacion : "",
-    observacion : "",
-    id_detalle_modificacion : 0
+    sueldo_neto : "",
+    fecha_mov : "",
+    fecha_detalle : "",
+    descripcion : "",
+    departamento : "",
+    id_departamento : 0,
+    url_foto : "./assets/img/defaults/usuario_por_defecto.svg"
   };
+  detalle_atiguo = {
+    empresa : "",
+    departamento : "",
+    candidato : "",
+    puesto : "",
+    id_nomina : 0,
+    sucursal : "",
+    sueldo : "",
+    sueldo_neto : "",
+    fecha_detalle : "",
+    descripcion : "",
+    url_foto : "./assets/img/defaults/usuario_por_defecto.svg"
+  };
+  movimiento_seleccionado = 0;
 
   constructor(
+    private movimiento_service : MovimientoService,
     private modalService: NgbModal,
     private candidato_service : CandidatoService,
-    private contrato_service : ContratoService,
     private empresa_service : EmpresaService,
     private departamento_service : DepartamentoService,
-    private puesto_service : PuestoService,
-    private modificacion_service : ModificacionService,
-    private usuario_service : UsuarioService
-    ) { }
+    private currencyPipe : CurrencyPipe,
+    private contrato_service : ContratoService,
+    private sucursal_service : SucursalService,
+    private dateAdapter: DateAdapter<Date>,
+    private empleado_service : EmpleadoService,
+    private compartido_service : CompartidoService,
+    private reporte_service : ReporteService
+  ) { 
+    this.modal = NgbModalRef;
+    this.paginator = MatPaginator;
+    this.dateAdapter.setLocale('en-GB');
+  }
 
   ngOnInit(): void {
-    this.mostrarModificacion();
+    this.obtenerMovimientos();
+    this.filterControlEmpresa.disable();
+    this.filterControlPuestos.disable();
+    this.filterControlDepartamento.disable();
   }
 
-  mostrarModificacion(){
-    this.modificaciones = [];
-    let array = {
-      id_cliente : this.id_cliente,
-      fecha_inicial : this.fecha_inicial,
-      fecha_final : this.fecha_final,
-      id_status : this.status
+  transformAmount(element : any, tipo : number){
+    if(tipo == 1){
+      this.detalle.sueldo = this.currencyPipe.transform(this.detalle.sueldo, '$')+"";
+      element.target.value = this.detalle.sueldo;
     }
-    this.usuario_service.tieneSistema({"usuario":this.usuario_creacion,"id_sistema" : "3"})
-    .subscribe( (object : any) => {
-      this.aplicar = true;
+    if(tipo == 2){
+      this.detalle.sueldo_neto = this.currencyPipe.transform(this.detalle.sueldo_neto, '$')+"";
+      element.target.value = this.detalle.sueldo_neto;
+    }
+  }
+
+  obtenerMovimientos(){
+    let json = {
+      id_cliente : this.cliente_seleccionado,
+      status : this.status,
+      tipo : "M"
+    }
+    this.movimiento_service.obtenerMovimientosReclutamiento(json)
+    .subscribe((object : any) => {
       if(object.ok){
-        this.aplicar = false;
-      }
-    });
-    this.modificacion_service.obtenerSolicitudesBaja(array)
-    .subscribe( (object : any)=>{
-      if(object.ok){
-        this.band = true;
-        this.modificaciones = object.data;
-      }else{
-        this.band = false;
+        this.dataSource.data = object.data;
+        this.dataSource.paginator = this.paginator;
       }
     });
   }
 
-  mostrarCandidatos(value : any){
+  buscarCandidato(status : number){
     this.candidatos = [];
-    if(value.length > 3){
+    if(this.filterControl.value.length > 2 || this.filterControl.value == ""){
       let json = {
-        palabra : value,
-        taken : 5,
-        status : 1,
-        pagina : 0,
-        id_cliente : this.id_cliente  
+        nombre_candidato : this.filterControl.value.toUpperCase(),
+        status : status,
+        id_cliente : this.cliente_seleccionado
       };
-      this.candidato_service.obtenerCandidatos(json)
-      .subscribe( (object : any) => {
+      this.candidato_service.autoCompleteCandidato(json)
+      .subscribe((object : any) => {
         if(object.ok){
-          this.candidatos = object.data.registros;
-        }else{
-          this.candidatos = [];
+          this.candidatos = object.data;
+        }
+      })
+    }
+  }
+
+  optionCandidato(event : any, tipo : number){
+    let candidato = this.candidatos.filter( (x : any) => x.id_candidato === parseInt(event.option.id))[0];
+    this.detalle.url_foto = candidato.fotografia;
+    this.filterControlEmpresa.enable();
+    this.detalle.id_candidato = candidato.id_candidato;
+    this.detalle.candidato = candidato.nombre;
+    this.detalle_atiguo.url_foto = candidato.fotografia;
+    this.empleado_service.obtenerEmpleadoPorIdCandidato(candidato.id_candidato)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.mostrarDepartamentos(object.data.id_empresa);
+        this.mostrarPuestos(object.data.id_departamento);
+        this.mostrarSucursales(object.data.id_empresa);
+        this.detalle_atiguo.puesto = object.data.puesto;
+        this.detalle_atiguo.empresa = object.data.empresa;
+        this.detalle_atiguo.departamento = object.data.departamento;
+        this.detalle_atiguo.id_nomina = object.data.id_nomina;
+        this.detalle_atiguo.sucursal = object.data.sucursal;
+        this.detalle_atiguo.sueldo = object.data.sueldo_diario;
+        this.detalle_atiguo.sueldo_neto = object.data.sueldo_integrado;
+        this.detalle_atiguo.fecha_detalle = object.data.fecha_ingreso;
+        this.detalle_atiguo.descripcion = object.data.descripcion;
+        this.detalle.puesto = object.data.puesto;
+        this.detalle.id_puesto = object.data.id_puesto;
+        this.filterControlPuestos.setValue(object.data.puesto);
+        this.filterControlPuestos.enable();
+        this.detalle.empresa = object.data.empresa;
+        this.detalle.id_empresa = object.data.id_empresa;
+        this.filterControlDepartamento.setValue(object.data.departamento);
+        this.filterControlDepartamento.enable();
+        this.detalle.departamento = object.data.departamento;
+        this.detalle.id_departamento = object.data.id_departamento;
+        this.filterControlEmpresa.setValue(object.data.empresa);
+        this.filterControlEmpresa.enable();
+        this.detalle.id_nomina = object.data.id_nomina;
+        this.detalle.id_sucursal = object.data.id_sucursal;
+        this.detalle.sueldo = object.data.sueldo_diario;
+        this.detalle.sueldo_neto = object.data.sueldo_integrado;
+        this.detalle.fecha_detalle = object.data.fecha_ingreso;
+        this.detalle.descripcion = object.data.descripcion;
+      }else{
+        Swal.fire("Aviso","No se ha podido encontrar la información del empleado","info");
+      }
+    });
+  }
+
+  mostrarEmpresas(){
+    this.empresas_busqueda = [];
+    this.empresas = [];
+    this.empresa_service.obtenerEmpresasPorIdCliente(this.cliente_seleccionado)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.empresas = object.data;
+        this.empresas_busqueda = object.data;
+      }else{
+        Swal.fire("Aviso","No se han encontrado empresas configuradas a este cliente","info");
+      }
+    });
+  }
+
+  buscarEmpresa(){
+    this.empresas_busqueda = [];
+    this.empresas.forEach((element : any) => {
+      this.empresas_busqueda.push({
+        "empresa" : element.empresa,
+        "id_empresa" : element.id_empresa
+      });
+    });
+    if(this.filterControlEmpresa.value.length > 0){
+      this.empresas_busqueda = [];
+      this.empresas.forEach((element : any) => {
+        if(element.empresa.includes(this.filterControlEmpresa.value.toUpperCase())){ 
+          this.empresas_busqueda.push({
+            "empresa" : element.empresa,
+            "id_empresa" : element.id_empresa
+          })
         }
       });
-    }else{
-      this.candidatos = [];
     }
+  }
+
+  optionEmpresa(value : any){
+    this.mostrarDepartamentos(value.option.id);
+    this.detalle.empresa = value.option.value;
+    this.detalle.id_empresa = value.option.id;
+    this.mostrarSucursales(value.option.id);
+    this.filterControlDepartamento.setValue("");
+    this.filterControlPuestos.setValue("");
+    this.filterControlPuestos.disable();
+    this.detalle.id_sucursal = 0;
+    this.detalle.id_puesto = 0;
+  }
+  
+  mostrarDepartamentos(id_empresa : any){
+    let busqueda = {
+      id_cliente : this.cliente_seleccionado,
+      id_empresa : id_empresa
+    };
+    this.departamentos_busqueda = [];
+    this.departamento_service.obtenerDepartamentosPorIdCliente(busqueda)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.departamentos_busqueda = object.data;
+        this.departamentos = object.data;
+        this.filterControlDepartamento.enable();
+      }else{
+        this.filterControlDepartamento.disable();
+        Swal.fire("Aviso","No se han encontrado departamentos en está empresa","info");
+      }
+    });
+  }
+
+  buscarDepartamento(){
+    this.departamentos_busqueda = [];
+    this.departamentos.forEach((element : any) => {
+      this.departamentos_busqueda.push({
+        "departamento_busqueda" : element.departamento_busqueda,
+        "id_departamento" : element.id_departamento
+      });
+    });
+    if(this.filterControlDepartamento.value.length > 0){
+      this.departamentos_busqueda = [];
+      this.departamentos.forEach((element : any) => {
+        if(element.departamento_busqueda.includes(this.filterControlDepartamento.value.toUpperCase())){ 
+          this.departamentos_busqueda.push({
+            "departamento_busqueda" : element.departamento_busqueda,
+            "id_departamento" : element.id_departamento
+          })
+        }
+      });
+    }
+  }
+
+  optionDepartamento(value : any){
+    this.filterControlPuestos.setValue("");
+    this.detalle.id_departamento = value.option.id;
+    this.detalle.departamento = value.option.value;
+    this.mostrarPuestos(value.option.id);
+  }
+
+  mostrarPuestos(id_departamento : any){
+    this.puestos_busqueda = [];
+    this.departamento_service.obtenerDepartamentoPorId(id_departamento)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.puestos_busqueda = object.data.puestos;
+        this.puestos = object.data.puestos;
+        this.filterControlPuestos.enable();
+      }else{
+        this.filterControlPuestos.disable();
+        Swal.fire("Aviso","No se tiene puestos en este departamento","info");
+        
+      }
+    });
+  }
+
+  buscarPuesto(){
+    this.puestos_busqueda = [];
+    this.puestos.forEach((element : any) => {
+      this.puestos_busqueda.push({
+        "puesto" : element.puesto,
+        "id_puesto" : element.id_puesto
+      });
+    });
+    if(this.filterControlPuestos.value.length > 0){
+      this.puestos_busqueda = [];
+      this.puestos.forEach((element : any) => {
+        if(element.puesto.includes(this.filterControlPuestos.value.toUpperCase())){ 
+          this.puestos_busqueda.push({
+            "puesto" : element.puesto,
+            "id_puesto" : element.id_puesto
+          })
+        }
+      });
+    }
+  }
+
+  optionPuesto(value : any){
+    this.detalle.id_puesto = value.option.id;
+    this.detalle.puesto = value.option.value;
   }
 
   mostrarNominas(){
@@ -143,247 +357,317 @@ export class ProcedimientoModificacionComponent implements OnInit {
     })
   }
 
-  mostrarEmpresas(){
-    this.empresas = [];
-    this.empresa_service.obtenerEmpresasPorIdCliente(this.id_cliente)
+  mostrarSucursales(id_empresa : any){
+    this.sucursales = [];
+    this.sucursal_service.obtenerSucursales(id_empresa)
     .subscribe( (object : any) => {
       if(object.ok){
-        for(let i=0;i<object.data.length;i++){
-          this.empresas.push({
-            "id_empresa" : object.data[i].id_empresa,
-            "empresa" : object.data[i].empresa
-          });
-        }
+        this.sucursales = object.data;
       }else{
-        this.empresas = [
-          { "empresa" : "No existen empresas disponibles para este cliente"}
-        ];
-      }
-    });
-  }
-  
-  cambiarEmpresa(){
-    this.modificar = true;  //Hubo una modificación
-    this.mostrarDepartamentos(this.json.id_empresa);
-    this.json.id_departamento = 0;
-    this.json.id_puesto = 0;
-    this.puestos = [];
-  }
-
-  mostrarDepartamentos(id_empresa : any){
-    this.departamentos = [];
-    let json = {
-      "taken" : 999,
-      "pagina" : 0,
-      "status" : 2,
-      "palabra" : "",
-      "id_empresa" : id_empresa
-    };
-    this.departamento_service.obtenerDepartamentos(json)
-    .subscribe( (object : any)=>{
-      if(object.ok){
-        for(let i=0;i<object.data.registros.length;i++){
-          this.departamentos.push({
-            "id_departamento" : object.data.registros[i].id_departamento,
-            "departamento" : object.data.registros[i].departamento
-          });
-        }
-      }else{
-        this.departamentos = [];
+        Swal.fire("Aviso","No existen sucursales para esta empresa","info");
       }
     });
   }
 
-  cambiarDepartamento(){
-    this.modificar = true;  //Hubo una modificación
-    this.mostrarPuestos(this.json.id_departamento);
-    this.json.id_puesto = 0;
+  nuevaPrecaptura(){
+    this.movimiento_seleccionado = 0;
+    this.tipo_modal = 1;
+    this.filterControl.enable();
+    this.movimientos = [];
+    this.openModal(1);
   }
 
-  mostrarPuestos(id_departamento : any){
-    this.puestos = [];
-    this.puesto_service.obtenerPuestosPorIdDepartamento(id_departamento)
-    .subscribe( (object : any) => {
+  editarPrecaptura(id : any){
+    this.tipo_modal = 2;
+    this.movimiento_seleccionado = id;
+    this.movimiento_service.obtenerDetallePorId(id)
+    .subscribe((object : any) => {
       if(object.ok){
-        for(let i=0;i<object.data.length;i++){
-          let band = true;
-          if(object.data[i].vacantes == "0"){
-            band = false;
-          }
-          this.puestos.push({
-            "id_puesto" : object.data[i].id_puesto,
-            "puesto" : object.data[i].puesto
-          });
-        }
+        this.movimientos = object.data;
+        this.openModal(1);
       }else{
-        this.puestos = [];
+        Swal.fire("Aviso","No se ha podido encontrar la información del empleado","info");
       }
     });
   }
 
-  getCandidato(event : any){
-    this.candidato_service.obtenerCandidatoActivoId(event.option.id)
-    .subscribe( (object : any) => {
-      this.bandera = true;
-      this.json.nombre = event.option.value;
-      this.json.id_candidato = event.option.id;
-      this.json.sueldo = object.data[0].sueldo;
-      this.json.id_nomina = object.data[0].id_nomina;
-      this.json.id_empresa = object.data[0].id_empresa;
-      this.mostrarDepartamentos(object.data[0].id_empresa);
-      this.json.id_departamento = object.data[0].id_departamento;
-      this.mostrarPuestos(object.data[0].id_departamento)
-      this.json.id_puesto = object.data[0].id_puesto;
-    });
+  nuevaContratacion(){
+    this.filterControl.setValue("");
+    this.tipo_modal_alta = 1;
+    this.mostrarEmpresas();
+    this.mostrarNominas();
+    this.limpiarDetalle();
+    this.openModal(2);
   }
 
   agregarModificacion(){
-    if(this.modificar){
-      let band = false;
-      this.modificacion.candidatos.forEach( (element : any) => {
-        if(element.id_candidato == this.json.id_candidato){
-          band = true;
+    let puesto = this.puestos.filter( (x : any) => x.id_puesto === this.detalle.id_puesto)[0];
+    let autorizados = puesto.autorizados;
+    let validador = 0;
+    let band = true;
+    if(this.detalle.id_puesto != 0){
+      //Validacion puesto y candidato
+      this.compartido_service.obtenerContratados(this.detalle.id_puesto)
+      .subscribe((object : any) => {
+        validador = validador + object;
+        this.movimientos.forEach((element : any) => {
+          if(element.id_puesto == this.detalle.id_puesto){
+            validador++;
+          }
+          if(element.id_candidato == this.detalle.id_candidato){
+            band = false;
+          }
+        });
+        if(validador >= autorizados){
+          Swal.fire("Aviso","El puesto que se ha seleccionado ya se encuentra lleno, aumenta la capacidad e intentelo de nuevo","info");
+        }else{
+          if(band){
+            this.detalle.id_registro = this.movimientos.length + 1;
+            this.detalle.descripcion = this.detalle.descripcion.toUpperCase();
+            this.movimientos.push(this.detalle);
+            this.tipo_modal_alta = 1;
+            this.cerrarModal(2);
+          }else{
+            Swal.fire("Aviso","Ya existe una modificación con el mismo empleado en está precaptura","info");
+            this.limpiarDetalle();
+          }
         }
       });
-      if(!band){
-        this.modificacion.candidatos.push(this.json);
-      }else{
-        Swal.fire("Ha ocurrido un error","No se puede agregar a un mismo empleado","info");
-      }
-      this.json = {
-        nombre : "",
-        id_candidato : 0,
-        id_empresa : 0,
-        id_departamento : 0,
-        id_puesto : 0,
-        id_nomina : 0,
-        sueldo : "",
-        fecha_modificacion : "",
-        observacion : "",
-        id_detalle_modificacion : 0,
-      };
-      this.myControl.reset('');
     }else{
-      Swal.fire("Ha ocurrido un error","Antes de agregar, realice una modificación","info");
-    }
-  }
-  nuevoModi(){
-    this.modificacion.candidatos = [];
-    this.tipo_modal = 0;
-    this.openModal();
-  }
-  crearModi(){
-    if(this.modificacion.candidatos.length > 0){
-      this.confirmar("Confirmación","¿Seguro que deseas crear una solicitud de modificación","info",null,1);
-    }else{
-      Swal.fire("Ha ocurrido un error","Primero agregue modificaciones a la tabla","info");
+      Swal.fire("Aviso","El campo 'puesto' es obligatorio","info");
     }
   }
 
-  modificarModi(){
-    if(this.modificacion.candidatos.length > 0){
-      this.confirmar("Confirmación","¿Seguro que deseas modificar una solicitud de modificación","info",null,2);
-    }else{
-      Swal.fire("Ha ocurrido un error","Primero agregue modificaciones a la tabla","info");
-    }
-  }
-
-  editar(id : any, tipo : any){
-    this.modificacion.candidatos = [];
-    this.tipo_modal = tipo;
-    this.modificacion_service.obtenerDetalleModificacion(id)
-    .subscribe( (object : any) =>{
-      if(object.ok){
-        this.bandera = true;
-        this.modificacion.id_movimiento = id;
-        object.data.forEach( (element : any) => {
-          this.modificacion.candidatos.push(element);
+  editarModificacion(id_registro : number){
+    this.limpiarDetalle();
+    this.movimientos.forEach((element : any) => {
+      if(element.id_registro == id_registro){
+        this.mostrarNominas();
+        this.mostrarDepartamentos(element.id_empresa);
+        this.mostrarPuestos(element.id_departamento);
+        this.mostrarSucursales(element.id_empresa);
+        this.tipo_modal_alta = 2;
+        if(this.tipo_modal == 1){
+          this.filterControl.disable();
+          this.filterControlEmpresa.enable();
+          this.filterControlEmpresa.setValue(element.empresa);
+          this.filterControlDepartamento.enable();
+          this.filterControlDepartamento.setValue(element.departamento);
+          this.filterControlPuestos.enable();
+          this.filterControlPuestos.setValue(element.puesto);
+          this.filterControl.setValue(element.candidato);
+        }else{
+          this.filterControl.disable();
+          this.filterControlEmpresa.enable();
+          this.filterControlEmpresa.setValue(element.empresa);
+          this.filterControlDepartamento.enable();
+          this.filterControlDepartamento.setValue(element.departamento);
+          this.filterControlPuestos.enable();
+          this.filterControlPuestos.setValue(element.puesto);
+          this.filterControl.setValue(element.candidato_uno);
+        }
+        this.empleado_service.obtenerEmpleadoPorIdCandidato(element.id_candidato)
+        .subscribe((object : any) => {
+          if(object.ok){
+            this.mostrarDepartamentos(object.data.id_empresa);
+            this.mostrarPuestos(object.data.id_departamento);
+            this.mostrarSucursales(object.data.id_empresa);
+            this.detalle_atiguo.puesto = object.data.puesto;
+            this.detalle_atiguo.empresa = object.data.empresa;
+            this.detalle_atiguo.departamento = object.data.departamento;
+            this.detalle_atiguo.id_nomina = object.data.id_nomina;
+            this.detalle_atiguo.sucursal = object.data.sucursal;
+            this.detalle_atiguo.sueldo = object.data.sueldo_diario;
+            this.detalle_atiguo.sueldo_neto = object.data.sueldo_integrado;
+            this.detalle_atiguo.fecha_detalle = object.data.fecha_ingreso;
+            this.detalle_atiguo.descripcion = object.data.descripcion;
+            this.detalle_atiguo.url_foto = element.url_foto;
+          }else{
+            Swal.fire("Aviso","No se ha podido encontrar la información del empleado","info");
+          }
         });
-      }else{
-        this.modificacion.candidatos = [];
-        this.bandera = false;
+        this.detalle = element;
+        this.openModal(2);
+      }
+    })
+  }
+
+  modificarModificacion(){
+    let puesto = this.puestos.filter( (x : any) => x.id_puesto === this.detalle.id_puesto)[0];
+    let autorizados = puesto.autorizados;
+    let validador = 0;
+    let band = true;
+    if(this.detalle.id_puesto != 0){
+      //Validacion puesto y candidato
+      this.compartido_service.obtenerContratados(this.detalle.id_puesto)
+      .subscribe((object : any) => {
+        validador = validador + object;
+        this.movimientos.forEach((element : any) => {
+          if(element.id_puesto == this.detalle.id_puesto){
+            validador++;
+          }
+        });
+        if(validador >= autorizados){
+          Swal.fire("Aviso","El puesto que se ha seleccionado ya se encuentra lleno, aumenta la capacidad e intentelo de nuevo","info");
+        }else{
+          this.detalle.descripcion = this.detalle.descripcion.toUpperCase();
+          this.cerrarModal(2);
+        }
+      });
+    }else{
+      Swal.fire("Aviso","El campo 'puesto' es obligatorio","info");
+    }
+  }
+
+  guardarMovimiento(){
+    if(this.tipo_modal == 1){
+      let json = {
+        usuario_creacion : this.usuario,
+        id_cliente : this.cliente_seleccionado,
+        tipo_mov : "M",
+        movimientos : this.movimientos
+      };
+      this.confirmar("Confirmación","¿Seguro que deseas registrar las sig. precaptura?","info",1,json);
+    }
+    if(this.tipo_modal == 2){
+      let json = {
+        usuario_creacion : this.usuario,
+        id_movimiento : this.movimiento_seleccionado,
+        tipo_mov : "M",
+        movimientos : this.movimientos
+      };
+      this.confirmar("Confirmación","¿Seguro que deseas modificar la precaptura?","info",2,json);
+    }
+  }
+
+  cancelarDetalle(id_registro : number, id : number){
+    this.movimientos.forEach((element : any, indice : any) => {
+      if(element.id_registro == id_registro){
+        this.confirmar("Aviso","¿Seguro que deseas eliminar esta contratación?","info",4,{
+          indice : indice,
+          id : id
+        });
       }
     });
-    this.openModal();
   }
 
-  eliminarDetalle(id_detalle_modificacion : any, id_candidato : any){
-      this.confirmar("Confirmación","¿Seguro que deseas eliminar este detalle?","info",{id_detalle_modificacion : id_detalle_modificacion, id_candidato : id_candidato},3);
-  }
-
-  eliminarFilaDetalle(id_candidato : any){
-    this.modificacion.candidatos.forEach( (element : any , index : any) => {
-      if(element.id_candidato == id_candidato){
-        this.modificacion.candidatos.splice(index,1);
-      }
-    });
-  }
-
-  busqueda(event : any) {
-
-  }
-
-  irPagina(pagina : any){
-    this.pagina_actual = pagina;
+  cancelarPrecaptura(id : number){
+    this.confirmar("Confirmación","¿Seguro que deseas cancelar la Precaptura?","info",3,id);
   }
   
-  aplicarModificacion(id : any){
-    this.confirmar("Confirmación","¿Seguro que deseas aplicar la modificación?","info",null,4);
+  aplicarPrecatura(id : number){
+    this.confirmar("Confirmación","¿Seguro que deseas aplicar la precaptura? Una vez aplicada ya no podras realizar más cambios","info",5,id);
   }
 
-  paginar(){
-    this.paginas = [];
-    let paginas_a_pintar = parseInt(this.total_registros+"")%parseInt(this.taken+"");
-    if(paginas_a_pintar == 0){
-      paginas_a_pintar = (parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+"");
-    }else{
-      paginas_a_pintar = ((parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+""))+1;
+  descargarReporte(id : number){
+    location.href = SERVER_API+"contratacion/obtenerDocContratacion/"+id;
+  }
+  
+  consumoReporte(tipo : any,id_detalle : any){
+    if(tipo == 1){
+      window.open(SERVER_API+'reporte/reporteContrato/'+id_detalle);
     }
-    //Pintamos las flechas
-    if(paginas_a_pintar > this.paginas_a_mostrar){
-      this.next = true;
-    }
-    if(this.pagina_actual == paginas_a_pintar){
-      this.next = false;
-    }
-    if(this.pagina_actual > this.paginas_a_mostrar){
-      this.previous = true;
-    }
-    if(this.pagina_actual == 0){
-      this.previous = false;
-    }
-    //Pintamos las paginas
-    for(let i =0;i<this.paginas_a_mostrar;i++){
-      let pagina_inicial = this.limite_inferior;
-      if(i<paginas_a_pintar){
-        if(this.pagina_actual == pagina_inicial+i){
-          this.paginas.push({
-            numero : (pagina_inicial+i)+1,
-            valor_pagina : pagina_inicial+i,
-            active : "active"
-          });
-        }else{
-          this.paginas.push({
-            numero : (pagina_inicial+i)+1,
-            valor_pagina : pagina_inicial+i,
-            active : ""
-          });
+    if(tipo == 2){
+      this.reporte_service.reporteModificacion(id_detalle)
+      .subscribe((object : any) => {
+        if(object.ok){
+          let win = window.open("ReporteModificacion","_blank");
+          let html = '';
+          html += '<html>';
+          html += '<body style="margin:0!important">';
+          html += '<embed width="100%" height="100%" src="data:application/pdf;base64,'+object.data+'" type="application/pdf" />';
+          html += '</body>';
+          html += '</html>';
+          win?.document.write(html);
         }
-      }
+      });
     }
   }
 
-  openModal() {
-    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
-    this.mostrarNominas();
-    this.mostrarEmpresas();
+  realizarContratacion(id : number){
+    this.confirmar("Confirmación","¿Seguro que deseas realizar las modificaciones?","info",6,id);
   }
 
-  cerrarModal(){
-    this.modal.close();
+  visualizarDetalle(id : number){
+    this.tipo_modal = 3;
+    this.movimiento_service.obtenerDetallePorId(id)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.movimientos = object.data;
+        this.openModal(1);
+      }else{
+        Swal.fire("Aviso","No se ha podido encontrar la información del empleado","info");
+      }
+    });
   }
 
-  confirmar(title : any ,texto : any ,tipo_alert : any,json : any,tipo : number){
+  limpiarDetalle(){
+    this.detalle = {
+      id_registro : 0,
+      id_detalle : 0,
+      id_candidato : "",
+      candidato : "",
+      id_puesto : 0,
+      puesto : "",
+      id_nomina : 0,
+      nomina : "",
+      id_sucursal : 0,
+      empresa : "",
+      id_empresa : 0,
+      sucursal : "",
+      sueldo : "",
+      sueldo_neto : "",
+      fecha_mov : "",
+      fecha_detalle : "",
+      descripcion : "",
+      departamento : "",
+      id_departamento : 0,
+      url_foto : "./assets/img/defaults/usuario_por_defecto.svg"
+    };
+    
+    this.detalle_atiguo = {
+      empresa : "",
+      departamento : "",
+      candidato : "",
+      puesto : "",
+      id_nomina : 0,
+      sucursal : "",
+      sueldo : "",
+      sueldo_neto : "",
+      fecha_detalle : "",
+      descripcion : "",
+      url_foto : "./assets/img/defaults/usuario_por_defecto.svg"
+    };
+    this.filterControl.setValue("");
+    this.filterControlEmpresa.setValue("");
+    this.filterControlPuestos.setValue("");
+    this.filterControlDepartamento.setValue("");
+    this.filterControl.enable();
+    this.filterControlEmpresa.disable();
+    this.filterControlPuestos.disable();
+    this.filterControlDepartamento.disable();
+  }
+
+  openModal(tipo : number){
+    if(tipo == 1){
+      this.modal = this.modalService.open(this.modal_mov,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
+    if(tipo == 2){
+      this.buscarCandidato(1);
+      this.modal_control_alta = this.modalService.open(this.modal_alta,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
+  }
+
+  cerrarModal(tipo : number){
+    if(tipo == 1){
+      this.modal.close();
+    }
+    if(tipo == 2){
+      this.modal_control_alta.close();
+    }
+  }
+
+  confirmar(title : any ,texto : any ,tipo_alert : any,tipo : number,json : any){
     Swal.fire({
       title: title,
       text: texto,
@@ -396,46 +680,72 @@ export class ProcedimientoModificacionComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         if(tipo == 1){  //Guardar
-          this.modificacion_service.crearSolicitudDeModificacion(this.modificacion)
-          .subscribe( (object : any)=>{
-            if(object.ok){
-              this.cerrarModal();
-              this.mostrarModificacion();
-              Swal.fire("Buen trabajo","Se ha creado la solicitud éxitosamente","success");
-            }else{
-              Swal.fire("Ha ocurrido un error",object.message,"info");
-            }
+          this.movimiento_service.altaMovimiento(json)
+          .subscribe((object : any) => {
+              if(object.ok){
+                this.obtenerMovimientos();
+                this.cerrarModal(1);
+                Swal.fire("Buen trabajo","Se han dado de alta los movimientos","success");
+              }
           });
         }
         if(tipo == 2){  //Editar
-          this.modificacion_service.modificarDetalleModificacion(this.modificacion)
-          .subscribe( (object : any) =>{
-            if(object.ok){
-              Swal.fire("Buen trabajo","Se ha editado la solicitud éxitosamente","success");
-            }else{
-              Swal.fire("Ha ocurrido un error",object.message,"info");
-            }
+          this.movimiento_service.modificarMovimiento(json)
+          .subscribe((object : any) => {
+              if(object.ok){
+                Swal.fire("Buen trabajo","Se ha moficado la contratación","success");
+                this.limpiarDetalle();
+                this.cerrarModal(2);
+              }
           });
         }
         if(tipo == 3){
-          this.modificacion_service.eliminarDetalle(json.id_detalle_modificacion)
-          .subscribe( (object : any)=>{
+          this.movimiento_service.cancelarMovimiento(json)
+          .subscribe((object : any) => {
             if(object.ok){
-              if(object.data){
-                this.cerrarModal();
-                this.mostrarModificacion();
-                Swal.fire("Buen trabajo","Se ha eliminado la solicitud éxitosamente","success");
-              }else{
-                Swal.fire("Buen trabajo","Se ha eliminado el detalle éxitosamente","success");
-              }
-              this.eliminarFilaDetalle(json.id_candidato);
-            }else{
-              Swal.fire("Ha ocurrido un error",object.message,"info");
+              this.obtenerMovimientos();
+              Swal.fire("Buen trabajo","Se ha cancelado la precaptura de contración","success");
             }
           });
         }
         if(tipo == 4){
-
+          this.movimiento_service.cancelarDetalle(json.id)
+          .subscribe((object : any) => {
+            this.movimientos.splice(json.indice,1);
+            Swal.fire("Buen trabajo","La contratación ha sido cancelada","success");  
+          });
+        }
+        if(tipo == 5){
+          this.movimiento_service.cambiarStatusMov(8,json)
+          .subscribe((object : any) => {
+            if(object.ok){
+              Swal.fire("Buen trabajo","La precaptura ha sido aplicada","success"); 
+              this.obtenerMovimientos();
+            }
+          })
+        }
+        if(tipo == 6){
+          let data = {
+            id_movimiento : json,
+            usuario_creacion : this.usuario,
+            tipo_mov : "M"
+          };
+          this.movimiento_service.aplicarMovimiento(data)
+          .subscribe((object : any) => {
+            if(object.ok){
+              if(object.data.tipo == 1){
+                Swal.fire("Buen trabajo","La precaptura ha sido aplicada con éxito","success");
+              }
+              if(object.data.tipo == 2){
+                let string = "";
+                object.data.errores.forEach((element : any)=>{
+                  string += "° "+element+"\n";
+                });
+                Swal.fire("Aviso","Una o varias contrataciones de la precaptura no han podido ser aplicadas \n"+string,"info");
+              }
+              this.obtenerMovimientos();
+            }
+          });
         }
       }
     });
