@@ -48,7 +48,7 @@ export class EmpresaService {
           return throwError(err);
         }));
   }
-  altaEmpresa(empresa : Empresa){
+  altaEmpresa(empresa : any){
     let url = SERVER_API+"empresa/altaEmpresa";
     return this.http.post( url, empresa )
     .pipe(map( (resp: any) => {
@@ -68,7 +68,7 @@ export class EmpresaService {
       return throwError(err);
     }));
   }
-  actualizarEmpresa(empresa : Empresa){
+  actualizarEmpresa(empresa : any){
     let url = SERVER_API+"empresa/actualizarEmpresa";
     return this.http.post( url, empresa )
       .pipe(map( (resp: any) => {

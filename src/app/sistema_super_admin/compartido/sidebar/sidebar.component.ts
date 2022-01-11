@@ -47,23 +47,45 @@ export class SidebarComponent implements OnInit {
   }
   pintarMenu(){
     this.menuItems = [
-      { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
+      { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-yellow', id:"dashboard_header", band: false, tipo : "", bg : "red"},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : [
-          {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08  text-orange'},
-          {path: 'catalogo_empresa', title: 'Empresas', icon: 'ni-building  text-orange'},
-          {path: 'catalogo_cliente', title: 'Clientes', icon: 'ni-collection  text-orange'},
-          {path: 'catalogo_tope_conceptos', title: 'Tope conceptos', icon: 'ni-collection  text-orange'}
-        ]
+          {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08'},
+          {path: 'catalogo_empresa', title: 'Empresas', icon: 'ni-building'},
+          {path: 'catalogo_cliente', title: 'Clientes', icon: 'ni-collection'},
+          // {path: 'catalogo_tope_conceptos', title: 'Tope conceptos', icon: 'ni-collection  text-orange'}
+        ], bg : "orange"
       },
-      { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
+      { path: '#', title: 'Procesos', icon: 'ni-settings text-red', id:'rh_procesos', band: true, tipo : "collapse",
         submenu : [
-          {path: 'procedimiento_usuario', title: 'Asignar permisos a usuario', icon: 'ni-badge text-yellow'},
-          { path : "procedimineto_empresa", title: "Asignar permisos a empresa", icon: 'ni-settings text-yellow'}
-        ]
+          // {path: 'procedimiento_usuario', title: 'Asignar permisos a usuario', icon: 'ni-badge text-yellow'},
+          { path : "procedimineto_empresa", title: "Asignar permisos a empresa", icon: 'far fa-check-square'}
+        ], bg : "red"
       },
-      { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: false, tipo : ""}
+      { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: true, tipo : "collapse",
+        submenu : [
+          {path: 'reporte_general', title: 'Reporte General', icon: 'ni-archive-2 text-white'},
+        ], bg : "green"
+    }
     ];
+    // this.menuItems = [
+    //   { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
+    //   { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
+    //     submenu : [
+    //       {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08  text-orange'},
+    //       {path: 'catalogo_empresa', title: 'Empresas', icon: 'ni-building  text-orange'},
+    //       {path: 'catalogo_cliente', title: 'Clientes', icon: 'ni-collection  text-orange'},
+    //       // {path: 'catalogo_tope_conceptos', title: 'Tope conceptos', icon: 'ni-collection  text-orange'}
+    //     ]
+    //   },
+    //   { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
+    //     submenu : [
+    //       // {path: 'procedimiento_usuario', title: 'Asignar permisos a usuario', icon: 'ni-badge text-yellow'},
+    //       { path : "procedimineto_empresa", title: "Asignar permisos a empresa", icon: 'far fa-check-square text-yellow'}
+    //     ]
+    //   },
+    //   { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: false, tipo : ""}
+    // ];
   }
   
   cerrarSesion(){

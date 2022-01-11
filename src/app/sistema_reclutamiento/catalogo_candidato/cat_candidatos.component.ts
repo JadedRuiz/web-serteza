@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, Output, EventEmitter} from '@angular/core';
 import swal from'sweetalert2';
 import { LocalidadService } from 'src/app/services/localidad/localidad.service';
-import { COLOR } from 'src/config/config';
+import { COLOR, SERVER_API } from 'src/config/config';
 import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
 import { Candidato } from 'src/app/models/Candidato';
 import { Direccion } from 'src/app/models/Direccion';
@@ -535,6 +535,10 @@ export class CatalogoCandidatosComponent implements OnInit {
         }
       }
     });
+  }
+  descargarContrato(id : any){
+    location.href = SERVER_API+"contratacion/obtenerDocContratacionPorCandidato/"+id;
+
   }
 }
 

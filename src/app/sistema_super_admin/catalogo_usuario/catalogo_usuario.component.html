@@ -136,20 +136,11 @@
                             </div>
                             <div class="col-lg-9 col-sm-12">
                                 <div class="row">
-                                    <div class="col-lg-6 col-sm-12">
+                                    <div class="col-lg-12 col-sm-12">
                                         <div class="form-group">
                                             <mat-form-field class="w-100" appearance="fill">
                                                 <mat-label>Nombre</mat-label>
-                                                <input matInput [(ngModel)]="usuario.nombre" name="nombre">
-                                            </mat-form-field>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 col-sm-12">
-                                        <div class="form-group">
-                                            <mat-form-field class="w-100" appearance="fill">
-                                                <mat-label>Usuario</mat-label>
-                                                <input type="text" matInput [(ngModel)]="usuario.usuario" name="usuario">
-                                                <mat-icon matSuffix><i class="fas fa-user"></i></mat-icon>
+                                                <input matInput [(ngModel)]="usuario.nombre" name="nombre" placeholder="" autocomplete="off" style="text-transform: uppercase;" required>
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -158,13 +149,22 @@
                                     <div class="col-lg-6 col-sm-12">
                                         <div class="form-group">
                                             <mat-form-field class="w-100" appearance="fill">
-                                                <mat-label>Contraseña</mat-label>
-                                                <input matInput [(ngModel)]="usuario.password" name="password" [type]="show ? 'text' : 'password'">
-                                                <mat-icon matSuffix  (click)="mostrarPassword()" style="cursor: pointer;"><i class="fas fa-key"></i></mat-icon>
+                                                <mat-label>Usuario</mat-label>
+                                                <input type="text" matInput [(ngModel)]="usuario.usuario" name="usuario" autocomplete="off" required>
+                                                <mat-icon matSuffix><i class="fas fa-user"></i></mat-icon>
                                             </mat-form-field>
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-sm-12">
+                                        <div class="form-group">
+                                            <mat-form-field class="w-100" appearance="fill">
+                                                <mat-label>Contraseña</mat-label>
+                                                <input matInput [(ngModel)]="usuario.password" name="password" [type]="show ? 'text' : 'password'" autocomplete="off" required>
+                                                <mat-icon matSuffix  (click)="mostrarPassword()" style="cursor: pointer;"><i class="fas fa-key"></i></mat-icon>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-lg-6 col-sm-12">
                                         <mat-form-field class="w-100" appearance="fill">
                                             <mat-label>Perfiles</mat-label>
                                             <mat-select [(ngModel)]="usuario.id_perfil" name="perfil">
@@ -174,7 +174,7 @@
                                               </mat-option>
                                             </mat-select>
                                         </mat-form-field>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -185,9 +185,24 @@
                         <mat-tab-group mat-align-tabs="center" animationDuration="2000ms" style="height: 300px;">
                             <mat-tab label="Sistemas">
                                 <mat-selection-list (selectionChange)="setSistema($event)">
-                                    <mat-list-option *ngFor="let sistema of sistemas" [value]="sistema.id_sistema">
-                                        {{sistema.sistema}}
-                                    </mat-list-option>
+                                    <div class="opciones d-flex justify-content-center align-items-center" *ngFor="let sistema of sistemas">
+                                        <div class="col-lg-9">
+                                            <mat-list-option [value]="sistema.id_sistema" [selected]="sistema.activo">
+                                                {{sistema.sistema}}
+                                            </mat-list-option>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>Perfiles</mat-label>
+                                                <mat-select name="perfil" [(ngModel)]="sistema.perfil" (selectionChange)="optionPerfil(sistema.id_sistema, $event)">
+                                                  <mat-option [value]="0" disabled>SELECCIONA EL PERFIL</mat-option>
+                                                  <mat-option *ngFor="let perfil of sistema.perfiles" [value]="perfil.id_perfil">
+                                                    {{perfil.perfil}}
+                                                  </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
                                 </mat-selection-list>
                             </mat-tab>
                             <mat-tab label="Empresas" class="mt-2">

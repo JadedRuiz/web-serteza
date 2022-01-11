@@ -54,18 +54,42 @@ export class SidebarComponent implements OnInit {
   pintarMenu(){
     let catalogos = [];
     let procesos = [];
-    catalogos.push(
-      {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08'},
-      {path: 'catalogo_departamento', title: 'Departamentos', icon: 'ni-archive-2'},
-      {path: 'catalogo_empresa', title: 'Empresas', icon: 'far fa-building'},
-      {path: 'catalogo_sucursal', title: 'Sucursales', icon: 'fas fa-map-marker-alt'},
-      {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'}
-    );
-    procesos.push(
-      {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17'},
-      {path: 'procedimiento_modificacion', title: 'Modificaciones', icon: 'ni-curved-next'},
-      {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove'},
-    );
+    //Perfiles
+    //Administrador
+    if(this.perfil == 1){
+      catalogos.push(
+        {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08'},
+        {path: 'catalogo_departamento', title: 'Departamentos', icon: 'ni-archive-2'},
+        {path: 'catalogo_empresa', title: 'Empresas', icon: 'far fa-building'},
+        {path: 'catalogo_sucursal', title: 'Sucursales', icon: 'fas fa-map-marker-alt'},
+        {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'}
+      );
+      procesos.push(
+        {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17'},
+        {path: 'procedimiento_modificacion', title: 'Modificaciones', icon: 'ni-curved-next'},
+        {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove'},
+      );
+    }
+    //JEFE INMEDIATO
+    if(this.perfil == 2){
+      catalogos.push(
+        {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'}
+      );
+    }
+    //RECURSOS HUMANOS
+    if(this.perfil == 3){
+      catalogos.push(
+        {path: 'catalogo_departamento', title: 'Departamentos', icon: 'ni-archive-2'},
+        {path: 'catalogo_empresa', title: 'Empresas', icon: 'far fa-building'},
+        {path: 'catalogo_sucursal', title: 'Sucursales', icon: 'fas fa-map-marker-alt'},
+        {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'}
+      );
+      procesos.push(
+        {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17'},
+        {path: 'procedimiento_modificacion', title: 'Modificaciones', icon: 'ni-curved-next'},
+        {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove'},
+      );
+    }
     this.menuItems = [
       { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-yellow', id:"dashboard_header", band: false, tipo : "", bg : "red"},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",

@@ -25,19 +25,21 @@ export class CatalogoUsuarioComponent implements OnInit {
 
   public color = COLOR;
   public fotografia = new Fotografia(0,"","","");
+  public usuario_creacion = window.sessionStorage.getItem("user");
   public usuario = {
     id_usuario : 0,
     fotografia : this.fotografia,
     nombre : "",
     usuario : "",
     password : "",
-    id_perfil : 0,
     sistemas : [],
     empresas : [],
-    clientes : []
+    clientes : [],
+    usuario_creacion : parseInt(""+this.usuario_creacion)
   };
   public usuarios : any;
   public sistemas : any;
+  public sist3m4s_copia : any;
   public show = false;
   public band_persiana = true;
   public foto_user : any;
@@ -50,7 +52,6 @@ export class CatalogoUsuarioComponent implements OnInit {
   public clientes_busqueda : any;
   public clientes_seleccionados : any;
   public busqueda : any;
-  public usuario_creacion = window.sessionStorage.getItem("user");
   public modal : any;
   public texto_modal = "";
   @ViewChild('content', {static: false}) contenidoDelModal : any;
@@ -103,7 +104,6 @@ export class CatalogoUsuarioComponent implements OnInit {
   ngOnInit(): void {
     this.mostrarUsuarios();
     this.obtenerSistemas();
-    this.mostrarPerfiles();
   }
 
   mostrarUsuarios(){
@@ -114,16 +114,6 @@ export class CatalogoUsuarioComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.usuarios = object.data.registros;
         this.usuarios_busqueda = object.data.registros;
-      }
-    });
-  }
-
-  mostrarPerfiles(){
-    this.perfiles_x_sistema = [];
-    this.compartido_service.obtenerPerfiles()
-    .subscribe((object : any) => {
-      if(object.ok){
-        this.perfiles_x_sistema = object.data;
       }
     });
   }
@@ -191,7 +181,7 @@ export class CatalogoUsuarioComponent implements OnInit {
   }
 
   modificarUsuario(){
-    if(this.usuario.nombre == "" || this.usuario.usuario == ""){
+    if(this.usuario.nombre == "" || this.usuario.usuario == "" || this.usuario.password == ""){
       Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
     }else{
       if(this.sistemas_seleccionados.length == 0){
@@ -201,22 +191,16 @@ export class CatalogoUsuarioComponent implements OnInit {
         if(!this.activo){
           active = 0;
         }
-        let json = {
-          id_usuario : this.usuario.id_usuario,
-          nombre :  this.usuario.nombre,
-          usuario : this.usuario.usuario,
-          password : this.usuario.password,
-          sistemas : this.sistemas_seleccionados,
-          usuario_creacion : this.usuario_creacion,
-          activo : active,
-          fotografia : this.fotografia
-        };
-        this.confirmar("Confirmación","¿Seguro que desea editar la información?","info",json,2);
+        this.usuario.sistemas = this.sistemas_seleccionados;
+        this.usuario.empresas = this.empresas_seleccionadas;
+        this.usuario.clientes = this.clientes_seleccionados;
+        this.confirmar("Confirmación","¿Seguro que desea editar la información?","info",this.usuario,2);
       }
     }
   }
 
   nuevoUsuario(){
+    this.obtenerSistemas();
     this.openModal(1);
     this.tipo_modal = 1;
   }
@@ -227,24 +211,32 @@ export class CatalogoUsuarioComponent implements OnInit {
 
   setSistema(value : any){
     if(value.option.selected){
-      this.sistemas_seleccionados.push(value.option.value);
-      this.sistemas.forEach((element : any) =>{
-        if(element.id_sistema == value.option.value){
-          element.activo = false;
-        }
+      this.sistemas_seleccionados.push({
+        id_sistema : value.option.value,
+        id_perfil : 0
       });
     }else{
       this.sistemas_seleccionados.forEach((element : any, index : any) => {
-        if(element == value.option.value){
+        if(element.id_sistema == value.option.value){
           this.sistemas_seleccionados.splice(index,1);
         }
       });
       this.sistemas.forEach((element : any) =>{
         if(element.id_sistema == value.option.value){
-          element.activo = true;
+          element.perfil = 0;
         }
       });
     }
+  }
+
+  optionPerfil(id_sistema : any, event : any){
+    // console.log(id_sistema, event.value);
+    this.sistemas_seleccionados.forEach((element : any) =>{
+      if(element.id_sistema == id_sistema){
+        element.id_perfil = event.value;
+      }
+    });
+    
   }
 
   buscarEmpresa(){
@@ -320,55 +312,69 @@ export class CatalogoUsuarioComponent implements OnInit {
   }
 
   pintarEntidades(tipo : any, arreglo : any){
-    arreglo.forEach((sistema : any) => {
-      if(tipo == 1){
-        this.sistemas.forEach((entidad : any) => {
-          if(entidad.id_sistema == sistema){
-            entidad.activo = true;
+    if(tipo == 1){
+      arreglo.forEach((object : any) => {
+        this.sistemas.forEach((sistema : any) => {
+          if(object.id_sistema == sistema.id_sistema){
+            sistema.activo = true;
+            sistema.perfil = object.id_perfil;
           }
         });
-      }
-      if(tipo == 2){
-        this.empresas_busqueda.forEach((entidad : any) => {
-          if(entidad.id_empresa == sistema){
-            entidad.activo = true;
+      });
+    }
+    if(tipo == 2){
+      arreglo.forEach((object : any) => {
+        this.empresas_busqueda.forEach((empresa : any) => {
+          if(object == empresa.id_empresa){
+            empresa.activo = true;
           }
         });
-      }
-      if(tipo == 3){
-        this.sistemas.forEach((entidad : any) => {
-          if(entidad.id_cliente == sistema){
-            entidad.activo = true;
+      });
+    }
+    if(tipo == 3){
+      arreglo.forEach((object : any) => {
+        this.clientes_busqueda.forEach((cliente : any) => {
+          if(object == cliente.id_cliente){
+            cliente.activo = true;
           }
         });
-      }
-    });
+      });
+    }
   }
 
   editar(folio : any){
-    this.usuario_service.obtenerUsuarioPorId(folio)
-    .subscribe( (object : any) => {
+    this.sistemas = [];
+    this.usuario_service.obtenerSistemas()
+    .subscribe( (object : any) =>{
       if(object.ok){
-        this.texto_modal = "Editar usuario";
+        this.tipo_modal = 2;
+        this.sistemas = object.data;
         this.openModal(1);
-        //Se pinta la imagen
-        this.fotografia.id_fotografia = object.data[0].id_fotografia;
-        this.docB64 = object.data[0].fotografia;
-        //Usuario
-        this.usuario.usuario = object.data[0].usuario;
-        this.usuario.password = object.data[0].password;
-        this.usuario.nombre = object.data[0].nombre;
-        this.usuario.id_usuario = object.data[0].id_usuario;
-        this.sistemas_seleccionados = object.data[0].sistemas;
-        this.pintarEntidades(1,object.data[0].sistemas);
-        this.empresas_seleccionadas = object.data[0].empresas;
-        this.pintarEntidades(2,object.data[0].empresas);
-        this.clientes_seleccionados = object.data[0].clientes;
-        this.pintarEntidades(3,object.data[0].clientes);
-      }else{
-        Swal.fire("Ha ocurrido un error",object.message,"error");
+        this.usuario_service.obtenerUsuarioPorId(folio)
+        .subscribe( (object : any) => {
+          if(object.ok){
+            this.texto_modal = "Editar usuario";
+            //Se pinta la imagen
+            this.fotografia.id_fotografia = object.data[0].id_fotografia;
+            this.docB64 = object.data[0].fotografia;
+            //Usuario
+            this.usuario.usuario = object.data[0].usuario;
+            this.usuario.password = object.data[0].password;
+            this.usuario.nombre = object.data[0].nombre;
+            this.usuario.id_usuario = object.data[0].id_usuario;
+            this.sistemas_seleccionados = object.data[0].sistemas;
+            this.pintarEntidades(1,object.data[0].sistemas);
+            this.empresas_seleccionadas = object.data[0].empresas;
+            this.pintarEntidades(2,object.data[0].empresas);
+            this.clientes_seleccionados = object.data[0].clientes;
+            this.pintarEntidades(3,object.data[0].clientes);
+          }else{
+            Swal.fire("Ha ocurrido un error",object.message,"error");
+          }
+        });
       }
     });
+    
   }
 
   activarDesactivar(id : number, activo : number){
@@ -398,10 +404,10 @@ export class CatalogoUsuarioComponent implements OnInit {
       usuario : "",
       nombre : "",
       password : "",
-      id_perfil : 0,
       sistemas : [],
       empresas : [],
-      clientes : []
+      clientes : [],
+      usuario_creacion : parseInt(""+this.usuario_creacion)
     };
     this.sistemas_seleccionados = [];
     this.empresas_seleccionadas = [];

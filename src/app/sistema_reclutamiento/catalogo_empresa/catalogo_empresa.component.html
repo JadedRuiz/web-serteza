@@ -127,19 +127,20 @@
                 <div class="col-lg-6 col-sm-12">
                   <mat-form-field class="w-100">
                     <mat-label>Nombre</mat-label>
-                    <input matInput [(ngModel)]="empresa.empresa" name="empresa">
+                    <input matInput [(ngModel)]="empresa.empresa" name="empresa" style="text-transform: uppercase;">
                   </mat-form-field>
                 </div>
                 <div class="col-lg-6 col-sm-12">
                   <mat-form-field class="w-100">
                     <mat-label>Razón social</mat-label>
-                    <input matInput [(ngModel)]="empresa.razon_social" name="razon">
+                    <input matInput [(ngModel)]="empresa.razon_social" name="razon" style="text-transform: uppercase;">
                   </mat-form-field>
                 </div>
                 <div class="col-lg-12 col-sm-12">
                   <mat-form-field class="w-100">
                     <mat-label>RFC</mat-label>
-                    <input matInput [(ngModel)]="empresa.rfc" name="rfc">
+                    <input matInput #rfc maxlength="13" [(ngModel)]="empresa.rfc" name="rfc" style="text-transform: uppercase;">
+                    <mat-hint align="end">{{rfc.value.length}} / 13</mat-hint>
                   </mat-form-field>
                 </div>
               </div>
@@ -149,7 +150,7 @@
             <div class="col-lg-12 col-sm-12">
               <mat-form-field class="w-100">
                 <mat-label>Descripción</mat-label>
-                <textarea matInput placeholder="Redacte una breve descripción acerca de la empresa" [(ngModel)]="empresa.descripcion" name="desc"></textarea>
+                <textarea matInput placeholder="Redacte una breve descripción acerca de la empresa" [(ngModel)]="empresa.descripcion" name="desc" style="text-transform: uppercase;"></textarea>
               </mat-form-field>
             </div>
           </div>
@@ -160,25 +161,25 @@
               <div class="col-lg-3 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>Calle</mat-label>
-                  <input matInput [(ngModel)]="empresa.direccion.calle" name="calle">
+                  <input matInput [(ngModel)]="empresa.direccion.calle" name="calle" style="text-transform: uppercase;">
                 </mat-form-field>
               </div>
               <div class="col-lg-3 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>Num. interior</mat-label>
-                  <input matInput [(ngModel)]="empresa.direccion.numero_interior" name="ni">
+                  <input matInput [(ngModel)]="empresa.direccion.numero_interior" name="ni" style="text-transform: uppercase;">
                 </mat-form-field>
               </div>
               <div class="col-lg-3 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>Num. exterior</mat-label>
-                  <input matInput [(ngModel)]="empresa.direccion.numero_exterior" name="ne">
+                  <input matInput [(ngModel)]="empresa.direccion.numero_exterior" name="ne" style="text-transform: uppercase;">
                 </mat-form-field>
               </div>
               <div class="col-lg-3 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>Cruzamientos</mat-label>
-                  <input matInput [(ngModel)]="empresa.direccion.cruzamiento_uno" name="cruza">
+                  <input matInput [(ngModel)]="empresa.direccion.cruzamiento_uno" name="cruza" style="text-transform: uppercase;">
                 </mat-form-field>
               </div>
             </div>
@@ -186,13 +187,14 @@
               <div class="col-lg-5 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>Colonia</mat-label>
-                  <input matInput [(ngModel)]="empresa.direccion.colonia" name="colonia">
+                  <input matInput [(ngModel)]="empresa.direccion.colonia" name="colonia" style="text-transform: uppercase;">
                 </mat-form-field>
               </div>
               <div class="col-lg-2 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>C.P</mat-label>
-                  <input matInput [(ngModel)]="empresa.direccion.codigo_postal" name="cp">
+                  <input matInput #postalCode maxlength="5" [(ngModel)]="empresa.direccion.codigo_postal">
+                  <mat-hint align="end">{{postalCode.value.length}} / 5</mat-hint>
                 </mat-form-field>
               </div>
               <div class="col-lg-5 col-sm-12">
@@ -218,13 +220,13 @@
               <div class="col-lg-6 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>Localidad</mat-label>
-                  <input matInput [(ngModel)]="empresa.direccion.localidad" name="loca">
+                  <input matInput [(ngModel)]="empresa.direccion.localidad" name="loca" style="text-transform: uppercase;">
                 </mat-form-field>
               </div>
               <div class="col-lg-6 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>Municipio</mat-label>
-                  <input matInput [(ngModel)]="empresa.direccion.municipio" name="muni">
+                  <input matInput [(ngModel)]="empresa.direccion.municipio" name="muni" style="text-transform: uppercase;">
                 </mat-form-field>
               </div>
             </div>
@@ -232,7 +234,7 @@
               <div class="col-lg-12 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>Referencias</mat-label>
-                  <textarea matInput placeholder="Redacte una breve referencia de la empresa" [(ngModel)]="empresa.direccion.descripcion" name="ref"></textarea>
+                  <textarea matInput placeholder="Redacte una breve referencia de la empresa" [(ngModel)]="empresa.direccion.descripcion" name="ref" style="text-transform: uppercase;"></textarea>
                 </mat-form-field>
               </div>
             </div>
@@ -244,7 +246,7 @@
               <div class="col-lg-12 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>Nombre</mat-label>
-                  <input matInput [(ngModel)]="empresa.representante.nombre" name="name_r">
+                  <input matInput [(ngModel)]="empresa.representante.nombre" name="name_r" style="text-transform: uppercase;">
                 </mat-form-field>
               </div>
             </div>
@@ -252,149 +254,25 @@
               <div class="col-lg-6 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>RFC</mat-label>
-                  <input matInput [(ngModel)]="empresa.representante.rfc" name="repre_r">
+                  <input matInput #rfc maxlength="13" [(ngModel)]="empresa.representante.rfc" name="repre_r" style="text-transform: uppercase;">
+                  <mat-hint align="end">{{rfc.value.length}} / 13</mat-hint>
                 </mat-form-field>
               </div>
               <div class="col-lg-6 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>CURP</mat-label>
-                  <input matInput [(ngModel)]="empresa.representante.curp" name="repre_c">
+                  <input matInput #curp maxlength="18" [(ngModel)]="empresa.representante.curp" name="repre_c" style="text-transform: uppercase;">
+                  <mat-hint align="end">{{curp.value.length}} / 18</mat-hint>
                 </mat-form-field>
               </div>
             </div>
           </div>
         </mat-tab>
       </mat-tab-group>
-        <!-- <div class="form-row col-12 mb-2" style="display: flex;justify-content: flex-end;">
-            <div class="custom-control custom-switch">
-                <input [(ngModel)]="activo" name="activo" type="checkbox" class="custom-control-input" id="customSwitch1">
-                <label *ngIf="activo" class="custom-control-label" for="customSwitch1">Activado</label>
-                <label *ngIf="!activo" class="custom-control-label" for="customSwitch1">Desactivado</label>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-12">
-              <ul class="nav nav-tabs profile-tab" role="tablist">
-                <li class="nav-item">
-                  <a class="nav-link active" data-toggle="tab" href="#empresa_tab" role="tab" aria-selected="true">Datos de la empresa</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link " data-toggle="tab" href="#direccion_tab" role="tab" aria-selected="false">Dirección</a>
-                </li>
-              </ul>
-            </div>
-            <div class="tab-content col-12" id="myTabContent">
-                <div class="tab-pane active col-12" id="empresa_tab" role="tabpanel">
-                    <div class="container col-12">
-                        <div class="row">
-                            <div class="col-lg-5 col-sm-12">
-                                <div class="form-group rounded" style="max-width:280px;height:175px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;overflow: hidden;">
-                                    <img (click)="subirImagen()" id="imagen_perfil" class="img-fluid" [src]="foto_user">
-                                    <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg,.jpeg" (change)="cambiarImagen($event)">
-                                </div>
-                            </div>
-                            <div class="col-lg-7 col-sm-12">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <label for="empresa">Empresa</label>
-                                            <input [(ngModel)]="empresa.empresa" name="empresa" type="text" class="form-control" id="empresa">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label for="razon_social">Razón social</label>
-                                            <input [(ngModel)]="empresa.razon_social" name="rfc" type="text" class="form-control" id="razon_social">
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label for="rfc">RFC</label>
-                                            <input [(ngModel)]="empresa.rfc" name="rfc" type="text" class="form-control" id="rfc" required style="text-transform: uppercase;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group"> 
-                                    <label for="desc_cempresa">Descripción de la empresa</label>
-                                    <textarea [(ngModel)]="empresa.descripcion" name="desc_cempresa" class="form-control" rows="5" id="desc_cempresa"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-              </div>
-              <div class="tab-pane col-12" id="direccion_tab" role="tabpanel">
-                <div class="form-row">
-                  <div class="form-group col-md-1">
-                    <label for="calle">Calle</label>
-                    <input [(ngModel)]="empresa.direccion.calle" name="calle" type="number" class="form-control" id="calle" required>
-                  </div>
-                  <div class="form-group col-md-2">
-                    <label for="num_ext">Número ext.</label>
-                    <input [(ngModel)]="empresa.direccion.numero_exterior" name="num_exterior" type="text" class="form-control" id="num_ext" placeholder="">
-                  </div>
-                  <div class="form-group col-md-2">
-                    <label for="num_int">Número int.</label>
-                    <input [(ngModel)]="empresa.direccion.numero_interior" name="num_interior" type="text" class="form-control" id="num_int" placeholder="">
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="cruzamientos_form">Cruzamientos</label>
-                    <div class="form-inline form-row align-items-center" id="cruzamientos_form">
-                      <input [(ngModel)]="empresa.direccion.cruzamiento_uno" name="cruzamiento_ext" type="number" class="form-control col-5" id="cruzamientos_int" placeholder="">
-                      <p class="text-center col-2"> y </p>
-                      <input [(ngModel)]="empresa.direccion.cruzamiento_dos" name="cruzamiento_int" type="number" class="form-control col-5" id="cruzamientos_ext" placeholder="">
-                    </div>
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="codigo_postal">Código postal</label>
-                    <div class="input-group mb-3">
-                      <input [(ngModel)]="empresa.direccion.codigo_postal" name="codigo_postal" id="codigo_postal" type="number" class="form-control" aria-describedby="icono">
-                      <div class="input-group-append">
-                        <span class="input-group-text" id="icono" style="cursor:pointer;" (click)="getDatos()"><i class="ni ni-fat-add"></i></span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-row">
-                  <div class="form-group col-md-3">
-                    <label for="colonia">Colonia</label>
-                    <select [(ngModel)]="empresa.direccion.colonia" name="colonia" type="text" class="form-control" (change)="modificarMunicipio()" id="colonia" placeholder="">
-                      <option *ngFor="let colonia of colonias">{{colonia}}</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="localidad">Localidad</label>
-                    <input [(ngModel)]="empresa.direccion.localidad" name="localidad" type="text" class="form-control" id="localidad" placeholder="">
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="municipio">Municipio</label>
-                    <input [(ngModel)]="empresa.direccion.municipio" name="municipio" type="text" class="form-control" id="municipio">
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="estado">Estado</label>
-                    <input [(ngModel)]="empresa.direccion.estado" name="estado" type="text" class="form-control" id="estado">
-                  </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <div class="form-group"> 
-                            <label for="desc_dir_empresa">Descripción</label>
-                            <textarea [(ngModel)]="empresa.direccion.descripcion" name="desc_dir_empresa" class="form-control" rows="5" id="desc_dir_empresa"></textarea>
-                        </div>
-                    </div>
-                </div>
-              </div>
-            </div>
-        </div> -->
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
-        <button type="button" class="btn btn-success">Editar</button>
+        <button type="button" class="btn btn-success" (click)="guardar()">Guardar</button>
     </div>
 </ng-template>
   

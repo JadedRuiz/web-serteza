@@ -105,7 +105,7 @@
         </div>
         <div class="form-group col-md-12">
           <div *ngIf="tipo_arreglo == 0" class="list-group">
-            <a *ngFor="let sistema of sistemas" style="cursor: pointer;" (click)="eleccion(sistema.id,2)" class="list-group-item list-group-item-action" aria-current="true">
+            <a *ngFor="let sistema of sistemas" style="cursor: pointer;" (click)="eleccion(sistema.id,sistema.id_perfil,2)" class="list-group-item list-group-item-action" aria-current="true">
               {{sistema.sistema}}
             </a>
           </div>

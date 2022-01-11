@@ -38,6 +38,10 @@ export class ProcedimientoContratacionComponent implements OnInit {
   modal : any;
   @ViewChild('content_alta', {static: false}) modal_alta : any;
   modal_control_alta : any;
+  @ViewChild('content_import', {static: false}) modal_excel : any;
+  modal_control_excel: any;
+  @ViewChild('content_load', {static: false}) modal_carga : any;
+  modal_control_carga: any;
   //Buscadores
   filterControl = new FormControl();
   candidatos : any;
@@ -81,6 +85,14 @@ export class ProcedimientoContratacionComponent implements OnInit {
     url_foto : "./assets/img/defaults/usuario_por_defecto.svg"
   };
   movimiento_seleccionado = 0;
+  band_errores = false;
+  errores : any;
+  nombre_archivo = "Arrastre y suelte o haga click para abrir el buscador";
+  importe = {
+    file : "",
+    id_cliente : this.cliente_seleccionado,
+    usuario_creacion : this.usuario
+  };
 
   constructor(
     private movimiento_service : MovimientoService,
@@ -346,6 +358,36 @@ export class ProcedimientoContratacionComponent implements OnInit {
     this.openModal(2);
   }
 
+  importarExcel(){
+    if(this.importe.file == ""){
+      Swal.fire("Aviso","Primero adjunta un arhivo valido","info");
+    }else{
+      this.openModal(4);
+      this.movimiento_service.enviarExcel(this.importe)
+      .subscribe((object : any) => {
+        if(object.ok){
+          if(object.data.errores.length > 0){
+            this.errores = object.data.errores;
+            this.band_errores = true;
+            this.obtenerMovimientos();
+            this.cerrarModal(4);
+          }else{
+            this.obtenerMovimientos();
+            this.cerrarModal(3);
+            this.cerrarModal(4);
+            Swal.fire("Buen trabajo","Los trabajadores se han capturado","success");
+          }
+        }else{
+          this.cerrarModal(4);
+          Swal.fire("Ha ocurrido un error", object.error.message, 'error');
+        }
+      },
+      (err : any) => {
+        this.cerrarModal(4);
+      })
+    }
+  }
+
   agregarContratacion(){
     let puesto = this.puestos.filter( (x : any) => x.id_puesto === this.detalle.id_puesto)[0];
     let autorizados = puesto.autorizados;
@@ -502,8 +544,32 @@ export class ProcedimientoContratacionComponent implements OnInit {
         }
       });
     }
+    if(tipo == 3){
+      this.movimiento_service.obtenerFormatoAlto({id_cliente : this.cliente_seleccionado})
+      .subscribe((object : any) => {
+        if(object.ok){
+          var arrayBuffer = this.base64ToArrayBuffer(object.data);
+          var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
+          var data = window.URL.createObjectURL(newBlob);
+          let link  = document.createElement('a');
+          link.href = data;
+          link.download = "FormatoAlta.xlsx";
+          link.click();
+        }
+      });
+    }
   }
-  
+
+  base64ToArrayBuffer(base64 : string) {
+    var binary_string =  window.atob(base64);
+    var len = binary_string.length;
+    var bytes = new Uint8Array( len );
+    for (var i = 0; i < len; i++)        {
+        bytes[i] = binary_string.charCodeAt(i);
+    }
+    return bytes;
+  }
+
   visualizarDetalle(id : number){
     this.tipo_modal = 3;
     this.movimiento_service.obtenerDetallePorId(id)
@@ -561,6 +627,19 @@ export class ProcedimientoContratacionComponent implements OnInit {
       this.buscarCandidato(6);
       this.modal_control_alta = this.modalService.open(this.modal_alta,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
     }
+    if(tipo == 3){
+      this.band_errores = false;
+      this.importe = {
+        file : "",
+        id_cliente : this.cliente_seleccionado,
+        usuario_creacion : this.usuario
+      };
+      this.nombre_archivo = "Arrastre y suelte o haga click para abrir el buscador";
+      this.modal_control_excel = this.modalService.open(this.modal_excel,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
+    if(tipo == 4){
+      this.modal_control_carga = this.modalService.open(this.modal_carga,{ size: 'sm', centered : true, backdropClass : 'light-blue-backdrop', backdrop: 'static', keyboard: false});
+    }
   }
 
   cerrarModal(tipo : number){
@@ -570,6 +649,40 @@ export class ProcedimientoContratacionComponent implements OnInit {
     if(tipo == 2){
       this.modal_control_alta.close();
     }
+    if(tipo == 3){
+      this.modal_control_excel.close();
+    }
+    if(tipo == 4){
+      this.modal_control_carga.close();
+    }
+  }
+
+  cambiarImagen(event: any){
+    if (event.target.files && event.target.files[0]) {
+      let archivos = event.target.files[0];
+      let extension = archivos.name.split(".")[1];
+      if(extension == "xlsx"){
+       this.nombre_archivo = archivos.name;
+       this.convertirFileAB64(archivos).then( respuesta => {
+        this.importe.file = respuesta+"";
+      });
+      }else{
+        this.nombre_archivo = "Arrastre y suelte o haga click para abrir el buscador";
+        Swal.fire("Ha ocurrido un error","Tipo de archivo no permitido","error");
+      }
+    }
+  }
+
+  convertirFileAB64(fileInput : any){
+    return new Promise(function(resolve, reject) {
+      let b64 = "";
+      const reader = new FileReader();
+      reader.readAsDataURL(fileInput);
+      reader.onload = (e: any) => {
+          b64 = e.target.result.split("base64,")[1];
+          resolve(b64);
+      };
+    });
   }
 
   confirmar(title : any ,texto : any ,tipo_alert : any,tipo : number,json : any){

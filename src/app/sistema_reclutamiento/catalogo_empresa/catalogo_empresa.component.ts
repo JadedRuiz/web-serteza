@@ -28,6 +28,7 @@ export class CatalogoEmpresaComponent implements OnInit {
   public direccion : Direccion = new Direccion(0,"","","","","","","","","","","");
   public fotografia = new Fotografia(0,"","","");
   public empresa = {
+    id_empresa : "",
     empresa : "",
     razon_social : "",
     rfc : "",
@@ -157,29 +158,38 @@ export class CatalogoEmpresaComponent implements OnInit {
         this.mostrarEstado();
         this.openModal();
         this.info_modal.nombre_empresa = object.data[0].empresa;
+        this.empresa.id_empresa = object.data[0].id_empresa;
         this.empresa.empresa = object.data[0].empresa;
         this.empresa.rfc = object.data[0].rfc;
-        this.empresa.razon_social = object.data[0].razon_social;
         this.empresa.descripcion = object.data[0].descripcion;
+        this.empresa.razon_social = object.data[0].razon_social;
+        this.empresa.direccion.id_direccion = object.data[0].id_direccion;
+        this.empresa.direccion.calle = object.data[0].id_sucursal;
+        this.empresa.direccion.calle = object.data[0].id_sucursal;
         this.empresa.direccion.calle = object.data[0].calle;
         this.empresa.direccion.numero_exterior = object.data[0].numero_exterior;
         this.empresa.direccion.numero_interior = object.data[0].numero_interior;
         this.empresa.direccion.cruzamiento_uno = object.data[0].cruzamiento_uno;
         this.empresa.direccion.colonia = object.data[0].colonia;
         this.empresa.direccion.codigo_postal = object.data[0].codigo_postal;
-        this.empresa.direccion.estado = object.data[0].estado;
+        this.empresa.direccion.estado = object.data[0].id_estado;
         this.empresa.direccion.localidad = object.data[0].localidad;
         this.empresa.direccion.municipio = object.data[0].municipio;
         this.empresa.direccion.descripcion = object.data[0].descripcion_direccion;
         this.empresa.representante.nombre = object.data[0].representante_legal;
         this.empresa.representante.rfc = object.data[0].rfc_repre;
         this.empresa.representante.curp = object.data[0].curp;
-
+        this.empresa.fotografia.id_fotografia = object.data[0].id_fotografia;
         this.foto_user = object.data[0].fotografia;
+        this.filterControlEstado.setValue(object.data[0].estado);
       }
     });
   }
- 
+
+  guardar(){
+    this.confirmar("Confirmación","¿Seguro que deseas actualizar a la empresa?","info",1);
+  }
+
   limpiarCampos(){
     this.direccion  = new Direccion(0,"","","","","","","","","","","");
     this.fotografia = new Fotografia(0,"","",""); 
@@ -221,8 +231,9 @@ export class CatalogoEmpresaComponent implements OnInit {
           let img = "data:image/"+extension+";base64, "+respuesta;
           this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
           this.docB64 = respuesta+"";
-          this.fotografia.docB64 = respuesta+"";
-          this.fotografia.extension = extension;
+          this.empresa.fotografia.docB64 = respuesta+"";
+          this.empresa.fotografia.extension = extension;
+          
         });
       }else{
         Swal.fire("Ha ocurrido un error","Tipo de imagen no permitida","error");
@@ -250,8 +261,13 @@ export class CatalogoEmpresaComponent implements OnInit {
       cancelButtonText : "Cancelar"
     }).then((result) => {
       if (result.isConfirmed) {
-        if(tipo == 2){  //Editar
-          
+        if(tipo == 1){  //Editar
+          this.empresa_service.actualizarEmpresa(this.empresa)
+          .subscribe((object : any) => {
+            if(object.ok){
+              Swal.fire("Buen trabajo","Se ha actualizado la empresa","success");
+            }
+          });
         }
       }
     });

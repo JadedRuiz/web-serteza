@@ -72,8 +72,7 @@ export class LoginComponent implements OnInit {
           }else{
             this.sistema_elegido = resp.data.info_usuario.sistemas[0].id;
             window.sessionStorage.setItem("sistema",this.sistema_elegido);
-            // window.sessionStorage.setItem("perfil",resp.data.info_usuario.sistemas[0].id_perfil);
-            this.eleccion(this.sistema_elegido,1);
+            this.eleccion(this.sistema_elegido,resp.data.info_usuario.sistemas[0].id_perfil,1);
           }
         }else{
           Swal.fire("Ha ocurrio un error",resp.message,"error");
@@ -81,9 +80,11 @@ export class LoginComponent implements OnInit {
       });      
     }
   }
-  eleccion(id : any, tipo : any){
+
+  eleccion(id : any, perfil : any, tipo : any){
     this.sistema_elegido = id;
     window.sessionStorage.setItem("sistema",this.sistema_elegido);
+    window.sessionStorage.setItem("perfil",perfil);
     if(this.sistema_elegido == "5"){
       this.router.navigate(["sistema_super_admin/dashboard"]);
     }
@@ -120,7 +121,11 @@ export class LoginComponent implements OnInit {
     if(this.sistema_elegido == "2" || this.sistema_elegido == "7"){
       if(tipo != 1){
         this.closeModal();
-        // window.sessionStorage.setItem("perfil",id_perfil+"");
+      }
+      if(this.sistema_elegido == "2" && parseInt(window.sessionStorage.getItem("perfil")+"") == 0){
+        console.log("entro");
+        Swal.fire("Aviso","Este usuario no cuenta con un perfil para ingresar al Sistema de R.H por favor contacte al administrador del sistema para que le asigne su perfil correspondiente.","info");
+        return "";
       }
       this.clientes = [];
       this.cliente_service.obtenerClientePorIdUsuario(window.sessionStorage.getItem("user"))
@@ -144,7 +149,9 @@ export class LoginComponent implements OnInit {
         }
       });
     }
+    return "";
   }
+  
   openModal() {
     this.modal = this.modalService.open(this.contenidoDelModal,{ centered : true, backdropClass : 'light-blue-backdrop'});
   }

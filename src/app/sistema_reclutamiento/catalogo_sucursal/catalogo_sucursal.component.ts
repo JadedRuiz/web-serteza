@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Direccion } from 'src/app/models/Direccion';
 import { ClienteService } from 'src/app/services/Cliente/cliente.service';
 import { CompartidoService } from 'src/app/services/Compartido/Compartido.service';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
@@ -24,10 +25,15 @@ export class CatalogoSucursalComponent implements OnInit {
   filterControlEmpresa = new FormControl();
   empresas : any;
   empresas_busqueda : any;
-  public estados : any;
+  id_empresa = 0;
+  filterControlEstado = new FormControl();
+  estados : any;
+  estados_busqueda : any;
   public clientes : any;
   public modal : any;
+  public direccion = new Direccion(0,"","","","","","","","","","","");
   public cliente_seleccionado = window.sessionStorage.getItem("cliente");
+  public perfil = window.sessionStorage.getItem("perfil");
   public usuario = parseInt(window.sessionStorage.getItem("user")+"");
   public empresa = parseInt(window.sessionStorage.getItem("empresa")+"");
   @ViewChild('content', {static: false}) contenidoDelModal : any;
@@ -36,20 +42,25 @@ export class CatalogoSucursalComponent implements OnInit {
   dataSource  = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator : any;
   nombre_sucursal = "";
-  public json = {
-    id_empresa : this.empresa,
+  public sucursal = {
+    id_empresa : 0,
     id_sucursal : "",
-    id_cliente : "",
+    id_cliente : this.cliente_seleccionado,
     sucursal : "",
     tasa_estatal : 0.00,
     tasa_especial : 0.00,
     zona : "",
     region : "",
-    estado : 0,
+    direccion : this.direccion,
     prima_riesgo : 0.00,
-    usuario : this.usuario
+    usuario : this.usuario,
+    representante : {
+      nombre : "",
+      rfc : "",
+      curp : ""
+    },
   };
-  public tipo_modal = 1;
+  public tipo_modal = 0;
 
   constructor(
     private modalService: NgbModal,
@@ -69,6 +80,8 @@ export class CatalogoSucursalComponent implements OnInit {
     this.empresa_service.obtenerEmpresasPorIdCliente(this.cliente_seleccionado)
     .subscribe((object : any) => {
       if(object.ok){
+        this.id_empresa = object.data[0].id_empresa;
+        this.sucursal.id_empresa = object.data[0].id_empresa;
         this.mostrarSucursales(object.data[0].id_empresa);
         this.empresas = object.data;
         this.empresas_busqueda = object.data;
@@ -99,6 +112,7 @@ export class CatalogoSucursalComponent implements OnInit {
   }
 
   optionEmpresa(value : any){
+    this.id_empresa = value.option.id;
     this.mostrarSucursales(value.option.id);
   }
 
@@ -112,76 +126,98 @@ export class CatalogoSucursalComponent implements OnInit {
     });
   }
 
-  visualizar(id_sucursal : any){
-    this.sucursal_service.obtenerSucursalPorIdSucursal(id_sucursal)
-    .subscribe( (object : any) =>{
-      if(object.ok){
-        this.openModal();
-        let sucursal = object.data[0];
-        this.nombre_sucursal = sucursal.sucursal;
-      }
-    });
-  }
-
-  guardar(){
-    this.tipo_modal = 1;
-    this.openModal();
-  }
-  
-  mostrarEstados(){
+  mostrarEstado(){
+    this.estados_busqueda = [];
     this.estados = [];
     this.compartido_service.obtenerCatalogo("gen_cat_estados")
-    .subscribe( (object : any) => {
+    .subscribe((object : any) => {
       if(object.length > 0){
+        this.estados_busqueda = object;
         this.estados = object;
       }
     });
   }
 
-  mostrarClientes(){
-    this.clientes = [];
-    this.cliente_service.obtenerClientesPorIdEmpresa(this.empresa)
-    .subscribe( (object : any) => {
+  buscarEstado(){
+    this.estados_busqueda = [];
+    this.estados.forEach((element : any) => {
+      this.estados_busqueda.push({
+        "estado" : element.estado,
+        "id_estado" : element.id_estado
+      });
+    });
+    if(this.filterControlEstado.value.length > 0){
+      this.estados_busqueda = [];
+      this.estados.forEach((element : any) => {
+        if(element.estado.includes(this.filterControlEstado.value.toUpperCase())){ 
+          this.estados_busqueda.push({
+            "estado" : element.estado,
+            "id_estado" : element.id_estado
+          })
+        }
+      });
+    }
+  }
+
+  optionEstado(value : any){
+    this.sucursal.direccion.estado = value.option.id;
+  }
+
+  
+  nuevaSucursal(){
+    this.limpiarCampos();
+    this.tipo_modal = 1;
+    this.mostrarEstado();
+    this.openModal();
+  }
+
+  visualizar(id_sucursal : any){
+    this.sucursal_service.obtenerSucursalPorIdSucursal(id_sucursal)
+    .subscribe( (object : any) =>{
       if(object.ok){
-        this.clientes = object.data;
+        this.limpiarCampos();
+        this.tipo_modal = 2;
+        this.openModal();
+        this.mostrarEstado();
+        let sucursal = object.data[0];
+        this.nombre_sucursal = sucursal.sucursal;
+        this.sucursal.id_sucursal = sucursal.id_sucursal;
+        this.sucursal.sucursal = sucursal.sucursal;
+        this.sucursal.prima_riesgo = sucursal.prima_riesgotrabajo;
+        this.sucursal.zona = sucursal.zona;
+        this.sucursal.region = sucursal.region;
+        this.sucursal.tasa_estatal = sucursal.tasaimpuestoestatal;
+        this.sucursal.tasa_especial = sucursal.tasaimpuestoespecial;
+        this.sucursal.direccion.id_direccion = sucursal.id_direccion;
+        this.sucursal.direccion.calle = sucursal.calle;
+        this.sucursal.direccion.numero_exterior = sucursal.numero_exterior;
+        this.sucursal.direccion.numero_interior = sucursal.numero_interior;
+        this.sucursal.direccion.cruzamiento_uno = sucursal.cruzamiento_uno;
+        this.sucursal.direccion.colonia = sucursal.colonia;
+        this.sucursal.direccion.codigo_postal = sucursal.codigo_postal;
+        this.filterControlEstado.setValue(sucursal.estado);
+        this.sucursal.direccion.estado = sucursal.estado;
+        this.sucursal.direccion.localidad = sucursal.localidad;
+        this.sucursal.direccion.municipio = sucursal.municipio;
+        this.sucursal.direccion.descripcion = sucursal.descripcion_direccion;
+        this.sucursal.representante.nombre = sucursal.representante_legal;
+        this.sucursal.representante.rfc = sucursal.rfc;
+        this.sucursal.representante.curp = sucursal.curp;
       }
     });
+  }
+
+  guardar(){
+    this.sucursal.id_empresa = this.id_empresa;
+    this.confirmar("Confirmación","¿Seguro que deseas actualizar la sucursal?","info",null,2);
   }
 
   altaSucursal(){
-    this.confirmar("Confirmación","¿Seguro que deseas dar de alta esta sucursal?","info",null,1);
-  }
-
-  editar(id : any){
-    this.sucursal_service.obtenerSucursalPorIdSucursal(id)
-    .subscribe( (object : any) =>{
-      if(object.ok){
-        this.openModal();
-        this.tipo_modal = 2;
-        let sucursal = object.data[0];
-        this.json.id_sucursal = id;
-        this.json.id_cliente = sucursal.id_cliente;
-        this.json.sucursal = sucursal.sucursal;
-        this.json.zona = sucursal.zona;
-        this.json.region = sucursal.region;
-        this.json.tasa_estatal = sucursal.tasaimpuestoestatal;
-        this.json.tasa_especial = sucursal.tasaimpuestoespecial;
-        this.json.prima_riesgo = sucursal.prima_riesgotrabajo;
-        this.json.estado = sucursal.id_estado;
-      }else{
-        Swal.fire("Ha ocurrido un error","No se ha encontrado la sucursal","error");
-      }
-    });
-  }
-
-  modificarSucursal(){
-    this.confirmar("Confirmación","¿Seguro que deseas modificar esta sucursal?","info",null,2);
+    this.sucursal.id_empresa = this.id_empresa;
+    this.confirmar("Confirmación","¿Seguro que deseas dar de alta la sucursal?","info",null,1);
   }
 
   openModal() {
-    this.mostrarEstados();
-    this.mostrarClientes();
-    this.limpiarCampos();
     this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
   }
 
@@ -190,19 +226,25 @@ export class CatalogoSucursalComponent implements OnInit {
   }
 
   limpiarCampos(){
-    this.json = {
-      id_empresa : this.empresa,
+    this.sucursal = {
+      id_empresa : 0,
       id_sucursal : "",
-      id_cliente : "",
+      id_cliente : this.cliente_seleccionado,
       sucursal : "",
       tasa_estatal : 0.00,
       tasa_especial : 0.00,
       zona : "",
       region : "",
-      estado : 0,
+      direccion : this.direccion,
       prima_riesgo : 0.00,
-      usuario : this.usuario
+      usuario : this.usuario,
+      representante : {
+        nombre : "",
+        rfc : "",
+        curp : ""
+      },
     };
+    this.tipo_modal = 0;
   }
 
   confirmar(title : any ,texto : any ,tipo_alert : any,json : any,tipo : number){
@@ -217,8 +259,24 @@ export class CatalogoSucursalComponent implements OnInit {
       cancelButtonText : "Cancelar"
     }).then((result) => {
       if (result.isConfirmed) {
+        if(tipo == 1){
+          this.sucursal_service.crearSucursal(this.sucursal)
+          .subscribe((object : any) => {
+            if(object.ok){
+              Swal.fire("Buen trabajo","Se ha dado de alta correctamente","success");
+              this.mostrarSucursales(this.sucursal.id_empresa);
+              this.cerrarModal();
+            }
+          });
+        }
         if(tipo == 2){  //Editar
-          
+          this.sucursal_service.modificarSucursal(this.sucursal)
+          .subscribe((object : any) => {
+            if(object.ok){
+              Swal.fire("Buen trabajo","Se ha actualizado correctamente","success");
+              this.mostrarSucursales(this.sucursal.id_empresa);
+            }
+          });
         }
       }
     });

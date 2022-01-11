@@ -12,6 +12,7 @@ import { FormControl} from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { UsuarioService } from 'src/app/services/Reclutamiento/Usuario.service';
+import { CompartidoService } from 'src/app/services/Compartido/Compartido.service';
 
 @Component({
   selector: 'app-catalogo-usuario',
@@ -30,6 +31,7 @@ export class CatalogoUsuarioComponent implements OnInit {
   public band_persiana = true;
   public foto_user : any;
   public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
+  public sistema_seleccionado = parseInt(window.sessionStorage.getItem("sistema")+"");
   public modal : any;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   //Camera
@@ -42,6 +44,7 @@ export class CatalogoUsuarioComponent implements OnInit {
   public modal_camera : any;
   public fotografia = new Fotografia(0,"","","");
   public docB64 = "";
+  id_perfil = 0;
   public usuario = {
     id_usuario : "",
     fotografia : {},
@@ -49,10 +52,16 @@ export class CatalogoUsuarioComponent implements OnInit {
     usuario : "",
     password : "",
     activo : 1,
-    sistemas : [{"id_sistema" : 2}],
+    sistemas : [
+      {
+        id_sistema : 2, 
+        id_perfil : 0
+      }
+    ],
     cliente : this.cliente_seleccionado,
     usuario_creacion : this.usuario_creacion
   };
+  perfiles : any;
   // webcam snapshot trigger
   private trigger: Subject<void> = new Subject<void>();
   private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
@@ -65,7 +74,8 @@ export class CatalogoUsuarioComponent implements OnInit {
   constructor(
     private usuario_service : UsuarioService,
     private modalService: NgbModal,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private compartido_service : CompartidoService
   ) {
     this.modal = NgbModalRef;
     this.paginator = MatPaginator;
@@ -75,6 +85,21 @@ export class CatalogoUsuarioComponent implements OnInit {
 
   ngOnInit(): void {
     this.mostrarUsuarios();
+    this.mostrarPerfiles();
+  }
+
+  mostrarPerfiles(){
+    this.perfiles = [];
+    this.compartido_service.obtenerCatalogo("gen_catperfiles")
+    .subscribe((object : any) => {
+      if(object.length > 0){
+        object.forEach((element : any) => {
+          if(this.sistema_seleccionado == element.id_sistema){
+            this.perfiles.push(element);
+          }
+        });
+      }
+    });
   }
 
   mostrarUsuarios(){
@@ -122,6 +147,7 @@ export class CatalogoUsuarioComponent implements OnInit {
 
   altaUsuario(){
     this.usuario.fotografia = this.fotografia;
+    this.usuario.sistemas[0].id_perfil = this.id_perfil;
     this.confirmar("Confirmación","¿Seguro que deseas crear un nuevo usuario?","info",null,1);
   }
 
@@ -137,6 +163,7 @@ export class CatalogoUsuarioComponent implements OnInit {
         this.usuario.password = object.data.password;
         this.foto_user = object.data.fotografia;
         this.tipo_modal = 2;
+        this.id_perfil = object.data.id_perfil;
         this.openModal(1);
       }
     });
@@ -144,6 +171,7 @@ export class CatalogoUsuarioComponent implements OnInit {
 
   modificarUsuario(){
     this.usuario.fotografia = this.fotografia;
+    this.usuario.sistemas[0].id_perfil = this.id_perfil;
     this.confirmar("Confirmación","¿Seguro que deseas modificar al usuario?","info",null,2);
   }
 
@@ -212,7 +240,12 @@ export class CatalogoUsuarioComponent implements OnInit {
       usuario : "",
       password : "",
       activo : 1,
-      sistemas : [{"id_sistema" : 2}],
+      sistemas : [
+        {
+          id_sistema : 2, 
+          id_perfil : 0
+        }
+      ],
       cliente : this.cliente_seleccionado,
       usuario_creacion : this.usuario_creacion
     };

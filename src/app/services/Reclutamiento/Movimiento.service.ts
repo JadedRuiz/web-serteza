@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ViewChild } from '@angular/core';
 import { SERVER_API } from 'src/config/config';
 import { CookieService } from "ngx-cookie-service";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -85,5 +85,25 @@ export class MovimientoService {
     obtenerDetalleBaja(id_mov : any){
         let url = SERVER_API+"movimiento/obtenerDetalleBaja/"+id_mov;
         return this.http.get(url);
+    }
+    obtenerFormatoAlto(json : any){
+        let url = SERVER_API+"excel/formatoAltaEmpleados";
+        return this.http.post( url, json )
+        .pipe(map( (resp: any) => {
+        return resp;
+        }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+        return throwError(err);
+        }));
+    }
+    enviarExcel(json : any){
+        let url = SERVER_API+"movimiento/altaMovimientoPorExcel";
+        return this.http.post( url, json )
+        .pipe(map( (resp: any) => {
+        return resp;
+        }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+        return throwError(err);
+        }));
     }
 }

@@ -93,6 +93,10 @@
                                             <mat-icon>edit</mat-icon>
                                             <span>Editar</span>
                                         </button>
+                                        <button *ngIf="element.id_statu == '1'" mat-menu-item (click)="descargarContrato(element.id_candidato)">
+                                          <mat-icon><i class="fas fa-file-contract"></i></mat-icon>
+                                          <span>Descargar contrato</span>
+                                      </button>
                                     </mat-menu>
                                 </td>
                             </ng-container>

@@ -90,6 +90,10 @@ export class UsuarioService {
     let url = SERVER_API+"usuario/obtenerSistemas";
     return this.http.get(url);
   }
+  obtenerSistemasPorIdUsuario(id : any){
+    let url = SERVER_API+"usuario/obtenerSistemasPorIdUsuario/"+id;
+    return this.http.get(url);
+  }
   obtenerSistemasAdmin(id : any){
     let url = SERVER_API+"usuario/obtenerSistemasAdmin/"+id;
     return this.http.get(url);
