@@ -22,7 +22,8 @@ import { CatalogoSeriesComponent } from './catalogo_series/catalogo_series.compo
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { ChartsModule } from 'ng2-charts';
 import {MatExpansionModule} from '@angular/material/expansion';
-
+import {MatRadioModule} from '@angular/material/radio';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,9 @@ import {MatExpansionModule} from '@angular/material/expansion';
     MatSelectModule,
     MatCheckboxModule,
     ChartsModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatRadioModule,
+    MatDatepickerModule
   ]
 })
 export class SistemaFacturacionModule { }

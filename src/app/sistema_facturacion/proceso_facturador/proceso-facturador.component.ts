@@ -70,6 +70,17 @@ export class ProcesoFacturadorComponent implements OnInit {
     total : "0.00",
     usuario_creacion : this.usuario
   };
+  datos_ubicacion = {
+    "id_row" : 0,
+    "tipo" : "",
+    "rfc" : "",
+    "Ide" : "",
+    "Propietario" : "",
+    "Distancia" : 0,
+    "Fecha" : "",
+    "active" : true
+  };
+  mostrarDatos = true;
   band_view = false;
   public modal : any;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
@@ -92,6 +103,7 @@ export class ProcesoFacturadorComponent implements OnInit {
   tipo_modal = 0;
   band_button = true;
   selectedTab = 0;
+  modalUbicacion: any;
 
   constructor(
     private empresa_service: EmpresaService,
@@ -298,7 +310,7 @@ export class ProcesoFacturadorComponent implements OnInit {
         this.cliente.direccion.localidad = object.data.localidad;
         this.cliente.direccion.municipio = object.data.municipio;
         this.cliente.direccion.descripcion = object.data.descripcion_direccion;
-        this.openModal();
+        this.openModal(1);
       }
     });
   }
@@ -469,7 +481,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     this.limpiarCampos();
     this.mostrarEstado();
     this.tipo_modal = 1;
-    this.openModal();
+    this.openModal(1);
   }
 
   altaCliente(){
@@ -496,12 +508,26 @@ export class ProcesoFacturadorComponent implements OnInit {
     return "";
   }
 
-  openModal() {
-    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+  nuevaUbicacion(){
+    this.openModal(2);
   }
 
-  cerrarModal(){
-    this.modal.close();
+  openModal(tipo : any) {
+    if(tipo == 1){
+      this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
+    if(tipo == 2){
+      this.modalUbicacion = this.modalService.open(this.contenidoDelModalUbicacion,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
+  }
+
+  cerrarModal(tipo : any){
+    if(tipo == 1){
+      this.modal.close();
+    }
+    if(tipo == 1){
+      this.modalUbicacion.close();
+    }
   }
 
   limpiarCampos(){
@@ -584,7 +610,7 @@ export class ProcesoFacturadorComponent implements OnInit {
             if(object.ok){
               Swal.fire("Buen trabajo","El cliente se ha dado de alta correctamente","success");
               this.mostrarClientes();
-              this.cerrarModal();
+              this.cerrarModal(1);
             }else{
               Swal.fire("Ha ocurrido un error",object.message,"error");
             }

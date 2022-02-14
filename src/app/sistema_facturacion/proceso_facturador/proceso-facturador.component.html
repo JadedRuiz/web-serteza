@@ -218,7 +218,7 @@
                                 <mat-tab *ngIf="band_" label="Datos cataporte">
                                     <div class="container mt-3">
                                         <div class="row">
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group mb-3 ">
                                                     <div class="input-group-prepend">
                                                       <label class="input-group-text" for="inputGroupSelect01">Traslado internacional</label>
@@ -231,7 +231,7 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group mb-3">
                                                     <div class="input-group-prepend">
                                                       <span class="input-group-text" id="">Distancia recorrida</span>
@@ -246,7 +246,64 @@
                                                     <mat-expansion-panel>
                                                         <mat-expansion-panel-header>
                                                             <mat-panel-title>
-                                                                Ubicaciones
+                                                                <h4 class="title">Transporte</h4>
+                                                            </mat-panel-title>
+                                                        </mat-expansion-panel-header>
+                                                        <div class="container">
+                                                            <div class="row">
+                                                                <div class="col-4">
+                                                                    <div class="input-group">
+                                                                        <input type="search" class="form-control"
+                                                                        [matAutocomplete]="autoPlace" 
+                                                                        required
+                                                                        placeholder="Buscar transporte">
+                                                                        <div class="input-group-append">
+                                                                            <button class="btn btn-success btn-sm" title="Nuevo autotransporte" (click)="nuevaUbicacion()"><i class="fas fa-truck-moving"></i></button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <mat-autocomplete #autoPlace="matAutocomplete">
+                                                                        <mat-option *ngFor="let concepto of conceptos" [value]="concepto.descripcion" [id]="concepto.id_concepto_empresa">
+                                                                            {{concepto.descripcion}}
+                                                                        </mat-option>
+                                                                    </mat-autocomplete>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <div class="input-group">
+                                                                        <input type="search" class="form-control"
+                                                                        [matAutocomplete]="autoPlace" 
+                                                                        required placeholder="Buscar operador">
+                                                                        <div class="input-group-append">
+                                                                            <button class="btn btn-success btn-sm" title="Nuevo operador" (click)="nuevaUbicacion()"><i class="fas fa-user-plus"></i></button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <mat-autocomplete #autoPlace="matAutocomplete">
+                                                                        <mat-option *ngFor="let concepto of conceptos" [value]="concepto.descripcion" [id]="concepto.id_concepto_empresa">
+                                                                            {{concepto.descripcion}}
+                                                                        </mat-option>
+                                                                    </mat-autocomplete>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <div class="input-group">
+                                                                        <input type="search" class="form-control"
+                                                                        [matAutocomplete]="autoPlace" 
+                                                                        required placeholder="Buscar arrendador">
+                                                                        <div class="input-group-append">
+                                                                            <button class="btn btn-success btn-sm" title="Nuevo arrendador" (click)="nuevaUbicacion()"><i class="fas fa-key"></i></button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <mat-autocomplete #autoPlace="matAutocomplete">
+                                                                        <mat-option *ngFor="let concepto of conceptos" [value]="concepto.descripcion" [id]="concepto.id_concepto_empresa">
+                                                                            {{concepto.descripcion}}
+                                                                        </mat-option>
+                                                                    </mat-autocomplete>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </mat-expansion-panel>
+                                                    <mat-expansion-panel>
+                                                        <mat-expansion-panel-header>
+                                                            <mat-panel-title>
+                                                                <h4 class="title">Ubicaciones</h4>
                                                             </mat-panel-title>
                                                         </mat-expansion-panel-header>
                                                         <div class="container">
@@ -257,7 +314,18 @@
                                                                         <ng-container matColumnDef="Lugar">
                                                                             <th mat-header-cell *matHeaderCellDef>Lugar</th>
                                                                             <td mat-cell *matCellDef="let element">
-                                                                                <input type="text" [(ngModel)]="element.Propietario" class="form-control">
+                                                                                <div class="input-group">
+                                                                                    <input type="search" [(ngModel)]="element.Propietario" class="form-control"
+                                                                                    [matAutocomplete]="autoPlace" >
+                                                                                    <div class="input-group-append">
+                                                                                        <button class="btn btn-success btn-sm" title="Nueva ubicacion" (click)="nuevaUbicacion()"><i class="fas fa-map-marker-alt"></i></button>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <mat-autocomplete #autoPlace="matAutocomplete" (optionSelected)="optionConcepto($event, element.id_row)">
+                                                                                    <mat-option *ngFor="let concepto of conceptos" [value]="concepto.descripcion" [id]="concepto.id_concepto_empresa">
+                                                                                        {{concepto.descripcion}}
+                                                                                    </mat-option>
+                                                                                </mat-autocomplete>
                                                                             </td>
                                                                         </ng-container> 
 
@@ -296,7 +364,9 @@
 
                                                                         <ng-container matColumnDef="Accion">
                                                                             <th mat-header-cell *matHeaderCellDef>  
-                                                                                <button class="btn btn-info btn-sm ml-2" title="Nueva linea" (click)="nuevaLinea()">Nueva ubicación</button>
+                                                                                <div class="container d-flex">
+                                                                                    <button class="btn btn-info btn-sm ml-2" title="Nueva linea" (click)="nuevaUbicacion()"><i class="fas fa-plus-circle"></i></button>
+                                                                                </div>
                                                                             </th>
                                                                             <td mat-cell *matCellDef="let element">
                                                                                  <button class="btn btn-warning btn-sm" (click)="eliminarLinea(element.id_row)"><i class="fas fa-trash-alt"></i></button>
@@ -312,15 +382,7 @@
                                                     <mat-expansion-panel>
                                                         <mat-expansion-panel-header>
                                                             <mat-panel-title>
-                                                                Mercancias
-                                                            </mat-panel-title>
-                                                        </mat-expansion-panel-header>
-                                                        <p>This is the primary content of the panel.</p>
-                                                    </mat-expansion-panel>
-                                                    <mat-expansion-panel>
-                                                        <mat-expansion-panel-header>
-                                                            <mat-panel-title>
-                                                                Transporte
+                                                                <h4 class="title">Mercancias</h4>
                                                             </mat-panel-title>
                                                         </mat-expansion-panel-header>
                                                         <p>This is the primary content of the panel.</p>
@@ -553,81 +615,103 @@
           </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="btn btn-warning" (click)="cerrarModal(1)">Cerrar</button>
         <button type="button" class="btn btn-success" (click)="altaCliente()">Guardar</button>
     </div>
 </ng-template>
 <ng-template #ubicacion let-c="close" let-d="dismiss" class="modal-lg">
-    <div class="modal-header">
-        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nueva ubicación</h2>
-    </div>
-    <div class="modal-body">
+    <div class="modal-body" style="height: 450px;overflow-y: auto;">
         <div class="container mt-3">
             <div class="row">
-                <div class="col-lg-3 col-sm-12">
+                <p class="mr-3">Tipo de ubicación : </p>
+                <mat-radio-group aria-label="Tipo de ubicacion" [(ngModel)]="datos_ubicacion.tipo" (change)="mostrarDatos = false;">
+                    <mat-radio-button value="O" class="mr-2">Origen</mat-radio-button>
+                    <mat-radio-button value="D">Destino</mat-radio-button>
+                </mat-radio-group>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-12"><h3>Datos de la ubicación</h3></div>
+                <div class="col-lg-4 col-sm-12">
                     <mat-form-field class="w-100">
-                      <mat-label>RFC</mat-label>
-                      <input matInput [(ngModel)]="cliente.rfc" maxlength="14" name="serie" style="text-transform: uppercase;" required>
+                        <mat-label>Id origen</mat-label>
+                        <input matInput [(ngModel)]="datos_ubicacion.Ide" [disabled]="mostrarDatos" placeholder="OR/DE + 6 digitos">
                     </mat-form-field>
                 </div>
                 <div class="col-lg-4 col-sm-12">
                     <mat-form-field class="w-100">
-                      <mat-label>CURP</mat-label>
-                      <input matInput [(ngModel)]="cliente.curp" maxlength="18" name="serie" style="text-transform: uppercase;">
+                        <mat-label>RFC</mat-label>
+                        <input matInput [(ngModel)]="datos_ubicacion.rfc" required [disabled]="mostrarDatos">
                     </mat-form-field>
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-6 col-sm-12">
+                <div class="col-lg-4 col-sm-12">
                     <mat-form-field class="w-100">
-                      <mat-label>Email</mat-label>
-                      <input matInput [(ngModel)]="cliente.mail" name="serie" required>
+                        <mat-label>Propietario</mat-label>
+                        <input matInput [(ngModel)]="datos_ubicacion.Propietario" required [disabled]="mostrarDatos">
                     </mat-form-field>
                 </div>
-                <div class="col-lg-6 col-sm-12">
+                <div class="col-lg-4 col-sm-12">
                     <mat-form-field class="w-100">
-                      <mat-label>Telefono</mat-label>
-                      <input matInput [(ngModel)]="cliente.telefono" name="serie" style="text-transform: uppercase;" maxlength="10">
+                        <mat-label>Fecha salida</mat-label>
+                        <input matInput [matDatepicker]="pickerDos" required [disabled]="mostrarDatos">
+                        <mat-datepicker-toggle matSuffix [for]="pickerDos"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerDos></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <mat-form-field class="w-100">
+                        <mat-label>Hora</mat-label>
+                        <input type="time" matInput [matDatepicker]="pickerDos" required [disabled]="mostrarDatos">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row" *ngIf="datos_ubicacion.tipo == 'D'">
+                <div class="col-lg-4 col-sm-12">
+                    <mat-form-field class="w-100">
+                        <mat-label>Distancia recorrida</mat-label>
+                        <input type="number" min="0" matInput [(ngModel)]="datos_ubicacion.Propietario" required [disabled]="mostrarDatos">
                     </mat-form-field>
                 </div>
             </div>
             <div class="row">
-              <div class="col-lg-3 col-sm-12">
-                <mat-form-field class="w-100">
-                  <mat-label>Calle</mat-label>
-                  <input matInput [(ngModel)]="cliente.direccion.calle" name="calle" style="text-transform: uppercase;">
-                </mat-form-field>
-              </div>
-              <div class="col-lg-3 col-sm-12">
-                <mat-form-field class="w-100">
-                  <mat-label>Num. interior</mat-label>
-                  <input matInput [(ngModel)]="cliente.direccion.numero_interior" name="ni" style="text-transform: uppercase;">
-                </mat-form-field>
-              </div>
-              <div class="col-lg-3 col-sm-12">
-                <mat-form-field class="w-100">
-                  <mat-label>Num. exterior</mat-label>
-                  <input matInput [(ngModel)]="cliente.direccion.numero_exterior" name="ne" style="text-transform: uppercase;">
-                </mat-form-field>
-              </div>
-              <div class="col-lg-3 col-sm-12">
-                <mat-form-field class="w-100">
-                  <mat-label>Cruzamientos</mat-label>
-                  <input matInput [(ngModel)]="cliente.direccion.cruzamiento_uno" name="cruza" style="text-transform: uppercase;">
-                </mat-form-field>
-              </div>
+                <div class="col-12"><h3>Dirección</h3></div>
+                <div class="col-lg-3 col-sm-12">
+                    <mat-form-field class="w-100">
+                    <mat-label>Calle</mat-label>
+                    <input matInput [(ngModel)]="cliente.direccion.calle" name="calle" style="text-transform: uppercase;" [disabled]="mostrarDatos">
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <mat-form-field class="w-100">
+                    <mat-label>Num. interior</mat-label>
+                    <input matInput [(ngModel)]="cliente.direccion.numero_interior" name="ni" style="text-transform: uppercase;" [disabled]="mostrarDatos">
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <mat-form-field class="w-100">
+                    <mat-label>Num. exterior</mat-label>
+                    <input matInput [(ngModel)]="cliente.direccion.numero_exterior" name="ne" style="text-transform: uppercase;" [disabled]="mostrarDatos">
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <mat-form-field class="w-100">
+                    <mat-label>Cruzamientos</mat-label>
+                    <input matInput [(ngModel)]="cliente.direccion.cruzamiento_uno" name="cruza" style="text-transform: uppercase;" [disabled]="mostrarDatos">
+                    </mat-form-field>
+                </div>
             </div>
             <div class="row">
               <div class="col-lg-5 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>Colonia</mat-label>
-                  <input matInput [(ngModel)]="cliente.direccion.colonia" name="colonia" style="text-transform: uppercase;">
+                  <input matInput [(ngModel)]="cliente.direccion.colonia" name="colonia" style="text-transform: uppercase;" [disabled]="mostrarDatos">
                 </mat-form-field>
               </div>
               <div class="col-lg-2 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>C.P</mat-label>
-                  <input matInput #postalCode maxlength="5" [(ngModel)]="cliente.direccion.codigo_postal" required>
+                  <input matInput #postalCode maxlength="5" [(ngModel)]="cliente.direccion.codigo_postal" required [disabled]="mostrarDatos">
                   <mat-hint align="end">{{postalCode.value.length}} / 5</mat-hint>
                 </mat-form-field>
               </div>
@@ -641,7 +725,7 @@
                           (keyup)="buscarEstado()"
                           [formControl]="filterControlEstado"
                           [matAutocomplete]="autodos"
-                          style="text-transform: uppercase;">
+                          style="text-transform: uppercase;" [disabled]="mostrarDatos">
                   <mat-autocomplete #autodos="matAutocomplete" (optionSelected)="optionEstado($event)">
                       <mat-option *ngFor="let estado of estados_busqueda" [value]="estado.estado" [id]="estado.id_estado">
                           {{estado.estado}}
@@ -654,13 +738,13 @@
               <div class="col-lg-6 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>Localidad</mat-label>
-                  <input matInput [(ngModel)]="cliente.direccion.localidad" name="loca" style="text-transform: uppercase;">
+                  <input matInput [(ngModel)]="cliente.direccion.localidad" name="loca" style="text-transform: uppercase;" [disabled]="mostrarDatos">
                 </mat-form-field>
               </div>
               <div class="col-lg-6 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>Municipio</mat-label>
-                  <input matInput [(ngModel)]="cliente.direccion.municipio" name="muni" style="text-transform: uppercase;">
+                  <input matInput [(ngModel)]="cliente.direccion.municipio" name="muni" style="text-transform: uppercase;" [disabled]="mostrarDatos">
                 </mat-form-field>
               </div>
             </div>
@@ -668,14 +752,14 @@
               <div class="col-lg-12 col-sm-12">
                 <mat-form-field class="w-100">
                   <mat-label>Referencias</mat-label>
-                  <textarea matInput placeholder="Redacte una breve referencia de la empresa" [(ngModel)]="cliente.direccion.descripcion" name="ref" style="text-transform: uppercase;"></textarea>
+                  <textarea matInput placeholder="Redacte una breve referencia de la empresa" [(ngModel)]="cliente.direccion.descripcion" name="ref" style="text-transform: uppercase;" [disabled]="mostrarDatos"></textarea>
                 </mat-form-field>
               </div>
             </div>
           </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="btn btn-warning" (click)="cerrarModal(2)">Cerrar</button>
         <button type="button" class="btn btn-success" (click)="altaCliente()">Guardar</button>
     </div>
 </ng-template>
