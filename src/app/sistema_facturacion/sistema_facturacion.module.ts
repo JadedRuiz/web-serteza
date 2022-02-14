@@ -1,41 +1,56 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { SistemaFacturacionRoutingModule } from './sistema_facturacion.routes';
 import { SistemaFacturacionComponent } from './sistema_facturacion.component';
-import { InicioComponent } from './inicio/inicio.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CompartidoModule } from './compartido/compartido.module';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { CatalogoConceptosComponent } from './catalogo_conceptos/catalogo-conceptos.component';
+import { ProcesoFacturadorComponent } from './proceso_facturador/proceso-facturador.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTabsModule } from '@angular/material/tabs';
 import {MatSelectModule} from '@angular/material/select';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatTableModule} from '@angular/material/table';
-import {MatPaginatorModule} from '@angular/material/paginator';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatIconModule} from '@angular/material/icon';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { CatalogoSeriesComponent } from './catalogo_series/catalogo_series.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import { ChartsModule } from 'ng2-charts';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 
 @NgModule({
   declarations: [
     SistemaFacturacionComponent,
-    InicioComponent
+    DashboardComponent,
+    CatalogoConceptosComponent,
+    CatalogoSeriesComponent,
+    ProcesoFacturadorComponent
   ],
   imports: [
     CommonModule,
     SistemaFacturacionRoutingModule,
+    CompartidoModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
     NgbModule,
     FormsModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
     MatTableModule,
     MatPaginatorModule,
-    MatMenuModule,
     MatIconModule,
-    MatAutocompleteModule
+    MatMenuModule,
+    MatTabsModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    ChartsModule,
+    MatExpansionModule
   ]
 })
 export class SistemaFacturacionModule { }

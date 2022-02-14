@@ -1,0 +1,681 @@
+<div class="header {{color}}" style="height: 250px;">
+    <div class="container-fluid">
+    </div>
+</div>
+<div class="container-fluid mt--9">
+    <div class="row">
+        <div class="col-lg-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">FACTURADOR</h4>
+                  <div class="card-category">
+                    <div class="row align-items-center">
+                        <div class="col-lg-4 col-sm-12">
+                            <mat-form-field class="w-100">
+                                <mat-label>Seleccionar empresa (Emisor)</mat-label>
+                                <input type="text"
+                                        placeholder="Ingrese el nombre o id de la empresa"
+                                        aria-label="Number"
+                                        matInput
+                                        (keyup)="buscarEmpresa()"
+                                        [formControl]="filterControlEmpresa"
+                                        [matAutocomplete]="auto"
+                                        style="text-transform: uppercase;">
+                                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionEmpresa($event)">
+                                    <mat-option *ngFor="let empresa of empresas_busqueda" [value]="empresa.empresa" [id]="empresa.id_empresa">
+                                        {{empresa.empresa}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-lg-5 col-sm-12">
+                            <div class="row align-items-center">
+                                <div class="col-lg-10">
+                                    <mat-form-field class="w-100">
+                                        <mat-label>Seleccione el cliente a facturar (Receptor)</mat-label>
+                                        <input type="text"
+                                                placeholder="Ingrese el nombre o el rfc del cliente"
+                                                aria-label="Number"
+                                                matInput
+                                                (keyup)="buscarCliente()"
+                                                [formControl]="filterControlCliente"
+                                                [matAutocomplete]="autoDos"
+                                                style="text-transform: uppercase;">
+                                        <mat-autocomplete #autoDos="matAutocomplete" (optionSelected)="optionCliente($event)">
+                                            <mat-option *ngFor="let cliente of clientes_busqueda" [value]="cliente.nombre" [id]="cliente.id_catclientes">
+                                                {{cliente.nombre}}
+                                            </mat-option>
+                                        </mat-autocomplete>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-2 d-flex">
+                                    <button *ngIf="band_view" class="btn btn-yellow btn-sm" title="Visualizar cliente" (click)="mostrarCliente(datos_factura.id_cliente)"><i class="text-white fas fa-eye"></i></button>
+                                    <button class="btn btn-info btn-sm" title="Nuevo cliente" (click)="nuevoCliente()"><i class="fas fa-plus-circle"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row">
+                            <mat-tab-group mat-align-tabs="center" class="mt-2 w-100" style="height: 470px;" 
+                            [selectedIndex]="selectedTab">
+                                <mat-tab label="Datos de factura">
+                                    <div class="container contenedor">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-lg-6">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Serie</mat-label>
+                                                    <mat-select [formControl]="serieControl" [(ngModel)]="datos_factura.id_serie" required>
+                                                      <mat-option *ngFor="let serie of series" [value]="serie.id_serie">
+                                                        {{serie.serie}}
+                                                      </mat-option>
+                                                    </mat-select>
+                                                    <mat-error *ngIf="serieControl.hasError('required')">Por favor seleccione una serie</mat-error>
+                                                    <mat-hint>{{serieControl.value?.sound}}</mat-hint>
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-sm-12 col-lg-6">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Folio</mat-label>
+                                                    <input matInput required [(ngModel)]="datos_factura.folio">
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6 col-sm-12">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Forma de pago</mat-label>
+                                                    <mat-select [(ngModel)]="datos_factura.id_formapago">
+                                                      <mat-option *ngFor="let forma of formas_pago" [value]="forma.id_formapago">
+                                                        {{forma.descripcion}}
+                                                      </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-12">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Número de cuenta</mat-label>
+                                                    <input matInput [(ngModel)]="datos_factura.numero_cuenta">
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6 col-sm-12">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Método de pago</mat-label>
+                                                    <mat-select [(ngModel)]="datos_factura.id_metodopago" required>
+                                                      <mat-option *ngFor="let metodo of metodos_pago" [value]="metodo.id_metodopago">
+                                                        {{metodo.descripcion}}
+                                                      </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-12">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Tipo de moneda</mat-label>
+                                                    <mat-select [(ngModel)]="datos_factura.id_tipomoneda" required>
+                                                      <mat-option *ngFor="let moneda of monedas" [value]="moneda.id_catmoneda">
+                                                        {{moneda.descripcion}}
+                                                      </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6 col-sm-12">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Uso de CFDI</mat-label>
+                                                    <mat-select [(ngModel)]="datos_factura.id_usocfdi" required>
+                                                      <mat-option *ngFor="let uso of usoCFDIS" [value]="uso.id_usocfdi">
+                                                        {{uso.descripcion}}
+                                                      </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-12">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Tipo de comprobante</mat-label>
+                                                    <mat-select [(ngModel)]="datos_factura.tipo_comprobante" required>
+                                                        <mat-option *ngFor="let tipo of tipo_comprobante" [value]="tipo.id_tipocomprobante">
+                                                            {{tipo.descripcion}}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6 col-sm-12">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Condiciones de pago</mat-label>
+                                                    <input matInput required [(ngModel)]="datos_factura.condiciones">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-12">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Tipo de cambio</mat-label>
+                                                    <input matInput type="number" required min="0" [(ngModel)]="datos_factura.tipo_cambio">
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12 col-sm-12">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Observaciones</mat-label>
+                                                    <textarea matInput placeholder=""></textarea>
+                                                  </mat-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-2 col-sm-12">
+                                                <mat-checkbox color="primary" [(ngModel)]="band_ine" class="example-margin">Complemento Ine</mat-checkbox>
+                                            </div>
+                                            <div class="col-lg-2 col-sm-12">
+                                                <mat-checkbox color="primary" [(ngModel)]="band_" class="example-margin">Complemento cataporte</mat-checkbox>
+                                            </div>
+                                        </div>
+                                        <div class="row d-flex justify-content-end">
+                                            <button *ngIf="band_button" class="btn btn-warning" (click)="changeTab()">Siguiente</button>
+                                        </div>
+                                    </div>
+                                </mat-tab>
+                                <mat-tab *ngIf="band_ine" label="Datos INE">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-sm-12">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Tipo de comite</mat-label>
+                                                    <mat-select >
+                                                        <mat-option [value]="1">Ejecutivo nacional</mat-option>
+                                                        <mat-option [value]="2">Ejecutivo estatal</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-lg-4 col-sm-12">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Tipo de proceso</mat-label>
+                                                    <mat-select >
+                                                        <mat-option [value]="1">Ordinario</mat-option>
+                                                        <mat-option [value]="2">Precampaña</mat-option>
+                                                        <mat-option [value]="3">Campaña</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-lg-4 col-sm-12">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>ID Conta</mat-label>
+                                                    <input matInput>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="row d-flex justify-content-end">
+                                            <button *ngIf="band_button" class="btn btn-warning" (click)="changeTab()">Siguiente</button>
+                                        </div>
+                                    </div>
+                                </mat-tab>
+                                <mat-tab *ngIf="band_" label="Datos cataporte">
+                                    <div class="container mt-3">
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <div class="input-group mb-3 ">
+                                                    <div class="input-group-prepend">
+                                                      <label class="input-group-text" for="inputGroupSelect01">Traslado internacional</label>
+                                                    </div>
+                                                    <select class="custom-select" id="inputGroupSelect01">
+                                                      <option selected>No</option>
+                                                      <option value="1">Si</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <div class="input-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                      <span class="input-group-text" id="">Distancia recorrida</span>
+                                                    </div>
+                                                    <input type="number" class="form-control border-left px-2" min="0">
+                                                  </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <mat-accordion class="w-100">
+                                                    <mat-expansion-panel>
+                                                        <mat-expansion-panel-header>
+                                                            <mat-panel-title>
+                                                                Ubicaciones
+                                                            </mat-panel-title>
+                                                        </mat-expansion-panel-header>
+                                                        <div class="container">
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <table mat-table [dataSource]="UbicaionSource" class="w-100 h-100">
+                                                                        
+                                                                        <ng-container matColumnDef="Lugar">
+                                                                            <th mat-header-cell *matHeaderCellDef>Lugar</th>
+                                                                            <td mat-cell *matCellDef="let element">
+                                                                                <input type="text" [(ngModel)]="element.Propietario" class="form-control">
+                                                                            </td>
+                                                                        </ng-container> 
+
+                                                                        <ng-container matColumnDef="Tipo">
+                                                                            <th mat-header-cell *matHeaderCellDef> Tipo Ubicación </th>
+                                                                            <td mat-cell *matCellDef="let element">
+                                                                                <select class="custom-select" id="inputGroupSelect01" [(ngModel)]="element.tipo" [disabled]="element.active">
+                                                                                    <option value="Origen">Origen</option>
+                                                                                    <option value="Destino">Destino</option>
+                                                                                  </select>
+                                                                            </td>
+                                                                        </ng-container>
+                                                                        
+                                                                        <ng-container matColumnDef="Ide">
+                                                                            <th mat-header-cell *matHeaderCellDef> Identificador </th>
+                                                                            <td mat-cell *matCellDef="let element">
+                                                                                <input type="text" [(ngModel)]="element.Ide" class="form-control">
+                                                                            </td>
+                                                                        </ng-container>
+                        
+                                                                        <ng-container matColumnDef="Distancia">
+                                                                            <th mat-header-cell *matHeaderCellDef> Distancia recorrida </th>
+                                                                            <td mat-cell *matCellDef="let element">
+                                                                                <input type="number" min="0" [(ngModel)]="element.Distancia" class="form-control">
+                                                                            </td>
+                                                                        </ng-container>
+                        
+                                                                        <ng-container matColumnDef="Fecha">
+                                                                            <th mat-header-cell *matHeaderCellDef>  
+                                                                                Facha salida / llegada
+                                                                            </th>
+                                                                            <td mat-cell *matCellDef="let element">
+                                                                                <input type="datetime" [(ngModel)]="element.HoraOut" class="form-control">
+                                                                            </td>
+                                                                        </ng-container>
+
+                                                                        <ng-container matColumnDef="Accion">
+                                                                            <th mat-header-cell *matHeaderCellDef>  
+                                                                                <button class="btn btn-info btn-sm ml-2" title="Nueva linea" (click)="nuevaLinea()">Nueva ubicación</button>
+                                                                            </th>
+                                                                            <td mat-cell *matCellDef="let element">
+                                                                                 <button class="btn btn-warning btn-sm" (click)="eliminarLinea(element.id_row)"><i class="fas fa-trash-alt"></i></button>
+                                                                            </td>
+                                                                        </ng-container>
+                                                                        <tr mat-header-row *matHeaderRowDef="displayedColumnsUbicaciones; sticky: true"></tr>
+                                                                        <tr mat-row *matRowDef="let row; columns: displayedColumnsUbicaciones;"></tr>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </mat-expansion-panel>
+                                                    <mat-expansion-panel>
+                                                        <mat-expansion-panel-header>
+                                                            <mat-panel-title>
+                                                                Mercancias
+                                                            </mat-panel-title>
+                                                        </mat-expansion-panel-header>
+                                                        <p>This is the primary content of the panel.</p>
+                                                    </mat-expansion-panel>
+                                                    <mat-expansion-panel>
+                                                        <mat-expansion-panel-header>
+                                                            <mat-panel-title>
+                                                                Transporte
+                                                            </mat-panel-title>
+                                                        </mat-expansion-panel-header>
+                                                        <p>This is the primary content of the panel.</p>
+                                                    </mat-expansion-panel>
+                                                </mat-accordion>  
+                                            </div>
+                                        </div>
+                                        <div class="row d-flex justify-content-end mt-2">
+                                            <button *ngIf="band_button" class="btn btn-warning" (click)="changeTab()">Siguiente</button>
+                                        </div>
+                                    </div>
+                                </mat-tab>
+                                <mat-tab label="Conceptos">
+                                    <div class="container mt-3">
+                                        <div class="row contenedor" style="max-height: 250px;overflow: auto;">
+                                            <table mat-table [dataSource]="dataSource" class="w-100 h-100">
+                                
+                                                <ng-container matColumnDef="Descripcion">
+                                                    <th mat-header-cell *matHeaderCellDef> Descripción </th>
+                                                    <td mat-cell *matCellDef="let element">
+                                                        <textarea 
+                                                        style="width: 98%;" 
+                                                        rows="1"
+                                                        class="form-control" 
+                                                        [(ngModel)]="element.descripcion"
+                                                        [matAutocomplete]="auto" 
+                                                        required></textarea>
+                                                        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionConcepto($event, element.id_row)">
+                                                            <mat-option *ngFor="let concepto of conceptos" [value]="concepto.descripcion" [id]="concepto.id_concepto_empresa">
+                                                                {{concepto.descripcion}}
+                                                            </mat-option>
+                                                        </mat-autocomplete>
+                                                    </td>
+                                                </ng-container>
+                                                
+                                                <ng-container matColumnDef="Cantidad">
+                                                    <th mat-header-cell *matHeaderCellDef> Cantidad </th>
+                                                    <td mat-cell *matCellDef="let element">
+                                                        <input style="width: 98%;" type="number" class="form-control" [(ngModel)]="element.cantidad" required min="1" (change)="calcularRowTotal(element.id_row)">
+                                                    </td>
+                                                </ng-container>
+                                                
+                                                <ng-container matColumnDef="Precio">
+                                                    <th mat-header-cell *matHeaderCellDef> Precio unitario</th>
+                                                    <td mat-cell *matCellDef="let element">
+                                                        <input style="width: 98%;" type="text" class="form-control" [(ngModel)]="element.precio" required min="1" (change)="calcularRowTotal(element.id_row)">
+                                                    </td>
+                                                </ng-container> 
+
+                                                <ng-container matColumnDef="Total">
+                                                    <th mat-header-cell *matHeaderCellDef> Total </th>
+                                                    <td mat-cell *matCellDef="let element">
+                                                        <input style="width: 98%;" type="text" class="form-control" [(ngModel)]="element.neto_print" disabled>
+                                                </ng-container>
+
+                                                <ng-container matColumnDef="Accion">
+                                                    <th mat-header-cell *matHeaderCellDef>  
+                                                        <button class="btn btn-info btn-sm ml-2" title="Nueva linea" (click)="nuevaLinea()">Nueva linea</button>
+                                                    </th>
+                                                    <td mat-cell *matCellDef="let element">
+                                                        <button *ngIf="element.btn" class="btn btn-warning btn-sm" (click)="eliminarLinea(element.id_row)"><i class="fas fa-trash-alt"></i></button>
+                                                    </td>
+                                                </ng-container>
+
+                                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                                            </table>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12 table-responsive px-0 mx-0">
+                                                <table class="table table-light">
+                                                    <thead>
+                                                        <tr class="text-center">
+                                                            <th>Subtotal</th>
+                                                            <th>Descuento</th>
+                                                            <th>IVA</th>
+                                                            <th>IEPS</th>
+                                                            <th>Otros Imp.</th>
+                                                            <th>Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="bg-white">
+                                                        <tr class="text-center">
+                                                            <td><strong> $ {{datos_factura.subtotal}} </strong></td>
+                                                            <td><strong> $ {{datos_factura.descuento_t}} </strong></td>
+                                                            <td><strong> $ {{datos_factura.iva_t}} </strong></td>
+                                                            <td><strong> $ {{datos_factura.ieps_t}} </strong></td>
+                                                            <td><strong> $ {{datos_factura.otros_t}} </strong></td>
+                                                            <td><strong> $ {{datos_factura.total}} </strong></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="row d-flex justify-content-end">
+                                            <button class="btn btn-success mt-2" (click)="altaFactura()">Guardar</button>
+                                        </div>
+                                    </div>
+                                </mat-tab>
+                            </mat-tab-group>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
+    <div class="modal-header">
+        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nuevo cliente</h2>
+        <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Visualizar cliente</h2>
+    </div>
+    <div class="modal-body">
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-lg-5 col-sm-12">
+                    <mat-form-field class="w-100">
+                      <mat-label>Razón social</mat-label>
+                      <input matInput [(ngModel)]="cliente.razon_social" name="serie" style="text-transform: uppercase;" required>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <mat-form-field class="w-100">
+                      <mat-label>RFC</mat-label>
+                      <input matInput [(ngModel)]="cliente.rfc" maxlength="14" name="serie" style="text-transform: uppercase;" required>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <mat-form-field class="w-100">
+                      <mat-label>CURP</mat-label>
+                      <input matInput [(ngModel)]="cliente.curp" maxlength="18" name="serie" style="text-transform: uppercase;">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-sm-12">
+                    <mat-form-field class="w-100">
+                      <mat-label>Email</mat-label>
+                      <input matInput [(ngModel)]="cliente.mail" name="serie" required>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6 col-sm-12">
+                    <mat-form-field class="w-100">
+                      <mat-label>Telefono</mat-label>
+                      <input matInput [(ngModel)]="cliente.telefono" name="serie" style="text-transform: uppercase;" maxlength="10">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-3 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Calle</mat-label>
+                  <input matInput [(ngModel)]="cliente.direccion.calle" name="calle" style="text-transform: uppercase;">
+                </mat-form-field>
+              </div>
+              <div class="col-lg-3 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Num. interior</mat-label>
+                  <input matInput [(ngModel)]="cliente.direccion.numero_interior" name="ni" style="text-transform: uppercase;">
+                </mat-form-field>
+              </div>
+              <div class="col-lg-3 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Num. exterior</mat-label>
+                  <input matInput [(ngModel)]="cliente.direccion.numero_exterior" name="ne" style="text-transform: uppercase;">
+                </mat-form-field>
+              </div>
+              <div class="col-lg-3 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Cruzamientos</mat-label>
+                  <input matInput [(ngModel)]="cliente.direccion.cruzamiento_uno" name="cruza" style="text-transform: uppercase;">
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-5 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Colonia</mat-label>
+                  <input matInput [(ngModel)]="cliente.direccion.colonia" name="colonia" style="text-transform: uppercase;">
+                </mat-form-field>
+              </div>
+              <div class="col-lg-2 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>C.P</mat-label>
+                  <input matInput #postalCode maxlength="5" [(ngModel)]="cliente.direccion.codigo_postal" required>
+                  <mat-hint align="end">{{postalCode.value.length}} / 5</mat-hint>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-5 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Buscar estado</mat-label>
+                  <input type="text"
+                          placeholder="Ingrese del estado"
+                          aria-label="Number"
+                          matInput
+                          (keyup)="buscarEstado()"
+                          [formControl]="filterControlEstado"
+                          [matAutocomplete]="autodos"
+                          style="text-transform: uppercase;">
+                  <mat-autocomplete #autodos="matAutocomplete" (optionSelected)="optionEstado($event)">
+                      <mat-option *ngFor="let estado of estados_busqueda" [value]="estado.estado" [id]="estado.id_estado">
+                          {{estado.estado}}
+                      </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-6 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Localidad</mat-label>
+                  <input matInput [(ngModel)]="cliente.direccion.localidad" name="loca" style="text-transform: uppercase;">
+                </mat-form-field>
+              </div>
+              <div class="col-lg-6 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Municipio</mat-label>
+                  <input matInput [(ngModel)]="cliente.direccion.municipio" name="muni" style="text-transform: uppercase;">
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-12 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Referencias</mat-label>
+                  <textarea matInput placeholder="Redacte una breve referencia de la empresa" [(ngModel)]="cliente.direccion.descripcion" name="ref" style="text-transform: uppercase;"></textarea>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="btn btn-success" (click)="altaCliente()">Guardar</button>
+    </div>
+</ng-template>
+<ng-template #ubicacion let-c="close" let-d="dismiss" class="modal-lg">
+    <div class="modal-header">
+        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nueva ubicación</h2>
+    </div>
+    <div class="modal-body">
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-lg-3 col-sm-12">
+                    <mat-form-field class="w-100">
+                      <mat-label>RFC</mat-label>
+                      <input matInput [(ngModel)]="cliente.rfc" maxlength="14" name="serie" style="text-transform: uppercase;" required>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <mat-form-field class="w-100">
+                      <mat-label>CURP</mat-label>
+                      <input matInput [(ngModel)]="cliente.curp" maxlength="18" name="serie" style="text-transform: uppercase;">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-sm-12">
+                    <mat-form-field class="w-100">
+                      <mat-label>Email</mat-label>
+                      <input matInput [(ngModel)]="cliente.mail" name="serie" required>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6 col-sm-12">
+                    <mat-form-field class="w-100">
+                      <mat-label>Telefono</mat-label>
+                      <input matInput [(ngModel)]="cliente.telefono" name="serie" style="text-transform: uppercase;" maxlength="10">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-3 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Calle</mat-label>
+                  <input matInput [(ngModel)]="cliente.direccion.calle" name="calle" style="text-transform: uppercase;">
+                </mat-form-field>
+              </div>
+              <div class="col-lg-3 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Num. interior</mat-label>
+                  <input matInput [(ngModel)]="cliente.direccion.numero_interior" name="ni" style="text-transform: uppercase;">
+                </mat-form-field>
+              </div>
+              <div class="col-lg-3 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Num. exterior</mat-label>
+                  <input matInput [(ngModel)]="cliente.direccion.numero_exterior" name="ne" style="text-transform: uppercase;">
+                </mat-form-field>
+              </div>
+              <div class="col-lg-3 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Cruzamientos</mat-label>
+                  <input matInput [(ngModel)]="cliente.direccion.cruzamiento_uno" name="cruza" style="text-transform: uppercase;">
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-5 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Colonia</mat-label>
+                  <input matInput [(ngModel)]="cliente.direccion.colonia" name="colonia" style="text-transform: uppercase;">
+                </mat-form-field>
+              </div>
+              <div class="col-lg-2 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>C.P</mat-label>
+                  <input matInput #postalCode maxlength="5" [(ngModel)]="cliente.direccion.codigo_postal" required>
+                  <mat-hint align="end">{{postalCode.value.length}} / 5</mat-hint>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-5 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Buscar estado</mat-label>
+                  <input type="text"
+                          placeholder="Ingrese del estado"
+                          aria-label="Number"
+                          matInput
+                          (keyup)="buscarEstado()"
+                          [formControl]="filterControlEstado"
+                          [matAutocomplete]="autodos"
+                          style="text-transform: uppercase;">
+                  <mat-autocomplete #autodos="matAutocomplete" (optionSelected)="optionEstado($event)">
+                      <mat-option *ngFor="let estado of estados_busqueda" [value]="estado.estado" [id]="estado.id_estado">
+                          {{estado.estado}}
+                      </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-6 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Localidad</mat-label>
+                  <input matInput [(ngModel)]="cliente.direccion.localidad" name="loca" style="text-transform: uppercase;">
+                </mat-form-field>
+              </div>
+              <div class="col-lg-6 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Municipio</mat-label>
+                  <input matInput [(ngModel)]="cliente.direccion.municipio" name="muni" style="text-transform: uppercase;">
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-12 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Referencias</mat-label>
+                  <textarea matInput placeholder="Redacte una breve referencia de la empresa" [(ngModel)]="cliente.direccion.descripcion" name="ref" style="text-transform: uppercase;"></textarea>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="btn btn-success" (click)="altaCliente()">Guardar</button>
+    </div>
+</ng-template>

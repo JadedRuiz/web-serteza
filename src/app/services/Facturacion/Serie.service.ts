@@ -8,19 +8,36 @@ import Swal from 'sweetalert2';
 @Injectable({
   providedIn: 'root'
 })
-export class FacturacionService {
+export class SerieService {
 
   constructor(
     public http: HttpClient
   ) { }
 
-  facObtenerFolio(id : any){
-    let url = SERVER_API+"facturacion/facObtenerFolio/"+id;
-    return this.http.get(url);
+  obtenerSeries(id_empresa : any){
+    let url = SERVER_API+"serie/obtenerSeries/"+id_empresa;
+    return this.http.get( url )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
+        return throwError(err);
+      }));
   }
-  
-  facAltaFactura(json : any){
-    let url = SERVER_API+"facturacion/facAltaFactura";
+
+  obtenerSeriePorId(id_serie : any){
+    let url = SERVER_API+"serie/obtenerSeriePorId/"+id_serie;
+    return this.http.get( url )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
+        return throwError(err);
+      }));
+  }
+
+  altaSerie(json : any){
+    let url = SERVER_API+"serie/altaSerie";
     return this.http.post( url, json )
       .pipe(map( (resp: any) => {
         return resp;
@@ -30,8 +47,8 @@ export class FacturacionService {
       }));
   }
 
-  obtenerFacturas(json : any){
-    let url = SERVER_API+"facturacion/obtenerFacturas";
+  modificarSerie(json : any){
+    let url = SERVER_API+"serie/modificarSerie";
     return this.http.post( url, json )
       .pipe(map( (resp: any) => {
         return resp;
@@ -41,17 +58,6 @@ export class FacturacionService {
       }));
   }
 
-  generarExcel(json : any){
-    let url = SERVER_API+"facturacion/generarExcel";
-    return this.http.post( url, json )
-      .pipe(map( (resp: any) => {
-        return resp;
-      }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error, 'error');
-        return throwError(err);
-      }));
-  }
-  
   opcionesFactura(json : any){
     let url = SERVER_API+"facturacion/opcionesFactura";
     return this.http.post( url, json )

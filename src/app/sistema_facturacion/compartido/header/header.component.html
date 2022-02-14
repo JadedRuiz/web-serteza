@@ -1,0 +1,72 @@
+<nav class="navbar navbar-top navbar-expand-md navbar-dark {{color}}" id="navbar-main">
+    <div class="container-fluid">
+      <!-- User -->
+      <ul class="navbar-nav align-items-center d-none d-md-flex">
+        <li class="nav-item m-auto">
+          <span class="mb-0 text-m text-white font-weight-bold">{{nombre_cliente}}</span>
+        </li>
+      </ul>
+      <ul class="navbar-nav align-items-center d-none d-md-flex ml-auto mt-2">
+        <li class="nav-item" ngbDropdown placement="bottom-right">
+          <a class="nav-link pr-0" role="button" ngbDropdownToggle>
+            <div class="media align-items-center">
+              <span class="avatar avatar-sm rounded-circle">
+                <img alt="Image placeholder" src="{{url_foto}}" width="40" height="40" style="object-fit: cover;
+                object-position: center center;">
+              </span>
+              <div class="media-body ml-2 d-none d-lg-block">
+                <span class="mb-0 text-sm  font-weight-bold pr-6">{{nombre}}</span>
+              </div>
+            </div>
+          </a>
+          <div class="dropdown-menu-arrow dropdown-menu-right" ngbDropdownMenu>
+            <div class=" dropdown-header noti-title">
+              <h6 class="text-overflow m-0">Bienvenido!</h6>
+            </div>
+            <a *ngIf="sistemas.length"  (click)="openModal(1)" class="dropdown-item" style="cursor: pointer;" disabled>
+              <i class="fas fa-sync"></i>
+              <span>Cambiar de sistema - En proceso...</span>
+            </a>
+            <a *ngIf="clientes.length" (click)="openModal(2)" class="dropdown-item" style="cursor: pointer;">
+              <i class="ni ni-curved-next"></i>
+              <span>Cambiar de cliente</span>
+            </a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header justify-content-center">
+      <h4 *ngIf="tipo_modal == 1" class="modal-title" id="modal-basic-title">¿Que sistema desea utilizar?</h4>
+      <h4 *ngIf="tipo_modal == 2" class="modal-title" id="modal-basic-title">¿Que cliente desea utilizar?</h4>
+    </div>
+    <div class="modal-body">
+      <form *ngIf="tipo_modal == 1">
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <div class="list-group">
+              <a *ngFor="let sistema of sistemas" (click)="eleccion(sistema.id_sistema)" style="cursor: pointer;" class="list-group-item list-group-item-action {{sistema.class}}" aria-current="true">
+                {{sistema.sistema}}
+              </a>
+            </div>
+          </div>
+        </div>
+      </form>
+      <form *ngIf="tipo_modal == 2">
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <div class="list-group">
+              <a *ngFor="let cliente of clientes" (click)="eleccion(cliente.id_cliente)" style="cursor: pointer;" class="list-group-item list-group-item-action {{cliente.class}}" aria-current="true">
+                {{cliente.cliente}}
+              </a>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer justify-content-center">
+      <button type="button" class="btn btn-warning" aria-label="Close" (click)="d('Cross click')">Cancelar</button>
+    </div>
+  </ng-template>
+  

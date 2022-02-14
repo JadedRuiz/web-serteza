@@ -79,6 +79,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
     sueldo_neto : "",
     fecha_mov : "",
     fecha_detalle : "",
+    fecha_antiguedad : "",
     descripcion : "",
     departamento : "",
     id_departamento : 0,
@@ -379,7 +380,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
           }
         }else{
           this.cerrarModal(4);
-          Swal.fire("Ha ocurrido un error", object.error.message, 'error');
+          Swal.fire("Ha ocurrido un error", object.message, 'error');
         }
       },
       (err : any) => {
@@ -415,7 +416,6 @@ export class ProcedimientoContratacionComponent implements OnInit {
   editarContratacion(id_registro : number){
     this.movimientos.forEach((element : any) => {
       if(element.id_registro == id_registro){
-        console.log(element);
         this.mostrarEmpresas();
         this.mostrarNominas();
         this.mostrarDepartamentos(element.id_empresa);
@@ -605,6 +605,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
       sueldo_neto : "",
       fecha_mov : "",
       fecha_detalle : "",
+      fecha_antiguedad : "",
       descripcion : "",
       departamento : "",
       id_departamento : 0,

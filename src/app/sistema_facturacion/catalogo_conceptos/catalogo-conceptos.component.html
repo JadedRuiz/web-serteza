@@ -1,0 +1,240 @@
+<div class="header {{color}}" style="height: 250px;">
+    <div class="container-fluid">
+    </div>
+</div>
+<div class="container-fluid mt--9">
+    <div class="row">
+        <div class="col-lg-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">CONCEPTOS</h4>
+                  <div class="card-category">
+                    <div class="row align-items-center">
+                        <div class="col-lg-4 col-sm-12">
+                            <mat-form-field class="w-100">
+                                <mat-label>Seleccionar empresa</mat-label>
+                                <input type="text"
+                                        placeholder="Ingrese el nombre o id de la empresa"
+                                        aria-label="Number"
+                                        matInput
+                                        (keyup)="buscarEmpresa()"
+                                        [formControl]="filterControlEmpresa"
+                                        [matAutocomplete]="auto"
+                                        style="text-transform: uppercase;">
+                                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionEmpresa($event)">
+                                    <mat-option *ngFor="let empresa of empresas_busqueda" [value]="empresa.empresa" [id]="empresa.id_empresa">
+                                        {{empresa.empresa}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-lg-4 col-sm-12">
+                        </div>
+                        <div class="col-lg-4 col-sm-12 text-right">
+                            <button class="btn btn-info" title="Nuevo concepto" (click)="nuevoConcepto()"><i class="fas fa-plus-square"></i></button>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12" style="overflow-x: scroll;">
+                            <table *ngIf="dataSource.data.length > 0; else pintaElse" mat-table [dataSource]="dataSource" class="w-100">
+                                
+                                <ng-container matColumnDef="Id">
+                                    <th mat-header-cell *matHeaderCellDef> Id </th>
+                                    <td mat-cell *matCellDef="let element"> {{element.id_concepto_empresa}} </td>
+                                </ng-container>
+                                
+                                <ng-container matColumnDef="Descripcion">
+                                    <th mat-header-cell *matHeaderCellDef> Descripcion </th>
+                                    <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+                                </ng-container>
+                                
+                                <ng-container matColumnDef="Descuento">
+                                    <th mat-header-cell *matHeaderCellDef> Descuento </th>
+                                    <td mat-cell *matCellDef="let element"> % {{element.descuento}} </td>
+                                </ng-container>
+    
+                                <ng-container matColumnDef="Iva">
+                                  <th mat-header-cell *matHeaderCellDef> IVA </th>
+                                  <td mat-cell *matCellDef="let element"> % {{element.iva}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="Ieps">
+                                    <th mat-header-cell *matHeaderCellDef> IEPS </th>
+                                    <td mat-cell *matCellDef="let element"> % {{element.ieps}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="Otros">
+                                    <th mat-header-cell *matHeaderCellDef> Otros </th>
+                                    <td mat-cell *matCellDef="let element"> % {{element.otros_imp}} </td>
+                                </ng-container>
+    
+                                <ng-container matColumnDef="Accion">
+                                    <th mat-header-cell *matHeaderCellDef> Accion </th>
+                                    <td mat-cell *matCellDef="let element">  
+                                        <button [matMenuTriggerFor]="menu" class="btn btn-info btn-sm"><i class="fas fa-ellipsis-v"></i></button>
+                                        <mat-menu #menu="matMenu">
+                                            <button mat-menu-item (click)="visualizar(element.id_concepto_empresa)">
+                                                <mat-icon><i class="far fa-eye"></i></mat-icon>
+                                                <span>Ver</span>
+                                            </button>
+                                        </mat-menu>
+                                    </td>
+                                </ng-container>
+        
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                            </table>
+                            <mat-paginator 
+                                [pageSizeOptions]="[5, 10, 20]"
+                                showFirstLastButtons 
+                                aria-label="Select page of periodic elements">
+                            </mat-paginator>
+                            <ng-template #pintaElse>
+                                <p class="text-center">Aún no se tiene conceptos en está empresa</p>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
+    <div class="modal-header">
+        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nuevo concepto</h2>
+        <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Visualizar concepto</h2>
+    </div>
+    <div class="modal-body">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-sm-12">
+                    <mat-form-field class="w-100">
+                        <mat-label>Descripción</mat-label>
+                        <input matInput [(ngModel)]="concepto.descripcion" name="desc" required>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6 col-sm-12">
+                    <mat-form-field class="w-100">
+                        <mat-label>Seleccionar unidad de medida</mat-label>
+                        <input type="text"
+                                placeholder="Ingrese su busqueda"
+                                aria-label="Number"
+                                matInput
+                                (keyup)="buscarUnidades()"
+                                [formControl]="filterControlUnidad"
+                                [matAutocomplete]="autoDos"
+                                style="text-transform: uppercase;"
+                                required>
+                        <mat-autocomplete #autoDos="matAutocomplete" (optionSelected)="optionUnidad($event)">
+                            <mat-option *ngFor="let unidad of unidades" [value]="unidad.Descripcion" [id]="unidad.id_UnidadMedida">
+                                {{unidad.Descripcion}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6 col-sm-12">
+                    <mat-form-field class="w-100">
+                        <mat-label>Seleccionar servicio</mat-label>
+                        <input type="text"
+                                placeholder="Ingrese su busqueda"
+                                aria-label="Number"
+                                matInput
+                                (keyup)="buscarServicio()"
+                                [formControl]="filterControlServicio"
+                                [matAutocomplete]="autoTres"
+                                style="text-transform: uppercase;"
+                                required>
+                        <mat-autocomplete #autoTres="matAutocomplete" (optionSelected)="optionServicio($event)">
+                            <mat-option *ngFor="let servicio of servicios" [value]="servicio.Descripcion" [id]="servicio.id_ClaveProdServ">
+                                {{servicio.Descripcion}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <label for="iva">Descuento</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">%</span>
+                        </div>
+                        <input type="text" class="form-control" [(ngModel)]="concepto.descuento" name="descuento">
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <label for="iva">IVA</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">%</span>
+                        </div>
+                        <input type="text" class="form-control" [(ngModel)]="concepto.iva" name="iva">
+                        <div class="input-group-append">
+                            <button  class="btn btn-info" mat-icon-button [matMenuTriggerFor]="menuUno" title="Tipo">
+                                {{concepto.tipo_iva}}
+                            </button>
+                            <mat-menu #menuUno="matMenu">
+                                <button mat-menu-item (click)="concepto.tipo_iva = 'T'">
+                                    <span>T - Trasladado</span>
+                                </button>
+                                <button mat-menu-item (click)="concepto.tipo_iva = 'R'">
+                                    <span>R - Retenido</span>
+                                </button>
+                            </mat-menu>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <label for="iva">IEPS</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">%</span>
+                        </div>
+                        <input type="text" class="form-control" [(ngModel)]="concepto.ieps" name="ieps">
+                        <div class="input-group-append">
+                            <button  class="btn btn-info" mat-icon-button [matMenuTriggerFor]="menuDos" title="Tipo">
+                                {{concepto.tipo_ieps}}
+                            </button>
+                            <mat-menu #menuDos="matMenu">
+                                <button mat-menu-item (click)="concepto.tipo_ieps = 'T'">
+                                    <span>T - Trasladado</span>
+                                </button>
+                                <button mat-menu-item (click)="concepto.tipo_ieps = 'R'">
+                                    <span>R - Retenido</span>
+                                </button>
+                            </mat-menu>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <label for="iva">Otros impuestos</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">%</span>
+                        </div>
+                        <input type="text" class="form-control" [(ngModel)]="concepto.otros" name="otros">
+                        <div class="input-group-append">
+                            <button  class="btn btn-info" mat-icon-button [matMenuTriggerFor]="menuTres" title="Tipo">
+                                {{concepto.tipo_otros}}
+                            </button>
+                            <mat-menu #menuTres="matMenu">
+                                <button mat-menu-item (click)="concepto.tipo_otros = 'T'">
+                                    <span>T - Trasladado</span>
+                                </button>
+                                <button mat-menu-item (click)="concepto.tipo_otros = 'R'">
+                                    <span>R - Retenido</span>
+                                </button>
+                            </mat-menu>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+        <button *ngIf="tipo_modal == 1" type="button" class="btn btn-success" (click)="altaConcepto()">Guardar</button>
+        <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success" (click)="modificarConcepto()">Guardar</button>
+    </div>
+</ng-template>

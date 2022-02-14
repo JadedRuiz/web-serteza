@@ -53,7 +53,7 @@ export class SidebarComponent implements OnInit {
           {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08'},
           {path: 'catalogo_empresa', title: 'Empresas', icon: 'ni-building'},
           {path: 'catalogo_cliente', title: 'Clientes', icon: 'ni-collection'},
-          // {path: 'catalogo_tope_conceptos', title: 'Tope conceptos', icon: 'ni-collection  text-orange'}
+          {path: 'catalogo_sucursal', title: 'Sucursales', icon: 'fas fa-map-marker-alt'}
         ], bg : "orange"
       },
       { path: '#', title: 'Procesos', icon: 'ni-settings text-red', id:'rh_procesos', band: true, tipo : "collapse",

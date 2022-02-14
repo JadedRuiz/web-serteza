@@ -118,7 +118,7 @@ export class LoginComponent implements OnInit {
         }
       });
     }
-    if(this.sistema_elegido == "2" || this.sistema_elegido == "7"){
+    if(this.sistema_elegido == "2" || this.sistema_elegido == "7" || this.sistema_elegido == '8'){
       if(tipo != 1){
         this.closeModal();
       }
@@ -176,7 +176,14 @@ export class LoginComponent implements OnInit {
       if(tipo != 1){
         this.closeModal();
       }
-      this.router.navigate(["sistema_facturacion/inicio"]);
+      this.router.navigate(["sistema_timbrado/inicio"]);
+    }
+    if(this.sistema_elegido == "8"){
+      window.sessionStorage.setItem("cliente",id);
+      if(tipo != 1){
+        this.closeModal();
+      }
+      this.router.navigate(["sistema_facturacion/dashboard"]);
     }
     if(this.sistema_elegido == "3"){
       window.sessionStorage["empresa"] = id;

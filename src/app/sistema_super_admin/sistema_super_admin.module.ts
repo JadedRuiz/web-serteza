@@ -24,6 +24,7 @@ import {MatListModule} from '@angular/material/list';
 import {MatTabsModule} from '@angular/material/tabs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {BrowserModule} from '@angular/platform-browser';
+import { CatalogoSucursalComponent } from './catalogo_sucursal/catalogo_sucursal.component';
 
 
 @NgModule({
@@ -32,6 +33,7 @@ import {BrowserModule} from '@angular/platform-browser';
     CatalogoClienteComponent,
     CatalogoUsuarioComponent,
     CatalogoEmpresaComponent,
+    CatalogoSucursalComponent,
     CatalogoTopeConceptosComponent,
     ProcedimientoUsuarioComponent,
     ProcedimientoEmpresaComponent

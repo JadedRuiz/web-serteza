@@ -273,7 +273,7 @@
               </div>
           </div>
           <div class="form-row w-100">
-              <div class="form-group col-sm-12 col-lg-4">
+              <div class="form-group col-sm-12 col-lg-3">
                   <mat-form-field class="w-100">
                       <mat-label>Tipo de nómina</mat-label>
                       <mat-select [(ngModel)]="detalle.id_nomina">
@@ -281,7 +281,7 @@
                       </mat-select>
                   </mat-form-field>
               </div>
-              <div class="form-group col-sm-12 col-lg-4">
+              <div class="form-group col-sm-12 col-lg-3">
                   <mat-form-field class="w-100">
                       <mat-label>Selecciona la sucursal</mat-label>
                       <mat-select [(ngModel)]="detalle.id_sucursal">
@@ -289,14 +289,22 @@
                       </mat-select>
                   </mat-form-field>
               </div>
-              <div class="form-group col-sm-12 col-lg-4">
-                  <mat-form-field class="w-100">
+              <div class="form-group col-sm-12 col-lg-3">
+                    <mat-form-field class="w-100">
                       <mat-label>Fecha de ingreso</mat-label>
                       <input matInput [matDatepicker]="picker" [(ngModel)]="detalle.fecha_detalle">
                       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                       <mat-datepicker #picker></mat-datepicker>
-                    </mat-form-field>
+                    </mat-form-field>   
               </div>
+              <div class="form-group col-sm-12 col-lg-3">
+                <mat-form-field class="w-100">
+                  <mat-label>Fecha de antiguedad</mat-label>
+                  <input matInput [matDatepicker]="pickerTres" [(ngModel)]="detalle.fecha_antiguedad">
+                  <mat-datepicker-toggle matSuffix [for]="pickerTres"></mat-datepicker-toggle>
+                  <mat-datepicker #pickerTres></mat-datepicker>
+                </mat-form-field>   
+              </div>  
           </div>
           <div class="form-row">
               <div class="col-lg-12 col-sm-12">

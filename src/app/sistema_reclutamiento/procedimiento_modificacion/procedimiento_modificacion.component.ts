@@ -76,6 +76,7 @@ export class ProcedimientoModificacionComponent implements OnInit {
     sueldo_neto : "",
     fecha_mov : "",
     fecha_detalle : "",
+    fecha_antiguedad : "",
     descripcion : "",
     departamento : "",
     id_departamento : 0,
@@ -91,6 +92,7 @@ export class ProcedimientoModificacionComponent implements OnInit {
     sueldo : "",
     sueldo_neto : "",
     fecha_detalle : "",
+    fecha_antiguedad : "",
     descripcion : "",
     url_foto : "./assets/img/defaults/usuario_por_defecto.svg"
   };
@@ -186,6 +188,7 @@ export class ProcedimientoModificacionComponent implements OnInit {
         this.detalle_atiguo.sueldo = object.data.sueldo_diario;
         this.detalle_atiguo.sueldo_neto = object.data.sueldo_integrado;
         this.detalle_atiguo.fecha_detalle = object.data.fecha_ingreso;
+        this.detalle_atiguo.fecha_antiguedad = object.data.fecha_antiguedad;
         this.detalle_atiguo.descripcion = object.data.descripcion;
         this.detalle.puesto = object.data.puesto;
         this.detalle.id_puesto = object.data.id_puesto;
@@ -204,6 +207,7 @@ export class ProcedimientoModificacionComponent implements OnInit {
         this.detalle.sueldo = object.data.sueldo_diario;
         this.detalle.sueldo_neto = object.data.sueldo_integrado;
         this.detalle.fecha_detalle = object.data.fecha_ingreso;
+        this.detalle.fecha_antiguedad = object.data.fecha_antiguedad;
         this.detalle.descripcion = object.data.descripcion;
       }else{
         Swal.fire("Aviso","No se ha podido encontrar la información del empleado","info");
@@ -480,6 +484,7 @@ export class ProcedimientoModificacionComponent implements OnInit {
             this.detalle_atiguo.sueldo = object.data.sueldo_diario;
             this.detalle_atiguo.sueldo_neto = object.data.sueldo_integrado;
             this.detalle_atiguo.fecha_detalle = object.data.fecha_ingreso;
+            this.detalle_atiguo.fecha_antiguedad = object.data.fecha_antiguedad;
             this.detalle_atiguo.descripcion = object.data.descripcion;
             this.detalle_atiguo.url_foto = element.url_foto;
           }else{
@@ -619,6 +624,7 @@ export class ProcedimientoModificacionComponent implements OnInit {
       sueldo_neto : "",
       fecha_mov : "",
       fecha_detalle : "",
+      fecha_antiguedad : "",
       descripcion : "",
       departamento : "",
       id_departamento : 0,
@@ -635,6 +641,7 @@ export class ProcedimientoModificacionComponent implements OnInit {
       sueldo : "",
       sueldo_neto : "",
       fecha_detalle : "",
+      fecha_antiguedad : "",
       descripcion : "",
       url_foto : "./assets/img/defaults/usuario_por_defecto.svg"
     };
@@ -653,7 +660,7 @@ export class ProcedimientoModificacionComponent implements OnInit {
       this.modal = this.modalService.open(this.modal_mov,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
     }
     if(tipo == 2){
-      this.buscarCandidato(1);
+      // this.buscarCandidato(1);
       this.modal_control_alta = this.modalService.open(this.modal_alta,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop'});
     }
   }

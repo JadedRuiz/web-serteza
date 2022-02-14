@@ -13,6 +13,72 @@ export class ConceptoService {
   constructor(
     public http: HttpClient
   ) { }
+  
+  facServiciosAutocomplete(json : any){
+    let url = SERVER_API+"concepto/facServiciosAutocomplete";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+
+  facUnidadesAutocomplete(json : any){
+    let url = SERVER_API+"concepto/facUnidadesAutocomplete";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+
+  facAltaConcepto(json : any){
+    let url = SERVER_API+"concepto/facAltaConcepto";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+
+  facModificarConcepto(json : any){
+    let url = SERVER_API+"concepto/facModificarConcepto";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+
+  facObtenerConceptosEmpresa(id : any){
+    let url = SERVER_API+"concepto/facObtenerConceptosEmpresa/"+id;
+    return this.http.get(url)
+    .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+        return throwError(err);
+      }));
+  }
+
+  facObtenerConceptosPorId(id : any){
+    let url = SERVER_API+"concepto/facObtenerConceptosPorId/"+id;
+    return this.http.get(url)
+    .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+        return throwError(err);
+      }));
+  }
 
   autocomplete(json : any){
     let url = SERVER_API+"concepto/autocomplete";

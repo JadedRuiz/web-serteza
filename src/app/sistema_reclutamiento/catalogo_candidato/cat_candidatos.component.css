@@ -1,3 +1,4 @@
+/deep/ .cdk-overlay-container { z-index: 9999; }
 .hover_img_user{
     position: relative;
 }

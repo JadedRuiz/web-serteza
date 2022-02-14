@@ -150,8 +150,8 @@ export class CatalogoClienteComponent implements OnInit {
   }
 
   nuevoCliente(){
-    this.tipo_modal == 1;
     this.limpiarCampos();
+    this.tipo_modal = 1;
     this.openModal();
   }
 

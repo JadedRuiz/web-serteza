@@ -16,6 +16,8 @@ import { FormControl} from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { filter } from 'rxjs/operators';
+import { CompartidoService } from 'src/app/services/Compartido/Compartido.service';
+import { DateAdapter } from '@angular/material/core';
   
 @Component({
   selector: 'app-candidatos-original',
@@ -37,6 +39,9 @@ export class CatalogoCandidatosComponent implements OnInit {
   public modal : any;
   public estatus_color = "";
   public modal_camera : any;
+  filterControlEstado = new FormControl();
+  estados : any;
+  estados_busqueda : any;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
   public activo = true;
@@ -63,6 +68,7 @@ export class CatalogoCandidatosComponent implements OnInit {
   public palabra = "";
   //Autocomplete
   myControl = new FormControl();
+  tipo_modal = 0;
 
   colonias = [
     "Primero ingresa el Codigo Postal"
@@ -74,17 +80,21 @@ export class CatalogoCandidatosComponent implements OnInit {
     public cp_service: LocalidadService,
     private candidato_service: CandidatoService,
     private sanitizer: DomSanitizer,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private compartido_service : CompartidoService,
+    private dateAdapter: DateAdapter<Date>
   ) {
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
     this.modal_camera = NgbModalRef;
     this.modal = NgbModalRef;
     this.paginator = MatPaginator;
     this.candidatos_busqueda = [];
+    this.dateAdapter.setLocale('en-GB');
    }
 
   ngOnInit(): void {
     this.mostrarCandidatos();
+    this.mostrarEstado();
     WebcamUtil.getAvailableVideoInputs()
     .then((mediaDevices: MediaDeviceInfo[]) => {
       this.isCameraExist = mediaDevices && mediaDevices.length > 0;
@@ -135,6 +145,43 @@ export class CatalogoCandidatosComponent implements OnInit {
         }
       })
     }
+  }
+
+  mostrarEstado(){
+    this.estados_busqueda = [];
+    this.estados = [];
+    this.compartido_service.obtenerCatalogo("gen_cat_estados")
+    .subscribe((object : any) => {
+      if(object.length > 0){
+        this.estados_busqueda = object;
+        this.estados = object;
+      }
+    });
+  }
+
+  buscarEstado(){
+    this.estados_busqueda = [];
+    this.estados.forEach((element : any) => {
+      this.estados_busqueda.push({
+        "estado" : element.estado,
+        "id_estado" : element.id_estado
+      });
+    });
+    if(this.filterControlEstado.value.length > 0){
+      this.estados_busqueda = [];
+      this.estados.forEach((element : any) => {
+        if(element.estado.includes(this.filterControlEstado.value.toUpperCase())){ 
+          this.estados_busqueda.push({
+            "estado" : element.estado,
+            "id_estado" : element.id_estado
+          })
+        }
+      });
+    }
+  }
+
+  optionEstado(value : any){
+    this.candidato.direccion.estado = value.option.id;
   }
 
   altaCandidato(){
@@ -209,9 +256,11 @@ export class CatalogoCandidatosComponent implements OnInit {
     this.candidato_service.obtenerCandidatoPorId(folio)
     .subscribe( (object : any)=>{
       if(object.ok){
+        this.tipo_modal = 2;
         this.openModal();
-        jQuery("#guardar").hide();
-        jQuery("#editar").show();
+        if(object.data[0].id_status == 1){
+          this.bandera_activo = true;
+        }
         //Datos de direccion
         this.candidato.direccion.id_direccion = object.data[0].id_direccion;
         this.candidato.direccion.calle = object.data[0].calle;
@@ -223,15 +272,15 @@ export class CatalogoCandidatosComponent implements OnInit {
         this.candidato.direccion.colonia = object.data[0].colonia;
         this.candidato.direccion.localidad = object.data[0].localidad;
         this.candidato.direccion.municipio = object.data[0].municipio;
-        this.candidato.direccion.estado = object.data[0].estado;
+        
+        this.filterControlEstado.setValue(object.data[0].estado);
+        this.candidato.direccion.estado = object.data[0].id_estado;
         this.candidato.direccion.descripcion = object.data[0].descripcion_direccion;
         //Datos de usuario
         this.candidato.id_candidato = object.data[0].id_candidato;
         this.candidato.apellido_paterno = object.data[0].apellido_paterno;
         this.candidato.apellido_materno = object.data[0].apellido_materno;
-        if(object.data[0].id_status == 1){
-          this.bandera_activo = true;
-        }
+        
         this.candidato.id_statu = object.data[0].id_status;
         this.candidato.nombre = object.data[0].nombre;
         this.candidato.rfc = object.data[0].rfc;
@@ -269,9 +318,9 @@ export class CatalogoCandidatosComponent implements OnInit {
         && this.direccion.numero_interior == ""
         ){
           Swal.fire({
-            title: '¿Estas seguro de modificar una empresa sin ningun dato de dirección?',
-            text: "El empresa se modificará sin domicilio, pero puedes actulizar su información en cualquier momento",
-            icon: 'warning',
+            title: '¿Estas seguro de agregar un candidato sin ninguna dato de dirección?',
+            text: "El candidato se registrará sin domicilio, pero puedes actulizar su información en cualquier momento",
+            icon: 'info',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
@@ -288,9 +337,9 @@ export class CatalogoCandidatosComponent implements OnInit {
         if(band){
           if(this.fotografia.docB64 == ""){
             Swal.fire({
-              title: '¿Estas seguro de modificar al candidato sin ningun foto?',
-              text: "El candidato se modificará sin foto, pero puedes actulizar su información en cualquier momento",
-              icon: 'warning',
+              title: '¿Estas seguro de agregar al candidato sin ningun foto?',
+              text: "El candidato se registrará sin foto, pero puedes actulizar su información en cualquier momento",
+              icon: 'info',
               showCancelButton: true,
               confirmButtonColor: '#3085d6',
               cancelButtonColor: '#d33',
@@ -298,7 +347,7 @@ export class CatalogoCandidatosComponent implements OnInit {
               cancelButtonText : "Cancelar"
             }).then((result) => {
               if (result.isConfirmed) {
-                band = true;
+                this.confirmar("Confirmación","¿Seguro que desea editar la información?","info",2);
               }else{
                 band = false;
               }
@@ -414,9 +463,8 @@ export class CatalogoCandidatosComponent implements OnInit {
 
   guardar(){
     this.limpiarCampos();
+    this.tipo_modal = 1;
     this.openModal();
-    jQuery("#guardar").show();
-    jQuery("#editar").hide();
   }
 
   optionCandidato(event : any) {

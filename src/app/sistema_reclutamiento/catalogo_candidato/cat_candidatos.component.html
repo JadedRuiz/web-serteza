@@ -118,18 +118,10 @@
 </div>
 <ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
     <div class="modal-header">
-        <h2 class="modal-title" id="tituloModal">Nuevo candidato</h2>
+        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nuevo candidato</h2>
+        <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Visualizar candidato</h2>
     </div>
     <div class="modal-body">
-        <div class="form-row col-12 mb-2" style="display: flex;justify-content: flex-end;">
-          <select [(ngModel)]="candidato.id_statu" class="form-control" style="width: 200px;" disabled>
-              <option default value="6">En reclutamiento</option>
-              <option value="1">Activo</option>
-              <option value="2">Baja</option>
-              <option value="3">Suspendido</option>
-              <option value="5">Solicitud</option>
-          </select>
-        </div>
         <div class="form-row">
             <div class="form-group col-12">
               <ul class="nav nav-tabs profile-tab" role="tablist">
@@ -139,13 +131,13 @@
                 <li class="nav-item">
                   <a class="nav-link " data-toggle="tab" href="#direccion_tab" role="tab" aria-selected="false">Dirección</a>
                 </li>
-                <!-- <li class="nav-item" *ngIf="bandera_activo">
-                  <a class="nav-link" data-toggle="tab" href="#movientos_tab" role="tab" aria-selected="false">Movimientos</a>
-                </li> -->
+                <li class="nav-item" *ngIf="bandera_activo">
+                  <a class="nav-link" data-toggle="tab" href="#movientos_tab" role="tab" aria-selected="false">Detalles contratación</a>
+                </li>
               </ul>
             </div>
             <div class="tab-content col-12" id="myTabContent">
-                <div class="tab-pane active col-12" id="empresa_tab" role="tabpanel">
+                <div class="tab-pane active col-12" id="empresa_tab" role="tabpanel" style="height: 450px;overflow-y: auto;">
                     <div class="container col-12">
                         <div class="row">
                             <div class="col-lg-2 col-sm-12">
@@ -257,132 +249,178 @@
                         </div>
                     </div>
               </div>
-              <div class="tab-pane col-12" id="direccion_tab" role="tabpanel">
-                <div class="form-row">
-                  <div class="form-group col-md-2">
-                    <label for="calle">Calle</label>
-                    <input [(ngModel)]="candidato.direccion.calle" style="text-transform: uppercase;" name="calle" type="text" class="form-control" id="calle" required>
-                  </div>
-                  <div class="form-group col-md-2">
-                    <label for="num_ext">Número ext.</label>
-                    <input [(ngModel)]="candidato.direccion.numero_exterior" style="text-transform: uppercase;" name="num_exterior" type="text" class="form-control" id="num_ext" placeholder="">
-                  </div>
-                  <div class="form-group col-md-2">
-                    <label for="num_int">Número int.</label>
-                    <input [(ngModel)]="candidato.direccion.numero_interior" style="text-transform: uppercase;" name="num_interior" type="text" class="form-control" id="num_int" placeholder="">
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="cruzamientos_form">Cruzamientos</label>
-                    <div class="form-inline form-row align-items-center" id="cruzamientos_form">
-                      <input [(ngModel)]="candidato.direccion.cruzamiento_uno" style="text-transform: uppercase;" name="cruzamiento_ext" type="text" class="form-control col-5" id="cruzamientos_int" placeholder="">
-                      <p class="text-center col-2"> y </p>
-                      <input [(ngModel)]="candidato.direccion.cruzamiento_dos" style="text-transform: uppercase;" name="cruzamiento_int" type="text" class="form-control col-5" id="cruzamientos_ext" placeholder="">
+              <div class="tab-pane col-12" id="direccion_tab" role="tabpanel" style="height: 450px;overflow-y: auto;">
+                <div class="container mt-3">
+                  <div class="row">
+                    <div class="col-lg-3 col-sm-12">
+                      <mat-form-field class="w-100">
+                        <mat-label>Calle</mat-label>
+                        <input matInput [(ngModel)]="candidato.direccion.calle" name="calle" style="text-transform: uppercase;">
+                      </mat-form-field>
+                    </div>
+                    <div class="col-lg-3 col-sm-12">
+                      <mat-form-field class="w-100">
+                        <mat-label>Num. interior</mat-label>
+                        <input matInput [(ngModel)]="candidato.direccion.numero_interior" name="ni" style="text-transform: uppercase;">
+                      </mat-form-field>
+                    </div>
+                    <div class="col-lg-3 col-sm-12">
+                      <mat-form-field class="w-100">
+                        <mat-label>Num. exterior</mat-label>
+                        <input matInput [(ngModel)]="candidato.direccion.numero_exterior" name="ne" style="text-transform: uppercase;">
+                      </mat-form-field>
+                    </div>
+                    <div class="col-lg-3 col-sm-12">
+                      <mat-form-field class="w-100">
+                        <mat-label>Cruzamientos</mat-label>
+                        <input matInput [(ngModel)]="candidato.direccion.cruzamiento_uno" name="cruza" style="text-transform: uppercase;">
+                      </mat-form-field>
                     </div>
                   </div>
-                  <div class="form-group col-md-2">
-                    <label for="codigo_postal">Código postal</label>
-                    <div class="input-group mb-3">
-                      <input [(ngModel)]="candidato.direccion.codigo_postal" name="codigo_postal" id="codigo_postal" type="text" class="form-control" aria-describedby="icono" maxlength="5">
-                      <!-- <div class="input-group-append">
-                        <span class="input-group-text" id="icono" style="cursor:pointer;" (click)="getDatos()"><i class="ni ni-fat-add"></i></span>
-                      </div> -->
+                  <div class="row">
+                    <div class="col-lg-5 col-sm-12">
+                      <mat-form-field class="w-100">
+                        <mat-label>Colonia</mat-label>
+                        <input matInput [(ngModel)]="candidato.direccion.colonia" name="colonia" style="text-transform: uppercase;">
+                      </mat-form-field>
+                    </div>
+                    <div class="col-lg-2 col-sm-12">
+                      <mat-form-field class="w-100">
+                        <mat-label>C.P</mat-label>
+                        <input matInput #postalCode maxlength="5" [(ngModel)]="candidato.direccion.codigo_postal">
+                        <mat-hint align="end">{{postalCode.value.length}} / 5</mat-hint>
+                      </mat-form-field>
+                    </div>
+                    <div class="col-lg-5 col-sm-12">
+                      <mat-form-field class="w-100">
+                        <mat-label>Buscar estado</mat-label>
+                        <input type="text"
+                                placeholder="Ingrese del estado"
+                                aria-label="Number"
+                                matInput
+                                (keyup)="buscarEstado()"
+                                [formControl]="filterControlEstado"
+                                [matAutocomplete]="autodos"
+                                style="text-transform: uppercase;">
+                        <mat-autocomplete #autodos="matAutocomplete" (optionSelected)="optionEstado($event)">
+                            <mat-option *ngFor="let estado of estados_busqueda" [value]="estado.estado" [id]="estado.id_estado">
+                                {{estado.estado}}
+                            </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-12">
+                      <mat-form-field class="w-100">
+                        <mat-label>Localidad</mat-label>
+                        <input matInput [(ngModel)]="candidato.direccion.localidad" name="loca" style="text-transform: uppercase;">
+                      </mat-form-field>
+                    </div>
+                    <div class="col-lg-6 col-sm-12">
+                      <mat-form-field class="w-100">
+                        <mat-label>Municipio</mat-label>
+                        <input matInput [(ngModel)]="candidato.direccion.municipio" name="muni" style="text-transform: uppercase;">
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-12">
+                      <mat-form-field class="w-100">
+                        <mat-label>Referencias</mat-label>
+                        <textarea matInput placeholder="Redacte una breve referencia de la empresa" [(ngModel)]="candidato.direccion.descripcion" name="ref" style="text-transform: uppercase;"></textarea>
+                      </mat-form-field>
                     </div>
                   </div>
                 </div>
-                <div class="form-row">
-                  <div class="form-group col-md-3">
-                    <label for="colonia">Colonia</label>
-                    <!-- <select [(ngModel)]="candidato.direccion.colonia" name="colonia" type="text" class="form-control" (change)="modificarMunicipio()" id="colonia" placeholder="">
-                      <option *ngFor="let colonia of colonias">{{colonia}}</option>
-                    </select> -->
-                    <input [(ngModel)]="candidato.direccion.colonia" style="text-transform: uppercase;" name="colonia" id="colonia" type="text" class="form-control">
+                
+              </div>
+              <div *ngIf="bandera_activo" class="tab-pane col-12" id="movientos_tab" role="tabpanel" style="height: 450px;overflow-y: auto;">
+                <div class="row">
+                  <div class="col-lg-6 col-sm-12">
+                    <mat-form-field class="w-100">
+                      <mat-label>Empresa</mat-label>
+                      <input matInput [(ngModel)]="info_contrato.informacion_contrato.empresa" type="text" min="0">
+                    </mat-form-field>
                   </div>
-                  <div class="form-group col-md-3">
-                    <label for="localidad">Localidad</label>
-                    <input [(ngModel)]="candidato.direccion.localidad" style="text-transform: uppercase;" name="localidad" type="text" class="form-control" id="localidad" placeholder="">
+                  <div class="col-lg-3 col-sm-12">
+                    <mat-form-field class="w-100">
+                      <mat-label>Departamento</mat-label>
+                      <input matInput [(ngModel)]="info_contrato.informacion_contrato.departamento" type="text" min="0">
+                    </mat-form-field>
                   </div>
-                  <div class="form-group col-md-3">
-                    <label for="municipio">Municipio</label>
-                    <input [(ngModel)]="candidato.direccion.municipio" style="text-transform: uppercase;" name="municipio" type="text" class="form-control" id="municipio">
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="estado">Estado</label>
-                    <input [(ngModel)]="candidato.direccion.estado" style="text-transform: uppercase;" name="estado" type="text" class="form-control" id="estado">
+                  <div class="col-lg-3 col-sm-12">
+                    <mat-form-field class="w-100">
+                      <mat-label>Puesto</mat-label>
+                      <input matInput [(ngModel)]="info_contrato.informacion_contrato.puesto" type="text" min="0">
+                    </mat-form-field>
                   </div>
                 </div>
                 <div class="row">
-                    <div class="col-12">
-                        <div class="form-group"> 
-                            <label for="desc_dir_empresa">Descripción</label>
-                            <textarea [(ngModel)]="candidato.direccion.descripcion" name="desc_dir_empresa" class="form-control" rows="5" id="desc_dir_empresa" style="text-transform: uppercase;"></textarea>
-                        </div>
+                    <div class="col-lg-3 col-sm-12">
+                      <mat-form-field class="w-100">
+                        <mat-label>Fecha de alta</mat-label>
+                        <input matInput [matDatepicker]="picker" [(ngModel)]="info_contrato.informacion_contrato.fecha_alta">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                      </mat-form-field> 
+                    </div>
+                    <div class="col-lg-3 col-sm-12">
+                      <mat-form-field class="w-100">
+                        <mat-label>Fecha de antiguedad</mat-label>
+                        <input matInput [matDatepicker]="pickerDos" [(ngModel)]="info_contrato.informacion_contrato.fecha_antiguedad">
+                        <mat-datepicker-toggle matSuffix [for]="pickerDos"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerDos></mat-datepicker>
+                      </mat-form-field>
+                    </div>
+                    <div class="col-lg-3 col-sm-12">
+                        <mat-form-field class="w-100">
+                            <mat-label>Sueldo diario</mat-label>
+                            <input matInput [(ngModel)]="info_contrato.informacion_contrato.sueldo_diario" type="text" min="0">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-3 col-sm-12">
+                        <mat-form-field class="w-100">
+                            <mat-label>Sueldo neto</mat-label>
+                            <input matInput [(ngModel)]="info_contrato.informacion_contrato.sueldo_integrado" type="text" min="0">
+                        </mat-form-field>
                     </div>
                 </div>
-              </div>
-              <!-- <div *ngIf="bandera_activo" class="tab-pane col-12" id="movientos_tab" role="tabpanel">
-                <div class="form-row">
-                  <div class="form-group col-md-3">
-                    <label for="estado">Empresa</label>
-                    <input [(ngModel)]="info_contrato.informacion_contrato.empresa" name="empresa" type="text" class="form-control" id="empresa" disabled>
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="departamento">Departamento</label>
-                    <input [(ngModel)]="info_contrato.informacion_contrato.departamento" name="departamento" type="text" class="form-control" id="departamento" disabled>
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="puesto">Puesto</label>
-                    <input [(ngModel)]="info_contrato.informacion_contrato.puesto" name="puesto" type="text" class="form-control" id="puesto" disabled>
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="sueldo">Sueldo</label>
-                    <input [(ngModel)]="info_contrato.informacion_contrato.sueldo" name="sueldo" type="text" class="form-control" id="sueldo" disabled>
-                  </div>
-                </div>
-                <div class="form-row">
-                  <div class="form-group col-md-6">
-                    <label for="nomina">Tipo nómina</label>
-                    <input [(ngModel)]="info_contrato.informacion_contrato.nomina" name="nomina" type="text" class="form-control" id="nomina" disabled>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="contratacion">Fecha de contratación</label>
-                    <input [(ngModel)]="info_contrato.informacion_contrato.fecha_alta" name="contratacion" type="text" class="form-control" id="contratacion" disabled>
-                  </div>
-                </div>
-                <div class="form-row">
-                  <h4 class="col-md-12">Movimientos</h4>
+                <div class="row">
+                  <h3>Movimientos</h3>
                   <div class="table-responsive col-md-12">
                     <table class="table">
                       <thead>
                         <tr>
                           <th colspan="1">Tipo de movimiento</th>
                           <th colspan="1">Fecha de movimiento</th>
+                          <th colspan="1">Observación</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr *ngFor="let alta of info_contrato.movimientos.alta">
-                          <td><i class="fas fa-arrow-up text-success mr-3"></i> A</td>
-                          <td>{{alta.fecha_movimiento}}</td>
-                        </tr>
-                        <tr *ngFor="let modificacion of info_contrato.movimientos.modificaciones">
-                          <td><i class="fas fa-check-bold text-success mr-3"></i> M</td>
-                          <td>{{modificacion.fecha_movimiento}}</td>
-                        </tr>
-                        <tr *ngFor="let baja of info_contrato.movimientos.baja">
-                          <td><i class="fas fa-arrow-down text-success mr-3"></i> B</td>
-                          <td>{{baja.fecha_movimiento}}</td>
+                        <tr *ngFor="let movimiento of info_contrato.movimientos">
+                          
+                          <td>
+                            <i *ngIf="movimiento.tipo_movimiento == 'A'" class="fas fa-long-arrow-alt-up text-success mr-3"></i>
+                            <i *ngIf="movimiento.tipo_movimiento == 'M'" class="fas fa-retweet text-warning mr-3"></i>
+                            <i *ngIf="movimiento.tipo_movimiento == 'B'" class="fas fa-long-arrow-alt-down text-danger mr-3"></i>
+                            {{movimiento.tipo_movimiento}}
+                          </td>
+                          <td>{{movimiento.fecha_movimiento}}</td>
+                          <td>{{movimiento.observacion}}</td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                 </div>
-              </div> -->
+              </div>
             </div>
         </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
-        <button type="button" class="btn btn-success" (click)="altaCandidato()" id="guardar">Guardar</button>
-        <button type="button" class="btn btn-success" (click)="modificarCandidato()" id="editar" >Guardar</button>
+        <button *ngIf="tipo_modal == 1" type="button" class="btn btn-success" (click)="altaCandidato()">Guardar</button>
+        <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success" (click)="modificarCandidato()" >Guardar</button>
     </div>
 </ng-template>
 

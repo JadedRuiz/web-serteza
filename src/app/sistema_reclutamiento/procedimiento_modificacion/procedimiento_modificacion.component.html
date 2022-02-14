@@ -234,7 +234,7 @@
                     </div>
                 </div>
                 <div class="form-row w-100">
-                    <div class="form-group col-sm-12 col-lg-4">
+                    <div class="form-group col-sm-12 col-lg-3">
                         <mat-form-field class="w-100">
                             <mat-label>Tipo de nómina</mat-label>
                             <mat-select [(ngModel)]="detalle_atiguo.id_nomina" disabled>
@@ -242,20 +242,28 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="form-group col-sm-12 col-lg-4">
+                    <div class="form-group col-sm-12 col-lg-3">
                         <mat-form-field class="example-full-width w-100">
                             <mat-label>Sucursal</mat-label>
                             <input matInput [(ngModel)]="detalle_atiguo.sucursal" disabled>
                         </mat-form-field>
                     </div>
-                    <div class="form-group col-sm-12 col-lg-4">
+                    <div class="form-group col-sm-12 col-lg-3">
                         <mat-form-field class="w-100">
                             <mat-label>Fecha de ingreso</mat-label>
                             <input matInput [matDatepicker]="picker" [(ngModel)]="detalle_atiguo.fecha_detalle" disabled>
                             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                             <mat-datepicker #picker></mat-datepicker>
-                          </mat-form-field>
+                        </mat-form-field>
                     </div>
+                    <div class="form-group col-sm-12 col-lg-3">
+                        <mat-form-field class="w-100">
+                          <mat-label>Fecha de antiguedad</mat-label>
+                          <input matInput [matDatepicker]="pickerTres" [(ngModel)]="detalle_atiguo.fecha_antiguedad">
+                          <mat-datepicker-toggle matSuffix [for]="pickerTres"></mat-datepicker-toggle>
+                          <mat-datepicker #pickerTres></mat-datepicker>
+                        </mat-form-field>   
+                    </div>  
                 </div>
                 <div class="form-row">
                     <div class="col-lg-12 col-sm-12">
@@ -352,7 +360,7 @@
                     </div>
                 </div>
                 <div class="form-row w-100">
-                    <div class="form-group col-sm-12 col-lg-4">
+                    <div class="form-group col-sm-12 col-lg-3">
                         <mat-form-field class="w-100">
                             <mat-label>Tipo de nómina</mat-label>
                             <mat-select [(ngModel)]="detalle.id_nomina">
@@ -360,7 +368,7 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="form-group col-sm-12 col-lg-4">
+                    <div class="form-group col-sm-12 col-lg-3">
                         <mat-form-field class="w-100">
                             <mat-label>Selecciona la sucursal</mat-label>
                             <mat-select [(ngModel)]="detalle.id_sucursal">
@@ -368,7 +376,7 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="form-group col-sm-12 col-lg-4">
+                    <div class="form-group col-sm-12 col-lg-3">
                         <mat-form-field class="w-100">
                             <mat-label>Fecha de ingreso</mat-label>
                             <input matInput [matDatepicker]="pickerDos" [(ngModel)]="detalle.fecha_detalle">
@@ -376,6 +384,14 @@
                             <mat-datepicker #pickerDos></mat-datepicker>
                           </mat-form-field>
                     </div>
+                    <div class="form-group col-sm-12 col-lg-3">
+                        <mat-form-field class="w-100">
+                          <mat-label>Fecha de antiguedad</mat-label>
+                          <input matInput [matDatepicker]="pickerCuatro" [(ngModel)]="detalle.fecha_antiguedad">
+                          <mat-datepicker-toggle matSuffix [for]="pickerCuatro"></mat-datepicker-toggle>
+                          <mat-datepicker #pickerCuatro></mat-datepicker>
+                        </mat-form-field>   
+                    </div>  
                 </div>
                 <div class="form-row">
                     <div class="col-lg-12 col-sm-12">
