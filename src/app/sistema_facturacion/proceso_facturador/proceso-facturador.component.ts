@@ -80,11 +80,36 @@ export class ProcesoFacturadorComponent implements OnInit {
     "Fecha" : "",
     "active" : true
   };
+  datos_transporte = {
+    placa : "",
+    anio : "",
+    permiso : "",
+    config : "",
+    num_permiso : "",
+    info_seguro : {
+      resp_civil : {
+        aseguradora : "",
+        poliza : ""
+      },
+      medio_ambiente : {
+        aseguradora : "",
+        poliza : ""
+      },
+      carga : {
+        aseguradora : "",
+        poliza : ""
+      },
+      prima_seguro : ""
+    },
+    remolques : []
+  };
   mostrarDatos = true;
   band_view = false;
   public modal : any;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   @ViewChild('ubicacion', {static: false}) contenidoDelModalUbicacion : any;
+  @ViewChild('transporte', {static: false}) contenidoDelModalTransporte : any;
+  @ViewChild('operador', {static: false}) contenidoDelModalOperador : any;
   cliente = {
     id_cliente : 0,
     razon_social : "",
@@ -104,6 +129,8 @@ export class ProcesoFacturadorComponent implements OnInit {
   band_button = true;
   selectedTab = 0;
   modalUbicacion: any;
+  modalTransporte: any;
+  modalOperador: any;
 
   constructor(
     private empresa_service: EmpresaService,
@@ -512,6 +539,14 @@ export class ProcesoFacturadorComponent implements OnInit {
     this.openModal(2);
   }
 
+  nuevoTransporte(){
+    this.openModal(3);
+  }
+
+  nuevoOperador(){ 
+    this.openModal(4);
+  }
+
   openModal(tipo : any) {
     if(tipo == 1){
       this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
@@ -519,14 +554,26 @@ export class ProcesoFacturadorComponent implements OnInit {
     if(tipo == 2){
       this.modalUbicacion = this.modalService.open(this.contenidoDelModalUbicacion,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
     }
+    if(tipo == 3){
+      this.modalTransporte = this.modalService.open(this.contenidoDelModalTransporte,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
+    if(tipo == 4){
+      this.modalOperador = this.modalService.open(this.contenidoDelModalOperador,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
   }
 
   cerrarModal(tipo : any){
     if(tipo == 1){
       this.modal.close();
     }
-    if(tipo == 1){
+    if(tipo == 2){
       this.modalUbicacion.close();
+    }
+    if(tipo == 3){
+      this.modalTransporte.close();
+    }
+    if(tipo == 4){
+      this.modalOperador.close();
     }
   }
 
