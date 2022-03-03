@@ -1,3 +1,4 @@
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
@@ -5,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { format } from 'path';
 import { element } from 'protractor';
 import { Direccion } from 'src/app/models/Direccion';
+import { Operador } from 'src/app/models/Operador';
 import { ClienteService } from 'src/app/services/Cliente/cliente.service';
 import { CompartidoService } from 'src/app/services/Compartido/Compartido.service';
 import { ConceptoService } from 'src/app/services/Concepto/Concepto.service';
@@ -25,26 +27,77 @@ export class ProcesoFacturadorComponent implements OnInit {
   public cliente_seleccionado = window.sessionStorage.getItem("cliente");
   public usuario = parseInt(window.sessionStorage.getItem("user")+"");
   public direccion = new Direccion(0,"","","","","","","","","","","");
+  public ope = new Operador(0,"","","","",this.direccion);
   filterControlEmpresa = new FormControl();
   filterControlCliente = new FormControl();
+  filterControlClave = new FormControl();
+  filterControlEmbalaje = new FormControl();
+  filterControlMonedas = new FormControl();
   serieControl = new FormControl();
   empresas : any;
   empresas_busqueda : any;
   conceptos : any;
   series : any;
+  operadores : any;
+  transportes : any;
   formas_pago : any;
   metodos_pago : any;
   monedas : any;
   usoCFDIS : any;
+  config_transportes : any;
+  tipo_permisos : any;
+  tipos_remolques : any;
   tipo_comprobante : any;
   id_empresa = 0;
   displayedColumns: string[] = ['Descripcion', 'Cantidad', 'Precio', "Total", "Accion"];
   displayedColumnsUbicaciones: string[] = ['Lugar', 'Tipo', 'Ide', "Distancia", "Fecha", "Accion"];
+  displayedColumnsMercancias: string[] = ['Bienes', 'Clave', 'Descripcion', "Peso", "Valor", "Accion"];
   dataSource  = new MatTableDataSource();
-  UbicaionSource  = new MatTableDataSource();
+  UbicacionSource  = new MatTableDataSource();
+  MercanciaSource = new MatTableDataSource();
   @ViewChild(MatTable) table: any;
-  band_ine = false;
-  band_ = false;
+  tipo_vehiculo = 1;
+  datos_ubicacion = {
+    id_cliente : this.cliente_seleccionado,
+    tipo : "",
+    lugar : "",
+    rfc : "",
+    folio_sat : "",
+    nombre : "",
+    direccion  : this.direccion
+  };
+  datos_transporte = {
+    tipo_vehiculo : 0,
+    id_empresa : 0,
+    num_economico : "",
+    placa : "",
+    anio : "",
+    tipo_permiso : "0",
+    configuracion : "0",
+    num_permiso : "",
+    aseguradora_resp_civil : "",
+    poliza_resp_civil : "",
+    aseguradora_ambiente : "",
+    poliza_ambiente : "",
+    aseguradora_carga : "",
+    poliza_carga : "",
+    prima_seguro : ""
+  };
+  cataporte = {
+    ubicaciones : this.UbicacionSource.data,
+    transporte : {
+      id_operador : 0,
+      operador : "",
+      id_vehiculo : 0,
+      vehiculo : "",
+      id_remolque : 0,
+      remolque : "",
+      id_propietario : 0,
+      propietario : ""
+    },
+    mercancias : []
+  };
+  mercancias : any;
   datos_factura = {
     folio : 0,
     id_serie : "",
@@ -59,8 +112,9 @@ export class ProcesoFacturadorComponent implements OnInit {
     tipo_cambio : "0",
     condiciones : "CONTADO/CREDITO",
     observaciones : "",
-    usa_ine : this.band_ine,
-    usa_cataporte : this.band_,
+    usa_ine : false,
+    usa_cataporte : false,
+    cataporte : this.cataporte,
     conceptos : this.dataSource.data,
     subtotal : "0.00",
     descuento_t : "0.00",
@@ -70,39 +124,25 @@ export class ProcesoFacturadorComponent implements OnInit {
     total : "0.00",
     usuario_creacion : this.usuario
   };
-  datos_ubicacion = {
-    "id_row" : 0,
-    "tipo" : "",
-    "rfc" : "",
-    "Ide" : "",
-    "Propietario" : "",
-    "Distancia" : 0,
-    "Fecha" : "",
-    "active" : true
+  datos_mercancia = {
+    bienes_trans : "",
+    clave_prod : "",
+    descripcion : "",
+    clave_uni : "",
+    dimensiones : "",
+    cantidad : "",
+    unidad : "",
+    embalaje : "",
+    desc_embalaje : "",
+    peso : "",
+    meterial_pel : false,
+    valor : "",
+    moneda : "",
+    fraccion_aran : "",
+    uuid_ext : ""
   };
-  datos_transporte = {
-    placa : "",
-    anio : "",
-    permiso : "",
-    config : "",
-    num_permiso : "",
-    info_seguro : {
-      resp_civil : {
-        aseguradora : "",
-        poliza : ""
-      },
-      medio_ambiente : {
-        aseguradora : "",
-        poliza : ""
-      },
-      carga : {
-        aseguradora : "",
-        poliza : ""
-      },
-      prima_seguro : ""
-    },
-    remolques : []
-  };
+  peso_total = 0;
+  total = 0;
   mostrarDatos = true;
   band_view = false;
   public modal : any;
@@ -110,6 +150,9 @@ export class ProcesoFacturadorComponent implements OnInit {
   @ViewChild('ubicacion', {static: false}) contenidoDelModalUbicacion : any;
   @ViewChild('transporte', {static: false}) contenidoDelModalTransporte : any;
   @ViewChild('operador', {static: false}) contenidoDelModalOperador : any;
+  @ViewChild('mercancia', {static: false}) contenidoDelModalMercancia : any;
+  @ViewChild('content_import', {static: false}) modal_excel : any;
+  modal_control_excel: any;
   cliente = {
     id_cliente : 0,
     razon_social : "",
@@ -131,6 +174,31 @@ export class ProcesoFacturadorComponent implements OnInit {
   modalUbicacion: any;
   modalTransporte: any;
   modalOperador: any;
+  remolques: any;
+  ubicaciones : any;
+  tipo_persona = 0;
+  personas : any;
+  model_ubicacion = {
+    id_row : 0,
+    id_lugar : 0,
+    ide : "",
+    tipo : "O",
+    lugar : "",
+    fecha_hora : "",
+    distancia_recorrida : "",
+    btn : false
+  }
+  nombre_archivo = "Arrastre y suelte o haga click para abrir el buscador";
+  importe = {
+    file : ""
+  };
+  modal_mercancia: any;
+  claves_unidad: any;
+  claves_unidad_copy: any;
+  embalajes : any;
+  embalajes_copy: any;
+  monedas_copy: any;
+  concepto_disable = false;
 
   constructor(
     private empresa_service: EmpresaService,
@@ -140,22 +208,14 @@ export class ProcesoFacturadorComponent implements OnInit {
     private cliente_service : ClienteService,
     private serie_service : SerieService,
     private factura_service : FacturacionService
-  ) { }
+  ) {  }
 
   ngOnInit(): void {
     this.mostrarEmpresas();
+    this.mostrarEstado();
     this.mostrarClientes();
     this.mostrarCatalogos();
-    this.UbicaionSource.data.push({
-      "id_row" : 0,
-      "tipo" : "Origen",
-      "Ide" : "OR0001",
-      "Propietario" : "",
-      "Distancia" : 0,
-      "FechaSalida" : "",
-      "FechaLLegada" : "",
-      "active" : true
-    });
+    this.UbicacionSource.data.push(this.model_ubicacion);
     this.dataSource.data.push({
       id_row : 0,
       id_concepto : 0,
@@ -176,12 +236,14 @@ export class ProcesoFacturadorComponent implements OnInit {
       neto_print : "",
       btn : false
     });
+    this.mercancias = [];
   }
-  
+
   mostrarCatalogos(){
     this.formas_pago = [];
     this.metodos_pago = [];
     this.monedas = [];
+    this.monedas_copy = [];
     this.usoCFDIS = [];
     this.tipo_comprobante = [];
     this.compartido_service.obtenerCatalogo("sat_FormaPago")
@@ -202,6 +264,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     .subscribe((object : any) => {
       if(object.length > 0){
         this.monedas = object;
+        this.monedas_copy = object;
       }
     });
     this.compartido_service.obtenerCatalogo("sat_UsoCFDI")
@@ -368,7 +431,6 @@ export class ProcesoFacturadorComponent implements OnInit {
         element.otros_porcent = concepto.otros_imp;
       }
     });
-    console.log(this.dataSource.data);
   }
 
   mostrarEstado(){
@@ -404,8 +466,13 @@ export class ProcesoFacturadorComponent implements OnInit {
     }
   }
 
-  optionEstado(value : any){
-    this.cliente.direccion.estado = value.option.id;
+  optionEstado(value : any, tipo : any){
+    if(tipo == 1){
+      this.cliente.direccion.estado = value.option.id;
+    }
+    if(tipo == 2){
+      this.ope.direccion.estado = value.option.id;
+    }
   }
 
   mostrarSeries(id_empresa : any){
@@ -418,6 +485,277 @@ export class ProcesoFacturadorComponent implements OnInit {
         this.datos_factura.id_serie = object.data[0].id_serie;
       }
     });
+  }
+
+  mostrarDatosTransporte(){
+    this.mostrarOperadores(this.id_empresa);
+    this.mostrarTrasporte(1);
+    this.mostrarTrasporte(2);
+    this.mostrarPersona(this.id_empresa);
+  }
+
+  mostrarDatosUbicacion(){
+    this.mostrarUbicaciones("");
+  }
+
+  mostrarDatosMercancia(){
+    this.mostrarClaveUnidad();
+    this.mostrarEmbalaje();
+  }
+
+  mostrarClaveUnidad(){
+    this.claves_unidad = [];
+    this.claves_unidad_copy = [];
+    this.compartido_service.obtenerCatalogo("sat_UnidadPeso")
+    .subscribe((object : any) => {
+      if(object.length > 0){
+        this.claves_unidad = object;
+        this.claves_unidad_copy = object;
+      }
+    });
+  }
+
+  buscarClave(){
+    this.claves_unidad_copy = [];
+    this.claves_unidad.forEach((element : any) => {
+      this.claves_unidad_copy.push({
+        "descripcion" : element.descripcion,
+        "clave" : element.clave,
+        "id_UnidadPeso" : element.id_UnidadPeso
+      });
+    });
+    if(this.filterControlClave.value.length > 0){
+      this.claves_unidad_copy = [];
+      this.claves_unidad.forEach((element : any) => {
+        console.log(element.descripcion.includes(this.filterControlClave.value.toUpperCase()));
+        if(element.descripcion.toLowerCase().includes(this.filterControlClave.value.toLowerCase()) || element.clave.includes(this.filterControlClave.value.toUpperCase())){ 
+          this.claves_unidad_copy.push({
+            "descripcion" : element.descripcion,
+            "clave" : element.clave,
+            "id_UnidadPeso" : element.id_UnidadPeso
+          })
+        }
+      });
+    }
+  }
+
+  optionClave(event : any){
+    this.datos_mercancia.clave_uni = event.option.id;
+  }
+
+  mostrarEmbalaje(){
+    this.embalajes = [];
+    this.embalajes_copy = [];
+    this.compartido_service.obtenerCatalogo("sat_TipoEmbalaje")
+    .subscribe((object : any) => {
+      if(object.length > 0){
+        this.embalajes = object;
+        this.embalajes_copy = object;
+      }
+    });
+  }
+
+  buscarEmbalaje(){
+    this.embalajes_copy = [];
+    this.embalajes.forEach((element : any) => {
+      this.embalajes_copy.push({
+        "descripcion" : element.descripcion,
+        "clave" : element.clave,
+        "id_TipoEmbalaje" : element.id_TipoEmbalaje
+      });
+    });
+    if(this.filterControlEmbalaje.value.length > 0){
+      this.embalajes_copy = [];
+      this.embalajes.forEach((element : any) => {
+        if(element.descripcion.toLowerCase().includes(this.filterControlEmbalaje.value.toLowerCase()) || element.clave.includes(this.filterControlEmbalaje.value.toUpperCase())){ 
+          this.embalajes_copy.push({
+            "descripcion" : element.descripcion,
+            "clave" : element.clave,
+            "id_TipoEmbalaje" : element.id_TipoEmbalaje
+          })
+        }
+      });
+    }
+  }
+  
+  optionEmbalaje(event : any){
+    this.datos_mercancia.embalaje = event.option.id;
+  }
+  
+  buscarMoneda(){
+    this.monedas_copy = [];
+    this.monedas.forEach((element : any) => {
+      this.monedas_copy.push({
+        "descripcion" : element.descripcion,
+        "clave_moneda" : element.clave_moneda,
+        "id_catmoneda" : element.id_catmoneda
+      });
+    });
+    if(this.filterControlMonedas.value.length > 0){
+      this.monedas_copy = [];
+      this.monedas.forEach((element : any) => {
+        if(element.descripcion.toLowerCase().includes(this.filterControlMonedas.value.toLowerCase()) || element.clave_moneda.includes(this.filterControlMonedas.value.toUpperCase())){ 
+          this.monedas_copy.push({
+            "descripcion" : element.descripcion,
+            "clave_moneda" : element.clave_moneda,
+            "id_catmoneda" : element.id_catmoneda
+          })
+        }
+      });
+    }
+  }
+
+  optionMoneda(event : any){
+    this.datos_mercancia.moneda = event.option.id;
+  }
+
+  mostrarUbicaciones(busqueda : any){
+    this.ubicaciones = [];
+    let json = {
+      id_cliente : this.cliente_seleccionado,
+      busqueda : busqueda,
+
+    }
+    this.factura_service.facObtenerUbicacion(json)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.ubicaciones =  object.data;
+      }
+    });
+  }
+
+  optionUbicacion(event : any, id : any){
+    let ide = "";
+    let tipo = "";
+    this.ubicaciones.forEach((element : any) => {
+      if(element.id_ubicacion == event.option.id){
+        tipo = element.tipo;
+        ide = element.folio_sat;
+      }
+    });
+    if(id != 0){
+      if(tipo != "O"){
+        this.UbicacionSource.data.forEach((element : any) => {
+          if(element.id_row == id){
+            element.id_lugar = event.option.id;
+            element.ide = ide;
+            element.tipo = tipo;
+          }
+        });
+      }else{
+        this.UbicacionSource.data.forEach((element : any) => {
+          if(element.id_row == id){
+            element.lugar = "";
+          }
+        });
+        Swal.fire("Aviso","No se puede agregar más de una ubicacion de Origen","info");
+      }
+    }else{
+      if(tipo != "D"){
+        this.UbicacionSource.data.forEach((element : any) => {
+          if(element.id_row == id){
+            element.id_lugar = event.option.id;
+            element.ide = ide;
+            element.tipo = tipo;
+          }
+        });
+      }else{
+        this.UbicacionSource.data.forEach((element : any) => {
+          if(element.id_row == id){
+            element.lugar = "";
+          }
+        });
+        Swal.fire("Aviso","La primero ubicacion debe ser una de Origen","info");
+      }
+    }
+  }
+
+  mostrarOperadores(id : any){
+    this.operadores = [];
+    this.factura_service.facObtenerOperadores(id)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.operadores = object.data;
+      }
+    });
+  }
+
+  optionOperador(event : any){
+    this.cataporte.transporte.id_operador = event.option.id;
+  }
+
+  mostrarPersona(id : any){
+    this.personas = [];
+    this.factura_service.facObtenerPersona(id)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.personas = object.data;
+      }
+    });
+  }
+
+  optionPropietario(event : any){
+    this.cataporte.transporte.id_propietario = event.option.id;
+  }
+
+  mostrarTrasporte(tipo : any){
+    if(tipo == 1){
+      this.transportes = [];
+    }
+    if(tipo == 1){
+      this.remolques = [];
+    }
+    this.factura_service.facObtenerTransporte(this.id_empresa,tipo)
+    .subscribe((object : any) => {
+      if(object.ok){
+        if(tipo == 1){
+          this.transportes = object.data;
+        }
+        if(tipo == 2){
+          this.remolques = object.data;
+        }
+      }
+    });
+  }
+
+  optionTrasporte(event : any){
+    if(this.tipo_vehiculo == 1){
+      this.cataporte.transporte.id_vehiculo = event.option.id;
+    }
+  }
+
+  mostrarConfigTransporte(){
+    this.config_transportes = [];
+    this.compartido_service.obtenerCatalogo("sat_ConfigAutotransporte")
+    .subscribe((object : any) => {
+      if(object.length > 0){
+        this.config_transportes = object;
+      }
+    });
+  }
+
+  mostraTipoPermiso(){
+    this.tipo_permisos = [];
+    this.compartido_service.obtenerCatalogo("sat_TipoPermiso")
+    .subscribe((object : any) => {
+      if(object.length > 0){
+        this.tipo_permisos = object;
+      }
+    });
+  }
+
+  mostraSubtipoRemolques(){
+    this.tipos_remolques = [];
+    this.compartido_service.obtenerCatalogo("sat_SubtipoRemolque")
+    .subscribe((object : any) => {
+      if(object.length > 0){
+        this.tipos_remolques = object;
+      }
+    });
+  }
+
+  optionRemolque(event : any){
+    this.cataporte.transporte.id_remolque = event.option.id;
   }
 
   nuevaLinea(){
@@ -506,13 +844,20 @@ export class ProcesoFacturadorComponent implements OnInit {
 
   nuevoCliente(){
     this.limpiarCampos();
-    this.mostrarEstado();
     this.tipo_modal = 1;
     this.openModal(1);
   }
 
   altaCliente(){
     this.confirmar("Confirmación","¿Seguro que desas dar de alta un nuevo cliente?","info",null,1);
+  }
+
+  usaConcepto(){
+    if(this.datos_factura.tipo_comprobante == '3'){
+      this.concepto_disable = true;
+    }else{
+      this.concepto_disable = false;
+    }
   }
 
   altaFactura(){
@@ -530,6 +875,26 @@ export class ProcesoFacturadorComponent implements OnInit {
       Swal.fire("Aviso","Es necesario seleccionar el concepto","info");
       return "";
     }
+    if(this.datos_factura.usa_cataporte){
+      if(this.UbicacionSource.data.length <= 1){
+        Swal.fire("Aviso","Es necesario agregar almenos una ubicación de destino","info");
+        return "";
+      }
+      if(this.mercancias.length == 0){
+        Swal.fire("Aviso","Es necesario almenos agregar una mercancia al cataporte","info");
+        return "";
+      }
+      if(this.cataporte.transporte.id_operador == 0){
+        Swal.fire("Aviso","Es necesario seleccionar el operador","info");
+        return "";
+      }
+      if(this.cataporte.transporte.id_vehiculo == 0){
+        Swal.fire("Aviso","Es necesario seleccionar el vehiculo","info");
+        return "";
+      }
+      this.cataporte.ubicaciones = this.UbicacionSource.data;
+      this.cataporte.mercancias = this.mercancias;
+    }
     this.datos_factura.id_empresa = this.id_empresa;
     this.confirmar("Confirmación","¿Seguro que deseas guardar está factura?","info",null,3);
     return "";
@@ -539,12 +904,105 @@ export class ProcesoFacturadorComponent implements OnInit {
     this.openModal(2);
   }
 
-  nuevoTransporte(){
+  altaUbicacion(){
+    this.confirmar("Confirmación","¿Seguro que deseas agregar esta ubicacion?","info",null,7);
+  }
+
+  nuevaLineaUbicacion(){
+    this.UbicacionSource.data.push({
+      id_row: this.UbicacionSource.data.length + 1,
+      id_lugar: 0,
+      ide: "",
+      tipo : "D",
+      lugar: "",
+      fecha_hora: "",
+      distancia_recorrida: "",
+      btn: true
+    });
+    this.table.renderRows();
+  }
+
+  eliminarUbicacion(id : any){
+    this.UbicacionSource.data.forEach((element : any, index : any) => {
+      if(element.id_row == id){
+        this.UbicacionSource.data.splice(index,1);
+      }
+    });
+    this.table.renderRows();
+  }
+
+  nuevoTransporte(tipo : any){
+    this.tipo_vehiculo = tipo;
+    if(tipo == 2){
+      this.mostraSubtipoRemolques();
+    }
     this.openModal(3);
   }
 
-  nuevoOperador(){ 
+  altaTransporte(){
+    this.datos_transporte.tipo_vehiculo = this.tipo_vehiculo;
+    this.datos_transporte.id_empresa = this.id_empresa;
+    this.confirmar("Confirmación","¿Seguro que deseas agregar un nuevo transporte?","info",null,5);
+  }
+
+  nuevaPersona(tipo : any){
+    this.tipo_persona = tipo; 
     this.openModal(4);
+  }
+
+  altaPersona(){
+    if(this.tipo_persona == 1){
+      this.ope.id_empresa = this.id_empresa;
+      this.confirmar("Confirmación","¿Seguro que deseas agregar un nuevo operador?","info",null,4);
+    }
+    if(this.tipo_persona == 2){
+      this.ope.id_empresa = this.id_empresa;
+      this.confirmar("Confirmación","¿Seguro que lo deseas agregar a tu catalogo?","info",null,6);
+    }
+  }
+
+  agregarMercancia(){
+    this.total += parseFloat(this.datos_mercancia.valor);
+    this.peso_total += parseFloat(this.datos_mercancia.peso);
+    this.mercancias.push({
+      id_row : this.mercancias.length+1,
+      bienes_trans : this.datos_mercancia.bienes_trans,
+      clave_prod : this.datos_mercancia.clave_prod,
+      descripcion : this.datos_mercancia.descripcion.toUpperCase(),
+      clave_uni : this.datos_mercancia.clave_uni,
+      dimensiones : this.datos_mercancia.dimensiones,
+      cantidad : this.datos_mercancia.cantidad,
+      unidad : this.datos_mercancia.unidad,
+      embalaje : this.datos_mercancia.embalaje,
+      desc_embalaje : this.datos_mercancia.desc_embalaje,
+      peso : this.datos_mercancia.peso,
+      meterial_pel : false,
+      valor : this.datos_mercancia.valor,
+      moneda : this.datos_mercancia.moneda,
+      fraccion_aran : this.datos_mercancia.fraccion_aran,
+      uuid_ext : this.datos_mercancia.uuid_ext
+    });
+    this.datos_mercancia = {
+      bienes_trans : "",
+      clave_prod : "",
+      descripcion : "",
+      clave_uni : "",
+      dimensiones : "",
+      cantidad : "",
+      unidad : "",
+      embalaje : "",
+      desc_embalaje : "",
+      peso : "",
+      meterial_pel : false,
+      valor : "",
+      moneda : "",
+      fraccion_aran : "",
+      uuid_ext : ""
+    };
+    this.filterControlClave.setValue("");
+    this.filterControlEmbalaje.setValue("");
+    this.filterControlMonedas.setValue("");
+    this.cerrarModal(6);
   }
 
   openModal(tipo : any) {
@@ -555,10 +1013,26 @@ export class ProcesoFacturadorComponent implements OnInit {
       this.modalUbicacion = this.modalService.open(this.contenidoDelModalUbicacion,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
     }
     if(tipo == 3){
-      this.modalTransporte = this.modalService.open(this.contenidoDelModalTransporte,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+      
+      if(this.tipo_vehiculo == 2){
+        this.modalTransporte = this.modalService.open(this.contenidoDelModalTransporte,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+      }
+      if(this.tipo_vehiculo == 1){
+        this.mostrarConfigTransporte();
+        this.mostraTipoPermiso();
+        this.modalTransporte = this.modalService.open(this.contenidoDelModalTransporte,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+      }
     }
     if(tipo == 4){
       this.modalOperador = this.modalService.open(this.contenidoDelModalOperador,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
+    if(tipo == 5){
+      this.importe.file = "";
+      this.nombre_archivo = "Arrastre y suelte o haga click para abrir el buscador";
+      this.modal_control_excel = this.modalService.open(this.modal_excel,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
+    if(tipo == 6){
+      this.modal_mercancia = this.modalService.open(this.contenidoDelModalMercancia,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
     }
   }
 
@@ -574,6 +1048,12 @@ export class ProcesoFacturadorComponent implements OnInit {
     }
     if(tipo == 4){
       this.modalOperador.close();
+    }
+    if(tipo == 5){
+      this.modal_control_excel.close();
+    }
+    if(tipo == 6){
+      this.modal_mercancia.close();
     }
   }
 
@@ -591,11 +1071,30 @@ export class ProcesoFacturadorComponent implements OnInit {
     };
     this.filterControlEstado.setValue('');
   }
-  
+
+  limpiarCamposCataporte(){
+    this.peso_total = 0;
+    this.total = 0;
+    this.cataporte = {
+      ubicaciones : [],
+      transporte : {
+        operador : "",
+        id_operador : 0,
+        vehiculo : "",
+        id_vehiculo : 0,
+        id_remolque : 0,
+        remolque : "",
+        id_propietario : 0,
+        propietario : "",
+      },
+      mercancias : []
+    }
+    this.mercancias = [];
+    this.UbicacionSource.data = [];
+  }
+
   limpiarCamposFactura(){
     this.filterControlCliente.setValue("");
-    this.band_ine = false;
-    this.band_ = false;
     this.dataSource.data = [];
     this.dataSource.data.push({
       id_row : 0,
@@ -626,8 +1125,9 @@ export class ProcesoFacturadorComponent implements OnInit {
       tipo_cambio : "0",
       condiciones : "CONTADO/CREDITO",
       observaciones : "",
-      usa_ine : this.band_ine,
-      usa_cataporte : this.band_,
+      usa_ine : false,
+      usa_cataporte : false,
+      cataporte : this.cataporte,
       conceptos : this.dataSource.data,
       subtotal : "0.00",
       descuento_t : "0.00",
@@ -672,7 +1172,76 @@ export class ProcesoFacturadorComponent implements OnInit {
             if(object.ok){
               this.limpiarCamposFactura();
               this.obtenerFolio(this.id_empresa);
+              this.limpiarCamposCataporte();
               Swal.fire("Buen trabajo","La factura ha sido almacenada correctamente","success");
+            }
+          });
+        }
+        if(tipo == 4){  //Alta operador
+          this.factura_service.facAltaOperador(this.ope)
+          .subscribe((object : any) => {
+            if(object.ok){
+              this.direccion = new Direccion(0,"","","","","","","","","","","");
+              this.ope = new Operador(this.id_empresa,"","","","",this.direccion);
+              this.cerrarModal(4);
+              Swal.fire("Buen trabajo","El operador se guardado con éxito","success");
+            }
+          });
+        }
+        if(tipo == 5){
+          this.factura_service.facAltaVehiculo(this.datos_transporte)
+          .subscribe((object : any) => {
+            if(object.ok){
+              this.mostrarTrasporte(this.tipo_vehiculo);
+              this.datos_transporte = {
+                tipo_vehiculo : 0,
+                id_empresa : 0,
+                num_economico : "",
+                placa : "",
+                anio : "",
+                tipo_permiso : "0",
+                configuracion : "0",
+                num_permiso : "",
+                aseguradora_resp_civil : "",
+                poliza_resp_civil : "",
+                aseguradora_ambiente : "",
+                poliza_ambiente : "",
+                aseguradora_carga : "",
+                poliza_carga : "",
+                prima_seguro : ""
+              };
+              this.cerrarModal(3);
+              Swal.fire("Buen trabajo","El transporte se guardado con éxito","success");
+            }
+          });
+        }
+        if(tipo == 6){
+          this.factura_service.facAltaPersona(this.ope)
+          .subscribe((object : any) => {
+            if(object.ok){
+              this.direccion = new Direccion(0,"","","","","","","","","","","");
+              this.ope = new Operador(this.id_empresa,"","","","",this.direccion);
+              this.cerrarModal(4);
+              Swal.fire("Buen trabajo","El operador se guardado con éxito","success");
+            }
+          });
+        }
+        if(tipo == 7){
+          this.factura_service.facAltaUbicacion(this.datos_ubicacion)
+          .subscribe((object : any) => {
+            if(object.ok){
+              this.datos_ubicacion = {
+                id_cliente : this.cliente_seleccionado,
+                tipo : "",
+                lugar : "",
+                rfc : "",
+                folio_sat : "",
+                nombre : "",
+                direccion  : this.direccion
+              };
+              this.mostrarUbicaciones("");
+              this.cerrarModal(2);
+              Swal.fire("Buen trabajo","La ubicacion se ha agregado a su catalogo","success");
             }
           });
         }
@@ -684,4 +1253,83 @@ export class ProcesoFacturadorComponent implements OnInit {
     this.selectedTab += 1; 
   }
 
+  cambiarImagen(event: any){
+    if (event.target.files && event.target.files[0]) {
+      let archivos = event.target.files[0];
+      let extension = archivos.name.split(".")[1];
+      if(extension == "xlsx"){
+       this.nombre_archivo = archivos.name;
+       this.convertirFileAB64(archivos).then( respuesta => {
+        this.importe.file = respuesta+"";
+      });
+      }else{
+        this.nombre_archivo = "Arrastre y suelte o haga click para abrir el buscador";
+        Swal.fire("Ha ocurrido un error","Tipo de archivo no permitido","error");
+      }
+    }
+  }
+
+  convertirFileAB64(fileInput : any){
+    return new Promise(function(resolve, reject) {
+      let b64 = "";
+      const reader = new FileReader();
+      reader.readAsDataURL(fileInput);
+      reader.onload = (e: any) => {
+          b64 = e.target.result.split("base64,")[1];
+          resolve(b64);
+      };
+    });
+  }
+
+  importarExcel(){
+    if(this.importe.file == ""){
+      Swal.fire("Aviso","Primero adjunta un arhivo valido","info");
+    }else{
+      this.openModal(5);
+      
+    }
+  }
+
+  consumoReporte(tipo : any){
+    if(tipo == 1){
+      this.factura_service.getImportMercancias()
+      .subscribe((object : any) => {
+        if(object.ok){
+          let win = window.open("ReporteAlta","_blank");
+          let html = '';
+          html += '<html>';
+          html += '<body style="margin:0!important">';
+          html += '<embed width="100%" height="100%" src="data:application/pdf;base64,'+object.data+'" type="application/pdf" />';
+          html += '</body>';
+          html += '</html>';
+          win?.document.write(html);
+        }
+      });
+      // window.open(SERVER_API+'reporte/reporteContrato/'+id_detalle);
+    }
+    if(tipo == 3){
+      this.factura_service.getImportMercancias()
+      .subscribe((object : any) => {
+        if(object.ok){
+          var arrayBuffer = this.base64ToArrayBuffer(object.data);
+          var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
+          var data = window.URL.createObjectURL(newBlob);
+          let link  = document.createElement('a');
+          link.href = data;
+          link.download = "FormatoAlta.xlsx";
+          link.click();
+        }
+      });
+    }
+  }
+
+  base64ToArrayBuffer(base64 : string) {
+    var binary_string =  window.atob(base64);
+    var len = binary_string.length;
+    var bytes = new Uint8Array( len );
+    for (var i = 0; i < len; i++)        {
+        bytes[i] = binary_string.charCodeAt(i);
+    }
+    return bytes;
+  }
 }

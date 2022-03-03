@@ -11,6 +11,7 @@ import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { FacturacionService } from 'src/app/services/Facturacion/Facturacion.service';
 import { SucursalService } from 'src/app/services/Sucursal/sucursal.service';
 import Swal from 'sweetalert2';
+import * as JSZip from 'jszip';
 
 @Component({
   selector: 'app-inicio',
@@ -25,8 +26,10 @@ export class InicioComponent implements OnInit {
   id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
   nombre = window.sessionStorage.getItem("nombre");
   modal: any;
+  modal_load: any;
   public filterControl = new FormControl();
   @ViewChild('content', {static: false}) contenidoDelModal : any;
+  @ViewChild('content_load', {static: false}) contenidoLoad : any;
   public clientes : any;
   filtros = {
     id_empresa : 0,
@@ -54,6 +57,7 @@ export class InicioComponent implements OnInit {
   correo = "";
   @ViewChild(MatPaginator) paginator : any;
   descarga_masiva = false;
+  tipo_load = 0;
 
   constructor(
     private router: Router,
@@ -81,6 +85,8 @@ export class InicioComponent implements OnInit {
       id_cliente : this.id_cliente,
       filtros : this.filtros
     };
+    this.tipo_load = 1;
+    this.openModalLoad();
     this.factura_service.obtenerFacturas(json)
     .subscribe((object : any) => {
       if(object.ok){
@@ -88,8 +94,10 @@ export class InicioComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.registros = object.data.total;
         this.descarga_masiva = true;
+        this.cerrarLoad();
       }else{
         this.descarga_masiva = false;
+        this.cerrarLoad();
       }
     });
   }
@@ -160,8 +168,16 @@ export class InicioComponent implements OnInit {
     this.modal = this.modalService.open(this.contenidoDelModal,{ centered : true, backdropClass : 'light-blue-backdrop', backdrop: 'static', keyboard: false});
   }
 
+  openModalLoad() {
+    this.modal_load = this.modalService.open(this.contenidoLoad,{ centered : true, backdropClass : 'light-blue-backdrop', backdrop: 'static', keyboard: false});
+  }
+
   cerrarModal(){
     this.modal.close();
+  }
+  
+  cerrarLoad(){
+    this.modal_load.close();
   }
   
   limpiarCampos(){
@@ -251,18 +267,28 @@ export class InicioComponent implements OnInit {
       id_cliente : this.id_cliente,
       filtros : this.filtros
     };
+    this.tipo_load = 2;
+    this.openModalLoad();
     this.factura_service.descargaMasiva(json)
     .subscribe((object : any) => {
       if(object.ok){
-          var arrayBuffer = this.base64ToArrayBuffer(object.data);
-          var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
-          var data = window.URL.createObjectURL(newBlob);
-          let link  = document.createElement('a');
-          link.href = data;
-          link.download = "archivos_factura.zip";
-          link.click();
+          const zip = new JSZip();
+          object.data.forEach((element : any) => {
+            var carpeta = zip.folder(element.nombre);
+            carpeta?.file(element.nombre+"-"+element.uuid+".xml",element.xml,{base64 : true});
+            carpeta?.file(element.nombre+"-"+element.uuid+".pdf",element.pdf,{base64 : true});
+          });
+          zip.generateAsync({type : "blob"}).then((content : any) => {
+            var data = window.URL.createObjectURL(content);
+            let link  = document.createElement('a');
+            link.href = data;
+            link.download = "archivos_timbres.zip";
+            link.click();
+            this.cerrarLoad();
+          });
       }else{
         Swal.fire("Ha ocurrido un error","No se ha encontrado resultados","error");
+        this.cerrarLoad();
       }
     });
   }

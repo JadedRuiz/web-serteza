@@ -30,6 +30,81 @@ export class FacturacionService {
       }));
   }
 
+  facObtenerOperadores(id : any){
+    let url = SERVER_API+"facturacion/facObtenerOperadores/"+id;
+    return this.http.get(url);
+  }
+
+  facAltaOperador(json : any){
+    let url = SERVER_API+"facturacion/facAltaOperador";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error, 'error');
+      return throwError(err);
+    }));
+  }
+
+  facObtenerTransporte(id : any, tipo : any){
+    let url = SERVER_API+"facturacion/facObtenerTransporte/"+id+"/"+tipo;
+    return this.http.get(url);
+  }
+
+  facObtenerPersona(id : any){
+    let url = SERVER_API+"facturacion/facObtenerPersona/"+id;
+    return this.http.get(url);
+  }
+
+  facAltaPersona(json : any){
+    let url = SERVER_API+"facturacion/facAltaPersona";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error, 'error');
+      return throwError(err);
+    }));
+  }
+
+  facAltaVehiculo(json : any){
+    let url = SERVER_API+"facturacion/facAltaVehiculo";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
+        return throwError(err);
+      }));
+  }
+
+  facObtenerUbicacion(json : any){
+    let url = SERVER_API+"facturacion/facObtenerUbicacion";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
+        return throwError(err);
+      }));
+  }
+
+  facAltaUbicacion(json : any){
+    let url = SERVER_API+"facturacion/facAltaUbicacion";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
+        return throwError(err);
+      }));
+  }
+  
+  getImportMercancias(){
+    let url = SERVER_API+"facturacion/getImportMercancias";
+    return this.http.get(url);
+  }
+
   obtenerFacturas(json : any){
     let url = SERVER_API+"facturacion/obtenerFacturas";
     return this.http.post( url, json )
@@ -68,9 +143,6 @@ export class FacturacionService {
     return this.http.post( url, json )
       .pipe(map( (resp: any) => {
         return resp;
-      }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error, 'error');
-        return throwError(err);
       }));
   }
 }
