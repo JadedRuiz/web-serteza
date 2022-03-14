@@ -148,7 +148,8 @@
                           <button *ngIf="tipo_modal != 3" class="btn btn-info btn-sm" title="Editar puesto" (click)="editarContratacion(movimiento.id_registro)"><i class="fas fa-edit"></i></button>
                           <button *ngIf="tipo_modal != 3" class="btn btn-danger btn-sm" title="Eliminar puesto" (click)="cancelarDetalle(movimiento.id_registro,movimiento.id_detalle)"><i class="far fa-trash-alt"></i></button>
                           <button *ngIf="tipo_modal == 3" class="btn btn-info btn-sm" title="Generar reporte" (click)="consumoReporte(2,movimiento.id_detalle)"><i class="far fa-file-pdf"></i></button>
-                          <button *ngIf="tipo_modal == 3" class="btn btn-yellow btn-sm" title="Generar contrato" (click)="descargarReporte(movimiento.id_detalle)"><i class="fas fa-file-contract"></i></button>
+                          <!-- <button *ngIf="tipo_modal == 3" class="btn btn-yellow btn-sm" title="Generar contrato" (click)="descargarReporte(movimiento.id_detalle)"><i class="fas fa-file-contract"></i></button> -->
+                          <app-modal-contrato *ngIf="tipo_modal == 3" title="Mis contratos" [id_empresa]="movimiento.id_empresa" [id_movimiento]="movimiento.id_detalle"></app-modal-contrato>
                       </div>
                   </mat-list-item>
                   <mat-divider></mat-divider>

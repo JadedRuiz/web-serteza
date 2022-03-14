@@ -31,6 +31,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatListModule} from '@angular/material/list';
 import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.component';
 import { CatalogoSucursalComponent } from './catalogo_sucursal/catalogo_sucursal.component';
+import { ComponentesModule } from '../componentes/compartido.module';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { CatalogoSucursalComponent } from './catalogo_sucursal/catalogo_sucursal
   ],
   imports: [
     CompartidoModule,
+    ComponentesModule,
     SistemaReclutamientoRoutingModule,
     BrowserModule,
     CommonModule,

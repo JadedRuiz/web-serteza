@@ -62,6 +62,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
   tipo_modal = 1;
   tipo_modal_alta = 1;
   movimientos : any; 
+  id_empresa = 0;
   detalle = {
     id_registro : 0,
     id_detalle : 0,
@@ -179,6 +180,7 @@ export class ProcedimientoContratacionComponent implements OnInit {
       if(object.ok){
         this.empresas = object.data;
         this.empresas_busqueda = object.data;
+        this.id_empresa = object.data[0].id_empresa;
       }else{
         Swal.fire("Aviso","No se han encontrado empresas configuradas a este cliente","info");
       }

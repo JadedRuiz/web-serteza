@@ -100,4 +100,26 @@ export class ContratoService {
         return throwError(err);
       }));
   }
+
+  recuperarContratos(id_cliente : any){
+    let url = SERVER_API+"contrato/obtenerContratos/"+id_cliente;
+    return this.http.get( url )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+
+  altaContrato(json : any){
+    let url = SERVER_API+"contrato/altaContrato";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
 }
