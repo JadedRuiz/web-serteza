@@ -36,7 +36,8 @@ export class CatalogoEmpresaComponent implements OnInit {
     representante : {
       nombre : "",
       rfc : "",
-      curp : ""
+      curp : "",
+      cargo : ""
     },
     direccion : this.direccion,
     fotografia : this.fotografia,
@@ -186,6 +187,7 @@ export class CatalogoEmpresaComponent implements OnInit {
         this.empresa.direccion.descripcion = object.data[0].descripcion_direccion;
         this.empresa.representante.nombre = object.data[0].representante_legal;
         this.empresa.representante.rfc = object.data[0].rfc_repre;
+        this.empresa.representante.cargo = object.data[0].cargo_repre;
         this.empresa.representante.curp = object.data[0].curp;
         this.empresa.fotografia.id_fotografia = object.data[0].id_fotografia;
         this.foto_user = object.data[0].fotografia;
@@ -228,7 +230,8 @@ export class CatalogoEmpresaComponent implements OnInit {
       representante : {
         nombre : "",
         rfc : "",
-        curp : ""
+        curp : "",
+        cargo : ""
       },
       direccion : this.direccion,
       fotografia : this.fotografia,
