@@ -56,6 +56,7 @@ export class SidebarComponent implements OnInit {
     let procesos = [];
     catalogos.push(
       {path: 'catalogo_concepto', title: 'Conceptos', icon: 'fas fa-receipt'},
+      {path: 'catalogo_empresa', title: 'Empresas', icon: 'fas fa-home'},
       {path: 'catalogo_serie', title: 'Series', icon: 'fas fa-home'},
       // {path: 'catalogo_empresa', title: 'Empresas', icon: 'far fa-building'},
       // {path: 'catalogo_sucursal', title: 'Sucursales', icon: 'fas fa-map-marker-alt'},

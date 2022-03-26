@@ -24,6 +24,7 @@ import { ChartsModule } from 'ng2-charts';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     DashboardComponent,
     CatalogoConceptosComponent,
     CatalogoSeriesComponent,
+    CatalogoEmpresaComponent,
     ProcesoFacturadorComponent
   ],
   imports: [
