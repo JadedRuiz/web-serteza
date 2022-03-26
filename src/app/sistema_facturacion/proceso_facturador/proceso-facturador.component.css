@@ -1,4 +1,13 @@
-
+.editable{
+  border:none;
+  outline:none;
+  background:transparent;    
+  font-weight: bolder;
+}
+.bold{
+  font-weight: bolder;
+  text-align: start;
+}
 .mat-column-Descripcion {
   word-wrap: break-word !important;
   white-space: unset !important;
@@ -113,7 +122,7 @@
   -webkit-hyphens: auto;
   hyphens: auto;
 }
-/deep/ .cdk-overlay-container { z-index: 9999; }
+.cdk-overlay-container { z-index: 9999; }
 .mat-table {
     overflow-x: scroll;
 }

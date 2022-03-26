@@ -462,7 +462,8 @@
                                                         rows="1"
                                                         class="form-control" 
                                                         [(ngModel)]="element.descripcion"
-                                                        [matAutocomplete]="auto" 
+                                                        [matAutocomplete]="auto"
+                                                        (keyup)="mostrarConceptos(element.descripcion)"
                                                         required></textarea>
                                                         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionConcepto($event, element.id_row)">
                                                             <mat-option *ngFor="let concepto of conceptos" [value]="concepto.descripcion" [id]="concepto.id_concepto_empresa">
@@ -509,7 +510,7 @@
                                             <div class="col-12 table-responsive px-0 mx-0">
                                                 <table class="table table-light">
                                                     <thead>
-                                                        <tr class="text-center">
+                                                        <tr class="text-start">
                                                             <th>Subtotal</th>
                                                             <th>Descuento</th>
                                                             <th>IVA</th>
@@ -519,13 +520,17 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody class="bg-white">
-                                                        <tr class="text-center">
-                                                            <td><strong> $ {{datos_factura.subtotal}} </strong></td>
-                                                            <td><strong> $ {{datos_factura.descuento_t}} </strong></td>
-                                                            <td><strong> $ {{datos_factura.iva_t}} </strong></td>
-                                                            <td><strong> $ {{datos_factura.ieps_t}} </strong></td>
-                                                            <td><strong> $ {{datos_factura.otros_t}} </strong></td>
-                                                            <td><strong> $ {{datos_factura.total}} </strong></td>
+                                                        <tr>
+                                                            <td class="bold">$ {{datos_factura.subtotal}}</td>
+                                                            <td class="bold">$ {{datos_factura.descuento_t}}</td>
+                                                            <td class="bold"> $ {{datos_factura.iva_t}} </td>
+                                                            <td class="bold"> 
+                                                                $ <input type="text" [(ngModel)]="datos_factura.ieps_t" (change)="" class="editable">
+                                                            </td>
+                                                            <td class="bold">
+                                                                $ <input type="text" [(ngModel)]="datos_factura.otros_t" class="editable">
+                                                            </td>
+                                                            <td class="bold"> $ {{datos_factura.total}}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>

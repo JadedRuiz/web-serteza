@@ -14,6 +14,11 @@ export class SerieService {
     public http: HttpClient
   ) { }
 
+  facObtenerFolio(id : any){
+    let url = SERVER_API+"serie/facObtenerFolio/"+id;
+    return this.http.get(url);
+  }
+
   obtenerSeries(id_empresa : any){
     let url = SERVER_API+"serie/obtenerSeries/"+id_empresa;
     return this.http.get( url )
