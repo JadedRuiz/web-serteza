@@ -36,6 +36,7 @@ export class CatalogoSeriesComponent implements OnInit {
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   serie = {
     id_serie : 0,
+    no_folio : 1,
     id_empresa : 0,
     serie : "",
     direccion : this.direccion,
@@ -150,8 +151,12 @@ export class CatalogoSeriesComponent implements OnInit {
   }
   
   altaSerie(){
-    this.serie.id_empresa = this.id_empresa;
-    this.confirmar("Confirmacion","¿Seguro que deseas dar de alta está serie?","info",null,1);
+    if(this.direccion.estado == ""){
+      Swal.fire("Aviso","Por favor seleccione un estado","info");
+    }else{
+      this.serie.id_empresa = this.id_empresa;
+      this.confirmar("Confirmacion","¿Seguro que deseas dar de alta está serie?","info",null,1);
+    }
   }
 
   visualizar(id : any){
@@ -162,6 +167,11 @@ export class CatalogoSeriesComponent implements OnInit {
       if(object.ok){
         let serie = object.data;
         this.serie.id_serie = serie.id_serie;
+        //recuperar_folio
+        this.serie_service.facObtenerFolio(serie.id_serie)
+        .subscribe((object : any) => {
+          this.serie.no_folio = object.data;
+        });
         this.serie.serie = serie.serie;
         this.serie.direccion.id_direccion = serie.id_direccion;
         this.serie.direccion.calle = serie.calle;
@@ -189,6 +199,7 @@ export class CatalogoSeriesComponent implements OnInit {
     this.direccion = new Direccion(0,"","","","","","","","","","","");
     this.serie = {
       id_serie : 0,
+      no_folio : 1,
       id_empresa : 0,
       serie : "",
       direccion : this.direccion,

@@ -292,9 +292,8 @@ export class ProcesoFacturadorComponent implements OnInit {
         this.empresas = object.data;
         this.empresas_busqueda = object.data;
         this.filterControlEmpresa.setValue(object.data[0].empresa);
-        this.mostrarConceptos(object.data[0].id_empresa);
+        this.mostrarConceptos("");
         this.mostrarSeries(object.data[0].id_empresa);
-        this.obtenerFolio(object.data[0].id_empresa);
       }
     });
   }
@@ -324,11 +323,11 @@ export class ProcesoFacturadorComponent implements OnInit {
     this.id_empresa = value.option.id;
   }
 
-  obtenerFolio(id_empresa : any){
-    this.factura_service.facObtenerFolio(id_empresa)
+  obtenerFolio(id_serie : any){
+    this.serie_service.facObtenerFolio(id_serie)
     .subscribe((object : any) => {
       if(object.ok){
-        this.datos_factura.folio = parseInt(object.data.folio)+1;
+        this.datos_factura.folio = object.data;
       }
     })
   }
@@ -361,7 +360,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     if(this.filterControlCliente.value.length > 0){
       this.clientes_busqueda = [];
       this.clientes.forEach((element : any) => {
-        if(element.empresa.includes(this.filterControlCliente.value.toUpperCase())){ 
+        if(element.nombre.includes(this.filterControlCliente.value.toUpperCase())){ 
           this.clientes_busqueda.push({
             "nombre" : element.nombre,
             "id_catclientes" : element.id_catclientes
@@ -405,9 +404,13 @@ export class ProcesoFacturadorComponent implements OnInit {
     });
   }
 
-  mostrarConceptos(id_empresa : any){
+  mostrarConceptos(busqueda : any){
     this.conceptos = [];
-    this.concepto_service.facObtenerConceptosEmpresa(id_empresa)
+    let json = {
+      id_empresa : this.id_empresa,
+      busqueda : busqueda
+    };
+    this.concepto_service.buscarConceptos(json)
     .subscribe((object : any) => {
       if(object.ok){
         this.conceptos = object.data;
@@ -483,6 +486,7 @@ export class ProcesoFacturadorComponent implements OnInit {
         this.series = object.data;
         this.serieControl.setValue(object.data[0].serie);
         this.datos_factura.id_serie = object.data[0].id_serie;
+        this.obtenerFolio(object.data[0].id_serie);
       }
     });
   }
@@ -849,7 +853,11 @@ export class ProcesoFacturadorComponent implements OnInit {
   }
 
   altaCliente(){
-    this.confirmar("Confirmación","¿Seguro que desas dar de alta un nuevo cliente?","info",null,1);
+    if(this.cliente.direccion.estado != ""){
+      this.confirmar("Confirmación","¿Seguro que desas dar de alta un nuevo cliente?","info",null,1);
+    }else{
+      Swal.fire("Aviso","Favor de seleccionar un estado","info");
+    }
   }
 
   usaConcepto(){
@@ -1157,6 +1165,16 @@ export class ProcesoFacturadorComponent implements OnInit {
             if(object.ok){
               Swal.fire("Buen trabajo","El cliente se ha dado de alta correctamente","success");
               this.mostrarClientes();
+              this.cliente = {
+                id_cliente : 0,
+                razon_social : "",
+                rfc : "",
+                curp : "",
+                telefono : "",
+                mail : "",
+                direccion : this.direccion,
+                usuario_creacion : this.usuario
+              };
               this.cerrarModal(1);
             }else{
               Swal.fire("Ha ocurrido un error",object.message,"error");
@@ -1170,8 +1188,8 @@ export class ProcesoFacturadorComponent implements OnInit {
           this.factura_service.facAltaFactura(this.datos_factura)
           .subscribe((object : any) => {
             if(object.ok){
+              this.obtenerFolio(this.datos_factura.id_serie);
               this.limpiarCamposFactura();
-              this.obtenerFolio(this.id_empresa);
               this.limpiarCamposCataporte();
               Swal.fire("Buen trabajo","La factura ha sido almacenada correctamente","success");
             }
