@@ -827,6 +827,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     const formatter = new Intl.NumberFormat('en-NZ', {
       currency: 'NZD',
       minimumFractionDigits: 2,
+      maximumFractionDigits : 2
     });
     this.datos_factura.subtotal = formatter.format(subtotal);
     this.datos_factura.descuento_t = formatter.format(descuento);
@@ -1147,6 +1148,37 @@ export class ProcesoFacturadorComponent implements OnInit {
     };
   }
 
+  previsualizarPDF(){
+    if(this.datos_factura.id_cliente == 0){
+      Swal.fire("Aviso","Es necesario seleccionar el cliente receptor para la factura","info");
+      return "";
+    }
+    let band = false;
+    this.dataSource.data.forEach((element : any) => {
+        if(element.id_concepto == "0"){
+          band = true;
+        }
+    });
+    if(band){
+      Swal.fire("Aviso","Es necesario seleccionar el concepto","info");
+      return "";
+    }
+    this.datos_factura.id_empresa = this.id_empresa;
+    this.factura_service.preview(this.datos_factura)
+    .subscribe((object : any) => {
+      var byteCharacters = atob(object.data);
+      var byteNumbers = new Array(byteCharacters.length);
+      for (var i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      var byteArray = new Uint8Array(byteNumbers);
+      var file = new Blob([byteArray], { type: 'application/pdf;base64' });
+      var fileURL = URL.createObjectURL(file);
+      window.open(fileURL);
+    });
+    return "";
+  }
+
   confirmar(title : any ,texto : any ,tipo_alert : any,json : any,tipo : number){
     Swal.fire({
       title: title,
@@ -1191,7 +1223,22 @@ export class ProcesoFacturadorComponent implements OnInit {
               this.obtenerFolio(this.datos_factura.id_serie);
               this.limpiarCamposFactura();
               this.limpiarCamposCataporte();
-              Swal.fire("Buen trabajo","La factura ha sido almacenada correctamente","success");
+              if(object.data == "1"){ 
+                Swal.fire("Buen trabajo","La factura ha sido almacenada correctamente","success");
+              }else{
+                var byteCharacters = atob(object.data);
+                var byteNumbers = new Array(byteCharacters.length);
+                for (var i = 0; i < byteCharacters.length; i++) {
+                  byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                var byteArray = new Uint8Array(byteNumbers);
+                var file = new Blob([byteArray], { type: 'application/pdf;base64' });
+                var fileURL = URL.createObjectURL(file);
+                window.open(fileURL);
+                Swal.fire("Buen trabajo","La factura ha sido almacenada y descargada correctamente","success");
+              }
+            }else{
+              Swal.fire("Ha ocurrido un error",object.message,"error");
             }
           });
         }

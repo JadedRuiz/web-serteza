@@ -145,4 +145,15 @@ export class FacturacionService {
         return resp;
       }));
   }
+
+  preview(json : any){
+    let url = SERVER_API+"facturacion/getPDFPreview";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
+        return throwError(err);
+      }));
+  }
 }

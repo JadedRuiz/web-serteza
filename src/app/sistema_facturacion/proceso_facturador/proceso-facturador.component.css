@@ -122,7 +122,7 @@
   -webkit-hyphens: auto;
   hyphens: auto;
 }
-.cdk-overlay-container { z-index: 9999; }
+/deep/ .cdk-overlay-container { z-index: 9999; }
 .mat-table {
     overflow-x: scroll;
 }

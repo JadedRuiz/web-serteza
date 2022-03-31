@@ -187,6 +187,17 @@ export class CatalogoEmpresaComponent implements OnInit {
         this.empresa.representante.cargo = object.data[0].cargo_repre;
         this.empresa.representante.curp = object.data[0].curp;
         this.empresa.fotografia.id_fotografia = object.data[0].id_fotografia;
+        this.empresa.no_cer = object.data[0].no_certificado;
+        if(object.data[0].certificado != null){
+          this.nombre_cer = "Estatus - Subido - Adjuntar de nuevo";
+        }else{
+          this.nombre_cer = "Estatus : Vacio - Adjuntar Nuevo";
+        }
+        if(object.data[0].key != null){
+          this.nombre_key = "Estatus - Subido - Adjuntar de nuevo";
+        }else{
+          this.nombre_key = "Estatus : Vacio - Adjuntar Nuevo";
+        }
         this.foto_user = object.data[0].fotografia;
         this.filterControlEstado.setValue(object.data[0].estado);
       }
@@ -232,7 +243,7 @@ export class CatalogoEmpresaComponent implements OnInit {
         }
       }
       if(tipo == 2){
-        if(extension == "key" || extension == "KEY"){
+        if(extension == "pem" || extension == "PEM"){
           this.convertirImagenAB64(archivos).then( respuesta => {
             this.empresa.key = respuesta+"";
             this.nombre_key = "Estatus : Subido - "+archivos.name;

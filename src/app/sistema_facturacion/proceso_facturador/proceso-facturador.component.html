@@ -525,7 +525,7 @@
                                                             <td class="bold">$ {{datos_factura.descuento_t}}</td>
                                                             <td class="bold"> $ {{datos_factura.iva_t}} </td>
                                                             <td class="bold"> 
-                                                                $ <input type="text" [(ngModel)]="datos_factura.ieps_t" (change)="" class="editable">
+                                                                $ <input type="text" [(ngModel)]="datos_factura.ieps_t" class="editable">
                                                             </td>
                                                             <td class="bold">
                                                                 $ <input type="text" [(ngModel)]="datos_factura.otros_t" class="editable">
@@ -537,6 +537,7 @@
                                             </div>
                                         </div>
                                         <div class="row d-flex justify-content-end">
+                                            <button class="btn btn-info mt-2" (click)="previsualizarPDF()">Previsualizar</button>
                                             <button class="btn btn-success mt-2" (click)="altaFactura()">Guardar</button>
                                         </div>
                                     </div>

@@ -170,9 +170,9 @@
             </div>
             <div class="col-sm-12 col-lg-4">
               <mat-form-field class="w-100">
-                <mat-label>.KEY</mat-label>
+                <mat-label>.KEY.PEM</mat-label>
                 <input matInput [(ngModel)]="nombre_key" (click)="subirImagen('keyUpload')" style="cursor: pointer;" readonly>
-                <input type="file" name="" id="keyUpload" style="display: none;" accept=".key" (change)="subirCredencial(2,$event)">
+                <input type="file" name="" id="keyUpload" style="display: none;" accept=".pem" (change)="subirCredencial(2,$event)">
               </mat-form-field>
               <!-- <div class="input-group mb-3">
                 <div class="input-group-prepend">
