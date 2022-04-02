@@ -93,8 +93,8 @@ export class ClienteService {
         return throwError(err);
       }));
   }
-  facObtenerClientes(){
-    let url = SERVER_API+"cliente/facObtenerClientes";
+  facObtenerClientes(id_empresa : any){
+    let url = SERVER_API+"cliente/facObtenerClientes/"+id_empresa;
     return this.http.get(url);
   }
   facObtenerClientesPorId(id : any){

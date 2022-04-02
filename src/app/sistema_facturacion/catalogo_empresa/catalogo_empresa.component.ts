@@ -32,6 +32,7 @@ export class CatalogoEmpresaComponent implements OnInit {
     empresa : "",
     razon_social : "",
     rfc : "",
+    regimen : "",
     no_cer : "",
     cer : "",
     key : "",
@@ -188,6 +189,7 @@ export class CatalogoEmpresaComponent implements OnInit {
         this.empresa.representante.curp = object.data[0].curp;
         this.empresa.fotografia.id_fotografia = object.data[0].id_fotografia;
         this.empresa.no_cer = object.data[0].no_certificado;
+        this.empresa.regimen = object.data[0].regimen_fiscal;
         if(object.data[0].certificado != null){
           this.nombre_cer = "Estatus - Subido - Adjuntar de nuevo";
         }else{

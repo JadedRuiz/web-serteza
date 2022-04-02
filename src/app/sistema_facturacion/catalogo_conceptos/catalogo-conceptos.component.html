@@ -154,7 +154,7 @@
                         </mat-autocomplete>
                     </mat-form-field>
                 </div>
-                <div class="col-lg-3 col-sm-12">
+                <div class="col-lg-4 col-sm-12">
                     <label for="iva">Descuento</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -163,7 +163,7 @@
                         <input type="text" class="form-control" [(ngModel)]="concepto.descuento" name="descuento">
                     </div>
                 </div>
-                <div class="col-lg-3 col-sm-12">
+                <div class="col-lg-4 col-sm-12">
                     <label for="iva">IVA</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -185,7 +185,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-sm-12">
+                <div class="col-lg-4 col-sm-12">
                     <label for="iva">IEPS</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -207,13 +207,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-sm-12">
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-sm-12">
                     <label for="iva">Otros impuestos</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">%</span>
                         </div>
-                        <input type="text" class="form-control" [(ngModel)]="concepto.otros" name="otros">
+                        <input type="text" class="form-control" [(ngModel)]="concepto.otros" name="otros" (change)="habilitaCampo()">
                         <div class="input-group-append">
                             <button  class="btn btn-info" mat-icon-button [matMenuTriggerFor]="menuTres" title="Tipo">
                                 {{concepto.tipo_otros}}
@@ -228,6 +230,12 @@
                             </mat-menu>
                         </div>
                     </div>
+                </div>
+                <div *ngIf="band_otros" class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Otros imp. descripción</label>
+                        <input type="text" class="form-control" [(ngModel)]="concepto.nombre_otros" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Escriba aquí" maxlength="350">
+                      </div>
                 </div>
             </div>
         </div>

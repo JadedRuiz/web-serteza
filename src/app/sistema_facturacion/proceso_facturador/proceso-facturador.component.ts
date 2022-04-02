@@ -155,6 +155,7 @@ export class ProcesoFacturadorComponent implements OnInit {
   modal_control_excel: any;
   cliente = {
     id_cliente : 0,
+    id : this.cliente_seleccionado,
     razon_social : "",
     rfc : "",
     curp : "",
@@ -231,6 +232,7 @@ export class ProcesoFacturadorComponent implements OnInit {
       ieps_porcent : 0,
       otros : "0.00",
       otro_porcent : 0,
+      otros_tipo : "",
       importe : "0.00",
       neto : "0.00",
       neto_print : "",
@@ -335,7 +337,7 @@ export class ProcesoFacturadorComponent implements OnInit {
   mostrarClientes(){
     this.clientes = [];
     this.clientes_busqueda = [];
-    this.cliente_service.facObtenerClientes()
+    this.cliente_service.facObtenerClientes(this.cliente_seleccionado)
     .subscribe((object : any) => {
       if(object.ok){
         this.clientes = object.data;
@@ -432,6 +434,7 @@ export class ProcesoFacturadorComponent implements OnInit {
         element.iva_porcent = concepto.iva;
         element.ieps_porcent = concepto.ieps;
         element.otros_porcent = concepto.otros_imp;
+        element.otros_tipos = concepto.tipo_otros;
       }
     });
   }
@@ -778,6 +781,7 @@ export class ProcesoFacturadorComponent implements OnInit {
       ieps_porcent : 0,
       otros : "0.00",
       otro_porcent : 0,
+      otros_tipo : "",
       importe : "0.00",
       neto : "0.00",
       neto_print : "",
@@ -821,7 +825,11 @@ export class ProcesoFacturadorComponent implements OnInit {
       total += iva;
       ieps += parseFloat(element.ieps);
       total += ieps;
-      otros += parseFloat(element.otros);
+      if(element.otros_tipos == "T"){
+        otros += parseFloat(element.otros);
+      }else{
+        otros -= parseFloat(element.otros);
+      }
       total += otros;
     });
     const formatter = new Intl.NumberFormat('en-NZ', {
@@ -1070,6 +1078,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     this.direccion = new Direccion(0,"","","","","","","","","","","");
     this.cliente = {
       id_cliente : 0,
+      id : this.cliente_seleccionado,
       razon_social : "",
       rfc : "",
       curp : "",
@@ -1112,12 +1121,18 @@ export class ProcesoFacturadorComponent implements OnInit {
       cantidad : "1",
       precio : "0.00",
       unidad : "",
+      descuento_porcent : 0,
       descuento : "0.00",
+      iva_porcent : 0,
       iva : "0.00",
       ieps : "0.00",
+      ieps_porcent : 0,
       otros : "0.00",
+      otro_porcent : 0,
+      otros_tipo : "",
       importe : "0.00",
       neto : "0.00",
+      neto_print : "",
       btn : false
     });
     this.datos_factura = {
@@ -1199,6 +1214,7 @@ export class ProcesoFacturadorComponent implements OnInit {
               this.mostrarClientes();
               this.cliente = {
                 id_cliente : 0,
+                id : this.cliente_seleccionado,
                 razon_social : "",
                 rfc : "",
                 curp : "",

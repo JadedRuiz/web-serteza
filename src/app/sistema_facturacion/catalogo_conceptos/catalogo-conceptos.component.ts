@@ -44,8 +44,10 @@ export class CatalogoConceptosComponent implements OnInit {
     tipo_ieps : "T",
     otros : 0.00,
     tipo_otros : "T",
+    nombre_otros : "",
     usuario_creacion : this.usuario
   };
+  band_otros = false;
   public modal : any;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   tipo_modal = 0;
@@ -182,6 +184,13 @@ export class CatalogoConceptosComponent implements OnInit {
         this.concepto.tipo_ieps = concepto.tipo_ieps;
         this.concepto.otros = parseFloat(concepto.otros_imp);
         this.concepto.tipo_otros = concepto.tipo_otros;
+        if(this.concepto.otros > 0){
+          this.concepto.nombre_otros = concepto.nombre_otros;
+          this.band_otros = true;
+        }else{
+          this.band_otros = false;
+        }
+
         this.openModal();
       }else{
         Swal.fire("Ha ocurrido un error",object.message,"error");
@@ -192,6 +201,14 @@ export class CatalogoConceptosComponent implements OnInit {
   altaConcepto(){
     this.concepto.id_empresa = this.id_empresa;
     this.confirmar("Confirmación","¿Seguro que deseas dar de alta este concepto","info",null,1);
+  }
+
+  habilitaCampo(){
+    if(this.concepto.otros > 0){
+      this.band_otros = true;
+    }else{
+      this.band_otros = false;
+    }
   }
 
   modificarConcepto(){
@@ -223,6 +240,7 @@ export class CatalogoConceptosComponent implements OnInit {
       tipo_ieps : "T",
       otros : 0.00,
       tipo_otros : "T",
+      nombre_otros : "",
       usuario_creacion : this.usuario
     };
   }
