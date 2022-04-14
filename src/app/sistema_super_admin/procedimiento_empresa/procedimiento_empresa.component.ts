@@ -4,6 +4,7 @@ import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { ClienteService } from 'src/app/services/Cliente/cliente.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
+import { NominaService } from 'src/app/services/Nomina/Nomina.service';
 
 @Component({
   selector: 'app-procedimiento-empresa',
@@ -66,6 +67,7 @@ export class ProcedimientoEmpresaComponent implements OnInit {
       }
     });
   }
+
   mostrarClientesPorIdEmpresa(id_empresa : any){
     this.clientes_empresa = [];
     this.cliente_service.obtenerClientesPorIdEmpresa(id_empresa)

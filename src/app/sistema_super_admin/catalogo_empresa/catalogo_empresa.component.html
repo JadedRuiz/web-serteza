@@ -70,6 +70,11 @@
                                               <mat-icon><i class="far fa-eye"></i></mat-icon>
                                               <span>Ver</span>
                                           </button>
+                                          <button mat-menu-item (click)="visualizar_configuraciones(element.id_empresa)">
+                                            <mat-icon><i class="ni ni-settings-gear-65"></i></mat-icon>
+                                            <span>Configuraciones</span>
+                                        </button>
+                                          
                                       </mat-menu>
                                   </td>
                               </ng-container>
@@ -272,9 +277,56 @@
       </mat-tab-group>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="btn btn-warning" (click)="cerrarModal(1)">Cerrar</button>
         <button type="button" *ngIf="info_modal.tipo == 1" class="btn btn-success" (click)="altaEmpresa()">Guardar</button>
         <button type="button" *ngIf="info_modal.tipo == 2" class="btn btn-success" (click)="guardar()">Guardar</button>
     </div>
 </ng-template>
-  
+
+<ng-template #modal_config let-c="close" let-d="dismiss" class="modal-lg">
+  <div class="modal-header">
+    <h2 class="modal-title" id="tituloModal">Panel de Configuraciones</h2>
+  </div>
+  <div class="modal-body">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12 col-lg-6">
+          <mat-form-field class="w-100">
+            <mat-label>Seleccionar confiuración</mat-label>
+            <mat-select [(value)]="selected">
+              <mat-option value="1">Agregar tipo nómina</mat-option>
+              <mat-option value="2">...</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="row" *ngIf="selected == 1">
+              <div class="col-sm-12">
+                <div class="row">
+                  <div class="col-sm-12 col-lg-6">
+                    <input type="text" class="form-control" placeholder="Buscar nomina" [(ngModel)]="busqueda_nomina" (keyup)="buscarNomina()" name="busqueda" style="text-transform: uppercase;">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12">
+                    <mat-selection-list (selectionChange)="setNomina($event)" class="w-100">
+                      <div *ngFor="let nomina of nominas_busqueda" class="d-flex align-items-center">
+                          <mat-list-option  [value]="nomina.id_nomina" [selected]="nomina.activo">
+                              {{nomina.nomina}}
+                          </mat-list-option>
+                      </div>
+                    </mat-selection-list>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-danger" (click)=cerrarModal(2)>Cerrar</button>
+  </div>
+</ng-template>

@@ -6,14 +6,14 @@ import { CompartidoModule } from './compartido/compartido.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { SistemaControlRoutingModule } from './sistema_control.routes';
+import { SistemaControlRoutingModule } from './sistema_bitacora.routes';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import { MatNativeDateModule } from '@angular/material/core'; 
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import { SistemaControlComponent } from './sistema_control.component';
+import { SistemaControlComponent } from './sistema_bitacora.component';
 import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
@@ -39,4 +39,4 @@ import { ChartsModule } from 'ng2-charts';
     ChartsModule
   ]
 })
-export class SistemaControlModule { }
+export class SistemaBitacoraModule { }

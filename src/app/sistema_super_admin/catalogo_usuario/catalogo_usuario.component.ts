@@ -83,6 +83,7 @@ export class CatalogoUsuarioComponent implements OnInit {
   dataSource  = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator : any;
   filterControl = new FormControl();
+  show_nominas = false;
 
   constructor(
     private usuario_service : UsuarioService,

@@ -88,7 +88,7 @@ export class LoginComponent implements OnInit {
     if(this.sistema_elegido == "5"){
       this.router.navigate(["sistema_super_admin/dashboard"]);
     }
-    if(this.sistema_elegido == "1" || this.sistema_elegido == "6" || this.sistema_elegido == "3" || this.sistema_elegido == "4"){
+    if(this.sistema_elegido == "1" || this.sistema_elegido == "6" || this.sistema_elegido == "3" || this.sistema_elegido == "4" ||this.sistema_elegido == "9"){
       this.closeModal();
       this.empresas = [];
       this.empresas_copy = [];
@@ -171,20 +171,6 @@ export class LoginComponent implements OnInit {
       }
       this.router.navigate(["sistema_reclutamiento/dashboard"]);
     }
-    if(this.sistema_elegido == "7"){
-      window.sessionStorage.setItem("cliente",id);
-      if(tipo != 1){
-        this.closeModal();
-      }
-      this.router.navigate(["sistema_timbrado/inicio"]);
-    }
-    if(this.sistema_elegido == "8"){
-      window.sessionStorage.setItem("cliente",id);
-      if(tipo != 1){
-        this.closeModal();
-      }
-      this.router.navigate(["sistema_facturacion/dashboard"]);
-    }
     if(this.sistema_elegido == "3"){
       window.sessionStorage["empresa"] = id;
       this.nominas = [];
@@ -217,8 +203,6 @@ export class LoginComponent implements OnInit {
         id_empresa : id,
         id_status : 1
       };
-      
-      
     }
     if(this.sistema_elegido == "6"){
       this.closeModal();
@@ -226,11 +210,54 @@ export class LoginComponent implements OnInit {
       this.router.navigate(["contabilidad/dashboard"]);
       
     }
+    if(this.sistema_elegido == "7"){
+      window.sessionStorage.setItem("cliente",id);
+      if(tipo != 1){
+        this.closeModal();
+      }
+      this.router.navigate(["sistema_timbrado/inicio"]);
+    }
+    if(this.sistema_elegido == "8"){
+      window.sessionStorage.setItem("cliente",id);
+      if(tipo != 1){
+        this.closeModal();
+      }
+      this.router.navigate(["sistema_facturacion/dashboard"]);
+    }
+    if(this.sistema_elegido == "9"){
+      window.sessionStorage["empresa"] = id;
+      this.nominas = [];
+      this.closeModal();
+      let json = {
+        id_empresa : id,
+        id_status : 1
+      };
+      this.nomina_service.obtenerLigaEmpresaNomina(json)
+      .subscribe( (object : any) => {
+        if(object.ok){
+          if(object.data.length > 1){
+            this.tipo_arreglo = 3;
+            this.nominas = object.data;
+            this.openModal();
+          }else{
+            window.sessionStorage["tipo_nomina"] = object.data[0].id_nomina;
+            this.router.navigate(["sistema_bitacora/dashboard"]); 
+          }
+        }else{
+          Swal.fire("Ha ocurrido un error","Este empresa no cuenta con tipos de nómina, pidele a tu administrador que le agregué los tipos de nómina que tiene tu empresa.","error");
+        }
+      });
+    }
   }
   redireccionNomina(id : any){
     this.closeModal();
     window.sessionStorage["tipo_nomina"] = id;
-    this.router.navigate(["sistema_nomina/dashboard"]); 
+    if(this.sistema_elegido == "3"){
+      this.router.navigate(["sistema_nomina/dashboard"]); 
+    }
+    if(this.sistema_elegido == "9"){
+      this.router.navigate(["sistema_bitacora/dashboard"]); 
+    }
   }
   buscarEmpresa(){
     this.empresas = [];

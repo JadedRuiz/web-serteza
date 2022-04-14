@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 
 @Component({
-  selector: 'app-sistema_control',
-  templateUrl: './sistema_control.component.html',
-  styleUrls: ['./sistema_control.component.css']
+  selector: 'app-sistema_bitacora',
+  templateUrl: './sistema_bitacora.component.html',
+  styleUrls: ['./sistema_bitacora.component.css']
 })
 export class SistemaControlComponent implements OnInit {
 

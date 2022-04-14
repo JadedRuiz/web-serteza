@@ -5,6 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { NominaService } from 'src/app/services/Nomina/Nomina.service';
 import Swal from 'sweetalert2';
+import { PeriodoService } from 'src/app/services/Periodo/Periodo.service';
 
 @Component({
   selector: 'app-header-rc',
@@ -26,11 +27,13 @@ export class HeaderComponent implements OnInit {
   public texto : String;
   public nombre_empresa : String;
   public tipo_arreglo = 0;
+  public periodo = "";
 
   constructor(private router: Router,
     public empresa_service : EmpresaService,
     private modalService: NgbModal,
-    public nomina_service : NominaService
+    public nomina_service : NominaService,
+    public periodo_service : PeriodoService
     ) {
       this.texto = "SISTEMA DE RECLUTAMIENTO";
       this.url_foto = './assets/iconos/perfil.svg';
@@ -51,6 +54,14 @@ export class HeaderComponent implements OnInit {
         this.header[1] = "Sin tipo, seleccionado"
       }
     });
+    this.periodo_service.obtenerPeriodoEjercicioActual(this.empresa_seleccionado,this.id_nomina)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.periodo = object.data.fecha_inicial+"/"+object.data.fecha_final;
+      }else{
+        this.periodo = "Periodo no disponible"
+      }
+    })
   }
   recuperarEmpresas(){
     this.empresas = [];
