@@ -33,7 +33,7 @@ import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.co
     CatalogoConceptosComponent,
     CatalogoSeriesComponent,
     CatalogoEmpresaComponent,
-    ProcesoFacturadorComponent
+    ProcesoFacturadorComponent,
   ],
   imports: [
     CommonModule,

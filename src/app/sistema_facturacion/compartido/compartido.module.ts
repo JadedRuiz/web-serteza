@@ -8,16 +8,18 @@ import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
-
 @NgModule({
-  declarations: [SidebarComponent, HeaderComponent],
+  declarations: [
+    SidebarComponent, 
+    HeaderComponent
+  ],
   imports: [
     CommonModule,
     RouterModule,
     AutocompleteLibModule,
     NgbModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   exports : [
     HeaderComponent,
