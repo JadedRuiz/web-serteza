@@ -48,10 +48,14 @@
                                             <button  *ngIf="!file.start" title="Eliminar Archivo" (click)="eliminarArchivo(file.n_file)" class="btn-warning btn btn-sm"><i class="fas fa-minus-circle"></i></button>
                                         </div>
                                         <div class="col-4">
-                                            <ng-template #popContent>{{file.detalle}}</ng-template>
+                                            <ng-template #popContent>
+                                                <ul style="max-height: 150px;overflow-y: auto;margin: 0;padding-left: 15px;">
+                                                    <li *ngFor="let file of file.detalle" class="px-0">{{file}}</li>
+                                                </ul>
+                                            </ng-template>
                                             <ng-template #popTitle>Detalle del Error</ng-template>
 
-                                            <button *ngIf="!file.start && !file.success" class="btn-info btn btn-sm" [ngbPopover]="popContent" [popoverTitle]="popTitle"><i class="fas fa-info-circle"></i></button>
+                                            <button *ngIf="!file.start && !file.success" class="btn-info btn btn-sm" [ngbPopover]="popContent" [popoverTitle]="popTitle"><i class="fas fa-info-circle" title="Ver detalle"></i></button>
                                         </div>
                                         <div class="col-4 d-flex justify-content-center align-items-center">
                                             <mat-spinner *ngIf="file.reload == 1" value="indeterminate" [diameter]="20"></mat-spinner>
@@ -69,7 +73,7 @@
         <div class="row mt-2">
             <div class="col-12">
                 <button class="btn btn-success float-right" (click)="altaBobedaXML()">Guardar</button>
-                <button class="btn btn-danger float-right mr-2">Cancelar</button>
+                <button class="btn btn-danger float-right mr-2" (click)="closeModal()">Cancelar</button>
             </div>
         </div>
     </div>

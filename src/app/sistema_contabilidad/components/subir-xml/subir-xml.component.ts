@@ -2,9 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, SelectControlValueAccessor } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {NgbPopoverConfig} from '@ng-bootstrap/ng-bootstrap';
+import { type } from 'os';
 import { config } from 'process';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { FacturacionService } from 'src/app/services/Facturacion/Facturacion.service';
+import Swal from 'sweetalert2';
 
 declare var $:any;
 
@@ -28,6 +30,7 @@ export class SubirXmlComponent implements OnInit {
     {
       n_file : 0,
       data : '',
+      extension : '',
       nombre : "Aún no se han seleccionado archivos",
       start : true,
       success : false,
@@ -96,29 +99,31 @@ export class SubirXmlComponent implements OnInit {
       return;
     }
     this.list_files = [];
-    if(files.length == 1){
-      if(files[0].type == "zip"){
+    // if(files.length == 1){
+    //   if(files[0].type == "zip"){
 
-      }
-      this.text_input = files[0].name;
-      this.list_files.push({
-        n_file : 0,
-        data : '',
-        nombre : files[0].name,
-        start :  false,
-        success : true,
-        reload : -1,
-        detalle : ''
-      });
-      return;
-    }
+    //   }
+    //   this.text_input = files[0].name;
+    //   this.list_files.push({
+    //     n_file : 0,
+    //     data : '',
+    //     extension : '',
+    //     nombre : files[0].name,
+    //     start :  false,
+    //     success : true,
+    //     reload : -1,
+    //     detalle : ''
+    //   });
+    //   return;
+    // }
     this.text_input = files.length+" Archivos seleccionados";
     for(let i=0; i< files.length; i++){
-      if(files[i].type == "text/xml"){
+      if(files[i].type == "text/xml" || files[i].type == "application/x-zip-compressed"){
         this.convertirImagenAB64(files[i]).then( respuesta => {
           this.list_files.push({
             n_file : i,
             data : respuesta+"",
+            extension : files[i].type,
             nombre : files[i].name,
             start :  false,
             success : true,
@@ -130,6 +135,7 @@ export class SubirXmlComponent implements OnInit {
         this.list_files.push({
           n_file : i,
           data : '',
+          extension : '',
           nombre : files[i].name,
           start :  false,
           success : false,
@@ -153,20 +159,26 @@ export class SubirXmlComponent implements OnInit {
     let json = {
       id_empresa : this.id_empresa,
       usuario_c : this.usuario_logueado,
-      data : ''
+      data : '',
+      extension : ''
     };
     this.list_files.forEach(async (element : any) => {
       if(element.data != ""){
         json.data = element.data;
+        json.extension = element.extension;
         element.reload = 1;
         await this.fac_service.facSubirXML(json)
         .subscribe((object : any) => {
           if(object.ok){
             element.reload = 2;
+            if(Array.isArray(object.data)){
+              element.success = false;
+              element.detalle = object.data;
+            }
           }else{
             element.reload = 3;
             element.success = false;
-            element.detalle = object.message;
+            element.detalle = [object.message];
           }
         });
       }
@@ -190,6 +202,8 @@ export class SubirXmlComponent implements OnInit {
   }
 
   closeModal(){
+    this.list_files = [];
+    this.text_input = "Directorio sin seleccionar";
     this.modal.close();
   }
 
