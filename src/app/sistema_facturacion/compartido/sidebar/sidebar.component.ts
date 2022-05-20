@@ -54,6 +54,7 @@ export class SidebarComponent implements OnInit {
   pintarMenu(){
     let catalogos = [];
     let procesos = [];
+    let herramientas = [];
     catalogos.push(
       {path: 'catalogo_concepto', title: 'Conceptos', icon: 'fas fa-receipt'},
       {path: 'catalogo_empresa', title: 'Empresas', icon: 'fas fa-home'},
@@ -65,7 +66,7 @@ export class SidebarComponent implements OnInit {
     procesos.push(
       {path: 'proceso_facturas', title: 'Facturas', icon: 'far fa-newspaper'},
       {path: 'proceso_facturador', title: 'Facturador', icon: 'ni-folder-17'},
-      // {path: 'procedimiento_modificacion', title: 'Modificaciones', icon: 'ni-curved-next'},
+      {path: 'proceso_bodega', title: 'Bodega XML', icon: 'fas fa-box'},
       // {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove'},
     );
     this.menuItems = [

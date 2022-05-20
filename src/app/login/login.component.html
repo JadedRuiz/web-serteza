@@ -1,81 +1,57 @@
-<nav class="navbar navbar-top navbar-horizontal navbar-expand-md navbar-dark" style="background-color: white;">
-    <div class="container px-4">
-    </div>
-  </nav>
-  <div class="header py-1 py-lg-5" style="background-color: white;">
-    <div class="container">
-      <div class="header-body text-center mb-7">
-        <div class="row justify-content-center">
-          <div class="col-lg-12 col-md-6">
-            <img src="assets/img/brand/argon-white.png" style="width: 200px"/>
-            <h1 class="text-dark">SISTEMA ADMINISTRATIVO</h1>
+<div class="container-fluid ps-md-0">
+  <div class="row g-0">
+    <div class="d-none d-md-flex col-md-4 col-lg-7 bg-image"></div>
+    <div class="col-md-8 col-lg-5">
+      <div class="login d-flex align-items-center py-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-9 col-lg-8 mx-auto">
+              <img class="my-2" src="assets/img/brand/argon-white.png" style="width: 200px">
+              <!-- Sign In Form -->
+              <form class="px-2" novalidate (ngSubmit)="login(f)" #f="ngForm">
+                <div class="form-floating mb-3">
+                  <label for="floatingInput">Usuario</label>
+                  <input matInput
+                         [(ngModel)]="usuario.usuario"
+                         #name="ngModel"
+                         type="text" class="form-control"
+                         name="usuario"
+                         placeholder="Ingresa tu nombre de usuario"
+                         max="150"
+                         required>
+                  <span *ngIf="name.invalid" class="badge badge-primary">El campo 'usuario' es obligatorio</span>
+                </div>
+                <div class="form-floating mb-3">
+                  <label for="floatingPassword">Contraseña</label>
+                  <input matInput
+                         [(ngModel)]="usuario.password"
+                         #contra="ngModel"
+                         type="password" class="form-control"
+                         placeholder="Ingresa tu contraseña"
+                         name="contra"
+                         required>
+                  <span *ngIf="contra.invalid" class="badge badge-primary">El campo 'contraseña' es obligatorio</span>
+                </div>
+
+                <div class="form-check mb-3" style="cursor: pointer;">
+                  <input class="form-check-input" type="checkbox" value="" id="rememberPasswordCheck" style="cursor: pointer;">
+                  <label class="form-check-label" for="rememberPasswordCheck" style="cursor: pointer;">
+                    Mantener sesión
+                  </label>
+                </div>
+
+                <div class="d-grid">
+                  <button class="btn btn-lg btn-primary btn-login text-uppercase fw-bold mb-2" type="submit"  [disabled]="f.invalid">Accesar</button>
+                </div>
+
+              </form>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <!-- Page content -->
-  <div class="container-fluid mt--9 pb-4"  style="background-color: white;">
-    <div class="row justify-content-center">
-      <div class="col-lg-4 col-md-6">
-        <div class="card {{color}} shadow border-0 text-dark">
-          <div class="card-body px-lg-5 py-lg-5">
-            <form role="form" #f="ngForm" ngNativeValidate (ngSubmit)="login(f)">
-              <div class="form-group mb-3">
-                <div class="input-group input-group-alternative">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="ni ni-email-83"></i></span>
-                  </div>
-                  <input [(ngModel)]="usuario.usuario" name="usuario" class="form-control" placeholder="Usuario" type="text" required>
-                </div>
-              </div>
-              <div class="form-group">
-                <div class="input-group input-group-alternative">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
-                  </div>
-                  <input [(ngModel)]="usuario.password" name="password" class="form-control" placeholder="Contraseña" type="password" required>
-                </div>
-              </div>
-              <div class="custom-control custom-control-alternative custom-checkbox">
-                <input class="custom-control-input" id=" customCheckLogin" type="checkbox">
-                <label class="custom-control-label" for=" customCheckLogin">
-                  <span class="text-dark">Recordar</span>
-                </label>
-              </div>
-              <div class="text-center">
-                <button type="submit" class="btn btn-primary my-4">Iniciar Sesión</button>
-              </div>
-            </form>
-          </div>
-        </div>
-        <!-- <div class="row mt-3">
-          <div class="col-6">
-            <a href="javascript:void(0)" class="text-light"><small>Has olvidado tu contraseña?</small></a>
-          </div>
-          <div class="col-6 text-right">
-            <a href="javascript:void(0)" class="text-light"><small>Registrate aqui</small></a>
-          </div>
-        </div> -->
-      </div>
-    </div>
-  </div>
-<footer class="py-4"  style="background-color: white;">
-  <div class="container">
-    <div class="row align-items-center justify-content-xl-between">
-      <div class="col-xl-12">
-        <ul class="nav nav-footer justify-content-center text-dark">
-          <li class="nav-item text-dark">
-            <a style="text-decoration: none;color: black;" href="https://www.serteza.com" class="font-weight-bold ml-1" target="_blank" >Serteza</a>&copy;
-          </li>
-          <li class="nav-item">
-            <a style="text-decoration: none;color: black;" href="https://www.creative-tim.com/presentation?ref=ada-footer-auth-layout" class="nav-link" target="_blank">Politicas</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</footer>
+</div>
 <ng-template #content let-c="close" let-d="dismiss">
   <div class="modal-header justify-content-center">
     <h4 *ngIf="tipo_arreglo == 0" class="modal-title" id="modal-basic-title">¿Que sistema desea administrar?</h4>

@@ -88,7 +88,7 @@ export class LoginComponent implements OnInit {
     if(this.sistema_elegido == "5"){
       this.router.navigate(["sistema_super_admin/dashboard"]);
     }
-    if(this.sistema_elegido == "1" || this.sistema_elegido == "6" || this.sistema_elegido == "3" || this.sistema_elegido == "4" ||this.sistema_elegido == "9"){
+    if(this.sistema_elegido == "1" || this.sistema_elegido == "3" || this.sistema_elegido == "4" ||this.sistema_elegido == "9"){
       this.closeModal();
       this.empresas = [];
       this.empresas_copy = [];
@@ -118,7 +118,7 @@ export class LoginComponent implements OnInit {
         }
       });
     }
-    if(this.sistema_elegido == "2" || this.sistema_elegido == "7" || this.sistema_elegido == '8'){
+    if(this.sistema_elegido == "2" || this.sistema_elegido == "7" || this.sistema_elegido == '8' || this.sistema_elegido == '6'){
       if(tipo != 1){
         this.closeModal();
       }
@@ -206,7 +206,7 @@ export class LoginComponent implements OnInit {
     }
     if(this.sistema_elegido == "6"){
       this.closeModal();
-      window.sessionStorage["empresa"] = id;
+      window.sessionStorage.setItem("cliente",id);
       this.router.navigate(["contabilidad/dashboard"]);
       
     }
