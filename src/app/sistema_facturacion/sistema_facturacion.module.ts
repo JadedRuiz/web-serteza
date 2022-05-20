@@ -25,6 +25,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.component';
+import { FacturasComponent } from './facturas/facturas.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.co
     CatalogoConceptosComponent,
     CatalogoSeriesComponent,
     CatalogoEmpresaComponent,
-    ProcesoFacturadorComponent
+    ProcesoFacturadorComponent,
+    FacturasComponent
   ],
   imports: [
     CommonModule,

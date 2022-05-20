@@ -63,6 +63,7 @@ export class SidebarComponent implements OnInit {
       // {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'}
     );
     procesos.push(
+      {path: 'proceso_facturas', title: 'Facturas', icon: 'far fa-newspaper'},
       {path: 'proceso_facturador', title: 'Facturador', icon: 'ni-folder-17'},
       // {path: 'procedimiento_modificacion', title: 'Modificaciones', icon: 'ni-curved-next'},
       // {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove'},

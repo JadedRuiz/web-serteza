@@ -6,6 +6,7 @@ import { ProcesoFacturadorComponent } from './proceso_facturador/proceso-factura
 import { CatalogoConceptosComponent } from './catalogo_conceptos/catalogo-conceptos.component';
 import { CatalogoSeriesComponent } from './catalogo_series/catalogo_series.component';
 import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.component';
+import { FacturasComponent } from './facturas/facturas.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,7 @@ const routes: Routes = [
         { path : "catalogo_concepto", component : CatalogoConceptosComponent },
         { path : "catalogo_empresa", component : CatalogoEmpresaComponent },
         { path : "catalogo_serie", component : CatalogoSeriesComponent },
+        { path : "proceso_facturas", component : FacturasComponent },
         { path : "proceso_facturador", component : ProcesoFacturadorComponent },
         { path: '', redirectTo: '/login', pathMatch: 'full'}
     ]

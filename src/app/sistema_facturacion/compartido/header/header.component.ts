@@ -47,21 +47,23 @@ export class HeaderComponent implements OnInit {
     this.sistemas = [];
     this.usuario_service.obtenerSistemasPorIdUsuario(this.usuario_logueado)
     .subscribe((object : any) => {
-      for(let i=0;i<object.data.length;i++){
-        if(this.sistema_seleccionado == parseInt(object.data[i].id_sistema)){
-          this.sistemas.push({
-            "sistema" : object.data[i].sistema,
-            "id_sistema" : object.data[i].id_sistema,
-            "id_perfil" : object.data[i].id_perfil,
-            "class" : "active"
-          });
-        }else{
-          this.sistemas.push({
-            "sistema" : object.data[i].sistema,
-            "id_sistema" : object.data[i].id_sistema,
-            "id_perfil" : object.data[i].id_perfil,
-            "class" : ""
-          });
+      if(object.ok){
+        for(let i=0;i<object.data.length;i++){
+          if(this.sistema_seleccionado == parseInt(object.data[i].id_sistema)){
+            this.sistemas.push({
+              "sistema" : object.data[i].sistema,
+              "id_sistema" : object.data[i].id_sistema,
+              "id_perfil" : object.data[i].id_perfil,
+              "class" : "active"
+            });
+          }else{
+            this.sistemas.push({
+              "sistema" : object.data[i].sistema,
+              "id_sistema" : object.data[i].id_sistema,
+              "id_perfil" : object.data[i].id_perfil,
+              "class" : ""
+            });
+          }
         }
       }
     });

@@ -1242,7 +1242,8 @@ export class ProcesoFacturadorComponent implements OnInit {
               if(object.data == "1"){ 
                 Swal.fire("Buen trabajo","La factura ha sido almacenada correctamente","success");
               }else{
-                var byteCharacters = atob(object.data);
+                //DESCARGA PDF
+                var byteCharacters = atob(object.data.docB64);
                 var byteNumbers = new Array(byteCharacters.length);
                 for (var i = 0; i < byteCharacters.length; i++) {
                   byteNumbers[i] = byteCharacters.charCodeAt(i);
@@ -1251,6 +1252,25 @@ export class ProcesoFacturadorComponent implements OnInit {
                 var file = new Blob([byteArray], { type: 'application/pdf;base64' });
                 var fileURL = URL.createObjectURL(file);
                 window.open(fileURL);
+
+                //DESCARGA XML
+                if(object.data.xml != "" || object.data.xml != null){
+                  byteCharacters = atob(object.data.xml);
+                  byteNumbers = new Array(byteCharacters.length);
+                  for (var i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                  }
+                  byteArray = new Uint8Array(byteNumbers);
+                  file = new Blob([byteArray], { type: 'application/octet-stream;base64' });
+
+                  var elem = window.document.createElement('a');
+                  elem.href = window.URL.createObjectURL(file);
+                  elem.download = 'factura.xml';
+                  document.body.appendChild(elem);
+                  elem.click();
+                  document.body.removeChild(elem);
+                }
+                
                 Swal.fire("Buen trabajo","La factura ha sido almacenada y descargada correctamente","success");
               }
             }else{
