@@ -32,7 +32,7 @@ export class DepartamentoService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
@@ -43,7 +43,7 @@ export class DepartamentoService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
@@ -54,7 +54,7 @@ export class DepartamentoService {
     .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }
@@ -65,7 +65,7 @@ export class DepartamentoService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }

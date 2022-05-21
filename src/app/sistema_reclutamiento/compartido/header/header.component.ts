@@ -3,6 +3,7 @@ import { COLOR } from 'src/config/config';
 import { Router } from '@angular/router';
 import { ClienteService } from 'src/app/services/Cliente/cliente.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 
 @Component({
   selector: 'app-header-rc',
@@ -12,16 +13,23 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class HeaderComponent implements OnInit {
   public color = COLOR;
   public nombre = window.sessionStorage.getItem("nombre");
+  sistema_seleccionado = parseInt(window.sessionStorage.getItem("sistema")+"");
   public usuario_logueado = window.sessionStorage.getItem("user");
   public url_foto : any;
   public cliente_seleccionado = parseInt(window.sessionStorage["cliente"]);
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   public modal: any;
   public clientes : any;
+  public empresas : any;
+  empresas_copy : any;
+  public sistemas : any;
   public texto : String;
   public nombre_cliente : String;
+  sistema_elegido = "";
+  tipo_modal = 0;
   constructor(private router: Router,
     public cliente_service : ClienteService,
+    public usuario_service : UsuarioService,
     private modalService: NgbModal
     ) {
       this.texto = "SISTEMA DE RECLUTAMIENTO";
@@ -31,8 +39,34 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.recuperarClientes();
+    this.recuperarSistemas();
     this.url_foto = window.sessionStorage["foto"];
   }
+
+  recuperarSistemas(){
+    this.sistemas = [];
+    this.usuario_service.obtenerSistemasPorIdUsuario(this.usuario_logueado)
+    .subscribe((object : any) => {
+      for(let i=0;i<object.data.length;i++){
+        if(this.sistema_seleccionado == parseInt(object.data[i].id_sistema)){
+          this.sistemas.push({
+            "sistema" : object.data[i].sistema,
+            "id_sistema" : object.data[i].id_sistema,
+            "id_perfil" : object.data[i].id_perfil,
+            "class" : "active"
+          });
+        }else{
+          this.sistemas.push({
+            "sistema" : object.data[i].sistema,
+            "id_sistema" : object.data[i].id_sistema,
+            "id_perfil" : object.data[i].id_perfil,
+            "class" : ""
+          });
+        }
+      }
+    });
+  }
+
   recuperarClientes(){
     this.clientes = [];
     this.cliente_service.obtenerClientePorIdUsuario(this.usuario_logueado)
@@ -59,12 +93,16 @@ export class HeaderComponent implements OnInit {
         }
       });
   }
+
   eleccion(id_cliente : any){
     window.sessionStorage["cliente"] = id_cliente;
     location.reload();
     this.closeModal();
   }
-  openModal() {
+
+
+  openModal(tipo : any) {
+    this.tipo_modal = tipo;
     this.modal = this.modalService.open(this.contenidoDelModal,{ centered : true, backdropClass : 'light-blue-backdrop'});
   }
   closeModal(){

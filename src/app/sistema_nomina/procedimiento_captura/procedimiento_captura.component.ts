@@ -202,7 +202,7 @@ export class ProcedimientoCapturaComponent implements OnInit {
   mostrarConceptosEmpleado(id : any){
     this.conceptos_empleado = [];
     this.empleado_seleccionado = id;
-    this.concepto_service.obtenerConceptosPorIdEmpleado(id,this.empresa_seleccionado)
+    this.concepto_service.obtenerConceptosPorIdEmpleado(id,this.empresa_seleccionado,1)
     .subscribe((object : any) => {
       if(object.ok){
         object.data.conceptos_automaticos.forEach((element : any) => {
@@ -436,7 +436,7 @@ export class ProcedimientoCapturaComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         if(tipo == 1){  //nuevo concepto de empleado
-          this.concepto_service.altaConceptoAEmpleado(json)
+          this.concepto_service.altaConceptosAEmpleado(json)
           .subscribe( (object : any) =>{
             if(object.ok){
               //Notificar

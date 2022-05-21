@@ -13,6 +13,72 @@ export class ConceptoService {
   constructor(
     public http: HttpClient
   ) { }
+  
+  facServiciosAutocomplete(json : any){
+    let url = SERVER_API+"concepto/facServiciosAutocomplete";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+
+  facUnidadesAutocomplete(json : any){
+    let url = SERVER_API+"concepto/facUnidadesAutocomplete";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+
+  facAltaConcepto(json : any){
+    let url = SERVER_API+"concepto/facAltaConcepto";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+
+  facModificarConcepto(json : any){
+    let url = SERVER_API+"concepto/facModificarConcepto";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+
+  facObtenerConceptosEmpresa(id : any){
+    let url = SERVER_API+"concepto/facObtenerConceptosEmpresa/"+id;
+    return this.http.get(url)
+    .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+        return throwError(err);
+      }));
+  }
+
+  facObtenerConceptosPorId(id : any){
+    let url = SERVER_API+"concepto/facObtenerConceptosPorId/"+id;
+    return this.http.get(url)
+    .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+        return throwError(err);
+      }));
+  }
 
   autocomplete(json : any){
     let url = SERVER_API+"concepto/autocomplete";
@@ -20,7 +86,7 @@ export class ConceptoService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
@@ -31,7 +97,7 @@ export class ConceptoService {
     .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }
@@ -42,7 +108,7 @@ export class ConceptoService {
     .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }
@@ -53,7 +119,7 @@ export class ConceptoService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
@@ -64,7 +130,7 @@ export class ConceptoService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
@@ -75,18 +141,18 @@ export class ConceptoService {
     .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }
 
-  altaConceptoAEmpleado(json : any){
-    let url = SERVER_API+"concepto/altaConceptoAEmpleado";
+  altaConceptosAEmpleado(json : any){
+    let url = SERVER_API+"concepto/altaConceptosAEmpleado";
     return this.http.post( url, json )
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
@@ -97,7 +163,7 @@ export class ConceptoService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
@@ -108,7 +174,7 @@ export class ConceptoService {
     .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }
@@ -119,19 +185,30 @@ export class ConceptoService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
 
-  obtenerConceptosPorIdEmpleado(id_empleado : any, id_empresa : any){
-    let url = SERVER_API+"concepto/obtenerConceptosPorIdEmpleado/"+id_empleado+"/"+id_empresa;
+  obtenerConceptosPorIdEmpleado(id_empleado : any, id_empresa : any, id_periodo : any){
+    let url = SERVER_API+"concepto/obtenerConceptosPorIdEmpleado/"+id_empleado+"/"+id_empresa+"/"+id_periodo;
     return this.http.get(url)
     .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
+  }
+
+  buscarConceptos(json : any){
+    let url = SERVER_API+"concepto/buscarConceptos";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
   }
 }

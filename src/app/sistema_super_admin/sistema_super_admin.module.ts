@@ -16,6 +16,15 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
+import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatIconModule} from '@angular/material/icon';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatListModule} from '@angular/material/list';
+import {MatTabsModule} from '@angular/material/tabs';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {BrowserModule} from '@angular/platform-browser';
+import { CatalogoSucursalComponent } from './catalogo_sucursal/catalogo_sucursal.component';
 
 
 @NgModule({
@@ -24,6 +33,7 @@ import {MatSelectModule} from '@angular/material/select';
     CatalogoClienteComponent,
     CatalogoUsuarioComponent,
     CatalogoEmpresaComponent,
+    CatalogoSucursalComponent,
     CatalogoTopeConceptosComponent,
     ProcedimientoUsuarioComponent,
     ProcedimientoEmpresaComponent
@@ -39,7 +49,15 @@ import {MatSelectModule} from '@angular/material/select';
     MatInputModule,
     MatAutocompleteModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatIconModule,
+    MatMenuModule,
+    MatListModule,
+    MatTabsModule,
+    BrowserModule,
+    BrowserAnimationsModule
   ]
 })
 export class SistemaSuperAdminModule { }

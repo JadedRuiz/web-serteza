@@ -10,6 +10,10 @@ import { DomSanitizer } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import * as jQuery from 'jquery';
 import { FormControl} from '@angular/forms';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { CompartidoService } from 'src/app/services/Compartido/Compartido.service';
+import { NominaService } from 'src/app/services/Nomina/Nomina.service';
 
 @Component({
   selector: 'app-catalogo-empresa',
@@ -20,44 +24,66 @@ export class CatalogoEmpresaComponent implements OnInit {
 
   //Variables globales
   public color = COLOR;
-  public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
-  public direccion : Direccion = new Direccion(0,0,"","","","","","","","","","");
+  public cliente_seleccionado = window.sessionStorage.getItem("cliente");
+  public usuario = parseInt(window.sessionStorage.getItem("user")+"");
+  public direccion : Direccion = new Direccion(0,"","","","","","","","","","","");
   public fotografia = new Fotografia(0,"","","");
-  public empresa = new Empresa(0,1,"","","","",this.usuario_creacion,this.direccion,this.fotografia,1);
-  public empresas : any;
+  public empresa = {
+    id_empresa : "",
+    empresa : "",
+    razon_social : "",
+    rfc : "",
+    descripcion : "",
+    representante : {
+      nombre : "",
+      rfc : "",
+      curp : "",
+      cargo : ""
+    },
+    direccion : this.direccion,
+    fotografia : this.fotografia,
+    usuario_creacion : this.usuario
+  }
+  empresa_seleecionada = "";
+  filterControlEmpresa = new FormControl();
+  empresas : any;
+  empresas_busqueda : any;
+  filterControlEstado = new FormControl();
+  estados : any;
+  estados_busqueda : any;
   public band = true;
+  tipo_modal = 0;
   public modal : any;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
+  public modal_config : any;
+  @ViewChild('modal_config', {static: false}) contenidoDelModalConfig : any;
   public activo = true;
   public foto_user : any;
   public docB64 = "";
-  //Filtros
-  public taken = 5; //Registros por default
-  public status = 2; //Status default
-  public palabra = "";
-  //Paginacion
-  public total_registros = 0;
-  public mostrar_pagination = false;
-  public paginas_a_mostrar = 5;
-  public paginas : any;
-  public pagina_actual = 0;
-  public limite_inferior = 0;
-  public limite_superior = this.paginas_a_mostrar;
-  public next = false;
-  public previous = false;
-  //Autocomplete
-  myControl = new FormControl();
-  empresa_busqueda : any;
-  
-  colonias = [
-    "Primero ingresa el Codigo Postal"
-  ];
+  //Modelo tabla
+  displayedColumns: string[] = ['Id', 'Empresa', "Representante", 'Razon', "accion"];
+  dataSource  = new MatTableDataSource();
+  @ViewChild(MatPaginator) paginator : any;
+  info_modal = {
+    nombre_empresa : "",
+    tipo : 0
+  };
+  //Configuraciones
+  selected = 1;
+  public nominas : any;
+  public nominas_busqueda : any;
+  public nominas_seleccionados : any;
+  busqueda_nomina = "";
+
+
   constructor(
     private modalService: NgbModal,
-    public cp_service: LocalidadService,
     private empresa_service: EmpresaService,
+    private compartido_service : CompartidoService,
+    private nomina_service : NominaService,
     private sanitizer: DomSanitizer
   ) {
+    this.nominas_seleccionados = [];
     this.foto_user = "./assets/img/defaults/imagen-no-disponible.png";
    }
 
@@ -65,337 +91,293 @@ export class CatalogoEmpresaComponent implements OnInit {
     this.mostrarEmpresas();
   }
 
-  autocomplete(palabra : string){
-    this.empresa_busqueda = [];
-    if(palabra.length > 3){
-      this.empresa_service.autoCompleteEmpresa({"nombre_empresa":palabra})
-      .subscribe((object : any) => {
-        if(object.ok){
-          this.empresa_busqueda = object.data;
-        }else{
-          this.empresa_busqueda = [];
-        }
-      })
-    }
-  }
-
-  getEmpresa(event : any) {
-    this.editar(event.option.id);
-    this.empresa_busqueda.splice(0,this.empresa_busqueda.length);
-    this.myControl.reset('');
-  }
-
-  busqueda(value : string){
-    if(value.length > 3){
-      this.autocomplete(value);
-    }
-  }
-
   mostrarEmpresas(){
     let json = {
-      palabra : this.palabra,
-      taken : this.taken,
-      status : this.status,
-      pagina : this.pagina_actual
+      palabra : "",
+      taken : 1000,
+      status : 2,
+      pagina : 0
     };
+    this.empresas_busqueda = [];
     this.empresas = [];
     this.empresa_service.obtenerEmpresas(json)
-    .subscribe( (object : any) =>{
-        if(object.ok){
-          //Mostrar si los registros son mayores a los registros que se muestran
-          this.total_registros = object.data.total;
-          if(this.total_registros > this.taken){
-            this.mostrar_pagination = true;
-            this.paginar();
-          }else{
-            this.mostrar_pagination = false;
-          }
-          //Mostrar usuarios
-          this.band = true;
-          //LLenar los usuarios en la tabla
-          for(let i =0; i<object.data.registros.length; i++){
-            let status = "Activo";
-            if(object.data.registros[i].activo == 0){
-              status = "Desactivado";
-            }
-            this.empresas.push({
-              "folio" : object.data.registros[i].id_empresa,
-              "cliente" : object.data.registros[i].empresa,
-              "status" : status
-            });
-          }
-        }else{
-          this.band = false;
-        }
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.dataSource.data = object.data.registros;
+        this.dataSource.paginator = this.paginator;
+        this.empresas = object.data.registros;
+        this.empresas_busqueda = object.data.registros;
+      }
     });
   }
 
-  altaCliente(){
-    let band = true;
-    if(this.empresa.empresa == "" || this.empresa.rfc == "" || this.empresa.razon_social == ""){
-      Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
-    }else{
-      if(
-        this.direccion.calle == 0 && this.direccion.codigo_postal == "" &&
-        this.direccion.colonia == "" && this.direccion.cruzamiento_dos == "" &&
-        this.direccion.cruzamiento_uno == "" && this.direccion.descripcion ==  "" &&
-        this.direccion.estado == "" && this.direccion.localidad == "" &&
-        this.direccion.municipio == "" && this.direccion.numero_exterior == ""
-        && this.direccion.numero_interior == ""
-        ){
-          Swal.fire({
-            title: '¿Estas seguro de agregar una empresa sin ningun dato de dirección?',
-            text: "El empresa se registrará sin domicilio, pero puedes actulizar su información en cualquier momento",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Si, estoy seguro',
-            cancelButtonText : "Cancelar"
-          }).then((result) => {
-            if (result.isConfirmed) {
-              band = true;
-            }else{
-              band = false;
-            }
-          });
-      }else{
-        if(band){
-          if(this.fotografia.docB64 == ""){
-            Swal.fire({
-              title: '¿Estas seguro de agregar una empresa sin ningun logo?',
-              text: "La empresa se registrará sin logo, pero puedes actulizar su información en cualquier momento",
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Si, estoy seguro',
-              cancelButtonText : "Cancelar"
-            }).then((result) => {
-              if (result.isConfirmed) {
-                band = true;
-              }else{
-                band = false;
-              }
-            });
-          }else{
-            if(band){
-              if(!this.activo){
-                this.empresa.activo = 0;
-              }
-              this.empresa.usuario_creacion = parseInt(this.usuario_creacion+"");
-              this.confirmar("Confirmación","¿Seguro que desea guardar la información?","info",1);
-            }
-          }
-        }
-      }
-    }
-  }
-
-  modificarUsuario(){
-    let band = true;
-    if(this.empresa.empresa == "" || this.empresa.rfc == "" || this.empresa.razon_social == ""){
-      Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
-    }else{
-      if(
-        this.direccion.calle == 0 && this.direccion.codigo_postal == "" &&
-        this.direccion.colonia == "" && this.direccion.cruzamiento_dos == "" &&
-        this.direccion.cruzamiento_uno == "" && this.direccion.descripcion ==  "" &&
-        this.direccion.estado == "" && this.direccion.localidad == "" &&
-        this.direccion.municipio == "" && this.direccion.numero_exterior == ""
-        && this.direccion.numero_interior == ""
-        ){
-          Swal.fire({
-            title: '¿Estas seguro de modificar una empresa sin ningun dato de dirección?',
-            text: "El empresa se modificará sin domicilio, pero puedes actulizar su información en cualquier momento",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Si, estoy seguro',
-            cancelButtonText : "Cancelar"
-          }).then((result) => {
-            if (result.isConfirmed) {
-              band = true;
-            }else{
-              band = false;
-            }
-          });
-      }else{
-        if(band){
-          if(this.fotografia.docB64 == ""){
-            Swal.fire({
-              title: '¿Estas seguro de modificar una empresa sin ningun logo?',
-              text: "La empresa se modificará sin logo, pero puedes actulizar su información en cualquier momento",
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Si, estoy seguro',
-              cancelButtonText : "Cancelar"
-            }).then((result) => {
-              if (result.isConfirmed) {
-                band = true;
-              }else{
-                band = false;
-              }
-            });
-          }else{
-            if(band){
-              if(!this.activo){
-                this.empresa.activo = 0;
-              }
-              this.empresa.usuario_creacion = parseInt(this.usuario_creacion+"");
-              this.confirmar("Confirmación","¿Seguro que desea editar la información?","info",2);
-            }
-          }
-        }
-      }
-    }
-  }
   
-  guardar(){
-    this.openModal();
-    jQuery("#editar").hide();
-    jQuery("#guardar").show();
+  mostrarNominasEmpresa(id_empresa : any){
+    let json = {
+      id_empresa : id_empresa,
+      id_status : 1
+    };
+    this.nomina_service.obtenerLigaEmpresaNomina(json)
+    .subscribe((object : any) => {
+      if(object.ok){
+        object.data.forEach((element : any) => {
+          this.nominas_busqueda.forEach((nomina : any) => {
+            if(parseInt(element.id_nomina) == parseInt(nomina.id_nomina) && parseInt(element.activo) == 1){
+              nomina.activo = true;
+            }
+          });
+        });
+        // console.log(this.nominas_busqueda);
+      }
+    });
   }
 
-  editar(folio : any){
-    this.empresa_service.obtenerEmpresaPorId(folio)
-    .subscribe( (object : any) => {
+  buscarEmpresa(){
+    this.empresas_busqueda = [];
+    this.empresas.forEach((element : any) => {
+      this.empresas_busqueda.push({
+        "empresa" : element.empresa,
+        "id_empresa" : element.id_empresa
+      });
+    });
+    if(this.filterControlEmpresa.value.length > 0){
+      this.empresas_busqueda = [];
+      this.empresas.forEach((element : any) => {
+        if(element.empresa.includes(this.filterControlEmpresa.value.toUpperCase())){ 
+          this.empresas_busqueda.push({
+            "empresa" : element.empresa,
+            "id_empresa" : element.id_empresa
+          })
+        }
+      });
+    }
+  }
+
+  optionEmpresa(value : any){
+    this.visualizar(value.option.id);
+  }
+
+  mostrarEstado(){
+    this.estados_busqueda = [];
+    this.estados = [];
+    this.compartido_service.obtenerCatalogo("gen_cat_estados")
+    .subscribe((object : any) => {
+      if(object.length > 0){
+        this.estados_busqueda = object;
+        this.estados = object;
+      }
+    });
+  }
+
+  buscarEstado(){
+    this.estados_busqueda = [];
+    this.estados.forEach((element : any) => {
+      this.estados_busqueda.push({
+        "estado" : element.estado,
+        "id_estado" : element.id_estado
+      });
+    });
+    if(this.filterControlEstado.value.length > 0){
+      this.estados_busqueda = [];
+      this.estados.forEach((element : any) => {
+        if(element.estado.includes(this.filterControlEstado.value.toUpperCase())){ 
+          this.estados_busqueda.push({
+            "estado" : element.estado,
+            "id_estado" : element.id_estado
+          })
+        }
+      });
+    }
+  }
+
+  optionEstado(value : any){
+    this.empresa.direccion.estado = value.option.id;
+  }
+
+  mostrarNomina(){
+    this.nominas = [];
+    this.nominas_busqueda = [];
+    this.compartido_service.obtenerCatalogo('nom_cat_nomina')
+    .subscribe((object : any) => {
+      if(object.length > 0){
+        object.forEach((element : any) => {
+          if(element.activo){
+            this.nominas.push({
+              id_nomina : element.id_nomina,
+              nomina : element.nomina,
+              activo : false
+            });
+            this.nominas_busqueda.push({
+              id_nomina : element.id_nomina,
+              nomina : element.nomina,
+              activo : false
+            });
+          }
+        });
+      }
+    });
+  }
+
+  buscarNomina(){
+    this.nominas_busqueda = [];
+    this.nominas.forEach((element : any) => {
+      this.nominas_busqueda.push({
+        "nomina" : element.nomina,
+        "id_nomina" : element.id_nomina,
+        "activo" : element.activo
+      });
+    });
+    if(this.busqueda_nomina.length > 0){
+      this.nominas_busqueda = [];
+      this.nominas.forEach((element : any) => {
+        if(element.nomina.includes(this.busqueda_nomina.toUpperCase())){ 
+          this.nominas_busqueda.push({
+            "nomina" : element.nomina,
+            "id_nomina" : element.id_nomina,
+            "activo" : element.activo
+          })
+        }
+      });
+      // this.pintarEntidades(this.sistema_config);
+    }
+  }
+
+  setNomina(event : any){
+    let json = {
+      id_empresa : this.empresa_seleecionada,
+      id_nomina : event.option.value
+    };
+    if(event.option.selected){
+      this.nomina_service.insertarLigaNominaEmpresa(json)
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.nominas.forEach((element : any) => {
+            if(element == event.option.value){
+              element.activo = true;
+            }
+          });
+        }
+      });
+    }else{
+      this.nomina_service.eliminarLigaEmpresaNomina(json)
+      .subscribe((object : any) => {
+        if(object.ok){
+          this.nominas.forEach((element : any) => {
+            if(element == event.option.value){
+              element.activo = false;
+            }
+          });
+        }
+      });
+    }
+  }
+
+  visualizar(id_empresa : any){
+    this.empresa_service.obtenerEmpresaPorId(id_empresa)
+    .subscribe((object : any) => {
       if(object.ok){
-        console.log(object.data[0]);
-        this.openModal();
-        
+        this.mostrarEstado();
+        this.openModal(1);
+        this.info_modal.tipo = 2;
+        this.info_modal.nombre_empresa = object.data[0].empresa;
+        this.empresa.id_empresa = object.data[0].id_empresa;
+        this.empresa.empresa = object.data[0].empresa;
+        this.empresa.rfc = object.data[0].rfc;
+        this.empresa.descripcion = object.data[0].descripcion;
+        this.empresa.razon_social = object.data[0].razon_social;
         this.empresa.direccion.id_direccion = object.data[0].id_direccion;
+        this.empresa.direccion.calle = object.data[0].id_sucursal;
+        this.empresa.direccion.calle = object.data[0].id_sucursal;
         this.empresa.direccion.calle = object.data[0].calle;
         this.empresa.direccion.numero_exterior = object.data[0].numero_exterior;
         this.empresa.direccion.numero_interior = object.data[0].numero_interior;
         this.empresa.direccion.cruzamiento_uno = object.data[0].cruzamiento_uno;
-        this.empresa.direccion.cruzamiento_dos = object.data[0].cruzamiento_dos;
-        this.empresa.direccion.codigo_postal = object.data[0].codigo_postal;
         this.empresa.direccion.colonia = object.data[0].colonia;
+        this.empresa.direccion.codigo_postal = object.data[0].codigo_postal;
+        this.empresa.direccion.estado = object.data[0].id_estado;
         this.empresa.direccion.localidad = object.data[0].localidad;
         this.empresa.direccion.municipio = object.data[0].municipio;
-        this.empresa.direccion.estado = object.data[0].estado;
         this.empresa.direccion.descripcion = object.data[0].descripcion_direccion;
-        this.empresa.id_empresa = object.data[0].id_empresa;
-        this.empresa.empresa = object.data[0].empresa;
-        this.empresa.razon_social = object.data[0].razon_social;
-        this.empresa.descripcion = object.data[0].descripcion;
-        this.empresa.rfc = object.data[0].rfc;
-        this.empresa.usuario_creacion = this.usuario_creacion;
-        this.fotografia.id_fotografia = object.data[0].id_fotografia;
+        this.empresa.representante.nombre = object.data[0].representante_legal;
+        this.empresa.representante.rfc = object.data[0].rfc_repre;
+        this.empresa.representante.cargo = object.data[0].cargo_repre;
+        this.empresa.representante.curp = object.data[0].curp;
+        this.empresa.fotografia.id_fotografia = object.data[0].id_fotografia;
         this.foto_user = object.data[0].fotografia;
-        if(object.data[0].activo == 1){
-          this.activo = true;
-        }else{
-          this.activo = false;
-        }
-        //Funcionalidad de modal
-        jQuery("#guardar").hide();
-        jQuery("#editar").show();
-      }else{
-        Swal.fire("Ha ocurrido un error",object.message,"error");
+        this.filterControlEstado.setValue(object.data[0].estado);
       }
     });
+  }
+
+  visualizar_configuraciones(id_empresa : any){
+    this.openModal(2);
+    this.empresa_seleecionada = id_empresa;
+    this.mostrarNomina();
+    this.mostrarNominasEmpresa(id_empresa)
+  }
+
+  nuevaEmpresa(){
+    this.limpiarCampos();
+    this.mostrarEstado();
+    this.openModal(1);
+    this.info_modal.nombre_empresa = "Nueva empresa"
+    this.info_modal.tipo = 1;
+  }
+
+  altaEmpresa(){
+    if(this.empresa.empresa == "" || this.empresa.rfc == "" || this.empresa.razon_social == ""){
+      Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
+    }else{
+      this.empresa.usuario_creacion = parseInt(this.usuario+"");
+      this.confirmar("Confirmación","¿Seguro que desea guardar la información?","info",1);
+    }
+  }
+
+  guardar(){
+    this.confirmar("Confirmación","¿Seguro que deseas actualizar a la empresa?","info",2);
   }
 
   limpiarCampos(){
-    this.direccion  = new Direccion(0,0,"","","","","","","","","","");
+    this.direccion  = new Direccion(0,"","","","","","","","","","","");
     this.fotografia = new Fotografia(0,"","",""); 
-    this.empresa = new Empresa(0,1,"","","","",this.usuario_creacion,this.direccion,this.fotografia,1);
     this.foto_user = "./assets/img/defaults/imagen-no-disponible.png";
+    this.empresa = {
+      id_empresa : "",
+      empresa : "",
+      razon_social : "",
+      rfc : "",
+      descripcion : "",
+      representante : {
+        nombre : "",
+        rfc : "",
+        curp : "",
+        cargo : ""
+      },
+      direccion : this.direccion,
+      fotografia : this.fotografia,
+      usuario_creacion : this.usuario
+    }
   }
 
-  openModal() {
-    this.limpiarCampos();
-    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+  openModal(tipo : number) {
+    if(tipo == 1){
+      this.limpiarCampos();
+      this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
+    if(tipo == 2){
+      this.modal_config = this.modalService.open(this.contenidoDelModalConfig,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+    }
   }
 
-  cerrarModal(){
-    this.modal.close();
+  cerrarModal(tipo : number){
+    if(tipo == 1){
+      this.modal.close();
+    }
+    if(tipo == 2){
+      this.modal_config.close();
+    }
   }
   
-  paginar(){
-    this.paginas = [];
-    let paginas_a_pintar = parseInt(this.total_registros+"")%parseInt(this.taken+"");
-    if(paginas_a_pintar == 0){
-      paginas_a_pintar = (parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+"");
-    }else{
-      paginas_a_pintar = ((parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+""))+1;
-    }
-    //Pintamos las flechas
-    if(paginas_a_pintar > this.paginas_a_mostrar){
-      this.next = true;
-    }
-    if(this.pagina_actual == paginas_a_pintar){
-      this.next = false;
-    }
-    if(this.pagina_actual > this.paginas_a_mostrar){
-      this.previous = true;
-    }
-    if(this.pagina_actual == 0){
-      this.previous = false;
-    }
-    //Pintamos las paginas
-    for(let i =0;i<this.paginas_a_mostrar;i++){
-      let pagina_inicial = this.limite_inferior;
-      if(i<paginas_a_pintar){
-        if(this.pagina_actual == pagina_inicial+i){
-          this.paginas.push({
-            numero : (pagina_inicial+i)+1,
-            valor_pagina : pagina_inicial+i,
-            active : "active"
-          });
-        }else{
-          this.paginas.push({
-            numero : (pagina_inicial+i)+1,
-            valor_pagina : pagina_inicial+i,
-            active : ""
-          });
-        }
-      }
-    }
-  }
-
-  irPagina(pagina : any){
-    this.pagina_actual = pagina;
-    this.mostrarEmpresas();
-  }
-
-  getDatos(){
-    this.cp_service.getDirrecion(this.empresa.direccion.codigo_postal)
-    .subscribe( (data: any) => {
-      if(data.length > 0){
-        this.empresa.direccion.estado = data[0].response.estado;
-        this.empresa.direccion.municipio = data[0].response.municipio;
-        this.colonias = [];
-        for(let i=0;i<data.length;i++){
-          this.colonias.push(data[i].response.asentamiento);
-        }
-      }
-    },
-    (error : any) => {
-      Swal.fire('Ha ocurrido un error','No se han encontrado resultados', 'warning');
-    });
-  }
-
-  modificarMunicipio(){
-    let colonia = this.empresa.direccion.colonia;
-    this.cp_service.getDirrecion(this.empresa.direccion.codigo_postal)
-    .subscribe( (data: any) => {
-      if(data.length > 0){
-        for(let i=0;i<data.length;i++){
-          if(data[i].response.asentamiento == colonia){
-            this.empresa.direccion.estado = data[i].response.estado;
-            this.empresa.direccion.municipio = data[i].response.municipio;
-          }
-        }
-      }
-    });
-  }
-
   subirImagen(){
       document.getElementById("foto_user")?.click();
   }
@@ -417,13 +399,14 @@ export class CatalogoEmpresaComponent implements OnInit {
       let archivos = event.target.files[0];
       let extension = archivos.name.split(".")[1];
       this.fotografia.extension = extension;
-      if(extension == "jpg" || extension == "png"){
+      if(extension == "jpg" || extension == "png" || extension == "jpeg"){
         this.convertirImagenAB64(archivos).then( respuesta => {
           let img = "data:image/"+extension+";base64, "+respuesta;
           this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
           this.docB64 = respuesta+"";
-          this.fotografia.docB64 = respuesta+"";
-          this.fotografia.extension = extension;
+          this.empresa.fotografia.docB64 = respuesta+"";
+          this.empresa.fotografia.extension = extension;
+          
         });
       }else{
         Swal.fire("Ha ocurrido un error","Tipo de imagen no permitida","error");
@@ -451,29 +434,21 @@ export class CatalogoEmpresaComponent implements OnInit {
       cancelButtonText : "Cancelar"
     }).then((result) => {
       if (result.isConfirmed) {
-        if(tipo == 1){  //Guardar
+        if(tipo == 1){
           this.empresa_service.altaEmpresa(this.empresa)
-          .subscribe( (object) =>{
+          .subscribe((object : any)=>{
             if(object.ok){
-              console.log(object);
-              this.limpiarCampos();
               this.mostrarEmpresas();
-              Swal.fire("Buen trabajo","La empresa se ha dado de alta correctamente","success");
-              this.cerrarModal();
-            }else{
-              Swal.fire("Ha ocurrido un error",object.message,"error");
+              this.cerrarModal(1);
+              Swal.fire("Buen trabajo","Se ha registrado la empresa","success");
             }
           });
         }
         if(tipo == 2){  //Editar
           this.empresa_service.actualizarEmpresa(this.empresa)
-          .subscribe( (object) =>{
+          .subscribe((object : any) => {
             if(object.ok){
-              console.log(object);
-              this.mostrarEmpresas();
-              Swal.fire("Buen trabajo","La empresa se ha modificado correctamente","success");
-            }else{
-              Swal.fire("Ha ocurrido un error",object.message,"error");
+              Swal.fire("Buen trabajo","Se ha actualizado la empresa","success");
             }
           });
         }

@@ -19,6 +19,11 @@ export class CompartidoService {
     return this.http.get(url);
   }
 
+  obtenerPerfiles(){
+    let url = SERVER_API+"obtenerPerfiles";
+    return this.http.get(url);
+  }
+
   obtenerMovimientos(id_empresa : any){
     let url = SERVER_API+"obtenerMovimientos/"+id_empresa;
     return this.http.get(url);
@@ -30,7 +35,7 @@ export class CompartidoService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }

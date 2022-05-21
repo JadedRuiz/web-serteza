@@ -1,130 +1,57 @@
-<nav class="navbar navbar-top navbar-horizontal navbar-expand-md navbar-dark {{color}}">
-    <div class="container px-4">
-      <a class="navbar-brand" routerLinkActive="active" [routerLink]="['/login']">
-        <img src="assets/img/brand/argon-white.png" />
-      </a>
-      <!-- <button class="navbar-toggler" type="button" (click)="isCollapsed=!isCollapsed"
-         aria-controls="sidenav-collapse-main">
-        <span class="navbar-toggler-icon"></span>
-      </button> -->
-      <div class="collapse navbar-collapse" id="sidenav-collapse-main">
-        <!-- Collapse header -->
-        <div class="navbar-collapse-header d-md-none">
+<div class="container-fluid ps-md-0">
+  <div class="row g-0">
+    <div class="d-none d-md-flex col-md-4 col-lg-7 bg-image"></div>
+    <div class="col-md-8 col-lg-5">
+      <div class="login d-flex align-items-center py-5">
+        <div class="container">
           <div class="row">
-            <div class="col-6 collapse-brand">
-              <a routerLinkActive="active" [routerLink]="['/dashboard']">
-                <img src="assets/img/brand/blue.png">
-              </a>
-            </div>
-            <div class="col-6 collapse-close">
-              <!-- <button type="button" class="navbar-toggler" (click)="isCollapsed=!isCollapsed" > -->
-                <!-- <span></span>
-                <span></span> -->
-              <!-- </button> -->
-            </div>
-          </div>
-        </div>
-        <!-- Navbar items
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link nav-link-icon" routerLinkActive="active" [routerLink]="['/register']">
-              <i class="ni ni-circle-08"></i>
-              <span class="nav-link-inner--text">Registro</span>
-            </a>
-          </li>
-        </ul> -->
-      </div>
-    </div>
-  </nav>
-  <div class="header {{color}} py-7 py-lg-8">
-    <div class="container">
-      <div class="header-body text-center mb-7">
-        <div class="row justify-content-center">
-          <div class="col-lg-12 col-md-6">
-            <h1 class="text-white">Enterprise Resourcing Sources</h1>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="separator separator-bottom separator-skew zindex-100">
-      <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
-        <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
-      </svg>
-    </div>
-  </div>
-  <!-- Page content -->
-  <div class="container-fluid mt--9 pb-5 bg-default">
-    <div class="row justify-content-center">
-      <div class="col-lg-4 col-md-6">
-        <div class="card bg-secondary shadow border-0">
-          <div class="card-body px-lg-5 py-lg-5">
-            <form role="form" #f="ngForm" ngNativeValidate (ngSubmit)="login(f)">
-              <div class="form-group mb-3">
-                <div class="input-group input-group-alternative">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="ni ni-email-83"></i></span>
-                  </div>
-                  <input [(ngModel)]="usuario.usuario" name="usuario" class="form-control" placeholder="Usuario" type="text" required>
+            <div class="col-md-9 col-lg-8 mx-auto">
+              <img class="my-2" src="assets/img/brand/argon-white.png" style="width: 200px">
+              <!-- Sign In Form -->
+              <form class="px-2" novalidate (ngSubmit)="login(f)" #f="ngForm">
+                <div class="form-floating mb-3">
+                  <label for="floatingInput">Usuario</label>
+                  <input matInput
+                         [(ngModel)]="usuario.usuario"
+                         #name="ngModel"
+                         type="text" class="form-control"
+                         name="usuario"
+                         placeholder="Ingresa tu nombre de usuario"
+                         max="150"
+                         required>
+                  <span *ngIf="name.invalid" class="badge badge-primary">El campo 'usuario' es obligatorio</span>
                 </div>
-              </div>
-              <div class="form-group">
-                <div class="input-group input-group-alternative">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
-                  </div>
-                  <input [(ngModel)]="usuario.password" name="password" class="form-control" placeholder="Contraseña" type="password" required>
+                <div class="form-floating mb-3">
+                  <label for="floatingPassword">Contraseña</label>
+                  <input matInput
+                         [(ngModel)]="usuario.password"
+                         #contra="ngModel"
+                         type="password" class="form-control"
+                         placeholder="Ingresa tu contraseña"
+                         name="contra"
+                         required>
+                  <span *ngIf="contra.invalid" class="badge badge-primary">El campo 'contraseña' es obligatorio</span>
                 </div>
-              </div>
-              <div class="custom-control custom-control-alternative custom-checkbox">
-                <input class="custom-control-input" id=" customCheckLogin" type="checkbox">
-                <label class="custom-control-label" for=" customCheckLogin">
-                  <span class="text-muted">Recordar</span>
-                </label>
-              </div>
-              <div class="text-center">
-                <button type="submit" class="btn btn-primary my-4">Iniciar Sesión</button>
-              </div>
-            </form>
+
+                <div class="form-check mb-3" style="cursor: pointer;">
+                  <input class="form-check-input" type="checkbox" value="" id="rememberPasswordCheck" style="cursor: pointer;">
+                  <label class="form-check-label" for="rememberPasswordCheck" style="cursor: pointer;">
+                    Mantener sesión
+                  </label>
+                </div>
+
+                <div class="d-grid">
+                  <button class="btn btn-lg btn-primary btn-login text-uppercase fw-bold mb-2" type="submit"  [disabled]="f.invalid">Accesar</button>
+                </div>
+
+              </form>
+            </div>
           </div>
         </div>
-        <!-- <div class="row mt-3">
-          <div class="col-6">
-            <a href="javascript:void(0)" class="text-light"><small>Has olvidado tu contraseña?</small></a>
-          </div>
-          <div class="col-6 text-right">
-            <a href="javascript:void(0)" class="text-light"><small>Registrate aqui</small></a>
-          </div>
-        </div> -->
       </div>
     </div>
   </div>
-<footer class="py-5 bg-default">
-  <div class="container">
-    <div class="row align-items-center justify-content-xl-between">
-      <div class="col-xl-6">
-        <div class="copyright text-center text-xl-left text-muted">
-          &copy;<a href="https://www.serteza.com" class="font-weight-bold ml-1" target="_blank">Serteza</a>
-        </div>
-      </div>
-      <div class="col-xl-6">
-        <ul class="nav nav-footer justify-content-center justify-content-xl-end">
-          <li class="nav-item">
-            <a href="https://www.creative-tim.com?ref=ada-footer-auth-layout" class="nav-link" target="_blank">Serteza</a>
-          </li>
-          <li class="nav-item">
-            <a href="https://www.creative-tim.com/presentation?ref=ada-footer-auth-layout" class="nav-link" target="_blank">Acerca de nosotros</a>
-          </li>
-          <li class="nav-item">
-            <a href="http://blog.creative-tim.com?ref=ada-footer-auth-layout" class="nav-link" target="_blank">Nuestro blog</a>
-          </li>
-          <li class="nav-item">
-            <a href="https://github.com/creativetimofficial/argon-dashboard-angular/blob/master/LICENSE.md" class="nav-link" target="_blank">MIT License</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</footer>
+</div>
 <ng-template #content let-c="close" let-d="dismiss">
   <div class="modal-header justify-content-center">
     <h4 *ngIf="tipo_arreglo == 0" class="modal-title" id="modal-basic-title">¿Que sistema desea administrar?</h4>
@@ -135,19 +62,36 @@
   <div class="modal-body">
     <form>
       <div class="form-row">
+        <div class="form-group col-md-12" *ngIf="tipo_arreglo == 1">
+          <input type="text" class="form-control" placeholder="Buscar empresa" [(ngModel)]="busqueda" (keyup)="buscarEmpresa()" name="busqueda" style="text-transform: uppercase;">
+          <div class="table-responsive mt-1" style="height: 250px;">
+            <table class="table table-striped" style="overflow-y: scroll;">
+              <thead *ngIf="tipo_arreglo == 1">
+                <tr>
+                  <th colspan="1">Empresa</th>
+                </tr>
+              </thead>
+              <tbody *ngIf="tipo_arreglo == 1">
+                <tr *ngFor="let empresa of empresas" (click)="redirigirPrincipal(empresa.id_empresa,2)" style="cursor: pointer;">
+                    <td colspan="1">{{empresa.empresa}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
         <div class="form-group col-md-12">
           <div *ngIf="tipo_arreglo == 0" class="list-group">
-            <a *ngFor="let sistema of sistemas" style="cursor: pointer;" (click)="eleccion(sistema.id)" class="list-group-item list-group-item-action" aria-current="true">
+            <a *ngFor="let sistema of sistemas" style="cursor: pointer;" (click)="eleccion(sistema.id,sistema.id_perfil,2)" class="list-group-item list-group-item-action" aria-current="true">
               {{sistema.sistema}}
             </a>
           </div>
-          <div *ngIf="tipo_arreglo == 1" class="list-group">
-            <a *ngFor="let empresa of empresas" style="cursor: pointer;" (click)="redirigirPrincipal(empresa.id_empresa)" class="list-group-item list-group-item-action" aria-current="true">
+          <!-- <div *ngIf="tipo_arreglo == 1" class="list-group">
+            <a *ngFor="let empresa of empresas" style="cursor: pointer;" (click)="redirigirPrincipal(empresa.id_empresa,2)" class="list-group-item list-group-item-action" aria-current="true">
               {{empresa.empresa}}
             </a>
-          </div>
+          </div> -->
           <div *ngIf="tipo_arreglo == 2" class="list-group">
-            <a *ngFor="let cliente of clientes" style="cursor: pointer;" (click)="redirigirPrincipal(cliente.id_cliente)" class="list-group-item list-group-item-action" aria-current="true">
+            <a *ngFor="let cliente of clientes" style="cursor: pointer;" (click)="redirigirPrincipal(cliente.id_cliente,2)" class="list-group-item list-group-item-action" aria-current="true">
               {{cliente.cliente}}
             </a>
           </div>

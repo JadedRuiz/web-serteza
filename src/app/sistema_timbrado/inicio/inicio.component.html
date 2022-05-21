@@ -1,0 +1,248 @@
+<nav class="navbar navbar-light bg-gradient-info">
+    <div class="container">
+        <a class="navbar-brand text-white" href="#">
+            <img [src]="foto_empresa" width="100" height="40" class="d-inline-block align-top" alt="">
+            SISTEMA DE TIMBRADO DE NÓMINA
+          </a>
+          <div class="form-inline" ngbDropdown placement="bottom-right">
+              <a class="nav-link pr-0" role="button" ngbDropdownToggle>
+                  <div class="media align-items-center">
+                    <span class="avatar avatar-sm rounded-circle">
+                      <img src="{{url_foto}}" width="40" height="40" style="object-fit: cover;
+                      object-position: center center;">
+                    </span>
+                    <div class="media-body ml-2 d-none d-lg-block">
+                      <span class="mb-0 text-sm  font-weight-bold pr-6 text-white">{{nombre}}</span>
+                    </div>
+                  </div>
+              </a>
+              <div class="dropdown-menu-arrow dropdown-menu-right" ngbDropdownMenu>
+              <div class=" dropdown-header noti-title">
+                  <h6 class="text-overflow m-0">Bienvenido!</h6>
+              </div>
+              <a class="dropdown-item" style="cursor: pointer;">
+                  <i class="fas fa-door-open"></i>
+                  <span (click)="cerrarSesion()">Cerrar sesión</span>
+              </a>
+              <!-- <a *ngIf="clientes.length" class="dropdown-item">
+                  <i class="ni ni-curved-next"></i>
+                  <span (click)="openModal()">Cambiar de cliente</span>
+              </a> -->
+              </div>
+          </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-sm-12 col-lg-3">
+            <mat-form-field class="w-100">
+                <mat-label>Empresas</mat-label>
+                <input type="text"
+                       placeholder="Ingrese el nombre de la empresa"
+                       aria-label="Number"
+                       matInput
+                       (keyup)="searchEmpresa()"
+                       [(ngModel)]="busqueda"
+                       [formControl]="filterControl"
+                       [matAutocomplete]="auto"
+                       style="text-transform: uppercase;">
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectEmpresa($event)">
+                    <mat-option *ngFor="let empresa of empresas_copy" [value]="empresa.empresa" [id]="empresa.id_empresa">
+                        {{empresa.empresa}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <!-- <mat-form-field class="w-100">
+                <mat-label>Empresas</mat-label>
+                <mat-select [(ngModel)]="filtros.id_empresa" name="empresas" (selectionChange)="selectEmpresa()">
+                  <mat-option *ngFor="let empresa of empresas" [value]="empresa.id_empresa" >
+                    {{empresa.empresa}}
+                  </mat-option>
+                </mat-select>
+            </mat-form-field> -->
+        </div>
+        <div class="col-sm-12 col-lg-3">
+            <mat-form-field class="w-100">
+                <mat-label>Sucursales</mat-label>
+                <mat-select [(ngModel)]="filtros.id_sucursal" name="empresas" [disabled]="sucursal">
+                  <mat-option *ngFor="let sucursal of sucursales" [value]="sucursal.id_sucursal">
+                    {{sucursal.sucursal}}
+                  </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-sm-12 col-lg-2">
+            <mat-form-field class="example-full-width" class="w-100">
+                <mat-label>RFC</mat-label>
+                <input matInput placeholder="RFC del empleado" [(ngModel)]="filtros.rfc" maxlength="13" style="text-transform: uppercase;">
+            </mat-form-field>
+        </div>
+        <div class="col-sm-12 col-lg-3">
+            <mat-form-field class="w-100">
+                <mat-label>Fecha de timbrado</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                  <input matStartDate placeholder="Fecha inicial" [(ngModel)]="filtros.fecha_inicial">
+                  <input matEndDate placeholder="Fecha final" [(ngModel)]="filtros.fecha_final">
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 col-lg-3">
+            <mat-form-field class="w-100">
+                <mat-label>Fecha de pago</mat-label>
+                <mat-date-range-input [rangePicker]="pickerDos">
+                  <input matStartDate placeholder="Fecha inicial" [(ngModel)]="filtros.fecha_pago_i">
+                  <input matEndDate placeholder="Fecha final" [(ngModel)]="filtros.fecha_pago_f">
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="pickerDos"></mat-datepicker-toggle>
+                <mat-date-range-picker #pickerDos></mat-date-range-picker>
+            </mat-form-field>
+        </div>
+        <div class="col-sm-12 col-lg-2">
+            <mat-form-field class="w-100">
+                <mat-label>Tipo nómina</mat-label>
+                <input matInput [(ngModel)]="filtros.tipo_nomina" name="nomina">
+            </mat-form-field>
+        </div>
+        <div class="col-sm-12 col-lg-2">
+            <mat-form-field class="w-100">
+                <mat-label>Periodo</mat-label>
+                <input matInput [(ngModel)]="filtros.periodo" name="periodo">
+            </mat-form-field>
+        </div>
+        <div class="col-sm-12 col-lg-2">
+            <mat-form-field class="w-100">
+                <mat-label>Ejercicio</mat-label>
+                <input matInput [(ngModel)]="filtros.ejercicio" name="ejercicio">
+            </mat-form-field>
+        </div>
+        <div class="col-sm-12 col-lg-3">
+            <button class="btn btn-success" (click)="buscar()"><i class="fas fa-search"></i> &nbsp; Buscar</button>
+            <button class="btn btn-danger" title="limpiar busqueda" (click)="limpiarCampos()"><i class="fas fa-backspace"></i></button>
+        </div>
+    </div>
+    <div class="row mt-2" *ngIf="descarga_masiva">
+        <div class="col-12  text-center">
+            <button class="btn btn-info" (click)="descargaMasiva()"><i class="fas fa-download"></i> &nbsp; Descargar masiva</button>
+            <button class="btn btn-info" (click)="descargaReporte()"><i class="far fa-file-excel"></i> &nbsp; Descargar reporte</button>
+        </div>
+    </div>
+</div>
+<div class="container mt-2">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-100">
+
+        <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+      
+        
+        <ng-container matColumnDef="codigo">
+            <th mat-header-cell *matHeaderCellDef> Codigo </th>
+            <td mat-cell *matCellDef="let element"> {{element.codigo_empleado}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef> Nombre </th>
+          <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+        </ng-container>
+      
+        <!-- Name Column -->
+        <ng-container matColumnDef="rfc">
+          <th mat-header-cell *matHeaderCellDef> RFC </th>
+          <td mat-cell *matCellDef="let element"> {{element.rfc}} </td>
+        </ng-container>
+        
+        <ng-container matColumnDef="uuid">
+            <th mat-header-cell *matHeaderCellDef> UUID </th>
+            <td mat-cell *matCellDef="let element"> {{element.uuid}} </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="fecha_pago">
+          <th mat-header-cell *matHeaderCellDef> Fecha pago </th>
+          <td mat-cell *matCellDef="let element"> {{element.fecha_pago}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="fecha_timbrado">
+            <th mat-header-cell *matHeaderCellDef> Fecha timbrado </th>
+            <td mat-cell *matCellDef="let element"> {{element.fecha_timbrado}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="accion">
+            <th mat-header-cell *matHeaderCellDef> Acciones </th>
+            <td mat-cell *matCellDef="let element">
+                <button [matMenuTriggerFor]="menu" class="btn btn-info btn-sm"><i class="fas fa-ellipsis-v"></i></button>
+                <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="opcion(1,element.id_timbrado)">
+                    <mat-icon>cloud_download</mat-icon>
+                    <span>Descargar XML</span>
+                </button>
+                <button mat-menu-item (click)="opcion(2,element.id_timbrado)">
+                    <mat-icon>voicemail</mat-icon>
+                    <span>Descargar PDF</span>
+                </button>
+                <button mat-menu-item (click)="opcion(3,element.id_timbrado)">
+                    <mat-icon>mail</mat-icon>
+                    <span>Enviar por correo</span>
+                </button>
+                </mat-menu>
+            </td>
+        </ng-container>
+      
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator 
+        [pageSizeOptions]="[5, 10, 25, 100, 200, 300, 500, 1000]"
+        showFirstLastButtons 
+        aria-label="Selecciona la pagina de la factura">
+    </mat-paginator>
+</div>
+<ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
+    <div class="modal-header my-0 py-4">
+        <h4 class="modal-title">ENVIAR RECIBO DE NÓMINA POR CORREO</h4>
+    </div>
+    <div class="modal-body my-0 py-2">
+        <div class="form">
+            <div class="form-row">
+                <div class="col-12">
+                    <mat-form-field class="w-100">
+                        <mat-label>Correo</mat-label>
+                        <input type="email" matInput [formControl]="emailFormControl" [(ngModel)]="correo" placeholder="Ex. pat@example.com">
+                        <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                          Por favor, ingrese un correo valido
+                        </mat-error>
+                        <mat-error *ngIf="emailFormControl.hasError('required')">
+                          El correo es <strong>requerido</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="form-row mt-2 justify-content-end">
+                <button type="button" class="btn btn-warning" (click)="cerrarModal()"><i class="far fa-window-close"></i> &nbsp; Cerrar</button>
+                <button class="btn btn-success" (click)="enviarCorreo()"><i class="far fa-paper-plane"></i> &nbsp; Enviar correo</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #content_load let-c="close" let-d="dismiss">
+    <div class="modal-body">
+        <div class="container">
+            <div class="row" style="height: 250px;">
+                <div class="col-12 text-center">
+                    <h2>Espere un momento...</h2>
+                </div>
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;" role="status"></div>
+                </div>
+                <div class="col-12 text-center">
+                    <h2 *ngIf="tipo_load == 2">Descargando archivo</h2>
+                    <h2 *ngIf="tipo_load == 1">Buscando resultados</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

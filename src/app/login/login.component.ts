@@ -29,6 +29,8 @@ export class LoginComponent implements OnInit {
   modal: any;
   active:string = "";
   public tipo_arreglo = 0;
+  public busqueda = "";
+  public empresas_copy : any;
 
   constructor( 
     public usuario_service : UsuarioService,
@@ -61,32 +63,36 @@ export class LoginComponent implements OnInit {
             for(let i=0; i<resp.data.info_usuario.sistemas.length; i++){
               let json = {
                 sistema : resp.data.info_usuario.sistemas[i].sistema+"",
-                id : resp.data.info_usuario.sistemas[i].id+""
+                id : resp.data.info_usuario.sistemas[i].id+"",
+                id_perfil : resp.data.info_usuario.sistemas[i].id_perfil
               };
               this.sistemas.push(json);
             } 
             this.openModal();
           }else{
             this.sistema_elegido = resp.data.info_usuario.sistemas[0].id;
-            window.sessionStorage["sistema"] = this.sistema_elegido;
-            this.eleccion(this.sistema_elegido);
+            window.sessionStorage.setItem("sistema",this.sistema_elegido);
+            this.eleccion(this.sistema_elegido,resp.data.info_usuario.sistemas[0].id_perfil,1);
           }
         }else{
-          Swal.fire("Ha ocurrio un error",resp.data,"error");
+          Swal.fire("Ha ocurrio un error",resp.message,"error");
         }
       });      
     }
   }
-  eleccion(id : any){
+
+  eleccion(id : any, perfil : any, tipo : any){
     this.sistema_elegido = id;
-    window.sessionStorage["sistema"] = this.sistema_elegido;
+    window.sessionStorage.setItem("sistema",this.sistema_elegido);
+    window.sessionStorage.setItem("perfil",perfil);
     if(this.sistema_elegido == "5"){
       this.router.navigate(["sistema_super_admin/dashboard"]);
     }
-    if(this.sistema_elegido == "1" || this.sistema_elegido == "6" || this.sistema_elegido == "3" || this.sistema_elegido == "4"){
+    if(this.sistema_elegido == "1" || this.sistema_elegido == "3" || this.sistema_elegido == "4" ||this.sistema_elegido == "9"){
       this.closeModal();
       this.empresas = [];
-      this.empresa.obtenerEmpresaPorIdUsuario(window.sessionStorage["user"])
+      this.empresas_copy = [];
+      this.empresa.obtenerEmpresaPorIdUsuario(window.sessionStorage.getItem("user"))
       .subscribe( (object : any) => {
         if(object.ok){
           this.tipo_arreglo = 1;
@@ -97,21 +103,32 @@ export class LoginComponent implements OnInit {
                 "id_empresa" : dato.id_empresa,
                 "empresa" : dato.empresa
               });
+              this.empresas_copy.push({
+                "id_empresa" : dato.id_empresa,
+                "empresa" : dato.empresa
+              });
             });
             this.openModal();
           }else{
-            window.sessionStorage["empresa"] = object.data[0].id_empresa;
-            this.redirigirPrincipal(object.data[0].id_empresa);
+            window.sessionStorage.setItem("empresa",object.data[0].id_empresa);
+            this.redirigirPrincipal(object.data[0].id_empresa,1);
           }
         }else{
           Swal.fire("Ha ocurrido un error","Este usuario no cuenta empresas para administrar","error");
         }
       });
     }
-    if(this.sistema_elegido == "2"){
-      this.closeModal();
+    if(this.sistema_elegido == "2" || this.sistema_elegido == "7" || this.sistema_elegido == '8' || this.sistema_elegido == '6'){
+      if(tipo != 1){
+        this.closeModal();
+      }
+      if(this.sistema_elegido == "2" && parseInt(window.sessionStorage.getItem("perfil")+"") == 0){
+        console.log("entro");
+        Swal.fire("Aviso","Este usuario no cuenta con un perfil para ingresar al Sistema de R.H por favor contacte al administrador del sistema para que le asigne su perfil correspondiente.","info");
+        return "";
+      }
       this.clientes = [];
-      this.cliente_service.obtenerClientePorIdUsuario(window.sessionStorage["user"])
+      this.cliente_service.obtenerClientePorIdUsuario(window.sessionStorage.getItem("user"))
       .subscribe( (object : any) => {
         if(object.ok){
           if(object.data.length > 1){
@@ -124,30 +141,34 @@ export class LoginComponent implements OnInit {
             });
             this.openModal();
           }else{
-            window.sessionStorage["cliente"] = object.data[0].id_cliente;
-            this.redirigirPrincipal(object.data[0].id_cliente);
+            window.sessionStorage.setItem("cliente",object.data[0].id_cliente);
+            this.redirigirPrincipal(object.data[0].id_cliente,1);
           }
         }else{
           Swal.fire("Ha ocurrido un error","Este usuario no cuenta con clientes","error");
         }
       });
     }
+    return "";
   }
+  
   openModal() {
     this.modal = this.modalService.open(this.contenidoDelModal,{ centered : true, backdropClass : 'light-blue-backdrop'});
   }
   closeModal(){
     this.modal.close();
   }
-  redirigirPrincipal(id : any){
+  redirigirPrincipal(id : any, tipo : any){
     if(this.sistema_elegido == "1"){
       window.sessionStorage["empresa"] = id;
       this.closeModal();
       this.router.navigate(["sistema_admin/dashboard"]);
     }
     if(this.sistema_elegido == "2"){
-      window.sessionStorage["cliente"] = id;
-      this.closeModal();
+      window.sessionStorage.setItem("cliente",id);
+      if(tipo != 1){
+        this.closeModal();
+      }
       this.router.navigate(["sistema_reclutamiento/dashboard"]);
     }
     if(this.sistema_elegido == "3"){
@@ -182,19 +203,80 @@ export class LoginComponent implements OnInit {
         id_empresa : id,
         id_status : 1
       };
-      
-      
     }
     if(this.sistema_elegido == "6"){
       this.closeModal();
-      window.sessionStorage["empresa"] = id;
+      window.sessionStorage.setItem("cliente",id);
       this.router.navigate(["contabilidad/dashboard"]);
       
+    }
+    if(this.sistema_elegido == "7"){
+      window.sessionStorage.setItem("cliente",id);
+      if(tipo != 1){
+        this.closeModal();
+      }
+      this.router.navigate(["sistema_timbrado/inicio"]);
+    }
+    if(this.sistema_elegido == "8"){
+      window.sessionStorage.setItem("cliente",id);
+      if(tipo != 1){
+        this.closeModal();
+      }
+      this.router.navigate(["sistema_facturacion/dashboard"]);
+    }
+    if(this.sistema_elegido == "9"){
+      window.sessionStorage["empresa"] = id;
+      this.nominas = [];
+      this.closeModal();
+      let json = {
+        id_empresa : id,
+        id_status : 1
+      };
+      this.nomina_service.obtenerLigaEmpresaNomina(json)
+      .subscribe( (object : any) => {
+        if(object.ok){
+          if(object.data.length > 1){
+            this.tipo_arreglo = 3;
+            this.nominas = object.data;
+            this.openModal();
+          }else{
+            window.sessionStorage["tipo_nomina"] = object.data[0].id_nomina;
+            this.router.navigate(["sistema_bitacora/dashboard"]); 
+          }
+        }else{
+          Swal.fire("Ha ocurrido un error","Este empresa no cuenta con tipos de nómina, pidele a tu administrador que le agregué los tipos de nómina que tiene tu empresa.","error");
+        }
+      });
     }
   }
   redireccionNomina(id : any){
     this.closeModal();
     window.sessionStorage["tipo_nomina"] = id;
-    this.router.navigate(["sistema_nomina/dashboard"]); 
+    if(this.sistema_elegido == "3"){
+      this.router.navigate(["sistema_nomina/dashboard"]); 
+    }
+    if(this.sistema_elegido == "9"){
+      this.router.navigate(["sistema_bitacora/dashboard"]); 
+    }
+  }
+  buscarEmpresa(){
+    this.empresas = [];
+    this.empresas_copy.forEach((element : any) => {
+      this.empresas.push({
+        "empresa" : element.empresa,
+        "id_empresa" : element.id_empresa
+      });
+    });
+    if(this.busqueda.length > 0){
+      this.empresas = [];
+      this.empresas_copy.forEach((element : any) => {
+        if(element.empresa.includes(this.busqueda.toUpperCase())){ 
+          this.empresas.push({
+            "empresa" : element.empresa,
+            "id_empresa" : element.id_empresa
+          })
+        }
+      });
+    }
   }
 }

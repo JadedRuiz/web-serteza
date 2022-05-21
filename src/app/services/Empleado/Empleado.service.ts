@@ -111,4 +111,19 @@ export class EmpleadoService {
     let url = SERVER_API+"nomina/activarLigaEmpresaNomina/"+id;
     return this.http.get(url);
   }
+
+  cargaEmpleado(empleado : any){
+    let url = SERVER_API+"empleado/cargaEmpleado";
+    return this.http.post( url, empleado )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error, 'error');
+        return throwError(err);
+      }));
+  }
+  obtenerEmpleadoPorIdCandidato(id : any){
+    let url = SERVER_API+"empleado/obtenerEmpleadoPorIdCandidato/"+id;
+    return this.http.get(url);
+  }
 }

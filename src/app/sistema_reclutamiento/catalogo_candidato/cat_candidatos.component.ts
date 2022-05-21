@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, Output, EventEmitter} from '@angular/core';
 import swal from'sweetalert2';
 import { LocalidadService } from 'src/app/services/localidad/localidad.service';
-import { COLOR } from 'src/config/config';
+import { COLOR, SERVER_API } from 'src/config/config';
 import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
 import { Candidato } from 'src/app/models/Candidato';
 import { Direccion } from 'src/app/models/Direccion';
@@ -13,6 +13,11 @@ import * as jQuery from 'jquery';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import { Observable, Subject } from 'rxjs';
 import { FormControl} from '@angular/forms';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { filter } from 'rxjs/operators';
+import { CompartidoService } from 'src/app/services/Compartido/Compartido.service';
+import { DateAdapter } from '@angular/material/core';
   
 @Component({
   selector: 'app-candidatos-original',
@@ -23,7 +28,7 @@ export class CatalogoCandidatosComponent implements OnInit {
 
   //Variables globales
   public color = COLOR;
-  public direccion : Direccion = new Direccion(0,0,"","","","","","","","","","");
+  public direccion : Direccion = new Direccion(0,"","","","","","","","","","","");
   public fotografia = new Fotografia(0,"","","");
   public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
@@ -34,37 +39,36 @@ export class CatalogoCandidatosComponent implements OnInit {
   public modal : any;
   public estatus_color = "";
   public modal_camera : any;
+  filterControlEstado = new FormControl();
+  estados : any;
+  estados_busqueda : any;
   @ViewChild('content', {static: false}) contenidoDelModal : any;
   @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
   public activo = true;
   public foto_user : any;
   public docB64 = "";
   public bandera_activo = false;
+  public band_persiana = true;
+  //Modelo tabla
+  displayedColumns: string[] = ['id_candidato', 'fotografia', "candidato", "descripcion", 'estatus', 'accion'];
+  dataSource  = new MatTableDataSource();
+  @ViewChild(MatPaginator) paginator : any;
+  //Buscador
+  filterControl = new FormControl();
+  candidatos_busqueda : any;
+  // webcam snapshot trigger
+  private trigger: Subject<void> = new Subject<void>();
+  private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
   @Output() getPicture = new EventEmitter<WebcamImage>();
   showWebcam = true;
   isCameraExist = true;
   errors: WebcamInitError[] = [];
-  // webcam snapshot trigger
-  private trigger: Subject<void> = new Subject<void>();
-  private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
   //Filtros
-  public taken = 5; //Registros por default
   public status = -1; //Status default
   public palabra = "";
-  //Paginacion
-  public total_registros = 0;
-  public mostrar_pagination = false;
-  public paginas_a_mostrar = 5;
-  public paginas : any;
-  public pagina_actual = 0;
-  public limite_inferior = 0;
-  public limite_superior = this.paginas_a_mostrar;
-  public next = false;
-  public previous = false;
-  public band_persiana = true;
   //Autocomplete
   myControl = new FormControl();
-  candidatos_busqueda : any;
+  tipo_modal = 0;
 
   colonias = [
     "Primero ingresa el Codigo Postal"
@@ -77,25 +81,30 @@ export class CatalogoCandidatosComponent implements OnInit {
     private candidato_service: CandidatoService,
     private sanitizer: DomSanitizer,
     private modalService: NgbModal,
+    private compartido_service : CompartidoService,
+    private dateAdapter: DateAdapter<Date>
   ) {
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
     this.modal_camera = NgbModalRef;
     this.modal = NgbModalRef;
+    this.paginator = MatPaginator;
+    this.candidatos_busqueda = [];
+    this.dateAdapter.setLocale('en-GB');
    }
 
   ngOnInit(): void {
     this.mostrarCandidatos();
+    this.mostrarEstado();
     WebcamUtil.getAvailableVideoInputs()
     .then((mediaDevices: MediaDeviceInfo[]) => {
       this.isCameraExist = mediaDevices && mediaDevices.length > 0;
     });
   }
+
   mostrarCandidatos(){
     let json = {
       palabra : this.palabra.toUpperCase(),
-      taken : this.taken,
       status : this.status,
-      pagina : this.pagina_actual,
       id_cliente : this.id_cliente,
       tipo : 1 
     };
@@ -103,44 +112,76 @@ export class CatalogoCandidatosComponent implements OnInit {
     this.candidato_service.obtenerCandidatos(json)
     .subscribe( (object : any) =>{
         if(object.ok){
-          //Mostrar si los registros son mayores a los registros que se muestran
-          this.total_registros = object.data.total;
-          if(this.total_registros > this.taken){
-            this.mostrar_pagination = true;
-            this.paginar();
-          }else{
-            this.mostrar_pagination = false;
-          }
-          //Mostrar usuarios
-          this.band = true;
-          //LLenar los usuarios en la tabla
-          for(let i =0; i<object.data.registros.length; i++){
-            let nombre = object.data.registros[i].nombre;
-            let apellidos = object.data.registros[i].apellido_paterno + " " + object.data.registros[i].apellido_materno;
-            this.candidatos.push({
-              "folio" : object.data.registros[i].id_candidato,
-              "fotografia" : ""+object.data.registros[i].fotografia,
-              "nombre" : apellidos + " " + nombre,
-              "status" : object.data.registros[i].status
-            });
-          }
-        }else{
-          this.band = false;
+          this.dataSource.data = object.data;
+          this.dataSource.paginator = this.paginator;
+          this.candidatos_busqueda= object.data;
         }
     });
   }
+
+  buscarCandidato(){
+    this.palabra = this.filterControl.value;
+    if(this.filterControl.value.length < 1){
+      this.mostrarCandidatos();
+    }
+    if(this.filterControl.value.length > 2){
+      this.autocomplete(this.filterControl.value);
+    }
+  }
+
   autocomplete(palabra : string){
     this.candidatos_busqueda = [];
-    if(palabra.length > 3){
-      this.candidato_service.autoCompleteCandidato({"nombre_candidato":palabra,"id_cliente":this.id_cliente})
+    if(palabra.length > 2){
+      let json = {
+        nombre_candidato : this.palabra.toUpperCase(),
+        status : this.status,
+        id_cliente : this.id_cliente
+      };
+      this.candidato_service.autoCompleteCandidato(json)
       .subscribe((object : any) => {
         if(object.ok){
-          this.candidatos_busqueda = object.data;
-        }else{
-          this.candidatos_busqueda = [];
+          this.dataSource.data = object.data;
+          this.dataSource.paginator = this.paginator;
         }
       })
     }
+  }
+
+  mostrarEstado(){
+    this.estados_busqueda = [];
+    this.estados = [];
+    this.compartido_service.obtenerCatalogo("gen_cat_estados")
+    .subscribe((object : any) => {
+      if(object.length > 0){
+        this.estados_busqueda = object;
+        this.estados = object;
+      }
+    });
+  }
+
+  buscarEstado(){
+    this.estados_busqueda = [];
+    this.estados.forEach((element : any) => {
+      this.estados_busqueda.push({
+        "estado" : element.estado,
+        "id_estado" : element.id_estado
+      });
+    });
+    if(this.filterControlEstado.value.length > 0){
+      this.estados_busqueda = [];
+      this.estados.forEach((element : any) => {
+        if(element.estado.includes(this.filterControlEstado.value.toUpperCase())){ 
+          this.estados_busqueda.push({
+            "estado" : element.estado,
+            "id_estado" : element.id_estado
+          })
+        }
+      });
+    }
+  }
+
+  optionEstado(value : any){
+    this.candidato.direccion.estado = value.option.id;
   }
 
   altaCandidato(){
@@ -149,7 +190,7 @@ export class CatalogoCandidatosComponent implements OnInit {
       Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
     }else{
       if(
-        this.direccion.calle == 0 && this.direccion.codigo_postal == "" &&
+        this.direccion.calle == "" && this.direccion.codigo_postal == "" &&
         this.direccion.colonia == "" && this.direccion.cruzamiento_dos == "" &&
         this.direccion.cruzamiento_uno == "" && this.direccion.descripcion ==  "" &&
         this.direccion.estado == "" && this.direccion.localidad == "" &&
@@ -215,9 +256,11 @@ export class CatalogoCandidatosComponent implements OnInit {
     this.candidato_service.obtenerCandidatoPorId(folio)
     .subscribe( (object : any)=>{
       if(object.ok){
+        this.tipo_modal = 2;
         this.openModal();
-        jQuery("#guardar").hide();
-        jQuery("#editar").show();
+        if(object.data[0].id_status == 1){
+          this.bandera_activo = true;
+        }
         //Datos de direccion
         this.candidato.direccion.id_direccion = object.data[0].id_direccion;
         this.candidato.direccion.calle = object.data[0].calle;
@@ -229,15 +272,15 @@ export class CatalogoCandidatosComponent implements OnInit {
         this.candidato.direccion.colonia = object.data[0].colonia;
         this.candidato.direccion.localidad = object.data[0].localidad;
         this.candidato.direccion.municipio = object.data[0].municipio;
-        this.candidato.direccion.estado = object.data[0].estado;
+        
+        this.filterControlEstado.setValue(object.data[0].estado);
+        this.candidato.direccion.estado = object.data[0].id_estado;
         this.candidato.direccion.descripcion = object.data[0].descripcion_direccion;
         //Datos de usuario
         this.candidato.id_candidato = object.data[0].id_candidato;
         this.candidato.apellido_paterno = object.data[0].apellido_paterno;
         this.candidato.apellido_materno = object.data[0].apellido_materno;
-        if(object.data[0].id_status == 1){
-          this.bandera_activo = true;
-        }
+        
         this.candidato.id_statu = object.data[0].id_status;
         this.candidato.nombre = object.data[0].nombre;
         this.candidato.rfc = object.data[0].rfc;
@@ -267,7 +310,7 @@ export class CatalogoCandidatosComponent implements OnInit {
       Swal.fire("Ha ocurrido un error","Primero llena los campos requeridos","error");
     }else{
       if(
-        this.direccion.calle == 0 && this.direccion.codigo_postal == "" &&
+        this.direccion.calle == "" && this.direccion.codigo_postal == "" &&
         this.direccion.colonia == "" && this.direccion.cruzamiento_dos == "" &&
         this.direccion.cruzamiento_uno == "" && this.direccion.descripcion ==  "" &&
         this.direccion.estado == "" && this.direccion.localidad == "" &&
@@ -275,9 +318,9 @@ export class CatalogoCandidatosComponent implements OnInit {
         && this.direccion.numero_interior == ""
         ){
           Swal.fire({
-            title: '¿Estas seguro de modificar una empresa sin ningun dato de dirección?',
-            text: "El empresa se modificará sin domicilio, pero puedes actulizar su información en cualquier momento",
-            icon: 'warning',
+            title: '¿Estas seguro de agregar un candidato sin ninguna dato de dirección?',
+            text: "El candidato se registrará sin domicilio, pero puedes actulizar su información en cualquier momento",
+            icon: 'info',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
@@ -294,9 +337,9 @@ export class CatalogoCandidatosComponent implements OnInit {
         if(band){
           if(this.fotografia.docB64 == ""){
             Swal.fire({
-              title: '¿Estas seguro de modificar al candidato sin ningun foto?',
-              text: "El candidato se modificará sin foto, pero puedes actulizar su información en cualquier momento",
-              icon: 'warning',
+              title: '¿Estas seguro de agregar al candidato sin ningun foto?',
+              text: "El candidato se registrará sin foto, pero puedes actulizar su información en cualquier momento",
+              icon: 'info',
               showCancelButton: true,
               confirmButtonColor: '#3085d6',
               cancelButtonColor: '#d33',
@@ -304,7 +347,7 @@ export class CatalogoCandidatosComponent implements OnInit {
               cancelButtonText : "Cancelar"
             }).then((result) => {
               if (result.isConfirmed) {
-                band = true;
+                this.confirmar("Confirmación","¿Seguro que desea editar la información?","info",2);
               }else{
                 band = false;
               }
@@ -319,31 +362,8 @@ export class CatalogoCandidatosComponent implements OnInit {
     }
   }
 
-  eliminar(folio : any){
-    Swal.fire({
-      title: '¿Estas seguro que deseas eliminar este candidato?',
-      text: "Una vez eliminado, ya no lo podrás visualizar de nuevo",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, estoy seguro',
-      cancelButtonText : "Cancelar"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.candidato_service.eliminarCandidato(folio)
-        .subscribe( (object : any)=>{
-          if(object.ok){
-            this.mostrarCandidatos();
-          }else{
-            Swal.fire("Ha ocurrido un error",object.message,"error");
-          }
-        });
-      }
-    });
-  }
   limpiarCampos(){
-    this.direccion  = new Direccion(0,0,"","","","","","","","","","");
+    this.direccion  = new Direccion(0,"","","","","","","","","","","");
     this.fotografia = new Fotografia(0,"","",""); 
     this.candidato = new Candidato(0,this.id_cliente,6,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia);
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
@@ -387,6 +407,15 @@ export class CatalogoCandidatosComponent implements OnInit {
       this.estatus_color = "bg-success";
     }
   }
+  
+
+  mostrarPersiana(){
+    this.band_persiana = false;
+  }
+
+  ocultarPersiana(){
+    this.band_persiana = true;
+  }
 
   subirImagen(){
     document.getElementById("foto_user")?.click();
@@ -422,79 +451,23 @@ export class CatalogoCandidatosComponent implements OnInit {
       }
     }
   }
-
-  mostrarPersiana(){
-    this.band_persiana = false;
-  }
-
-  ocultarPersiana(){
-    this.band_persiana = true;
-  }
   
   openModal() {
     this.bandera_activo = false;
-    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop'});
+    this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop', backdrop: 'static', keyboard: false});
   }
 
   cerrarModal(){
     this.modal.close();
   }
 
-  paginar(){
-    this.paginas = [];
-    let paginas_a_pintar = parseInt(this.total_registros+"")%parseInt(this.taken+"");
-    if(paginas_a_pintar == 0){
-      paginas_a_pintar = (parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+"");
-    }else{
-      paginas_a_pintar = ((parseInt(this.total_registros+"")-paginas_a_pintar)/parseInt(this.taken+""))+1;
-    }
-    //Pintamos las flechas
-    if(paginas_a_pintar > this.paginas_a_mostrar){
-      this.next = true;
-    }
-    if(this.pagina_actual == paginas_a_pintar){
-      this.next = false;
-    }
-    if(this.pagina_actual > this.paginas_a_mostrar){
-      this.previous = true;
-    }
-    if(this.pagina_actual == 0){
-      this.previous = false;
-    }
-    //Pintamos las paginas
-    for(let i =0;i<this.paginas_a_mostrar;i++){
-      let pagina_inicial = this.limite_inferior;
-      if(i<paginas_a_pintar){
-        if(this.pagina_actual == pagina_inicial+i){
-          this.paginas.push({
-            numero : (pagina_inicial+i)+1,
-            valor_pagina : pagina_inicial+i,
-            active : "active"
-          });
-        }else{
-          this.paginas.push({
-            numero : (pagina_inicial+i)+1,
-            valor_pagina : pagina_inicial+i,
-            active : ""
-          });
-        }
-      }
-    }
-  }
-
   guardar(){
     this.limpiarCampos();
+    this.tipo_modal = 1;
     this.openModal();
-    jQuery("#guardar").show();
-    jQuery("#editar").hide();
   }
 
-  irPagina(pagina : any){
-    this.pagina_actual = pagina;
-    this.mostrarCandidatos();
-  }
-
-  getCandidato(event : any) {
+  optionCandidato(event : any) {
     this.editar(event.option.id);
     this.candidatos_busqueda.splice(0,this.candidatos_busqueda.length);
     this.myControl.reset('');
@@ -530,7 +503,7 @@ export class CatalogoCandidatosComponent implements OnInit {
   }
 
   openModalCamera(){
-    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
+    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop', backdrop: 'static', keyboard: false});
     // this.showWebcam = true;
   }
 
@@ -556,7 +529,6 @@ export class CatalogoCandidatosComponent implements OnInit {
 
   handleImage(webcamImage: WebcamImage) {
     this.getPicture.emit(webcamImage);
-    this.showWebcam = false;
     this.foto_user = webcamImage.imageAsDataUrl;
     let docB64 = this.foto_user.split(",");
     this.fotografia.docB64 = docB64[1];
@@ -611,6 +583,10 @@ export class CatalogoCandidatosComponent implements OnInit {
         }
       }
     });
+  }
+  descargarContrato(id : any){
+    location.href = SERVER_API+"contratacion/obtenerDocContratacionPorCandidato/"+id;
+
   }
 }
 

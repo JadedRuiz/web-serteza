@@ -161,7 +161,7 @@ export class CatalogoPeriodoComponent implements OnInit {
           let tipo = 1;                 //Bit que indicara cual sera el manejo de la fecha inicial
           this.periodo_generado.periodo_array = [];
           switch(object.data[0].nomina){
-            case "Semanal" : 
+            case "SEMANAL" : 
               tipo = 1;
               dias_definidos = 7;
               if(tipo_genera == 3) {
@@ -170,7 +170,7 @@ export class CatalogoPeriodoComponent implements OnInit {
                 dias_pasados = this.obtenerDias(3,new Date(this.fecha_final_genera));
               }
               break;
-            case "Catorcenal" : 
+            case "CATORCENAL" : 
               tipo = 1;
               dias_definidos = 14;
               if(tipo_genera == 3) {
@@ -179,11 +179,11 @@ export class CatalogoPeriodoComponent implements OnInit {
                 dias_pasados = this.obtenerDias(3,new Date(this.fecha_final_genera));
               }
               break;
-            case "Quincenal" : 
+            case "QUINCENAL" : 
               tipo = 2;
               dias_definidos = 15;
               break;
-            case "Mensual" : 
+            case "MENSUAL" : 
               tipo = 3;
               break;
           }

@@ -1,7 +1,7 @@
 export class Direccion {
     constructor(
         public id_direccion : number,
-        public calle : number,
+        public calle : string,
         public numero_exterior : String,
         public numero_interior : String,
         public cruzamiento_uno : String,

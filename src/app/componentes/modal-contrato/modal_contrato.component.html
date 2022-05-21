@@ -1,0 +1,88 @@
+<button class="btn btn-sm btn-yellow text-white" (click)="open(1)"><i class="fas fa-file-contract"></i></button>
+<ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">CONTRATOS</h4>
+      <button class="btn btn-sm btn-success" title="Agregar contrato" (click)="addContrato()"><i class="fas fa-file-medical"></i></button>
+    </div>
+    <div class="modal-body my-1 py-1" style="height: 300px; overflow-y: auto;">
+      <div class="container" *ngIf="!add_contrato">
+          <div class="row">
+              <div class="col-sm-12 table-responsive" >
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>
+                                Acción
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let contrato of contratos">
+                            <td>{{contrato.nombre}}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info text-white" title="Descargar contrato" (click)="descargarReporte(contrato.id_contrato)"><i class="fas fa-download"></i></button>
+                                <button *ngIf="!contrato.primero" class="btn btn-sm btn-danger" title="Eliminar contrato"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+              </div>
+          </div>
+      </div>
+      <div class="container" *ngIf="add_contrato">
+        <p class="my-1 py-0">A continuacion, te mostraremos los pasos para agregar un contrato a está empresa :</p>
+        <p class="my-1 py-0">1) Abre el .docx que se adjuntará y sobre-escribe utilizando la siguiente sentencia "$&#123;" + <a class="text-warning" (click)="open(2)" style="cursor: pointer;">PALABRAS_CLAVE</a> + "&#125;" en los espacios en donde desees dicha información.
+        </p>
+        <p>2) Guarda y <a class="text-info my-1 py-0" (click)="abrirExplorador()" style="cursor: pointer;">Adjunta</a> el documento</p>
+        <input type="file" style="display: none;" id="explorador" (change)="subirDoc($event)" accept=".docx">
+        <p class="my-1 py-0">3) Proporciona la descripción del contrato</p>
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="Descripción contrato" style="text-transform: uppercase;" [(ngModel)]="json.nombre">
+        </div>
+        <p class="my-1 mb-2 py-0">4) Y por ultimo presiona el boton guardar</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-danger" (click)="cerrarAdd()">Cancelar</button>
+        <button *ngIf="add_contrato" class="btn btn-success" (click)="altaContrato()">Guardar</button>
+    </div>
+</ng-template>
+<ng-template #contentPalabra let-modalPalabra>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">PALABRAS CLAVE</h4>
+      <button class="btn btn-sm btn-danger" (click)="modalPalabra.close()"><i class="far fa-times-circle"></i></button>
+    </div>
+    <div class="modal-body my-1 py-1">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 col-lg-6">
+                    <div class="list-group">
+                        <button type="button" class="list-group-item list-group-item-action" placement="bottom" ngbTooltip="Regresa el representante de la sucursal" triggers="click:blur">REPRESENTANTESUC</button>
+                        <button type="button" class="list-group-item list-group-item-action"  placement="bottom" ngbTooltip="Regresa el representante de la empresa" triggers="click:blur">REPRESENTANTE</button>
+                        <button type="button" class="list-group-item list-group-item-action"  placement="bottom" ngbTooltip="Regresa la razón social de la empresa" triggers="click:blur">EMPRESA</button>
+                        <button type="button" class="list-group-item list-group-item-action"  placement="bottom" ngbTooltip="Regresa el nombre del empleado" triggers="click:blur">EMPLEADO</button>
+                        <button type="button" class="list-group-item list-group-item-action"  placement="bottom" ngbTooltip="Regresa la descripción del puesto" triggers="click:blur">DESCRIPCIONPUESTO</button>
+                        <button type="button" class="list-group-item list-group-item-action"  placement="bottom" ngbTooltip="Regresa el domicilio de la empresa" triggers="click:blur">DOMICILIOEMPRESA</button>
+                        <button type="button" class="list-group-item list-group-item-action"  placement="bottom" ngbTooltip="Regresa el RFC de la empresa" triggers="click:blur">RFCEMPRESA</button>
+                        <button type="button" class="list-group-item list-group-item-action"  placement="bottom" ngbTooltip="Regresa el CURP del empleado" triggers="click:blur">CURP</button>
+                        <button type="button" class="list-group-item list-group-item-action"  placement="bottom" ngbTooltip="Regresa el RFC del empleado" triggers="click:blur">RFC</button>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-6">
+                    <div class="list-group">
+                        <button type="button" class="list-group-item list-group-item-action"  placement="end" ngbTooltip="Regresa el domicilio del empleado" triggers="click:blur">DOMICILIO</button>
+                        <button type="button" class="list-group-item list-group-item-action" placement="bottom" ngbTooltip="Regresa la fecha de ingreso del empleado" triggers="click:blur">FECHAINGRESO</button>
+                        <button type="button" class="list-group-item list-group-item-action" placement="bottom" ngbTooltip="Regresa la fecha de antiguedad del empleado" triggers="click:blur">FECHAANTIGUEDAD</button>
+                        <button type="button" class="list-group-item list-group-item-action" placement="bottom" ngbTooltip="Regresa el puesto del empleado" triggers="click:blur">PUESTO</button>
+                        <button type="button" class="list-group-item list-group-item-action" placement="bottom" ngbTooltip="Regresa el nombre de la sucursal" triggers="click:blur">SUCURSAL</button>
+                        <button type="button" class="list-group-item list-group-item-action" placement="bottom" ngbTooltip="Regresa el domicilio de la sucursal" triggers="click:blur">DOMICILIOSUCURSAL</button>
+                        <button type="button" class="list-group-item list-group-item-action" placement="bottom" ngbTooltip="Regresa el sueldo diario el empleado con formato en pesos" triggers="click:blur">SUELDODIARO</button>
+                        <button type="button" class="list-group-item list-group-item-action" placement="bottom" ngbTooltip="Regresa el sueldo diario del empleado en letras" triggers="click:blur">SUELDODIARIOLETRAS</button>
+                        <button type="button" class="list-group-item list-group-item-action" placement="bottom" ngbTooltip="Regresa el cargo del representante de la empresa" triggers="click:blur">CARGOREPRE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
