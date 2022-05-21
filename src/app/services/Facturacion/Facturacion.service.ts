@@ -170,13 +170,7 @@ export class FacturacionService {
 
   facSubirXML(json : any){
     let url = SERVER_API+"facturacion/altaBobedaXML";
-    return this.http.post( url, json )
-      .pipe(map( (resp: any) => {
-        return resp;
-      }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error, 'error');
-        return throwError(err);
-      }));
+    return this.http.post( url, json );
   }
 
   facGenerarFactura(id_factura : number, tipo : number, tipo_envio : number){
