@@ -1161,6 +1161,10 @@ export class ProcesoFacturadorComponent implements OnInit {
       total : "0.00",
       usuario_creacion : this.usuario
     };
+    this.peso_total = 0;
+    this.total = 0;
+    this.mostrarDatos = true;
+    this.band_view = false;
   }
 
   previsualizarPDF(){
