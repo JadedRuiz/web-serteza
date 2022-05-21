@@ -11,6 +11,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BancosComponent } from './bancos/bancos.component';
+import { MovimientoBancosComponent } from './procedimientos/movimiento-bancos/movimiento-bancos.component';
 
  
 
@@ -20,6 +21,7 @@ import { BancosComponent } from './bancos/bancos.component';
     XmlUploadComponent,
     FacturasComponent,
     BancosComponent,
+    MovimientoBancosComponent,
   ],
   imports: [
     CommonModule,

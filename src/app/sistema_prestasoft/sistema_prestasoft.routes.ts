@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from '../sistema_prestasoft/dashboard/dashboard.component';
 import { BancosComponent } from './bancos/bancos.component';
 import { FacturasComponent } from './facturas/facturas.component';
+import { MovimientoBancosComponent } from './procedimientos/movimiento-bancos/movimiento-bancos.component';
 import { SistemaPrestaSoftComponent } from './sistema_prestasoft.component';
 import { XmlUploadComponent } from './xml-upload/xml-upload.component';
 
@@ -15,7 +16,8 @@ const routes: Routes = [
           { path: 'dashboard', component : DashboardComponent},
           { path: 'xml-upload', component : XmlUploadComponent},
           { path: 'facturas', component : FacturasComponent},
-          { path: 'bancos', component : BancosComponent},  
+          { path: 'bancos', component : BancosComponent}, 
+          { path: 'movimiento-bancos', component : MovimientoBancosComponent},  
           { path: '', redirectTo: '/login', pathMatch: 'full'}
       ]
     }
