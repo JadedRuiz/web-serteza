@@ -4,6 +4,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {NgbPopoverConfig} from '@ng-bootstrap/ng-bootstrap';
 import { type } from 'os';
 import { config } from 'process';
+import { throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { FacturacionService } from 'src/app/services/Facturacion/Facturacion.service';
 import Swal from 'sweetalert2';
@@ -39,6 +41,7 @@ export class SubirXmlComponent implements OnInit {
     }
   ];
   id_empresa = 0;
+  btn_dis = false;
 
   constructor(
     private empresa_service: EmpresaService,
@@ -162,12 +165,27 @@ export class SubirXmlComponent implements OnInit {
       data : '',
       extension : ''
     };
+    this.btn_dis = true;
+    let cont=1;
     this.list_files.forEach(async (element : any) => {
+      if(cont == this.list_files.length){
+        this.btn_dis = false;
+      }else{
+        cont++;
+      }
       if(element.data != ""){
         json.data = element.data;
         json.extension = element.extension;
         element.reload = 1;
         await this.fac_service.facSubirXML(json)
+        .pipe(
+          catchError(err => {
+            element.reload = 3;
+            element.success = false;
+            element.detalle = [err.error.message];
+            return throwError(err);
+          })
+        )
         .subscribe((object : any) => {
           if(object.ok){
             element.reload = 2;
@@ -182,6 +200,7 @@ export class SubirXmlComponent implements OnInit {
           }
         });
       }
+      
     })
   }
 
@@ -198,6 +217,7 @@ export class SubirXmlComponent implements OnInit {
   }
 
   openModal() {
+    this.btn_dis = false;
     this.modal = this.modalService.open(this.contenidoDelModal,{ centered : true, size : 'md', backdropClass : 'light-blue-backdrop'});
   }
 
