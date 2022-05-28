@@ -60,6 +60,8 @@ export class SidebarComponent implements OnInit {
         submenu : [
           { path: 'movimiento-bancos', title: 'Movimiento de bancos',  icon:'fas fa-university text-yellow', id:"rh_header", band: true, tipo : "collapse"},          
           { path: 'facturas', title: 'Captura facturas',  icon:'ni-folder-17 text-yellow', id:"rh_header", band: true, tipo : "collapse"},          
+          { path: 'descarga-masiva', title: 'Descarga masiva',  icon:'ni-cloud-download-95 text-yellow', id:"rh_header", band: true, tipo : "collapse"},          
+
           // { path: '#', title: 'Captura pagos',  icon:'ni-collection text-yellow', id:"rh_header", band: true, tipo : "collapse"},
           // { path: 'xml-upload', title: 'Carga xml´s',  icon:'ni-cloud-upload-96 text-yellow', id:"rh_header", band: true, tipo : "collapse"},
           // { path: '#', title: 'Estado de cuenta',  icon:'ni-book-bookmark text-yellow', id:"rh_header", band: true, tipo : "collapse"}

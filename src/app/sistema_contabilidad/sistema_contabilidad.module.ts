@@ -19,6 +19,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTabsModule } from '@angular/material/tabs';
 import  {MatSelectModule } from '@angular/material/select';
 import { MovimientoBancosComponent } from '../sistema_prestasoft/procedimientos/movimiento-bancos/movimiento-bancos.component';
+import { DescargaMasivaComponent } from './descarga-masiva/descarga-masiva.component';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { MovimientoBancosComponent } from '../sistema_prestasoft/procedimientos/
     FacturasComponent,
     BancosComponent,
     MovimientoBancosComponent,
-    CatalogoEmpresaComponent
+    CatalogoEmpresaComponent,
+    DescargaMasivaComponent
   ],
   imports: [
     CommonModule,

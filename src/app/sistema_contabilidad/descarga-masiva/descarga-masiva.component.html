@@ -1,0 +1,148 @@
+<div class="header " style="height: 250px;">
+    <div class="container-fluid">
+    </div>
+</div>
+<div class="container-fluid mt--9">
+  <div class="row">
+    <div class="col">
+      <div class="card border-info">
+          <div class="card-header">
+            Descarga masiva
+          </div>
+        <div class="card-body">
+            <div class="row mb-2">
+                
+                    <div class="col-9">
+                        
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Estado de la solicitud</label>
+                            <select (change)="getSolicitudesEstatus()" [(ngModel)]="id_estatus" name="tipo" class="form-control">
+                                <option selected value="0">Seleccione un estado</option> 
+                                <option value="1">En solicitud</option>                             
+                                <option value="14">Aceptadas</option>   
+                                <option value="15">Finalizadas</option>                                                       
+                                <option value="12">Canceladas</option>                             
+  
+                            </select>
+                        </div>
+                    </div>
+                   
+                    <div class="col-3 text-center">
+                        <div class="form-group mt-4">
+                            <a class="btn btn-info" (click)="limpiar()" title="Nuevo departamento" data-toggle="modal" data-target="#modalCancelacion"><img src="./assets/iconos/agregar.svg" style="width: 24px;">  Solicitud</a>
+
+                        </div>
+
+                    </div>               
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr style="text-align: center;">
+                            <th scope="col">#</th>
+                            <th scope="col">Folio</th>
+                            <th scope="col">Fecha inicial</th>
+                            <th scope="col">Fecha final</th>
+                            <th scope="col">Rfc</th>
+                            <th scope="col">Estatus</th>
+                            <th scope="col">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody  class="">
+                        <tr *ngFor="let item of  obj; let i = index" style="text-align: center;">
+                            <td colspan="1" style="vertical-align: middle;">{{i + 1}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{item.clave_solicitud}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{item.fecha_inicial | date : 'dd/MM/YYYY'}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{item.fecha_final | date : 'dd/MM/YYYY'}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{item.rfc}}</td>
+                            <td colspan="1" style="vertical-align: middle;">{{item.status}}</td>
+                            <td colspan="1" style="width: 20%;">
+                                <a *ngIf="item.status == 'Activo'" (click)="actualizar(item)" title="Actualizar"  style="cursor: pointer;" class="btn btn-info btn-sm"><img src="./assets/iconos/sync.svg" style="width: 14px;"></a>
+                                <a *ngIf="item.status == 'Aceptado'" (click)="cargar(item)" title="Cargar"  style="cursor: pointer;" class="btn btn-success btn-sm"><img src="./assets/iconos/cloud-computing.svg" style="width: 14px;"></a>
+                                <a *ngIf="item.status == 'Finalizado'" (click)="getDetalle(item)" title="Ver"  style="cursor: pointer;" class="btn btn-dark btn-sm"><img src="./assets/iconos/ver.svg" style="width: 14px;"></a>
+                                <a *ngIf="obj.status != 'Cancelado'" (click)="cancelar(item)" title="Cancelar"  style="cursor: pointer;" class="btn btn-warning btn-sm"><img src="./assets/iconos/sin-parar.svg" style="width: 14px;"></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                  
+                </table>
+                <div class="filtros container mt-3">
+                    <div class="row">
+                        <div class="col-lg-4 col-sm-12"></div>
+                        <div class="col-lg-4 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
+                            
+                        </div>
+                        <div class="col-lg-4 col-sm-12" style="text-align: end;">
+                            <!-- <select [(ngModel)]="taken" (change)="mostrarDepartamentos()" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalCancelacion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Crear solicitud</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form #f="ngForm" ngNativeValidate (ngSubmit)="guardarCatalogo(f)" >
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputCity">Fecha inicial</label>
+                    <input [(ngModel)]="fecha_inicial" name="fecha_inicial" type="date" class="form-control"/>              
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputCity">Fecha final</label>
+                    <input [(ngModel)]="fecha_final" name="fecha_final" type="date" class="form-control"/>              
+                </div>
+                             
+            </div>
+            
+            <div class="form-group">
+                <label for="xml">RFC</label>
+                <input [(ngModel)]="rfc" name="rfc" type="text" class="form-control" >
+            </div>
+            <div class="row col-12 justify-content-around">
+                <div class="form-check">
+                    <input (change)="cambioFechas($event)"  class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="recibidos" checked>
+                    <label class="form-check-label" for="exampleRadios1">
+                        Recibidos
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input (change)="cambioFechas($event)"  class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="emitidos">
+                    <label class="form-check-label" for="exampleRadios2">
+                        Emitidos
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-primary">Enviar</button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+
+

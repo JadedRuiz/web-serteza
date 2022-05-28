@@ -23,7 +23,7 @@ import { SistemaFacturacionModule } from './sistema_facturacion/sistema_facturac
   declarations: [
     AppComponent,
     LoginComponent,
-    RegistroComponent
+    RegistroComponent,
   ],
   imports: [
     BrowserModule,
