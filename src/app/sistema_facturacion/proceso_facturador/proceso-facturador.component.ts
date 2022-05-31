@@ -818,7 +818,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     let total = 0.00;
     this.dataSource.data.forEach((element : any) => {
       subtotal += parseFloat(element.neto);
-      total += subtotal;
+      total = subtotal;
       descuento += parseFloat(element.descuento);
       total += descuento;
       iva += parseFloat(element.iva);
