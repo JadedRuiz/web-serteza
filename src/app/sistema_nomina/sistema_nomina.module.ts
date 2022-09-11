@@ -27,6 +27,8 @@ import { ProcedimientoSolicitudesComponent } from './procedimiento_solicitudes/p
 import { ProcedimientoCapturaComponent } from './procedimiento_captura/procedimiento_captura.component';
 import { ProcedimientoCalculoComponent } from './procedimiento_calculo/procedimiento_calculo.component';
 import { ProcedimientoCierreComponent } from './procedimiento_cierre/procedimiento_cierre.component';
+import { ProcedimientoCotizacionComponent } from './procedimiento_cotizacion/procedimiento_cotizacion.component';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -43,6 +45,7 @@ import { ProcedimientoCierreComponent } from './procedimiento_cierre/procedimien
     ProcedimientoSolicitudesComponent,
     ProcedimientoCapturaComponent,
     ProcedimientoCalculoComponent,
+    ProcedimientoCotizacionComponent,
     ProcedimientoCierreComponent
   ],
   imports: [
@@ -60,7 +63,8 @@ import { ProcedimientoCierreComponent } from './procedimiento_cierre/procedimien
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    WebcamModule
+    WebcamModule,
+    ChartsModule
   ]
 })
 export class SistemaNominaModule { }

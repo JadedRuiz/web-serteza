@@ -14,6 +14,7 @@ import { ProcedimientoSolicitudesComponent } from './procedimiento_solicitudes/p
 import { ProcedimientoCapturaComponent } from './procedimiento_captura/procedimiento_captura.component';
 import { ProcedimientoCierreComponent } from './procedimiento_cierre/procedimiento_cierre.component';
 import { ProcedimientoCalculoComponent } from './procedimiento_calculo/procedimiento_calculo.component';
+import { ProcedimientoCotizacionComponent } from './procedimiento_cotizacion/procedimiento_cotizacion.component';
 
 const routes: Routes = [
   {
@@ -33,6 +34,7 @@ const routes: Routes = [
         { path : "procedimiento_captura", component : ProcedimientoCapturaComponent},
         { path : "procedimiento_cierre", component : ProcedimientoCierreComponent},
         { path : "procedimiento_calculo", component : ProcedimientoCalculoComponent},
+        { path : "procedimiento_cotizacion", component : ProcedimientoCotizacionComponent},
         { path: '', redirectTo: '/login', pathMatch: 'full'}
     ]
   }

@@ -67,4 +67,20 @@ export class NominaService {
         return throwError(err);
       }));
   }
+
+  buscarFolio(folio : any){
+    let url = SERVER_API+"nomina/buscarFolio/"+folio;
+    return this.http.get(url);
+  }
+
+  procesarCotizacion(json : any){
+    let url = SERVER_API+"nomina/procesarCotizacion";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+        return throwError(err);
+      }));
+  }
 }
