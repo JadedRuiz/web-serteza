@@ -50,9 +50,9 @@ export class SidebarComponent implements OnInit {
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : [
           { path: '#', title: 'Cliente / Proveedor',  icon:'ni-satisfied text-orange', id:"rh_header", band: true, tipo : "collapse"},
-          {path: 'catalogo_empresa', title: 'Empresas', icon: 'fas fa-home text-orange'},
+          { path: 'catalogo_empresa', title: 'Empresas', icon: 'fas fa-home text-orange'},
           // { path: '#', title: 'Ivas',  icon:'ni-money-coins text-orange', id:"rh_header", band: true, tipo : "collapse"},
-          { path: '#', title: 'Conceptos',  icon:'ni-books text-orange', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'conceptos', title: 'Conceptos',  icon:'ni-books text-orange', id:"rh_header", band: true, tipo : "collapse"},
           // { path: 'bancos', title: 'Bancos',  icon:'ni-building text-orange', id:"rh_header", band: true, tipo : "collapse"}
         ]
       },

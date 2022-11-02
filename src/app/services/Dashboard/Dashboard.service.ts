@@ -54,4 +54,24 @@ export class DashboardService {
       return throwError(err);
     }));
   }
+  obtenerCostosNomina(json : any){
+    let url = SERVER_API + "gerencia/costoNomina";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+  obtenerMeses(){
+    let url = SERVER_API + "obtenerMeses";
+    return this.http.get( url )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
 }

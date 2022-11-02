@@ -20,6 +20,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import  {MatSelectModule } from '@angular/material/select';
 import { MovimientoBancosComponent } from '../sistema_prestasoft/procedimientos/movimiento-bancos/movimiento-bancos.component';
 import { DescargaMasivaComponent } from './descarga-masiva/descarga-masiva.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { RouterModule } from '@angular/router';
+import { ConceptosComponent } from './conceptos/conceptos.component';
 
 
 @NgModule({
@@ -30,13 +33,16 @@ import { DescargaMasivaComponent } from './descarga-masiva/descarga-masiva.compo
     BancosComponent,
     MovimientoBancosComponent,
     CatalogoEmpresaComponent,
-    DescargaMasivaComponent
+    DescargaMasivaComponent,
+    DashboardComponent,
+    ConceptosComponent
   ],
   imports: [
     CommonModule,
     SistemaContabilidadRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    RouterModule,
     MatInputModule,
     NgbModule,
     CompartidoModule,
@@ -50,4 +56,4 @@ import { DescargaMasivaComponent } from './descarga-masiva/descarga-masiva.compo
     MatSelectModule
   ]
 })
-export class SitemaPrestasoftModule { }
+export class SitemaContabilidadModule { }

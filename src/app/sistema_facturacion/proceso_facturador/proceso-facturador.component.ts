@@ -801,9 +801,9 @@ export class ProcesoFacturadorComponent implements OnInit {
         element.neto = subtotal;
         element.neto_print = "$ " +formatter.format(subtotal);
         element.descuento = ((parseFloat(element.descuento_porcent) / 100) * subtotal);
-        element.iva = ((parseFloat(element.iva_porcent) / 100) * subtotal);
-        element.ieps = ((parseFloat(element.ieps_porcent) / 100) * subtotal);
-        element.otros = ((parseFloat(element.otros_porcent) / 100) * subtotal);
+        element.iva = ((parseFloat(element.iva_porcent) / 100) * subtotal).toFixed(2);
+        element.ieps = ((parseFloat(element.ieps_porcent) / 100) * subtotal).toFixed(2);
+        element.otros = ((parseFloat(element.otros_porcent) / 100) * subtotal).toFixed(2);
         this.calcularTotal();
       }
     });
