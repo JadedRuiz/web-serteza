@@ -55,13 +55,14 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
-import {OverlayModule} from '@angular/cdk/overlay';
+import { MovBancosComponent } from './sistema_contabilidad/mov-bancos/mov-bancos.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     RegistroComponent,
+    MovBancosComponent,
   ],
   imports: [
     BrowserModule,

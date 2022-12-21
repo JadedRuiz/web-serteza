@@ -23,7 +23,7 @@ import { DescargaMasivaComponent } from './descarga-masiva/descarga-masiva.compo
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RouterModule } from '@angular/router';
 import { ConceptosComponent } from './conceptos/conceptos.component';
-
+import { CurrencyPipe} from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -54,6 +54,9 @@ import { ConceptosComponent } from './conceptos/conceptos.component';
     MatMenuModule,
     MatTabsModule,
     MatSelectModule
+  ],
+  providers : [
+    CurrencyPipe
   ]
 })
 export class SitemaContabilidadModule { }

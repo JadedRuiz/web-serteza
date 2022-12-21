@@ -1,10 +1,7 @@
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { format } from 'path';
-import { element } from 'protractor';
 import { Direccion } from 'src/app/models/Direccion';
 import { Operador } from 'src/app/models/Operador';
 import { ClienteService } from 'src/app/services/Cliente/cliente.service';
@@ -105,7 +102,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     id_cliente : 0,
     id_formapago : "",
     id_metodopago : "",
-    id_tipomoneda : 100,
+    id_tipomoneda : "100",
     id_usocfdi : 3,
     numero_cuenta : "",
     tipo_comprobante : "2",
@@ -114,6 +111,11 @@ export class ProcesoFacturadorComponent implements OnInit {
     observaciones : "",
     usa_ine : false,
     usa_cataporte : false,
+    tiene_rela : false,
+    relaciones : {
+      folio_fiscal : "",
+      id_tiporela : ""
+    },
     cataporte : this.cataporte,
     conceptos : this.dataSource.data,
     subtotal : "0.00",
@@ -161,6 +163,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     curp : "",
     telefono : "",
     mail : "",
+    id_regimenfiscal : "603",
     direccion : this.direccion,
     usuario_creacion : this.usuario
   };
@@ -200,6 +203,8 @@ export class ProcesoFacturadorComponent implements OnInit {
   embalajes_copy: any;
   monedas_copy: any;
   concepto_disable = false;
+  regimenes : any;
+  cat_relaciones : any;
 
   constructor(
     private empresa_service: EmpresaService,
@@ -216,6 +221,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     this.mostrarEstado();
     this.mostrarClientes();
     this.mostrarCatalogos();
+    this.mostrarTipoRela();
     this.UbicacionSource.data.push(this.model_ubicacion);
     this.dataSource.data.push({
       id_row : 0,
@@ -282,6 +288,20 @@ export class ProcesoFacturadorComponent implements OnInit {
         this.datos_factura.tipo_comprobante = object[0].id_tipocomprobante;
       }
     });
+  }
+  
+  mostrarTipoRela(){
+    this.cat_relaciones = [];
+    this.compartido_service.obtenerCatalogo("sat_catRelaciones")
+    .subscribe((object : any) => {
+      if(object.length > 0){
+        this.cat_relaciones = object;
+      }
+    });
+  }
+
+  optionRelacion(event : any){
+     this.datos_factura.relaciones.id_tiporela = event.value;
   }
 
   mostrarEmpresas(){
@@ -379,6 +399,7 @@ export class ProcesoFacturadorComponent implements OnInit {
   
   mostrarCliente(id : any){
     this.limpiarCampos();
+    this.mostrarRegimen();
     this.tipo_modal = 2;
     this.cliente_service.facObtenerClientesPorId(id)
     .subscribe((object : any) => {
@@ -400,7 +421,8 @@ export class ProcesoFacturadorComponent implements OnInit {
         this.cliente.direccion.estado = object.data.id_estado;
         this.cliente.direccion.localidad = object.data.localidad;
         this.cliente.direccion.municipio = object.data.municipio;
-        this.cliente.direccion.descripcion = object.data.descripcion_direccion;
+        this.cliente.direccion.descripcion = object.data.descripcion;
+        this.cliente.id_regimenfiscal = object.data.id_regimenfiscal;
         this.openModal(1);
       }
     });
@@ -765,6 +787,20 @@ export class ProcesoFacturadorComponent implements OnInit {
     this.cataporte.transporte.id_remolque = event.option.id;
   }
 
+  mostrarRegimen(){
+    this.regimenes = [];
+    this.compartido_service.obtenerCatalogo("sat_regimenesfiscales")
+    .subscribe((object : any) => {
+      if(object.length > 0){
+        this.regimenes = object;
+      }
+    });
+  }
+  
+  optionRegimen(event : any){
+    this.cliente.id_regimenfiscal = event.value;
+  }
+
   nuevaLinea(){
     this.dataSource.data.push({
       id_row : this.dataSource.data.length+1,
@@ -858,6 +894,7 @@ export class ProcesoFacturadorComponent implements OnInit {
   nuevoCliente(){
     this.limpiarCampos();
     this.tipo_modal = 1;
+    this.mostrarRegimen();
     this.openModal(1);
   }
 
@@ -911,6 +948,16 @@ export class ProcesoFacturadorComponent implements OnInit {
       }
       this.cataporte.ubicaciones = this.UbicacionSource.data;
       this.cataporte.mercancias = this.mercancias;
+    }
+    if(this.datos_factura.tiene_rela){
+      if(this.datos_factura.relaciones.folio_fiscal == ""){
+        Swal.fire("Aviso","El campo folio fiscal es obligatorio","info");
+        return "";
+      }
+      if(this.datos_factura.relaciones.id_tiporela == ""){
+        Swal.fire("Aviso","El campo tipo de relación es obligatorio","info");
+        return "";
+      }
     }
     this.datos_factura.id_empresa = this.id_empresa;
     this.confirmar("Confirmación","¿Seguro que deseas guardar está factura?","info",null,3);
@@ -1084,6 +1131,7 @@ export class ProcesoFacturadorComponent implements OnInit {
       curp : "",
       telefono : "",
       mail : "",
+      id_regimenfiscal : "603",
       direccion : this.direccion,
       usuario_creacion : this.usuario
     };
@@ -1142,7 +1190,7 @@ export class ProcesoFacturadorComponent implements OnInit {
       id_cliente : 0,
       id_formapago : "",
       id_metodopago : "",
-      id_tipomoneda : 100,
+      id_tipomoneda : "100",
       id_usocfdi : 3,
       numero_cuenta : "",
       tipo_comprobante : "2",
@@ -1151,6 +1199,11 @@ export class ProcesoFacturadorComponent implements OnInit {
       observaciones : "",
       usa_ine : false,
       usa_cataporte : false,
+      tiene_rela : false,
+      relaciones : {
+        folio_fiscal : "",
+        id_tiporela : ""
+      },
       cataporte : this.cataporte,
       conceptos : this.dataSource.data,
       subtotal : "0.00",
@@ -1224,6 +1277,7 @@ export class ProcesoFacturadorComponent implements OnInit {
                 curp : "",
                 telefono : "",
                 mail : "",
+                id_regimenfiscal : "",
                 direccion : this.direccion,
                 usuario_creacion : this.usuario
               };

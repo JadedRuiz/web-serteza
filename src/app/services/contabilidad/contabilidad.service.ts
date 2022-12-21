@@ -76,4 +76,15 @@ export class ContabilidadService {
     let url = SERVER_API+"contabilidad/get-conceptos/"+ id_empresa;
     return this.http.get(url);
   }
+
+  conceptoAutoComplete(buqueda : any){
+    let url = SERVER_API + "contabilidad/ConceptosAutocomplete";
+    return this.http.post( url, buqueda )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
 }

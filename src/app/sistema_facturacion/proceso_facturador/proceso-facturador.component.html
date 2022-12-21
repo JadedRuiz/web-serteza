@@ -60,10 +60,10 @@
                 <div class="card-body">
                     <div class="container">
                         <div class="row">
-                            <mat-tab-group mat-align-tabs="center" class="mt-2 w-100" style="height: 470px;" 
+                            <mat-tab-group mat-align-tabs="center" class="mt-2 w-100" 
                             [selectedIndex]="selectedTab">
                                 <mat-tab label="Datos de factura">
-                                    <div class="container contenedor">
+                                    <div class="container contenedor mt-3">
                                         <div class="row">
                                             <div class="col-sm-12 col-lg-6">
                                                 <mat-form-field class="w-100">
@@ -170,11 +170,31 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-lg-2 col-sm-12">
+                                                <mat-checkbox color="primary" [(ngModel)]="datos_factura.tiene_rela" class="example-margin">Tiene relación</mat-checkbox>
+                                            </div>
+                                            <div class="col-lg-2 col-sm-12">
                                                 <mat-checkbox color="primary" [(ngModel)]="datos_factura.usa_ine" class="example-margin">Complemento Ine</mat-checkbox>
                                             </div>
                                             <div class="col-lg-2 col-sm-12">
                                                 <mat-checkbox color="primary" [(ngModel)]="datos_factura.usa_cataporte" class="example-margin">Complemento cataporte</mat-checkbox>
                                             </div>
+                                        </div>
+                                        <div class="row" *ngIf="datos_factura.tiene_rela">
+                                            <div class="col-lg-4 col-sm-12">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Folio fiscal</mat-label>
+                                                    <input matInput type="text" style="text-transform: uppercase;" required min="0" [(ngModel)]="datos_factura.relaciones.folio_fiscal">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-lg-4 col-sm-12">
+                                                <mat-form-field class="w-100">
+                                                    <mat-label>Tipo de relación</mat-label>
+                                                    <mat-select [(ngModel)]="datos_factura.relaciones.id_tiporela" (selectionChange)="optionRelacion($event)" required>
+                                                      <mat-option *ngFor="let regimen of cat_relaciones" [value]="regimen.clave">{{regimen.descripcion}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                            
                                         </div>
                                         <div class="row d-flex justify-content-end">
                                             <button *ngIf="band_button" class="btn btn-warning" (click)="changeTab()">Siguiente</button>
@@ -578,17 +598,25 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-6 col-sm-12">
+                <div class="col-lg-4 col-sm-12">
                     <mat-form-field class="w-100">
                       <mat-label>Email</mat-label>
                       <input matInput [(ngModel)]="cliente.mail" name="serie" required>
                     </mat-form-field>
                 </div>
-                <div class="col-lg-6 col-sm-12">
+                <div class="col-lg-4 col-sm-12">
                     <mat-form-field class="w-100">
                       <mat-label>Telefono</mat-label>
                       <input matInput [(ngModel)]="cliente.telefono" name="serie" style="text-transform: uppercase;" maxlength="10">
                     </mat-form-field>
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <mat-form-field class="w-100">
+                        <mat-label>Regimen fiscal</mat-label>
+                        <mat-select [(ngModel)]="cliente.id_regimenfiscal" (selectionChange)="optionRegimen($event)">
+                          <mat-option *ngFor="let regimen of regimenes" [value]="regimen.id_regimenfiscal">{{regimen.regimenfiscal}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
                 </div>
             </div>
             <div class="row">
