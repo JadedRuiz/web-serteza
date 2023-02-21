@@ -1,0 +1,188 @@
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card shadow" style="height: 550px;">
+        <div class="card-header border-0">
+            <div class="row align-items-center">
+                <div class="col">
+                <h3 class="mb-0">PROCEDIMIENTO DE COTIZACIÓN</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="container">
+              <div class="row">
+                <div class="col-12">
+                  <div class="row">
+                    <div class="col-sm-12 col-lg-4">
+                      <div class="row d-flex align-items-center">
+                        <div class="col-sm-12 col-lg-10 px-0">
+                          <input type="number" [(ngModel)]="json.folio" class="form-control input-general" max="20" maxlength="20" name="folio" placeholder="Ingresa el folio">
+                        </div>
+                        <div class="col-sm-12 col-lg-2 px-1">
+                          <a class="btn btn-sm btn-info" (click)="buscarFolio()" title="Buscar"><i class="fas fa-search"></i></a>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <small class="text-warning">Para recuperar una cotización, ingrese el folio.</small>
+                      </div>
+                      <div class="row mt-2">
+                        <input type="text" [(ngModel)]="json.cliente" class="form-control input-general" max="150" maxlength="150" name="cliente" placeholder="Cliente">
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-lg-8 border-success">
+                      <div class="card">
+                        <div class="card-body pt-1 mt-1 mb-0">
+                          <h4 class="card-title mb-0 mt-1">Opciones de previsualización</h4>
+                          <p class="card-text mb-0 mt-1">{{texto_folio}}</p>
+                          <button (click)="openModal()" class="btn-sm btn-primary my-1  {{class_folio_dos}}" >Ver estrategia</button>
+                          <button href="#" class="btn-sm btn-warning my-1 ml-2  {{class_folio_dos}}">Descargar PDF</button>
+                          <button href="#" (click)="nuevaCotizacion()" class="btn-sm btn-danger my-1 ml-2 {{class_folio_dos}}">Realizar nueva cotización</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-2 d-flex align-items-center">
+                <div class="col-lg-3 col-sm-12 px-0">
+                  <input type="date" [(ngModel)]="json.fecha" class="form-control" name="fecha" id="fecha">
+                </div>
+                <div class="col-lg-4 col-sm-12 px-1">
+                  <input type="text" name="empresa" [(ngModel)]="json.empresa" placeholder="Buscar empresa" id="" class="form-control input-general" [matAutocomplete]="auto" (keyup)="autocompletar(json.empresa,'empresa')">
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectEmpresa($event)">
+                    <mat-option *ngFor="let empresa of autocomplete" [value]="empresa.id_empresa">
+                      {{empresa.value}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </div>
+                <div class="col-lg-4 col-sm-12 px-1">
+                  <input type="email" [(ngModel)]="json.correo" class="form-control" name="correo" id="correo" placeholder="INGRESA TU CORREO ELECTRONICO">
+                </div>
+                <div class="col-lg-1 col-sm-12 text-right">
+                  <a class="btn btn-sm btn-success" (click)="nuevoDetalle()" title="Agregar linea"><i class="fas fa-plus"></i></a>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col-sm-12 table-responsive table-define">
+                  <table class="table">
+                    <thead>
+                      <th style="vertical-align: middle;">Identificador</th>
+                      <th style="vertical-align: middle;">Puesto</th>
+                      <th style="vertical-align: middle;">Fecha nacimiento</th>
+                      <th style="vertical-align: middle;">Fecha ingreso</th>
+                      <th style="vertical-align: middle;">Sueldo</th>
+                      <th style="vertical-align: middle;">Notas</th>
+                    </thead>
+                    <tbody *ngIf="json.detalle.length > 0; else empty_detalle">
+                      <tr *ngFor="let detalle of json.detalle; let i = index">
+                        <td class="column-input">
+                          <input type="text" name="Identificador" [(ngModel)]="detalle.identificador" placeholder="Ingresa el identificador" id="" class="input-general input-default" required>
+                        </td>
+                        <td class="column-input">
+                          <input type="text" name="Puesto" [(ngModel)]="detalle.puesto" placeholder="Buscar puesto" id="" class="input-general input-default" [matAutocomplete]="auto" (keyup)="autocompletar(detalle.puesto,'puesto')">
+                          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectPuesto($event,i)">
+                            <mat-option *ngFor="let puesto of autocomplete" [value]="puesto.id_puesto">
+                              {{puesto.value}}
+                            </mat-option>
+                          </mat-autocomplete>
+                        </td>
+                        <td class="column-input">
+                          <input type="date" name="Fecha_Nacimiento" [(ngModel)]="detalle.fecha_nacimiento" placeholder="Ingresa la fecha" id="" class="input-default" required>
+                        </td>
+                        <td class="column-input">
+                          <input type="date" [(ngModel)]="detalle.fecha_ingreso" name="Fecha_ingreso" placeholder="Ingresa la fecha" id="" class="input-default" required>
+                        </td>
+                        <td class="column-input">
+                          <input type="text" name="Sueldo" [(ngModel)]="detalle.sueldo_mensual" placeholder="Ingresa el sueldo" id="" class="input-general input-default" required>
+                        </td>
+                        <td class="column-input">
+                          <input type="text" name="Notas" [(ngModel)]="detalle.notas" placeholder="Notas" id="" class="input-general input-default" required>
+                          <a class="btn btn-sm btn-danger px-1" (click)="eliminarDetalle(i)"><i class="fas fa-times"></i></a>
+                        </td>
+                      </tr>
+                    </tbody>
+                    <ng-template #empty_detalle>
+                      <tbody>
+                        <tr>
+                          <td colspan="6" class="text-center">Sin registros aún</td>
+                        </tr>
+                      </tbody>
+                    </ng-template>
+                  </table>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12 text-right">
+                  <a class="btn btn-sm btn-success" (click)="procesarCotizacion()" title="Cotizar"><i class="fas fa-calculator"></i>&nbsp;Realizar cotización</a>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modal_visualizacion let-modal>
+  <div class="container">
+    <div class="row my-2 my-2">
+      <div class="col-12 text-right">
+        <a (click)="modal.close()" style="cursor: pointer;"><i class="fas fa-times"></i></a>
+      </div>
+    </div>
+    <div class="row my-2 mx-2">
+      <div class="col-sm-12 table-responsive">
+        <table class="table">
+          <thead>
+            <th colspan="2"></th>
+            <th>Normal</th>
+            <th class="border_left">Estrategia</th>
+          </thead>
+          <tbody>
+            <tr>
+              <th colspan="2" class="tr-define">Sueldos</th>
+              <td>$ {{datos_cotizacion.cotizacion.sueldos}}</td>
+              <td class="border_left">$ {{datos_cotizacion.cotizacion_estrategia.sueldos}}</td>
+            </tr>
+            <tr>
+              <th rowspan="2" colspan="1" style="vertical-align: middle;" class="tr-define">Costo Social</th>
+              <td rowspan="1" class="border_left tr-define">Imss Obrero</td>
+              <td rowspan="1">$ {{datos_cotizacion.cotizacion.imss_obrero}}</td>
+              <td rowspan="1" class="border_left">$ {{datos_cotizacion.cotizacion_estrategia.imss_obrero}}</td>
+            </tr>
+            <tr>
+              <td class="border_left tr-define">Imss Patronal</td>
+              <td>$ {{datos_cotizacion.cotizacion.ims_patronal}}</td>
+              <td class="border_left">$ {{datos_cotizacion.cotizacion_estrategia.ims_patronal}}</td>
+            </tr>
+            <tr>
+              <th colspan="2" class="tr-define">Imp. S/Nomina</th>
+              <td>$ {{datos_cotizacion.cotizacion.isn}}</td>
+              <td class="border_left">$ {{datos_cotizacion.cotizacion_estrategia.isn}}</td>
+            </tr>
+            <tr>
+              <th colspan="2" tr-define>Comisión</th>
+              <td>$ {{datos_cotizacion.cotizacion.sueldos}}</td>
+              <td class="border_left">$ {{datos_cotizacion.cotizacion_estrategia.sueldos}}</td>
+            </tr>
+            <tr>
+              <td colspan="2"></td>
+              <td>$ 0.00</td>
+              <td class="border_left">$ 0.00</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-8 text-center mx-auto" style="height: 300px !important;width: 300px !important;">
+        <canvas baseChart
+        [datasets]="pieChartData"
+        [labels]="pieChartLabels"
+        chartType="pie">
+        </canvas>
+      </div>
+      
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,49 @@
+/deep/ .cdk-overlay-container { z-index: 9999; }
+.hover_img_user{
+    position: relative;
+}
+.mat-elevation-z8 {    
+    overflow-x: auto;
+   }
+.persiana{
+    display: none;
+}
+.persiana_mostrar {
+    height: 200px;
+    width: 100%;
+    background-color:black;
+    position: absolute;
+    top: 0%;
+    left: 0;
+    opacity: .6;
+    animation-name: mostrar;
+    animation-duration: 1s;
+}
+.mat-table {
+    overflow-x: scroll;
+}
+  
+.mat-cell,
+.mat-header-cell {
+    word-wrap: initial;
+    display: table-cell;
+    padding: 0px 10px;
+    line-break: unset;
+    /* width: 100%; */
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.mat-row,
+.mat-header-row {
+    display: table-row;
+}
+@keyframes mostrar {
+    from {
+        top: 100%;
+    }
+    to {
+        top: 0%;
+    }
+}

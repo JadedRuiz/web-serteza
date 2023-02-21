@@ -15,7 +15,7 @@ export class UsuarioService {
   constructor(
     private cookies: CookieService,
     public http: HttpClient
-    ) { }
+  ) { }
 
   login(usuario : Usuario){
     let url = SERVER_API+"usuario/login";
@@ -29,6 +29,16 @@ export class UsuarioService {
   }
   altaUsuario(json : any){
     let url = SERVER_API+"usuario/altaUsuario";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", 'El campo "usuario" que se intenta dar de alta ya se encuentra utilizado.', 'error');
+        return throwError(err);
+      }));
+  }
+  altaUsuarioSuperAdmin(json : any){
+    let url = SERVER_API+"usuario/altaUsuarioSuperAdmin";
     return this.http.post( url, json )
       .pipe(map( (resp: any) => {
         return resp;
@@ -80,6 +90,10 @@ export class UsuarioService {
     let url = SERVER_API+"usuario/obtenerSistemas";
     return this.http.get(url);
   }
+  obtenerSistemasPorIdUsuario(id : any){
+    let url = SERVER_API+"usuario/obtenerSistemasPorIdUsuario/"+id;
+    return this.http.get(url);
+  }
   obtenerSistemasAdmin(id : any){
     let url = SERVER_API+"usuario/obtenerSistemasAdmin/"+id;
     return this.http.get(url);
@@ -90,6 +104,36 @@ export class UsuarioService {
   }
   obtenerUsuariosDeEntidad(json : any){
     let url = SERVER_API+"usuario/obtenerUsuariosDeEntidad";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+  autoCompleteUsuario(json : any){
+    let url = SERVER_API+"usuario/autoCompleteUsuario";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+  autoCompletePorIdEmpresa(json : any){
+    let url = SERVER_API+"usuario/autoCompletePorIdEmpresa";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
+  }
+  tieneSistema(json : any){
+    let url = SERVER_API+"usuario/tieneSistema";
     return this.http.post( url, json )
     .pipe(map( (resp: any) => {
       return resp;

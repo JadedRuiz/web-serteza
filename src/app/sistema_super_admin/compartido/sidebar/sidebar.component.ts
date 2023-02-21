@@ -5,6 +5,8 @@ import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ClienteService } from 'src/app/services/Cliente/cliente.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ProcedimientoEmpresaComponent } from '../../procedimiento_empresa/procedimiento_empresa.component';
+import Swal from 'sweetalert2';
 
 declare interface RouteInfo {
   path: string;
@@ -39,69 +41,73 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit() {
     this.pintarMenu();
-    // this.validarClientes();
     this.router.events.subscribe((event) => {
       this.isCollapsed = true;
    });
   }
   pintarMenu(){
     this.menuItems = [
-      { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
+      { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-yellow', id:"dashboard_header", band: false, tipo : "", bg : "red"},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : [
-          {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08  text-orange'},
-          {path: 'catalogo_empresa', title: 'Empresas', icon: 'ni-building  text-orange'},
-          {path: 'catalogo_cliente', title: 'Clientes', icon: 'ni-collection  text-orange'}
-        ]
+          {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08'},
+          {path: 'catalogo_empresa', title: 'Empresas', icon: 'ni-building'},
+          {path: 'catalogo_cliente', title: 'Clientes', icon: 'ni-collection'},
+          {path: 'catalogo_sucursal', title: 'Sucursales', icon: 'fas fa-map-marker-alt'}
+        ], bg : "orange"
       },
-      { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
+      { path: '#', title: 'Procesos', icon: 'ni-settings text-red', id:'rh_procesos', band: true, tipo : "collapse",
         submenu : [
-          {path: 'procedimiento_usuario', title: 'Asignar permisos a usuario', icon: 'ni-badge text-yellow'}
-        ]
+          {path: 'procedimineto_empresa', title: 'Asignar permisos a empresa', icon: 'ni-badge text-white'},
+          // { path : "configuraciones", title: "Cofiguraciones", icon: 'ni ni-settings-gear-65'}
+        ], bg : "red"
       },
-      { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: false, tipo : ""}
+      { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: true, tipo : "collapse",
+        submenu : [
+          {path: 'reporte_general', title: 'Reporte General', icon: 'ni-archive-2 text-white'},
+        ], bg : "green"
+    }
     ];
+    // this.menuItems = [
+    //   { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
+    //   { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
+    //     submenu : [
+    //       {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08  text-orange'},
+    //       {path: 'catalogo_empresa', title: 'Empresas', icon: 'ni-building  text-orange'},
+    //       {path: 'catalogo_cliente', title: 'Clientes', icon: 'ni-collection  text-orange'},
+    //       // {path: 'catalogo_tope_conceptos', title: 'Tope conceptos', icon: 'ni-collection  text-orange'}
+    //     ]
+    //   },
+    //   { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
+    //     submenu : [
+    //       // {path: 'procedimiento_usuario', title: 'Asignar permisos a usuario', icon: 'ni-badge text-yellow'},
+    //       { path : "procedimineto_empresa", title: "Asignar permisos a empresa", icon: 'far fa-check-square text-yellow'}
+    //     ]
+    //   },
+    //   { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: false, tipo : ""}
+    // ];
   }
-  // validarClientes(){
-  //   //AQUI SE RECUPERAN LOS CLIENTES DEL USUARIO LOGUEADO
-  //   this.clientes = [];
-  //   if(window.sessionStorage.getItem("cliente") == null){
-  //     let id_sistema_usuario = window.sessionStorage.getItem("sistema");
-  //     this.cliente_service.obtenerClientes(parseInt(id_sistema_usuario+""))
-  //     .subscribe( (object : any) => {
-  //       console.log(object);
-  //       if(object.ok){
-  //         if(object.data.length > 1){
-  //           this.clientes.push(object.data);
-  //           this.openModal();
-  //         }else{
-  //           if(object.data[0].empresa_relacionada_id != ""){
-  //             window.sessionStorage["empresa"] = object.data[0].empresa_relacionada_id;
-  //             window.sessionStorage["foto_empresa"] = object.data[0].fografia_empresa_id;
-  //           }
-  //           window.sessionStorage["cliente"] = object.data[0].id;
-  //         }
-  //       }
-  //     });
-  //   }
-  // }
-  // eleccion(id_cliente : any, id_empresa : any, id_fotografia : any){
-  //   if(id_empresa =! ""){
-  //     window.sessionStorage["empresa"] = id_empresa;
-  //     window.sessionStorage["foto_empresa"] = id_fotografia;
-  //     this.mostrarLogo();
-  //   }
-  //   window.sessionStorage["cliente"] = id_cliente;
-  //   this.closeModal();
-  // }
+  
   cerrarSesion(){
-    this.usuario.logout();
-    window.localStorage.removeItem("sistema");
-    window.localStorage.removeItem("empresa");
-    window.localStorage.removeItem("cliente");
-    window.localStorage.removeItem("nombre");
-    window.localStorage.removeItem("user");
-    window.localStorage.removeItem("foto_user");
-    this.router.navigateByUrl("login");
+    Swal.fire({
+      title: '¿Estas que deseas cerrar sesión?',
+      text: "",
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, estoy seguro',
+      cancelButtonText : "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.usuario.logout();
+        window.localStorage.removeItem("sistema");
+        window.localStorage.removeItem("empresa");
+        window.localStorage.removeItem("nombre");
+        window.localStorage.removeItem("user");
+        window.localStorage.removeItem("foto_user");
+        this.router.navigateByUrl("login");
+      }
+    });
   }
 }

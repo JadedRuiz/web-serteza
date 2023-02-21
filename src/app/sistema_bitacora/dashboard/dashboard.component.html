@@ -1,0 +1,226 @@
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Casos activos al cierre de mes</h3>
+            </div>
+            <!-- <div class="col text-right">
+              <a href="#!" class="btn btn-sm btn-primary">Ver todos</a>
+            </div> -->
+          </div>
+        </div>
+        <div class="table-responsive">
+          <!-- Projects table -->
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr class="text-center">
+                <th scope="col">División</th>
+                <th scope="col">sep-18</th>
+                <th scope="col">oct-18</th>
+                <th scope="col">nov-18</th>
+                <th scope="col">dec-18</th>
+                <th scope="col">ene-18</th>
+                <th scope="col">feb-18</th>
+                <th scope="col">mar-18</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="text-center">
+                <td>Comercial</td>
+                <td>30</td>
+                <td>29</td>
+                <td>30</td>
+                <td>27</td>
+                <td>27</td>
+                <td>27</td>
+                <td>26</td>
+              </tr>
+              <tr class="text-center">
+                <td>Granjas</td>
+                <td>8</td>
+                <td>8</td>
+                <td>9</td>
+                <td>8</td>
+                <td>8</td>
+                <td>9</td>
+                <td>9</td>
+              </tr>
+              <tr class="text-center">
+                <td>Oficinas generales</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+              </tr>
+              <tr class="text-center">
+                <td>Plantas procesadoras</td>
+                <td>6</td>
+                <td>6</td>
+                <td>6</td>
+                <td>5</td>
+                <td>6</td>
+                <td>6</td>
+                <td>7</td>
+              </tr>
+              <tr class="text-center">
+                <td>Terceros</td>
+                <td>24</td>
+                <td>18</td>
+                <td>18</td>
+                <td>19</td>
+                <td>24</td>
+                <td>22</td>
+                <td>25</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 mt-2">
+      <div class="card shadow">
+          <div class="card-header bg-transparent">
+              <div class="row align-items-center">
+              <div class="col">
+                  <h6 class="text-uppercase text-light ls-1 mb-1">Vista Previa</h6>
+                  <h2 class="text-white mb-0"></h2>
+              </div>
+              </div>
+          </div>
+          <div class="card-body">
+              <!-- Chart -->
+              <canvas baseChart
+                [datasets]="barChartData"
+                [labels]="barChartLabels"
+                [options]="barChartOptions"
+                [plugins]="barChartPlugins"
+                [legend]="barChartLegend"
+                chartType="bar"
+                [colors]="chartColors">
+              </canvas>
+          </div>
+      </div>
+    </div>
+    <div class="col-12 mt-2">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Monto de contingencia por año y riesgo</h3>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <!-- Projects table -->
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr class="text-center">
+                <th scope="col">Año</th>
+                <th scope="col">Bajo</th>
+                <th scope="col">Medio</th>
+                <th scope="col">Alto</th>
+                <th scope="col">Total general</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="text-center">
+                <td>2010</td>
+                <td>$ 2,725,671.18</td>
+                <td></td>
+                <td></td>
+                <td>$ 2,725,671.18</td>
+              </tr>
+              <tr class="text-center">
+                <td>2012</td>
+                <td>$ 1,319,470.01</td>
+                <td></td>
+                <td></td>
+                <td>$ 1,319,470.01</td>
+              </tr>
+              <tr class="text-center">
+                <td>2013</td>
+                <td>$  352,167.48</td>
+                <td></td>
+                <td></td>
+                <td>$  352,167.48</td>
+              </tr>
+              <tr class="text-center">
+                <td>2015</td>
+                <td>$ 1,865,538.38</td>
+                <td>$   676,019.10</td>
+                <td>$   816,257.68</td>
+                <td>$ 3,357,815.16</td>
+              </tr>
+              <tr class="text-center">
+
+                <td>2016</td>
+                <td>$ 1,145,832.47</td>
+                <td>$ 3,621,426.02</td>
+                <td>$   742,645.76</td>
+                <td>$ 5,509,904.25</td>
+              </tr>
+              <tr class="text-center">
+                <td>2017</td>
+                <td>$ 50,000.00</td>
+                <td>$ 537,032.25</td>
+                <td>$ 452,909.90</td>
+                <td>$ 1,039,942.15</td>
+              </tr>
+              <tr class="text-center">
+                <td>2018</td>
+                <td>$ 1,829,405.60</td>
+                <td>$ 6,241,976.07</td>
+                <td>$ 1,655,753.81</td>
+                <td>$ 9,727,135.48</td>
+              </tr>
+              <tr class="text-center">
+                <td>2019</td>
+                <td>$ 307,735.70</td>
+                <td>$ 2,900,004.00</td>
+                <td></td>
+                <td>$ 3,207,739.70</td>
+              </tr>
+              <tr class="text-center">
+                <th>Total general</th>
+                <th>$ 9,595,820.82</th>
+                <th>$ 13,976,457.44</th>
+                <th>$ 3,667,567.15</th>
+                <th>$ 27,239,845.41</th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 mt-2">
+      <div class="card shadow">
+          <div class="card-header bg-transparent">
+              <div class="row align-items-center">
+              <div class="col">
+                  <h6 class="text-uppercase text-light ls-1 mb-1">Vista Previa</h6>
+                  <h2 class="text-white mb-0"></h2>
+              </div>
+              </div>
+          </div>
+          <div class="card-body">
+              <!-- Chart -->
+              <canvas baseChart
+                [datasets]="barChartDataDos"
+                [labels]="barChartLabelsDos"
+                [options]="barChartOptions"
+                [plugins]="barChartPlugins"
+                [legend]="barChartLegend"
+                chartType="bar"
+                [colors]="chartColors">
+              </canvas>
+          </div>
+      </div>
+  </div>
+</div>
+

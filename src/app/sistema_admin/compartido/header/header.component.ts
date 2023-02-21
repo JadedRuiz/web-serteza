@@ -12,7 +12,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class HeaderComponent implements OnInit {
   public color = COLOR;
   public nombre = window.sessionStorage.getItem("nombre");
-  public url_foto = window.sessionStorage.getItem("foto_user");
+  public url_foto : any;
   public usuario_logueado = window.sessionStorage.getItem("user");
   public empresa_seleccionado = parseInt(window.sessionStorage["empresa"]);
   @ViewChild('content', {static: false}) contenidoDelModal : any;
@@ -27,17 +27,18 @@ export class HeaderComponent implements OnInit {
     private modalService: NgbModal
     ) {
       this.texto = "SISTEMA ADMINISTRATIVO";
+      this.url_foto = './assets/iconos/perfil.svg';
      }
 
   ngOnInit(): void {
     this.recuperarEmpresas();
+    this.url_foto = window.sessionStorage["foto"];
   }
   recuperarEmpresas(){
     this.empresas = [];
     this.empresa_service.obtenerEmpresaPorIdUsuario(this.usuario_logueado)
     .subscribe( (object : any) => {
       if(object.ok){
-        console.log(this.empresa_seleccionado);
         if(object.data.length > 1){
           for(let i=0;i<object.data.length;i++){
             if(this.empresa_seleccionado == parseInt(object.data[i].id_empresa)){

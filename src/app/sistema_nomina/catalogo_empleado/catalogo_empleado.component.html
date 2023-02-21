@@ -1,0 +1,602 @@
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow" style="height: 550px;">
+                <div class="card-header border-0">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      <h3 class="mb-0">CATÁLOGO DE EMPLEADOS</h3>
+                  </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-12">
+                          <mat-form-field class="w-100">
+                            <mat-label>Buscar empleado</mat-label>
+                            <input #input
+                                    type="text"
+                                    placeholder="Buscar por nombre, rfc o curp"
+                                    (keyup)="busqueda(input.value)"
+                                    aria-label="Buscar empleado"
+                                    matInput
+                                    [formControl]="myControl"
+                                    [matAutocomplete]="auto">
+                            <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getEmpleado($event)'>
+                              <mat-option *ngFor="let option of empleados_busqueda" [value]="option.nombre" [id]="option.id_empleado+''">
+                                {{option.nombre}}
+                              </mat-option>
+                            </mat-autocomplete>
+                          </mat-form-field>
+                        </div>
+                        <div class="col-lg-3 col-sm-12">
+                          <mat-form-field class="w-100">
+                            <mat-label>Tiipo de nómina</mat-label>
+                            <mat-select [(ngModel)]="tipo_nomina" (selectionChange)="mostrarEmpleados()">
+                                <mat-option [value]="-1">Todos</mat-option>
+                                <mat-option *ngFor="let nomina of nominas" [value]="nomina.id_nomina">{{nomina.nomina}}</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </div>
+                        <div class="col-lg-3 col-sm-12">
+                            <mat-form-field class="w-100">
+                                <mat-label>Status</mat-label>
+                                <mat-select [(ngModel)]="status" (selectionChange)="mostrarEmpleados()">
+                                    <mat-option [value]="-1">Todos</mat-option>
+                                    <mat-option [value]="6">En reclutamiento</mat-option>
+                                    <mat-option [value]="5">Solicitud</mat-option>
+                                    <mat-option [value]="1">Activos</mat-option>
+                                    <mat-option [value]="3">Suspendidos</mat-option>
+                                    <mat-option [value]="2">De baja</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-lg-3 col-sm-12">
+                          <div ngbDropdown class="d-inline-block float-right">
+                            <button class="btn btn-info" id="dropdownBasic1" ngbDropdownToggle>
+                              <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                              <button ngbDropdownItem (click)="nuevoEmpleado()">
+                                <i class="fas fa-user-plus"></i>
+                                Nuevo empleado
+                              </button>
+                              <button ngbDropdownItem (click)="consumeReporte(1,1)">
+                                <i class="fas fa-print"></i>
+                                Reporte de empleados
+                              </button>
+                              <button ngbDropdownItem (click)="openModalImporte()">
+                                <i class="fas fa-file-excel"></i>
+                                Importar movimientos
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr class="text-center">
+                                        <th scope="col">Folio</th>
+                                        <th scope="col">Fotografia</th>
+                                        <th scope="col">Nombre del empleado</th>
+                                        <th scope="col">Estatus</th>
+                                        <th scope="col" class="text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody *ngIf="empleados.length > 0; else pintaVacio" class="">
+                                    <tr *ngFor="let empleado of empleados" class="text-center">
+                                        <td colspan="1" style="vertical-align: middle;">{{empleado.id_empleado}}</td>
+                                        <td colspan="1" style="vertical-align: middle;">
+                                          <div class="img m-auto" style="height: 40px; width: 60px;">
+                                            <img [src]="empleado.fotografia" alt="" style="width: 100%; height: 100%;">
+                                          </div>
+                                        </td>
+                                        <td colspan="1" style="vertical-align: middle;">{{empleado.nombre}}</td>
+                                        <td *ngIf="empleado.id_estatus == 1" colspan="1" style="vertical-align: middle;">Activo</td>
+                                        <td *ngIf="empleado.id_estatus == 2" colspan="1" style="vertical-align: middle;">Baja</td>
+                                        <td colspan="1" style="width: 20%;vertical-align: middle;" class="text-center">
+                                            <a title="Reporte" style="cursor: pointer;" class="btn btn-gray btn-sm" (click)="consumeReporte(empleado.id_empleado,1)"><img src="./assets/iconos/reporte.svg" style="width: 14px;"></a>
+                                            <a title="Editar" (click)="editar(empleado.id_empleado)" style="cursor: pointer;" class="btn btn-yellow btn-sm"><img src="./assets/iconos/edit.svg" style="width: 14px;"></a>
+                                            <a title="Baja" (click)="bajaEmpleado(empleado.id_empleado)" style="cursor: pointer;" class="btn btn-danger btn-sm"><img src="./assets/iconos/delete.svg" style="width: 14px;"></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <ng-template #pintaVacio>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="5" class="text-center">No existen empleados</td>
+                                        </tr>
+                                    </tbody>
+                                </ng-template>
+                            </table>
+                            <div class="filtros container mt-3">
+                                <div class="row">
+                                    <div class="col-lg-2 col-sm-12"></div>
+                                    <div class="col-lg-8 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
+                                      <nav *ngIf="mostrar_pagination" aria-label="Page navigation example">
+                                        <ul class="pagination">
+                                          <li class="page-item" *ngIf="previous">
+                                            <a class="page-link" href="#" aria-label="Previous">
+                                              <span aria-hidden="true">&laquo;</span>
+                                              <span class="sr-only">Previous</span>
+                                            </a>
+                                          </li>
+                                          <li *ngFor="let pagina of paginas" class="page-item {{pagina.active}}" (click)="irPagina(pagina.valor_pagina)"><a class="page-link" style="cursor: pointer;">{{pagina.numero}}</a></li>
+                                          <li class="page-item" *ngIf="next">
+                                            <a class="page-link" href="#" aria-label="Next">
+                                              <span aria-hidden="true">&raquo;</span>
+                                              <span class="sr-only">Next</span>
+                                            </a>
+                                          </li>
+                                        </ul>
+                                      </nav>
+                                    </div>
+                                    <div class="col-lg-2 col-sm-12" style="text-align: end;">
+                                      <mat-form-field class="w-100">
+                                        <mat-label>No. resultados</mat-label>
+                                        <mat-select [(ngModel)]="taken" (selectionChange)="mostrarEmpleados()">
+                                            <mat-option [value]="5">5</mat-option>
+                                            <mat-option [value]="10">10</mat-option>
+                                            <mat-option [value]="20">20</mat-option>
+                                            <mat-option [value]="30">30</mat-option>
+                                            <mat-option [value]="40">40</mat-option>
+                                            <mat-option [value]="50">50</mat-option>
+                                            <mat-option [value]="100">100</mat-option>
+                                        </mat-select>
+                                      </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
+    <div class="modal-header">
+        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nuevo empleado</h2>
+        <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Editar empleado</h2>
+    </div>
+    <div class="modal-body">
+        <div class="form-row">
+            <div class="form-group col-12">
+              <ul class="nav nav-tabs profile-tab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" data-toggle="tab" href="#empresa_tab" role="tab" aria-selected="true">Datos del empleado</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link " data-toggle="tab" href="#direccion_tab" role="tab" aria-selected="false">Dirección</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#movientos_tab" role="tab" aria-selected="false">Datos de contratación</a>
+                </li>
+              </ul>
+            </div>
+            <div class="tab-content col-12" id="myTabContent" style="height: 350px;overflow: auto;">
+                <div class="tab-pane active col-12" id="empresa_tab" role="tabpanel">
+                    <div class="container col-12">
+                        <div class="row">
+                            <div class="col-lg-2 col-sm-12">
+                              <div class="form-group rounded hover_img_user" style="max-width:190px;height:200px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;overflow: hidden;" (mouseover)="mostrarPersiana()" (mouseout)="ocultarPersiana()">
+                                <div [class]="band_persiana ? 'persiana' : 'persiana_mostrar'">
+                                    <div class="container">
+                                        <div class="row mt-5 text-center justify-content-center">
+                                            <a style="cursor: pointer;" class="text-info tomar_foto" (click)="openModalCamera()">Tomar fotografía</a>  
+                                        </div>
+                                        <div class="row mt-3 justify-content-center">
+                                            <a class="text-info">ó</a>
+                                        </div>
+                                        <div class="row text-center mt-3 justify-content-center">
+                                            <a style="cursor: pointer;" class="text-info tomar_foto" (click)="subirImagen()">Subir imagen</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <img id="imagen_perfil" class="img-fluid" [src]="foto_user">
+                                <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
+                            </div>
+                            </div>
+                            <div class="col-lg-10 col-sm-12">
+                                <div class="row">
+                                    <div class="col-lg-3 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="apellido_paterno">Apellido paterno *</label>
+                                            <input [(ngModel)]="candidato.apellido_paterno" name="apellido_paterno" type="text" class="form-control" id="apellido_paterno" style="text-transform: uppercase;">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-12">
+                                      <div class="form-group">
+                                          <label for="apellido_materno">Apellido materno</label>
+                                          <input [(ngModel)]="candidato.apellido_materno" name="apellido_materno" type="text" class="form-control" id="apellido_materno" style="text-transform: uppercase;">
+                                      </div>
+                                    </div>
+                                    <div class="col-6">
+                                      <div class="form-group">
+                                          <label for="nombre">Nombres *</label>
+                                          <input [(ngModel)]="candidato.nombre" name="nombre" type="text" class="form-control" id="nombre" style="text-transform: uppercase;">
+                                      </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-lg-4 col-sm-12">
+                                    <div class="form-group">
+                                      <label for="curp">CURP</label>
+                                      <input [(ngModel)]="candidato.curp" name="rfc" type="text" class="form-control" id="curp" style="text-transform: uppercase;" maxlength="18" (change)="ayudaBusqueda(candidato.curp,3)">
+                                    </div>
+                                  </div>
+                                  <div class="col-lg-4 col-sm-12">
+                                    <div class="form-group">
+                                      <label for="rfc">RFC</label>
+                                      <input [(ngModel)]="candidato.rfc" name="rfc" type="text" class="form-control" id="rfc" style="text-transform: uppercase;" maxlength="14" (change)="ayudaBusqueda(candidato.rfc,2)">
+                                    </div>
+                                  </div>
+                                  <div class="col-lg-4" col-sm-12>
+                                    <div class="form-group">
+                                      <label for="numero_social">Número de seguro social</label>
+                                      <input [(ngModel)]="candidato.numero_social" name="numero_social" type="text" class="form-control" id="numero_social" style="text-transform: uppercase;">
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                          
+                        </div>
+                        <div class="row">
+                          <div class="col-lg-4 col-sm-12">
+                            <div class="form-group">
+                              <label for="fecha_nacimiento">Fecha de nacimiento</label>
+                              <mat-form-field class="w-100" id="fecha_ant">
+                                <input matInput [(ngModel)]="candidato.fecha_nacimiento" (change)="generarEdad()" [matDatepicker]="pickertres" placeholder="MM/DD/YYYY">
+                                <mat-datepicker-toggle matSuffix [for]="pickertres"></mat-datepicker-toggle>
+                                <mat-datepicker #pickertres></mat-datepicker>
+                              </mat-form-field>
+                              <!-- <input [(ngModel)]="candidato.fecha_nacimiento" name="fecha_nacimiento" type="date" class="form-control" id="fecha_nacimiento" > -->
+                            </div>
+                          </div>
+                          <div class="col-lg-2 col-sm-12">
+                            <div class="form-group">
+                              <label for="edad">Edad</label>
+                              <input [(ngModel)]="candidato.edad" name="edad" type="number" class="form-control" id="edad" maxlength="3">
+                            </div>
+                          </div>
+                          <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="correo">Correo</label>
+                                <input [(ngModel)]="candidato.correo" name="correo" type="text" class="form-control" id="correo">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="form-group col-lg-4 col-sm-12">
+                            <label for="tel_1">Telefono(s)</label>
+                            <input [(ngModel)]="candidato.telefono" name="telefono" type="text" class="form-control" id="tel_1" placeholder="Ingrese el número" maxlength="10">
+                          </div>
+                          <div class="form-group col-lg-4 col-sm-12">
+                            <label for="tel_2">&nbsp;</label>
+                            <input [(ngModel)]="candidato.telefono_dos" name="telefono_dos" type="text" class="form-control" id="tel_2" placeholder="Ingrese el número" maxlength="10">
+                          </div>
+                          <div class="form-group col-lg-4 col-sm-12">
+                            <label for="tel_3">&nbsp;</label>
+                            <input [(ngModel)]="candidato.telefono_tres" name="telefono_tres" type="text" class="form-control" id="tel_3" placeholder="Ingrese el número" maxlength="10">
+                          </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group"> 
+                                    <label for="desc_cempresa">Descripción del puesto</label>
+                                    <textarea [(ngModel)]="candidato.descripcion" name="desc_cempresa" class="form-control" rows="5" id="desc_cempresa" style="text-transform: uppercase;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+              </div>
+              <div class="tab-pane col-12" id="direccion_tab" role="tabpanel">
+                <div class="form-row">
+                  <div class="form-group col-md-2">
+                    <label for="calle">Calle</label>
+                    <input [(ngModel)]="candidato.direccion.calle" name="calle" type="text" class="form-control" id="calle" required style="text-transform: uppercase;">
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="num_ext">Número ext.</label>
+                    <input [(ngModel)]="candidato.direccion.numero_exterior" name="num_exterior" type="text" class="form-control" id="num_ext" placeholder="" style="text-transform: uppercase;">
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="num_int">Número int.</label>
+                    <input [(ngModel)]="candidato.direccion.numero_interior" name="num_interior" type="text" class="form-control" id="num_int" placeholder="" style="text-transform: uppercase;">
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="cruzamientos_form">Cruzamientos</label>
+                    <div class="form-inline form-row align-items-center" id="cruzamientos_form">
+                      <input [(ngModel)]="candidato.direccion.cruzamiento_uno" name="cruzamiento_ext" type="text" class="form-control col-5" id="cruzamientos_int" placeholder="" style="text-transform: uppercase;">
+                      <p class="text-center col-2"> y </p>
+                      <input [(ngModel)]="candidato.direccion.cruzamiento_dos" name="cruzamiento_int" type="text" class="form-control col-5" id="cruzamientos_ext" placeholder="" style="text-transform: uppercase;">
+                    </div>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="codigo_postal">Código postal</label>
+                    <input [(ngModel)]="candidato.direccion.codigo_postal" name="codigo_postal" id="codigo_postal" type="text" class="form-control" aria-describedby="icono" maxlength="5">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-3">
+                    <label for="colonia">Colonia</label>
+                    <input type="text" [(ngModel)]="candidato.direccion.colonia" class="form-control" id="colonia" style="text-transform: uppercase;">
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="localidad">Localidad</label>
+                    <input [(ngModel)]="candidato.direccion.localidad" name="localidad" type="text" class="form-control" id="localidad" placeholder="" style="text-transform: uppercase;">
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="municipio">Municipio</label>
+                    <input [(ngModel)]="candidato.direccion.municipio" name="municipio" type="text" class="form-control" id="municipio" style="text-transform: uppercase;">
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="estado">Estado</label>
+                    <mat-form-field class="w-100" id="estado">
+                        <mat-select [(ngModel)]="candidato.direccion.estado">
+                            <mat-option *ngFor="let estado of estados" [value]="estado.id_estado">{{estado.estado}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group"> 
+                            <label for="desc_dir_empresa">Descripción</label>
+                            <textarea [(ngModel)]="candidato.direccion.descripcion" name="desc_dir_empresa" class="form-control" rows="5" id="desc_dir_empresa" style="text-transform: uppercase;"></textarea>
+                        </div>
+                    </div>
+                </div>
+              </div>
+              <div class="tab-pane col-12" id="movientos_tab" role="tabpanel">
+                <div class="form-row">
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label for="tipo_nomina">Tipo de nómina</label>
+                        <mat-form-field class="w-100">
+                            <mat-label>Tiipo de nómina seleccionado</mat-label>
+                            <mat-select [(ngModel)]="empleado.id_nomina">
+                                <mat-option *ngFor="let nomina of nominas" [value]="nomina.id_nomina">{{nomina.nomina}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label for="puesto">Puesto</label>
+                        <mat-form-field class="w-100" id="puesto">
+                            <mat-label>Selecciona el puesto</mat-label>
+                            <mat-select [(ngModel)]="empleado.id_puesto">
+                                <mat-option *ngFor="let puesto of puestos" [value]="puesto.id_puesto">{{puesto.puesto}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label for="surcusal">Sucursal</label>
+                        <mat-form-field class="w-100" id="surcusal">
+                            <mat-label>Selecciona la sucursal</mat-label>
+                            <mat-select [(ngModel)]="empleado.id_sucursal">
+                                <mat-option *ngFor="let sucursal of sucursales " [value]="sucursal.id_sucursal">{{sucursal.sucursal}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label for="patronal">Registro patronal</label>
+                        <mat-form-field class="w-100" id="patronal">
+                            <mat-label>Selecciona el registro patronal</mat-label>
+                            <mat-select [(ngModel)]="empleado.id_registropatronal">
+                                <mat-option [value]="1">Prueba</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label for="banco">Banco</label>
+                        <mat-form-field class="w-100" id="banco">
+                            <mat-label>Selecciona el banco</mat-label>
+                            <mat-select [(ngModel)]="empleado.id_catbanco">
+                                <mat-option *ngFor="let banco of bancos" [value]="banco.id_bancosat">{{banco.descripcion}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-group col-lg-5 col-sm-12">
+                        <label for="tipo_con">Tipo de contrato</label>
+                        <mat-form-field class="w-100" id="tipo_con">
+                            <mat-label>Selecciona el tipo de contrato</mat-label>
+                            <mat-select [(ngModel)]="empleado.id_contratosat">
+                                <mat-option *ngFor="let contrato of contratos" [value]="contrato.id_contratosat">{{contrato.tipocontrato}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-group col-lg-2 col-sm-12">
+                        <label for="fecha_ing">Fecha ingreso</label>
+                        <mat-form-field class="w-100" id="fecha_ing">
+                            <input matInput [(ngModel)]="empleado.fecha_ingreso" [matDatepicker]="picker" placeholder="MM/DD/YYYY">
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-group col-lg-2 col-sm-12">
+                        <label for="fecha_ant">Fecha antiguedad</label>
+                        <mat-form-field class="w-100" id="fecha_ant">
+                            <input matInput [(ngModel)]="empleado.fecha_antiguedad" [matDatepicker]="pickerdos" placeholder="MM/DD/YYYY">
+                            <mat-datepicker-toggle matSuffix [for]="pickerdos"></mat-datepicker-toggle>
+                            <mat-datepicker #pickerdos></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label for="cuenta_banco">Cuenta de banco</label>
+                        <input [(ngModel)]="empleado.cuenta" type="text" class="form-control" id="cuenta_banco">
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label for="no_tarjeta">No. de tarjeta</label>
+                        <input [(ngModel)]="empleado.tarjeta" type="number" class="form-control" id="no_tarjeta">
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label for="no_clabe">No. de clabe</label>
+                        <input [(ngModel)]="empleado.clabe" type="text" class="form-control" id="no_clabe">
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label for="tipo_sal">Tipo de salario</label>
+                        <mat-form-field class="w-100" id="tipo_sal">
+                            <mat-label>Selecciona el tipo de salario</mat-label>
+                            <mat-select [(ngModel)]="empleado.tipo_salario">
+                                <mat-option value="M">Mixto</mat-option>
+                                <mat-option value="F">Fijo</mat-option>
+                                <mat-option value="V">Variable</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label for="jornada">Tipo de jornada</label>
+                        <mat-form-field class="w-100" id="jornada">
+                            <mat-label>Selecciona el tipo de jornada</mat-label>
+                            <mat-select [(ngModel)]="empleado.jornada">
+                                <mat-option value="N">Normal</mat-option>
+                                <mat-option value="R">Reducida</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label for="sueldo_diario">Sueldo diario</label>
+                        <input [(ngModel)]="empleado.sueldo_diario" type="number" class="form-control" id="sueldo_diario">
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label for="sueldo_integro">Sueldo integrado</label>
+                        <input [(ngModel)]="empleado.sueldo_integrado" type="number" class="form-control" id="sueldo_integro">
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label for="sueldo_complementario">Sueldo complementario</label>
+                        <input [(ngModel)]="empleado.sueldo_complemento" type="number" class="form-control" id="sueldo_complementario">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-check form-check-inline col-lg-3 col-sm-12">
+                        <input [(ngModel)]="empleado.aplicarsueldoneto" class="form-check-input" type="checkbox" id="sueldo_neto" value="option1">
+                        <label class="form-check-label" for="sueldo_neto">Aplicar sueldo neto</label>
+                    </div>
+                    <div class="form-check form-check-inline col-lg-3 col-sm-12">
+                        <input [(ngModel)]="empleado.sinsubsidio" class="form-check-input" type="checkbox" id="subsidio" value="option1">
+                        <label class="form-check-label" for="subsidio">Sin subsidio</label>
+                    </div>
+                    <div class="form-check form-check-inline col-lg-3 col-sm-12">
+                        <input [(ngModel)]="empleado.prestaciones_antiguedad" class="form-check-input" type="checkbox" id="prestaciones_antiguedad" value="option1">
+                        <label class="form-check-label" for="prestaciones_antiguedad">Prestaciones/Antiguedad</label>
+                    </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
+        <button *ngIf="candidato.id_candidato == 0 && tipo_modal == 1" type="button" class="btn btn-success" (click)="altaEmpleado()" id="guardar">Guardar</button>
+        <button *ngIf="candidato.id_candidato != 0 && tipo_modal == 1" type="button" class="btn btn-success" (click)="altaCandidatoAEmpleado()" id="guardar">Guardar</button>
+        <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success" (click)="modificarEmpleado()" id="guardar">Guardar</button>
+    </div>
+</ng-template>
+<ng-template #baja let-c="close" let-d="dismiss" class="modal-lg">
+  <div class="modal-header">
+      <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Baja del empleado</h2>
+  </div>
+  <div class="modal-body">
+      
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="cerrarModalBaja()">Cerrar</button>
+      <button *ngIf="candidato.id_candidato == 0 && tipo_modal == 1" type="button" class="btn btn-success" (click)="altaEmpleado()" id="guardar">Guardar</button>
+  </div>
+</ng-template>
+<ng-template #modal_camera let-c="close" let-d="dismiss">
+  <div class="modal-header">
+      <h2 class="modal-title" id="tituloModal">Tomar fotografia</h2>
+  </div>
+  <div class="modal-body">
+      <div class="container">
+          <div class="row">
+              <div *ngIf="isCameraExist; else noCameraExist" class="col-12">
+                  <div class="border border-success rounded text-center" style="width: 100%;height: 265px;">
+                      <!-- <div class="btn-group">
+                          <button class="button" (click)="changeWebCame(true)">Toggle Camera</button>
+                          <button class="button" (click)="onOffWebCame()">Switch camera</button>
+                      </div> <br /> -->
+                      <webcam [height]="450" [width]="350" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
+                          *ngIf="showWebcam" [switchCamera]="nextWebcamObservable"></webcam>
+                  </div>
+              
+                  <div *ngIf="errors.length > 0">
+                      <h4>Error Messages:</h4>
+                      <ul *ngFor="let error of errors">
+                          <li>{{ error | json }}</li>
+                      </ul>
+                  </div>
+              </div>
+              
+              <ng-template #noCameraExist>
+                  <div class="border border-danger rounded text-center" style="display: flex;justify-content: center;align-items: center;width: 450px;height: 350px;">
+                      Este dispositivo no cuenta con una camara disponible
+                  </div>
+              </ng-template>
+          </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="cerrarModalCamera()">Cerrar</button>
+      <button *ngIf="isCameraExist" type="button" class="btn btn-success" (click)="takeSnapshot()">Tomar foto</button>
+  </div>
+</ng-template>
+<ng-template #importe let-c="close" let-d="dismiss" class="modal-lg">
+  <div class="modal-header">
+      <h2 class="modal-title" id="tituloModal">Importar movimientos</h2>
+  </div>
+  <div class="modal-body">
+    <div class="form">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <input type="file" id="file_import" class="form-control" (change)="subirExcel($event)" placeholder="Importar excel" accept=".xlsx">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <small class="text-warning">Descargue el formato de movimientos 
+              <div ngbDropdown class="d-inline-block">
+                <a class="text-link" style="cursor: pointer;" id="dropdownBasic1" ngbDropdownToggle>aquí</a>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                  <button ngbDropdownItem (click)="descargarFormato(1)"><i class="fas fa-user-edit"></i> Formato de alta y modificación</button>
+                  <button ngbDropdownItem (click)="descargarFormato(2)"><i class="fas fa-user-minus"></i> Formato de bajas</button>
+                </div>
+              </div>
+            </small>
+          </div>
+        </div>
+        <div *ngIf="space_bar" class="row mt-2">
+          <div class="col-12">
+            <small class="text-info">Importando...</small>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" [style.width]="porcentaje+'%'" [attr.aria-valuenow]="porcentaje" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <small class="text-info">Guardando {{empleado_bar}}/{{total_bar}}</small>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div *ngIf="errores.length > 0" class="errores" style="overflow-y: scroll;height: 150px;">
+              <p class="text-danger my-0">Errores : </p>
+              <p class="text-danger my-0" *ngFor="let error of errores">{{error}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="cerrarModalImporte()">Cerrar</button>
+  </div>
+</ng-template>

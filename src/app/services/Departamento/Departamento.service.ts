@@ -32,7 +32,7 @@ export class DepartamentoService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
@@ -43,7 +43,7 @@ export class DepartamentoService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
@@ -54,9 +54,20 @@ export class DepartamentoService {
     .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
+  }
+
+  autoCompleteDepartamento(json : any){
+    let url = SERVER_API+"departamento/autoCompleteDepartamento";
+    return this.http.post( url, json )
+    .pipe(map( (resp: any) => {
+      return resp;
+    }), catchError(err => {
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+      return throwError(err);
+    }));
   }
 
 }

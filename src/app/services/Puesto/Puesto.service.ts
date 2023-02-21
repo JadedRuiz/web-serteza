@@ -19,13 +19,18 @@ export class PuestoService {
     return this.http.get(url);
   }
 
+  obtenerPuestosPorEmpresa(id : any){
+    let url = SERVER_API+"puesto/obtenerPuestosPorEmpresa/"+id;
+    return this.http.get(url);
+  }
+
   eliminarPuesto(id : any){
     let url = SERVER_API+"puesto/eliminarPuesto/"+id;
     return this.http.get(url)
     .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }

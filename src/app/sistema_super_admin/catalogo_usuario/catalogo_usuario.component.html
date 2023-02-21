@@ -4,208 +4,239 @@
 </div>
 <div class="container-fluid mt--9">
   <div class="row">
-    <div class="col">
-      <div class="card border-info">
-        <div class="card-header">
-            USUARIOS
-         </div>
-        <div class="card-body">
-            <div class="row mb-2">
-                <div class="col-lg-4 col-sm-12 mb-2">
-                    <div class="buscador">
-                        <input [(ngModel)]="palabra" type="search" placeholder="Buscar">
-                        <a title="Buscar" (click)="busqueda()"><i class="fas fa-search"></i></a>
+    <div class="col-lg-12 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+              <h4 class="card-title">USUARIOS</h4>
+              <div class="card-category">
+                <div class="row align-items-center">
+                    <div class="col-lg-4 col-sm-12">
+                        <mat-form-field class="w-100">
+                            <mat-label>Buscar usuario</mat-label>
+                            <input type="text"
+                                    placeholder="Ingrese el nombre o id del usuario"
+                                    aria-label="Number"
+                                    matInput
+                                    (keyup)="buscarUsuario()"
+                                    [formControl]="filterControl"
+                                    [matAutocomplete]="auto"
+                                    style="text-transform: uppercase;">
+                            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionUsuario($event)">
+                                <mat-option *ngFor="let usuario of usuarios_busqueda" [value]="usuario.usuario" [id]="usuario.id_usuario">
+                                    {{usuario.usuario_completo}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-8 col-sm-12 text-right">
+                        <button class="btn btn-info" (click)="nuevoUsuario()"><i class="fas fa-user-plus"></i></button>
                     </div>
                 </div>
-                <div class="col-lg-4 col-sm-12">
-                    <p style="display: inline-block;" class="my-0 py-0 mr-2">Filtro :</p> 
-                    <select [(ngModel)]="status" name="status" id="status" class="form-control" style="display: inline-block;width: 150px;" (change)="filtroStatus()">
-                        <option value="2">Todos</option>
-                        <option value="1">Activos</option>
-                        <option value="0">Inactivos</option>
-                    </select>
-                </div>
-                <div class="col-lg-4 col-sm-12" style="text-align: end;">
-                    <a class="btn btn-info" (click)="guardar()" title="Nuevo usuario"><img src="./assets/iconos/add-user.svg" style="width: 24px;"></a>
-                </div>
+              </div>
             </div>
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">Folio</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody *ngIf="band; else pintaVacio" class="">
-                        <tr *ngFor="let usuario of usuarios">
-                            <td colspan="1" style="vertical-align: middle;">{{usuario.folio}}</td>
-                            <td colspan="1" style="vertical-align: middle;">{{usuario.nombre}}</td>
-                            <td colspan="1" style="vertical-align: middle;">{{usuario.status}}</td>
-                            <td colspan="1" style="width: 20%;">
-                                <a title="Editar" (click)="editar(usuario.folio)" style="cursor: pointer;" class="btn btn-primary"><img src="./assets/iconos/edit.svg" style="width: 24px;"></a>
-                            </td>
-                        </tr>
-                    </tbody>
-                    <ng-template #pintaVacio>
-                        <tbody>
-                            <tr>
-                                <td colspan="4" class="text-center">No existen usuarios</td>
-                            </tr>
-                        </tbody>
-                    </ng-template>
-                    <tbody></tbody>
-                </table>
-                <div class="filtros container mt-3">
-                    <div class="row">
-                        <div class="col-lg-4 col-sm-12"></div>
-                        <div class="col-lg-4 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
-                            <nav *ngIf="mostrar_pagination" aria-label="Page navigation example">
-                                <ul class="pagination">
-                                  <li class="page-item" *ngIf="previous">
-                                    <a class="page-link" href="#" aria-label="Previous">
-                                      <span aria-hidden="true">&laquo;</span>
-                                      <span class="sr-only">Previous</span>
-                                    </a>
-                                  </li>
-                                  <li *ngFor="let pagina of paginas" class="page-item {{pagina.active}}" (click)="irPagina(pagina.valor_pagina)"><a class="page-link" style="cursor: pointer;">{{pagina.numero}}</a></li>
-                                  <li class="page-item" *ngIf="next">
-                                    <a class="page-link" href="#" aria-label="Next">
-                                      <span aria-hidden="true">&raquo;</span>
-                                      <span class="sr-only">Next</span>
-                                    </a>
-                                  </li>
-                                </ul>
-                              </nav>
-                        </div>
-                        <div class="col-lg-4 col-sm-12" style="text-align: end;">
-                            <p class="mr-2" style="display: inline-block;">Usuarios :</p>
-                            <select [(ngModel)]="taken" (change)="mostrarUsuarios()" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
-                                <option value="5">5</option>
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="30">30</option>
-                                <option value="40">40</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                        </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12" style="overflow-x: scroll;">
+                        <table mat-table [dataSource]="dataSource" class="w-100">
+                            
+                            <ng-container matColumnDef="id">
+                                <th mat-header-cell *matHeaderCellDef> Id </th>
+                                <td mat-cell *matCellDef="let element"> {{element.id_usuario}} </td>
+                            </ng-container>
+                            
+                            <ng-container matColumnDef="fotografia">
+                                <th mat-header-cell *matHeaderCellDef> Fotografía </th>
+                                <td mat-cell *matCellDef="let element">
+                                    <img src="{{element.fotografia}}" alt="" height="50" width="50" style="object-fit: cover;
+                                    object-position: center center;">
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="nombre">
+                              <th mat-header-cell *matHeaderCellDef> Nombre </th>
+                              <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                            </ng-container>
+                          
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="usuario">
+                              <th mat-header-cell *matHeaderCellDef> Usuario </th>
+                              <td mat-cell *matCellDef="let element"> {{element.usuario}} </td>
+                            </ng-container>
+                            
+                            <ng-container matColumnDef="estatus">
+                                <th mat-header-cell *matHeaderCellDef> Estatus </th>
+                                <td mat-cell *matCellDef="let element"> {{element.estatus}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="accion">
+                                <th mat-header-cell *matHeaderCellDef> Acción </th>
+                                <td mat-cell *matCellDef="let element">  
+                                    <button [matMenuTriggerFor]="menu" class="btn btn-info btn-sm"><i class="fas fa-ellipsis-v"></i></button>
+                                    <mat-menu #menu="matMenu">
+                                    <button mat-menu-item (click)="editar(element.id_usuario)">
+                                        <mat-icon>edit</mat-icon>
+                                        <span>Editar</span>
+                                    </button>
+                                    <button mat-menu-item *ngIf="!element.activo" (click)="activarDesactivar(element.id_usuario,1)">
+                                        <mat-icon><i class="fas fa-unlock-alt"></i></mat-icon>
+                                        <span>Activar</span>
+                                    </button>
+                                    <button mat-menu-item *ngIf="element.activo" (click)="activarDesactivar(element.id_usuario,0)">
+                                        <mat-icon><i class="fas fa-lock"></i></mat-icon>
+                                        <span>Desactivar</span>
+                                    </button>
+                                    </mat-menu>
+                                </td>
+                            </ng-container>
+    
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        </table>
+                        <mat-paginator 
+                            [pageSizeOptions]="[5, 10, 20]"
+                            showFirstLastButtons 
+                            aria-label="Selecciona la pagina de usuarios">
+                        </mat-paginator>
                     </div>
                 </div>
             </div>
         </div>
-      </div>
     </div>
   </div>
 </div>
 <ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
     <div class="modal-header">
-        <h2 class="modal-title" id="tituloModal">Nuevo usuario</h2>
+        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nuevo usuario</h2>
+        <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Editar usuario</h2>
     </div>
     <div class="modal-body">
         <form>
-        <div class="form-row col-12 mb-2" style="display: flex;justify-content: flex-end;">
-            <div class="custom-control custom-switch">
-                <input [(ngModel)]="activo" name="activo" type="checkbox" class="custom-control-input" id="customSwitch1">
-                <label *ngIf="activo" class="custom-control-label" for="customSwitch1">Activado</label>
-                <label *ngIf="!activo" class="custom-control-label" for="customSwitch1">Desactivado</label>
-            </div>
-        </div>
-        <div class="contianer col-12">
-            <div class="row">
-                <div class="col-lg-3 col-sm-12">
-                    <div class="form-group rounded hover_img_user" style="max-width:190px;height:200px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;overflow: hidden;" (mouseover)="mostrarPersiana()" (mouseout)="ocultarPersiana()">
-                        <div [class]="band_persiana ? 'persiana' : 'persiana_mostrar'">
-                            <div class="container">
-                                <div class="row mt-5 text-center justify-content-center">
-                                    <a style="cursor: pointer;" class="text-info tomar_foto" (click)="openModalCamera()">Tomar fotografía</a>  
+            <div class="contianer col-12">
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12">
+                        <div class="row">
+                            <div class="col-lg-3 col-sm-12">
+                                <div class="form-group rounded hover_img_user" style="max-width:190px;height:200px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;overflow: hidden;" (mouseover)="mostrarPersiana()" (mouseout)="ocultarPersiana()">
+                                    <div [class]="band_persiana ? 'persiana' : 'persiana_mostrar'">
+                                        <div class="container">
+                                            <div class="row mt-5 text-center justify-content-center">
+                                                <a style="cursor: pointer;" class="text-info tomar_foto" (click)="openModal(2)">Tomar fotografía</a>  
+                                            </div>
+                                            <div class="row mt-3 justify-content-center">
+                                                <a class="text-info">ó</a>
+                                            </div>
+                                            <div class="row text-center mt-3 justify-content-center">
+                                                <a style="cursor: pointer;" class="text-info tomar_foto" (click)="subirImagen()">Subir imagen</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <img id="imagen_perfil" class="img-fluid" [src]="foto_user">
+                                    <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg,.jpeg" (change)="cambiarImagen($event)">
                                 </div>
-                                <div class="row mt-3 justify-content-center">
-                                    <a class="text-info">ó</a>
+                            </div>
+                            <div class="col-lg-9 col-sm-12">
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12">
+                                        <div class="form-group">
+                                            <mat-form-field class="w-100" appearance="fill">
+                                                <mat-label>Nombre</mat-label>
+                                                <input matInput [(ngModel)]="usuario.nombre" name="nombre" placeholder="" autocomplete="off" style="text-transform: uppercase;" required>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="row text-center mt-3 justify-content-center">
-                                    <a style="cursor: pointer;" class="text-info tomar_foto" (click)="subirImagen()">Subir imagen</a>
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="form-group">
+                                            <mat-form-field class="w-100" appearance="fill">
+                                                <mat-label>Usuario</mat-label>
+                                                <input type="text" matInput [(ngModel)]="usuario.usuario" name="usuario" autocomplete="off" required>
+                                                <mat-icon matSuffix><i class="fas fa-user"></i></mat-icon>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="form-group">
+                                            <mat-form-field class="w-100" appearance="fill">
+                                                <mat-label>Contraseña</mat-label>
+                                                <input matInput [(ngModel)]="usuario.password" name="password" [type]="show ? 'text' : 'password'" autocomplete="off" required>
+                                                <mat-icon matSuffix  (click)="mostrarPassword()" style="cursor: pointer;"><i class="fas fa-key"></i></mat-icon>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-lg-6 col-sm-12">
+                                        <mat-form-field class="w-100" appearance="fill">
+                                            <mat-label>Perfiles</mat-label>
+                                            <mat-select [(ngModel)]="usuario.id_perfil" name="perfil">
+                                              <mat-option [value]="0" disabled>SELECCIONA EL PERFIL</mat-option>
+                                              <mat-option *ngFor="let perfil of perfiles_x_sistema" [value]="perfil.id_perfil">
+                                                {{perfil.perfil}}
+                                              </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
-                        <img id="imagen_perfil" class="img-fluid" [src]="foto_user">
-                        <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
                     </div>
                 </div>
-                <div class="col-lg-9 col-sm-12">
-                    <div class="row">
-                        <div class="col-lg-12 col-sm-12">
-                            <div class="form-group">
-                                <label for="apellido_paterno">Nombre *</label>
-                                <input [(ngModel)]="usuario.nombre" name="nombre" type="text" class="form-control" id="nombre" style="text-transform: uppercase;">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-12">
-                          <div class="form-group">
-                                <label for="usuario">Usuario *</label>
-                                <div class="input-group input-group-alternative" id="usuario">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="ni ni-email-83"></i></span>
-                                </div>
-                                <input [(ngModel)]="usuario.usuario" name="usuario" class="form-control" placeholder="Usuario" type="text" required>
-                                </div>  
-                          </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-12">
-                          <div class="form-group">
-                              <label for="nombre">Contraseña *</label>
-                              <div class="input-group input-group-alternative">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" style="cursor: pointer;" title="mostrar contraseña" (click)="mostrarPassword()"><i class="ni ni-lock-circle-open"></i></span>
-                                </div>
-                                <input [(ngModel)]="usuario.password" name="password" class="form-control" placeholder="Contraseña" [type]="show ? 'text' : 'password'" required>
-                              </div>
-                          </div>
-                        </div>
+                <div class="row">
+                    <div class="col-12">
+                        <mat-tab-group mat-align-tabs="center" animationDuration="2000ms" style="height: 300px;">
+                            <mat-tab label="Sistemas">
+                                <mat-selection-list (selectionChange)="setSistema($event)">
+                                    <div class="opciones d-flex justify-content-center align-items-center" *ngFor="let sistema of sistemas">
+                                        <div class="col-lg-9">
+                                            <mat-list-option [value]="sistema.id_sistema" [selected]="sistema.activo">
+                                                {{sistema.sistema}}
+                                            </mat-list-option>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <mat-form-field class="w-100">
+                                                <mat-label>Perfiles</mat-label>
+                                                <mat-select name="perfil" [(ngModel)]="sistema.perfil" (selectionChange)="optionPerfil(sistema.id_sistema, $event)">
+                                                  <mat-option [value]="0" disabled>SELECCIONA EL PERFIL</mat-option>
+                                                  <mat-option *ngFor="let perfil of sistema.perfiles" [value]="perfil.id_perfil">
+                                                    {{perfil.perfil}}
+                                                  </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </mat-selection-list>
+                            </mat-tab>
+                            <mat-tab label="Empresas" class="mt-2">
+                                <input type="text" class="form-control" placeholder="Buscar empresa" [(ngModel)]="busqueda" (keyup)="buscarEmpresa()" name="busqueda" style="text-transform: uppercase;">
+                                <mat-selection-list (selectionChange)="setEmpresa($event)" class="w-100">
+                                    <div *ngFor="let empresa of empresas_busqueda" class="d-flex align-items-center">
+                                        <mat-list-option  [value]="empresa.id_empresa" [selected]="empresa.activo">
+                                            {{empresa.empresa}}
+                                        </mat-list-option>
+                                    </div>
+                                </mat-selection-list>
+                            </mat-tab>
+                            <mat-tab label="Clientes">
+                                <input type="text" class="form-control" placeholder="Buscar cliente" [(ngModel)]="busqueda" (keyup)="buscarCliente()" name="busqueda" style="text-transform: uppercase;">
+                                <mat-selection-list (selectionChange)="setCliente($event)" class="w-100">
+                                    <div *ngFor="let cliente of clientes_busqueda" class="d-flex align-items-center">
+                                        <mat-list-option  [value]="cliente.id_cliente" [selected]="cliente.activo">
+                                            {{cliente.cliente}}
+                                        </mat-list-option>
+                                    </div>
+                                </mat-selection-list>
+                            </mat-tab>
+                        </mat-tab-group>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- <div class="form-row">
-            <div class="form-group col-4">
-                <p>Usuario : *</p>
-                <div class="input-group input-group-alternative">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
-                    </div>
-                    <input [(ngModel)]="usuario.usuario" name="usuario" class="form-control" placeholder="Usuario" type="text" required>
-                </div>
-            </div>
-            <div class="form-group col-4">
-                <p>Contraseña : *</p>
-                <div class="input-group input-group-alternative">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" style="cursor: pointer;" title="mostrar contraseña" (click)="mostrarPassword()"><i class="ni ni-lock-circle-open"></i></span>
-                    </div>
-                    <input [(ngModel)]="usuario.password" name="password" class="form-control" placeholder="Contraseña" [type]="show ? 'text' : 'password'" required>
-                  </div>
-            </div>
-        </div> -->
-        <div class="form-row">
-            <p>Seleccione los sistemas que administrará este usuario :</p>
-            <div class="form-group col-12 m-auto">
-                <ul class="list-group">
-                    <li *ngFor="let sistema of sistemas" id="sistema_{{sistema.id_sistema}}" (click)="seleccionar(sistema.id_sistema)" style="cursor:pointer;" class="list-group-item {{sistema.active}}">{{sistema.sistema}}</li>
-                    </ul>
-            </div>
-        </div>
-        
         </form>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-warning" (click)="cerrarModal()">Cerrar</button>
-        <button type="button" class="btn btn-success" (click)="altaUsuario()" id="guardar">Guardar</button>
-        <button type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Editar</button>
+        <button type="button" class="btn btn-warning" (click)="cerrarModal(1)">Cerrar</button>
+        <button *ngIf="tipo_modal == 1" type="button" class="btn btn-success" (click)="altaUsuario()" id="guardar">Guardar</button>
+        <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Guardar</button>
     </div>
 </ng-template>
-
 <ng-template #modal_camera let-c="close" let-d="dismiss">
     <div class="modal-header">
         <h2 class="modal-title" id="tituloModal">Tomar fotografia</h2>
@@ -240,8 +271,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-warning" (click)="cerrarModalCamera()">Cerrar</button>
+        <button type="button" class="btn btn-warning" (click)="cerrarModal(2)">Cerrar</button>
         <button *ngIf="isCameraExist" type="button" class="btn btn-success" (click)="takeSnapshot()">Tomar foto</button>
     </div>
 </ng-template>
-  

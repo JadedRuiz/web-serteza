@@ -1,0 +1,19 @@
+<div *ngIf="isCameraExist; else noCameraExist" class="col-12">
+    <div class="border border-success rounded text-center" style="width: 100%;height: 265px;">
+        <webcam [height]="450" [width]="350" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
+            *ngIf="showWebcam" [switchCamera]="nextWebcamObservable"></webcam>
+    </div>
+
+    <div *ngIf="errors.length > 0">
+        <h4>Error Messages:</h4>
+        <ul *ngFor="let error of errors">
+            <li>{{ error | json }}</li>
+        </ul>
+    </div>
+</div>
+
+<ng-template #noCameraExist>
+    <div class="border border-danger rounded text-center" style="display: flex;justify-content: center;align-items: center;width: 450px;height: 350px;">
+        {{messageError}}
+    </div>
+</ng-template>

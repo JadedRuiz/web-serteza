@@ -1,0 +1,27 @@
+
+/deep/ .cdk-overlay-container { z-index: 9999; }
+.hover_img_user{
+    position: relative;
+}
+.persiana{
+    display: none;
+}
+.persiana_mostrar {
+    height: 200px;
+    width: 100%;
+    background-color:black;
+    position: absolute;
+    top: 0%;
+    left: 0;
+    opacity: .6;
+    animation-name: mostrar;
+    animation-duration: 1s;
+}
+@keyframes mostrar {
+    from {
+        top: 100%;
+    }
+    to {
+        top: 0%;
+    }
+}

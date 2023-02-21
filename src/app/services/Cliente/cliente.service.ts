@@ -41,7 +41,7 @@ export class ClienteService {
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }
@@ -51,7 +51,7 @@ export class ClienteService {
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }
@@ -61,7 +61,7 @@ export class ClienteService {
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }
@@ -79,7 +79,35 @@ export class ClienteService {
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+        return throwError(err);
+      }));
+  }
+  autoCompleteCliente(json : any){
+    let url = SERVER_API+"cliente/autoCompleteCliente";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+        return throwError(err);
+      }));
+  }
+  facObtenerClientes(id_empresa : any){
+    let url = SERVER_API+"cliente/facObtenerClientes/"+id_empresa;
+    return this.http.get(url);
+  }
+  facObtenerClientesPorId(id : any){
+    let url = SERVER_API+"cliente/facObtenerClientesPorId/"+id;
+    return this.http.get(url);
+  }
+  facAltaCliente(json : any){
+    let url = SERVER_API+"cliente/facAltaCliente";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }

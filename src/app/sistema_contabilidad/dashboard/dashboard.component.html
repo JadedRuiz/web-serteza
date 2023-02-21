@@ -1,0 +1,104 @@
+<div class="header " style="height: 250px;">
+  <div class="container-fluid">
+  </div>
+</div>
+<div class="container-fluid mt--9">
+<div class="row">
+  <div class="col">
+    <div class="card border-info">
+        <div class="card-header">
+          Movimiento de Nominas
+        </div>
+      <div class="card-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-4 col-lg-4">
+                <mat-form-field class="w-100">
+                  <mat-label>EJERCICIO</mat-label>
+                  <mat-select [(ngModel)]="ejercicioActual" (selectionChange)="ejercicioSeleccionado($event)">
+                    <mat-option *ngFor="let ejersel of ejercicio" [value]="ejersel.ejercicio">{{ejersel.ejercicio}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col-4 col-lg-4">
+                <mat-form-field class="w-100">
+                  <mat-label>MES</mat-label>
+                  <mat-select [(ngModel)]="mesActual" (selectionChange)="mesSeleccionado($event.value)">
+                    <mat-option *ngFor="let messel of meses" [value]="messel.id">{{messel.mes}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>  
+              <div class="col-4 col-lg-4">
+                <mat-form-field class="w-100">
+                  <mat-label>PERIODO</mat-label>
+                  <mat-select [(ngModel)]="periodoActual" (selectionChange)="mesSeleccionado($event.value)">
+                    <mat-option *ngFor="let persel of periodos" [value]="persel.id_periodo">{{persel.descripcion}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>   
+          <div class="table-responsive">
+              <table class="table table-striped">
+                  <thead style="background-color: #3563ad;color: white;">
+                      <tr style="text-align: center;">
+                          <th scope="col">Cliente</th>
+                          <th scope="col">Estrategia</th>
+                          <th scope="col">Descripción</th>
+                          <th scope="col">Neto Fiscal</th>
+                          <th scope="col">Neto Exento</th>
+                          <th scope="col">Costo Social</th>
+                          <th scope="col">Impuesto Estatal</th>
+                          <th scope="col">Comisión</th>
+                      </tr>
+                  </thead>
+                  <tbody  class="">
+                    <tr *ngFor="let registro of resultados">
+                        <td colspan="1" style="vertical-align: middle;">{{registro.cliente}}</td>
+                        <td colspan="1" style="vertical-align: middle;">{{registro.estrategia}}</td>
+                        <td colspan="1" style="vertical-align: middle;">{{registro.descripcion}}</td>
+                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{registro.neto_fiscal | number: '3.1-2'}}</td>
+                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{registro.neto_exento | number: '3.1-2'}}</td>
+                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{registro.costo_social | number: '3.1-2'}}</td>
+                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{registro.impuesto_estatal | number: '3.1-2'}}</td>
+                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{registro.comision | number: '3.1-2'}}</td>
+                    </tr>
+                  </tbody>
+                  <thead style="background-color: #d89d25;color: white;">
+                    <tr style="text-align: center;">
+                        <th scope="col"></th>
+                        <th scope="col" colspan="2" >TOTALES</th>
+                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{Suma_neto_fiscal | number: '3.1-2'}}</td>
+                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{Suma_neto_exento | number: '3.1-2'}}</td>
+                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{Suma_costo_social | number: '3.1-2'}}</td>
+                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{Suma_impuesto_estatal | number: '3.1-2'}}</td>
+                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{Suma_comision | number: '3.1-2'}}</td>
+                        
+                    </tr>
+                </thead>
+              </table>
+              <div class="filtros container mt-3">
+                  <div class="row">
+                      <div class="col-lg-4 col-sm-12"></div>
+                      <div class="col-lg-4 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
+                          
+                      </div>
+                      <div class="col-lg-4 col-sm-12" style="text-align: end;">
+                          <!-- <select [(ngModel)]="taken" (change)="mostrarDepartamentos()" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
+                              <option value="5">5</option>
+                              <option value="10">10</option>
+                              <option value="20">20</option>
+                              <option value="30">30</option>
+                              <option value="40">40</option>
+                              <option value="50">50</option>
+                              <option value="100">100</option>
+                          </select> -->
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

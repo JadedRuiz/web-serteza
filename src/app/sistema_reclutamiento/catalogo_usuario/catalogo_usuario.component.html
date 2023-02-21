@@ -1,0 +1,223 @@
+<div class="header {{color}}" style="height: 250px;">
+    <div class="container-fluid">
+    </div>
+</div>
+<div class="container-fluid mt--9">
+  <div class="row">
+    <div class="col-lg-12 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+              <h4 class="card-title">USUARIOS</h4>
+              <div class="card-category">
+                <div class="row align-items-center">
+                    <div class="col-lg-4 col-sm-12">
+                        <mat-form-field class="w-100">
+                            <mat-label>Buscar usuario</mat-label>
+                            <input type="text"
+                                    placeholder="Ingrese el nombre o id del usuario"
+                                    aria-label="Number"
+                                    matInput
+                                    (keyup)="buscarUsuario()"
+                                    [formControl]="filterControl"
+                                    [matAutocomplete]="auto"
+                                    style="text-transform: uppercase;">
+                            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionUsuario($event)">
+                                <mat-option *ngFor="let usuario of usuarios_busqueda" [value]="usuario.usuario" [id]="usuario.id_usuario">
+                                    {{usuario.nombre}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-8 col-sm-12 text-right">
+                        <button class="btn btn-info" (click)="nuevoUsuario()"><i class="fas fa-user-plus"></i></button>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12" style="overflow-x: scroll;">
+                        <table mat-table [dataSource]="dataSource" class="w-100">
+                            
+                            <ng-container matColumnDef="id">
+                                <th mat-header-cell *matHeaderCellDef> Id </th>
+                                <td mat-cell *matCellDef="let element"> {{element.id_usuario}} </td>
+                            </ng-container>
+                            
+                            <ng-container matColumnDef="fotografia">
+                                <th mat-header-cell *matHeaderCellDef> Fotografía </th>
+                                <td mat-cell *matCellDef="let element">
+                                    <img src="{{element.fotografia}}" alt="" height="50" width="50" style="object-fit: cover;
+                                    object-position: center center;">
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="nombre">
+                              <th mat-header-cell *matHeaderCellDef> Nombre </th>
+                              <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                            </ng-container>
+                          
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="usuario">
+                              <th mat-header-cell *matHeaderCellDef> Usuario </th>
+                              <td mat-cell *matCellDef="let element"> {{element.usuario}} </td>
+                            </ng-container>
+                            
+                            <ng-container matColumnDef="estatus">
+                                <th mat-header-cell *matHeaderCellDef> Estatus </th>
+                                <td mat-cell *matCellDef="let element"> {{element.estatus}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="accion">
+                                <th mat-header-cell *matHeaderCellDef> Acción </th>
+                                <td mat-cell *matCellDef="let element">  
+                                    <button [matMenuTriggerFor]="menu" class="btn btn-info btn-sm"><i class="fas fa-ellipsis-v"></i></button>
+                                    <mat-menu #menu="matMenu">
+                                    <button mat-menu-item (click)="editar(element.id_usuario)">
+                                        <mat-icon>edit</mat-icon>
+                                        <span>Editar</span>
+                                    </button>
+                                    <button mat-menu-item *ngIf="!element.activo" (click)="activarDesactivar(element.id_usuario,1)">
+                                        <mat-icon><i class="fas fa-unlock-alt"></i></mat-icon>
+                                        <span>Activar</span>
+                                    </button>
+                                    <button mat-menu-item *ngIf="element.activo" (click)="activarDesactivar(element.id_usuario,0)">
+                                        <mat-icon><i class="fas fa-lock"></i></mat-icon>
+                                        <span>Desactivar</span>
+                                    </button>
+                                    </mat-menu>
+                                </td>
+                            </ng-container>
+    
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        </table>
+                        <mat-paginator 
+                            [pageSizeOptions]="[5, 10, 20]"
+                            showFirstLastButtons 
+                            aria-label="Select page of periodic elements">
+                        </mat-paginator>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
+    <div class="modal-header">
+        <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nuevo usuario</h2>
+        <h2 *ngIf="tipo_modal == 2" class="modal-title" id="tituloModal">Editar usuario</h2>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="contianer col-12">
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12 d-flex justify-content-center text-center">
+                        <div class="form-group rounded hover_img_user" style="max-width:190px;height:200px;cursor: pointer;border:1px lightgray solid;display: flex;justify-content: center;align-items: center;overflow: hidden;" (mouseover)="mostrarPersiana()" (mouseout)="ocultarPersiana()">
+                            <div [class]="band_persiana ? 'persiana' : 'persiana_mostrar'">
+                                <div class="container">
+                                    <div class="row mt-5 text-center justify-content-center">
+                                        <a style="cursor: pointer;" class="text-info tomar_foto" (click)="openModal(2)">Tomar fotografía</a>  
+                                    </div>
+                                    <div class="row mt-3 justify-content-center">
+                                        <a class="text-info">ó</a>
+                                    </div>
+                                    <div class="row text-center mt-3 justify-content-center">
+                                        <a style="cursor: pointer;" class="text-info tomar_foto" (click)="subirImagen()">Subir imagen</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <img id="imagen_perfil" class="img-fluid" [src]="foto_user">
+                            <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg,.jpeg" (change)="cambiarImagen($event)">
+                        </div>
+                    </div>
+                    <div class="col-lg-12 col-sm-12">
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <mat-form-field class="w-100" appearance="fill">
+                                        <mat-label>Nombre</mat-label>
+                                        <input matInput [(ngModel)]="usuario.nombre" name="nombre" placeholder="" autocomplete="off" style="text-transform: uppercase;" required>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Perfil</mat-label>
+                                    <mat-select [(ngModel)]="id_perfil" name="prueba">
+                                        <mat-option [value]="0" disabled>SELECCIONA EL PERFIL</mat-option>
+                                        <mat-option *ngFor="let perfil of perfiles" [value]="perfil.id_perfil">
+                                            {{perfil.perfil}}
+                                        </mat-option>
+                                    </mat-select>
+                                  </mat-form-field>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <mat-form-field class="w-100" appearance="fill">
+                                        <mat-label>Usuario</mat-label>
+                                        <input type="text" matInput [(ngModel)]="usuario.usuario" name="usuario" autocomplete="off" required>
+                                        <mat-icon matSuffix><i class="fas fa-user"></i></mat-icon>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <mat-form-field class="w-100" appearance="fill">
+                                        <mat-label>Contraseña</mat-label>
+                                        <input matInput [(ngModel)]="usuario.password" name="password" [type]="show ? 'text' : 'password'" autocomplete="off" required>
+                                        <mat-icon matSuffix  (click)="mostrarPassword()" style="cursor: pointer;"><i class="fas fa-key"></i></mat-icon>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModal(1)">Cerrar</button>
+        <button *ngIf="tipo_modal == 1" type="button" class="btn btn-success" (click)="altaUsuario()" id="guardar">Guardar</button>
+        <button *ngIf="tipo_modal == 2" type="button" class="btn btn-success" (click)="modificarUsuario()" id="editar" >Guardar</button>
+    </div>
+</ng-template>
+<ng-template #modal_camera let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h2 class="modal-title" id="tituloModal">Tomar fotografia</h2>
+    </div>
+    <div class="modal-body">
+        <div class="container">
+            <div class="row">
+                <div *ngIf="isCameraExist; else noCameraExist" class="col-12">
+                    <div class="border border-success rounded text-center" style="width: 100%;height: 265px;">
+                        <!-- <div class="btn-group">
+                            <button class="button" (click)="changeWebCame(true)">Toggle Camera</button>
+                            <button class="button" (click)="onOffWebCame()">Switch camera</button>
+                        </div> <br /> -->
+                        <webcam [height]="450" [width]="350" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
+                            *ngIf="showWebcam" [switchCamera]="nextWebcamObservable"></webcam>
+                    </div>
+                
+                    <div *ngIf="errors.length > 0">
+                        <h4>Error Messages:</h4>
+                        <ul *ngFor="let error of errors">
+                            <li>{{ error | json }}</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <ng-template #noCameraExist>
+                    <div class="border border-danger rounded text-center" style="display: flex;justify-content: center;align-items: center;width: 450px;height: 350px;">
+                        Este dispositivo no cuenta con una camara disponible
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="cerrarModal(2)">Cerrar</button>
+        <button *ngIf="isCameraExist" type="button" class="btn btn-success" (click)="takeSnapshot()">Tomar foto</button>
+    </div>
+</ng-template>

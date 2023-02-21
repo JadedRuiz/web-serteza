@@ -34,7 +34,7 @@ export class EmpresaService {
         .pipe(map( (resp: any) => {
             return resp;
           }), catchError(err => {
-            Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+            Swal.fire("Ha ocurrido un error", err.error.message, 'error');
             return throwError(err);
           }));
     }
@@ -44,17 +44,17 @@ export class EmpresaService {
       .pipe(map( (resp: any) => {
           return resp;
         }), catchError(err => {
-          Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+          Swal.fire("Ha ocurrido un error", err.error.message, 'error');
           return throwError(err);
         }));
   }
-  altaEmpresa(empresa : Empresa){
+  altaEmpresa(empresa : any){
     let url = SERVER_API+"empresa/altaEmpresa";
     return this.http.post( url, empresa )
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
@@ -64,17 +64,17 @@ export class EmpresaService {
     .pipe(map( (resp: any) => {
       return resp;
     }), catchError(err => {
-      Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+      Swal.fire("Ha ocurrido un error", err.error.message, 'error');
       return throwError(err);
     }));
   }
-  actualizarEmpresa(empresa : Empresa){
+  actualizarEmpresa(empresa : any){
     let url = SERVER_API+"empresa/actualizarEmpresa";
     return this.http.post( url, empresa )
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }
@@ -88,7 +88,7 @@ export class EmpresaService {
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }
@@ -98,12 +98,22 @@ export class EmpresaService {
       .pipe(map( (resp: any) => {
         return resp;
       }), catchError(err => {
-        Swal.fire("Ha ocurrido un error", err.error.data, 'error');
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
         return throwError(err);
       }));
   }
   obtenerEmpresasPorIdCliente(id : any){
     let url = SERVER_API+"empresa/obtenerEmpresasPorIdCliente/"+id;
     return this.http.get(url);
+  }
+  autoCompleteEmpresa(json : any){
+    let url = SERVER_API+"empresa/autoCompleteEmpresa";
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+        return throwError(err);
+      }));
   }
 }

@@ -1,0 +1,38 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="col mt-5">
+        <h1>xml-upload</h1>
+       
+      </div>
+    </div>  
+</div>
+<div class="container-fluid mt-5">
+  <div class="row">
+    <div class="col">
+      <div class="card border-info">
+        <div class="card-header">
+          Cargar XML
+        </div>
+        <div class="card-body">
+          <form class="">  
+              <input (ngModel)="archivos" type="file" class="form-control" (change)="save($event)" multiple="multiple">
+              <br>
+              <span [innerHTML]="result"></span>
+          </form>
+          <br>
+          <div class="col-sm-12" *ngIf="cargando">
+            <div class="alert alert-success text-center">
+                <strong>Cargando</strong>
+                <br>
+                <i class="fas fa-sync-alt fa-spin fa-2x"></i>
+                <br>
+                <span>Espere por favor</span>
+            </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
