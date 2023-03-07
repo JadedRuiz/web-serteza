@@ -118,11 +118,14 @@ export class ProcesoFacturadorComponent implements OnInit {
     },
     cataporte : this.cataporte,
     conceptos : this.dataSource.data,
+    importe : "0.00",
     subtotal : "0.00",
     descuento_t : "0.00",
     iva_t : "0.00",
     ieps_t : "0.00",
     otros_t : "0.00",
+    iva_r_t : "0.00",
+    isr_r_t : "0.00",
     total : "0.00",
     usuario_creacion : this.usuario
   };
@@ -205,6 +208,7 @@ export class ProcesoFacturadorComponent implements OnInit {
   concepto_disable = false;
   regimenes : any;
   cat_relaciones : any;
+  formatter : any;
 
   constructor(
     private empresa_service: EmpresaService,
@@ -217,6 +221,11 @@ export class ProcesoFacturadorComponent implements OnInit {
   ) {  }
 
   ngOnInit(): void {
+    this.formatter = new Intl.NumberFormat('en-NZ', {
+      currency: 'NZD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits : 2
+    });
     this.mostrarEmpresas();
     this.mostrarEstado();
     this.mostrarClientes();
@@ -230,18 +239,21 @@ export class ProcesoFacturadorComponent implements OnInit {
       cantidad : "1",
       precio : "0.00",
       unidad : "",
+      importe : "0.00",
+      importe_print : "",
       descuento_porcent : 0,
       descuento : "0.00",
       iva_porcent : 0,
       iva : "0.00",
+      iva_r_porcent : 0,
+      iva_r : "0.00",
       ieps : "0.00",
       ieps_porcent : 0,
       otros : "0.00",
       otro_porcent : 0,
-      otros_tipo : "",
-      importe : "0.00",
+      isr_r : "0.00",
+      isr_r_porcent : 0,
       neto : "0.00",
-      neto_print : "",
       btn : false
     });
     this.mercancias = [];
@@ -456,7 +468,9 @@ export class ProcesoFacturadorComponent implements OnInit {
         element.iva_porcent = concepto.iva;
         element.ieps_porcent = concepto.ieps;
         element.otros_porcent = concepto.otros_imp;
-        element.otros_tipos = concepto.tipo_otros;
+        element.iva_r_porcent = concepto.iva_r;
+        element.isr_r_porcent = concepto.isr_r;
+
       }
     });
   }
@@ -809,6 +823,8 @@ export class ProcesoFacturadorComponent implements OnInit {
       cantidad : "1",
       precio : "0.00",
       unidad : "",
+      importe : "0.00",
+      importe_print : "0.00",
       descuento_porcent : 0,
       descuento : "0.00",
       iva_porcent : 0,
@@ -817,10 +833,12 @@ export class ProcesoFacturadorComponent implements OnInit {
       ieps_porcent : 0,
       otros : "0.00",
       otro_porcent : 0,
-      otros_tipo : "",
-      importe : "0.00",
+      subtotal : "0.00",
+      iva_r_porcent : 0,
+      iva_r : "0.00",
+      isr_r_porcent : 0,
+      isr_r : "0.00",
       neto : "0.00",
-      neto_print : "",
       btn : false
     });
     this.table.renderRows();
@@ -833,52 +851,56 @@ export class ProcesoFacturadorComponent implements OnInit {
     });
     this.dataSource.data.forEach((element : any) => {
       if(element.id_row == id_row){
-        let subtotal = parseFloat(element.cantidad) * parseFloat(element.precio);
-        element.neto = subtotal;
-        element.neto_print = "$ " +formatter.format(subtotal);
-        element.descuento = ((parseFloat(element.descuento_porcent) / 100) * subtotal);
-        element.iva = ((parseFloat(element.iva_porcent) / 100) * subtotal).toFixed(2);
-        element.ieps = ((parseFloat(element.ieps_porcent) / 100) * subtotal).toFixed(2);
-        element.otros = ((parseFloat(element.otros_porcent) / 100) * subtotal).toFixed(2);
+        let importe = parseFloat(element.cantidad) * parseFloat(element.precio);
+        element.importe = this.formatter.format(importe);
+        element.importe_print = formatter.format(importe);
+        element.descuento = ((parseFloat(element.descuento_porcent+"") / 100) * importe);
+        element.iva = ((parseFloat(element.iva_porcent+"") / 100) * importe).toFixed(2);
+        element.ieps = ((parseFloat(element.ieps_porcent+"") / 100) * importe).toFixed(2);
+        element.otros = ((parseFloat(element.otros_porcent+"") / 100) * importe).toFixed(2);
+        element.subtotal = (parseFloat(element.importe)+parseFloat(element.descuento)+parseFloat(element.iva)+
+        parseFloat(element.ieps)+parseFloat(element.otros)).toFixed(2);
+        element.iva_r = ((parseFloat(element.iva_r_porcent+"") / 100) * importe).toFixed(2);
+        element.isr_r = ((parseFloat(element.isr_r_porcent+"") / 100) * importe).toFixed(2);
+        element.neto = (parseFloat(element.subtotal) - (parseFloat(element.iva_r)+parseFloat(element.isr_r))).toFixed(2);
         this.calcularTotal();
       }
     });
   }
 
   calcularTotal(){
-    let subtotal = 0.00;
+    let importe = 0.00;
+    let subtotal =0.00;
     let descuento = 0.00;
     let iva = 0.00;
     let ieps = 0.00;
     let otros = 0.00;
+    let iva_r = 0.00;
+    let isr_r = 0.00;
     let total = 0.00;
     this.dataSource.data.forEach((element : any) => {
-      subtotal += parseFloat(element.neto);
-      total = subtotal;
+      importe += parseFloat(element.importe);
       descuento += parseFloat(element.descuento);
-      total += descuento;
       iva += parseFloat(element.iva);
-      total += iva;
       ieps += parseFloat(element.ieps);
-      total += ieps;
-      if(element.otros_tipos == "T"){
-        otros += parseFloat(element.otros);
-      }else{
-        otros -= parseFloat(element.otros);
-      }
-      total += otros;
+      otros += parseFloat(element.otros);
+      iva_r += parseFloat(element.iva_r);
+      isr_r += parseFloat(element.isr_r);
+      subtotal += parseFloat(element.subtotal);
+      total += parseFloat(element.neto);
     });
-    const formatter = new Intl.NumberFormat('en-NZ', {
-      currency: 'NZD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits : 2
-    });
-    this.datos_factura.subtotal = formatter.format(subtotal);
-    this.datos_factura.descuento_t = formatter.format(descuento);
-    this.datos_factura.iva_t = formatter.format(iva);
-    this.datos_factura.ieps_t = formatter.format(ieps);
-    this.datos_factura.otros_t = formatter.format(otros);
-    this.datos_factura.total = formatter.format(total);
+    // subtotal = (iva+ieps+descuento+otros+importe);
+    // total = (subtotal-(iva_r+isr_r));
+    
+    this.datos_factura.importe = this.formatter.format(importe);
+    this.datos_factura.descuento_t = this.formatter.format(descuento);
+    this.datos_factura.iva_t = this.formatter.format(iva);
+    this.datos_factura.ieps_t = this.formatter.format(ieps);
+    this.datos_factura.otros_t = this.formatter.format(otros);
+    this.datos_factura.subtotal = this.formatter.format(subtotal);
+    this.datos_factura.iva_r_t = this.formatter.format(iva_r);
+    this.datos_factura.isr_r_t = this.formatter.format(isr_r);
+    this.datos_factura.total = this.formatter.format(total);
   }
   
   eliminarLinea(id : any){
@@ -960,6 +982,7 @@ export class ProcesoFacturadorComponent implements OnInit {
       }
     }
     this.datos_factura.id_empresa = this.id_empresa;
+    console.log(this.datos_factura);
     this.confirmar("Confirmación","¿Seguro que deseas guardar está factura?","info",null,3);
     return "";
   }
@@ -1169,18 +1192,21 @@ export class ProcesoFacturadorComponent implements OnInit {
       cantidad : "1",
       precio : "0.00",
       unidad : "",
+      importe : "0.00",
+      importe_print : "",
       descuento_porcent : 0,
       descuento : "0.00",
       iva_porcent : 0,
       iva : "0.00",
+      iva_r_porcent : 0,
+      iva_r : "0.00",
       ieps : "0.00",
       ieps_porcent : 0,
       otros : "0.00",
       otro_porcent : 0,
-      otros_tipo : "",
-      importe : "0.00",
+      isr_r : "0.00",
+      isr_r_porcent : 0,
       neto : "0.00",
-      neto_print : "",
       btn : false
     });
     this.datos_factura = {
@@ -1206,11 +1232,14 @@ export class ProcesoFacturadorComponent implements OnInit {
       },
       cataporte : this.cataporte,
       conceptos : this.dataSource.data,
+      importe : "0.00",
       subtotal : "0.00",
       descuento_t : "0.00",
       iva_t : "0.00",
       ieps_t : "0.00",
       otros_t : "0.00",
+      iva_r_t : "0.00",
+      isr_r_t : "0.00",
       total : "0.00",
       usuario_creacion : this.usuario
     };

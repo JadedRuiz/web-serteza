@@ -19,7 +19,7 @@ export class CatalogoConceptosComponent implements OnInit {
   public cliente_seleccionado = window.sessionStorage.getItem("cliente");
   public usuario = parseInt(window.sessionStorage.getItem("user")+"");
   //Modelo tabla
-  displayedColumns: string[] = ['Id', 'Descripcion', "Descuento", 'Iva', "Ieps","Otros","Accion"];
+  displayedColumns: string[] = ['Id', 'Descripcion', "Descuento", 'Iva', "Ieps","Otros","Iva_r","Isr","Accion"];
   dataSource  = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator : any;
   filterControlEmpresa = new FormControl();
@@ -38,12 +38,11 @@ export class CatalogoConceptosComponent implements OnInit {
     id_servicio : 0,
     id_unidad : 0,
     descuento : 0.00,
-    iva : 0.00,
-    tipo_iva : "T",
+    iva_t : 0.00,
+    iva_r : 0.00,
     ieps : 0.00,
-    tipo_ieps : "T",
     otros : 0.00,
-    tipo_otros : "T",
+    isr_r : 0.00,
     nombre_otros : "",
     usuario_creacion : this.usuario
   };
@@ -178,12 +177,11 @@ export class CatalogoConceptosComponent implements OnInit {
         this.filterControlUnidad.setValue(concepto.unidad);
         this.concepto.id_unidad = concepto.id_UnidadMedida;
         this.concepto.descuento = parseFloat(concepto.descuento);
-        this.concepto.iva = parseFloat(concepto.iva);
-        this.concepto.tipo_iva = concepto.tipo_iva;
-        this.concepto.ieps = parseFloat(concepto.ieps);
-        this.concepto.tipo_ieps = concepto.tipo_ieps;
-        this.concepto.otros = parseFloat(concepto.otros_imp);
-        this.concepto.tipo_otros = concepto.tipo_otros;
+        this.concepto.iva_t = concepto.iva == null ? concepto.iva = 0.00 : concepto.iva = parseFloat(concepto.iva);
+        this.concepto.iva_r = concepto.iva_r == null ? concepto.iva_r = 0.00 : concepto.iva_r = parseFloat(concepto.iva_r);
+        this.concepto.ieps = concepto.ieps == null ? concepto.ieps = 0.00 : concepto.ieps = parseFloat(concepto.ieps);
+        this.concepto.otros = concepto.otros_imp == null ? concepto.otros_imp = 0.00 : concepto.otros_imp = parseFloat(concepto.otros_imp);
+        this.concepto.isr_r = concepto.isr_r == null ? concepto.isr_r = 0.00 : concepto.isr_r = parseFloat(concepto.isr_r);
         if(this.concepto.otros > 0){
           this.concepto.nombre_otros = concepto.nombre_otros;
           this.band_otros = true;
@@ -234,12 +232,11 @@ export class CatalogoConceptosComponent implements OnInit {
       id_servicio : 0,
       id_unidad : 0,
       descuento : 0.00,
-      iva : 0.00,
-      tipo_iva : "T",
+      iva_t : 0.00,
+      iva_r : 0.00,
       ieps : 0.00,
-      tipo_ieps : "T",
       otros : 0.00,
-      tipo_otros : "T",
+      isr_r : 0.00,
       nombre_otros : "",
       usuario_creacion : this.usuario
     };

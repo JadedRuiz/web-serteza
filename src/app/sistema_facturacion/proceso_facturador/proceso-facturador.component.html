@@ -510,7 +510,7 @@
                                                 <ng-container matColumnDef="Total">
                                                     <th mat-header-cell *matHeaderCellDef> Total </th>
                                                     <td mat-cell *matCellDef="let element">
-                                                        <input style="width: 98%;" type="text" class="form-control" [(ngModel)]="element.neto_print" disabled>
+                                                        <input style="width: 98%;" type="text" class="form-control" [(ngModel)]="element.importe_print" disabled>
                                                 </ng-container>
 
                                                 <ng-container matColumnDef="Accion">
@@ -531,17 +531,20 @@
                                                 <table class="table table-light">
                                                     <thead>
                                                         <tr class="text-start">
-                                                            <th>Subtotal</th>
+                                                            <th>Importe</th>
                                                             <th>Descuento</th>
                                                             <th>IVA</th>
                                                             <th>IEPS</th>
-                                                            <th>Otros Imp.</th>
+                                                            <th>OTROS IMP.</th>
+                                                            <th>SUBTOTAL</th>
+                                                            <th>IVA R.</th>
+                                                            <th>ISR R.</th>
                                                             <th>Total</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody class="bg-white">
                                                         <tr>
-                                                            <td class="bold">$ {{datos_factura.subtotal}}</td>
+                                                            <td class="bold">$ {{datos_factura.importe}}</td>
                                                             <td class="bold">$ {{datos_factura.descuento_t}}</td>
                                                             <td class="bold"> $ {{datos_factura.iva_t}} </td>
                                                             <td class="bold"> 
@@ -550,6 +553,9 @@
                                                             <td class="bold">
                                                                 $ <input type="text" [(ngModel)]="datos_factura.otros_t" class="editable">
                                                             </td>
+                                                            <td class="bold">$ <input type="text" [(ngModel)]="datos_factura.subtotal" class="editable"></td>
+                                                            <td class="bold rojo">$ <input type="text" [(ngModel)]="datos_factura.iva_r_t" class="editable rojo"></td>
+                                                            <td class="bold rojo">$ <input type="text" [(ngModel)]="datos_factura.isr_r_t" class="editable rojo"></td>
                                                             <td class="bold"> $ {{datos_factura.total}}</td>
                                                         </tr>
                                                     </tbody>

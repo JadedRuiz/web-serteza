@@ -3,10 +3,15 @@
   outline:none;
   background:transparent;    
   font-weight: bolder;
+  max-width: 100px;
 }
 .bold{
   font-weight: bolder;
   text-align: start;
+}
+
+.rojo{
+  color: #DB2601;
 }
 .mat-column-Descripcion {
   word-wrap: break-word !important;
