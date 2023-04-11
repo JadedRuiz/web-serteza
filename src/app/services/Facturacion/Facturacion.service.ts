@@ -176,7 +176,6 @@ export class FacturacionService {
   facGenerarFactura(id_factura : number, tipo : number, tipo_envio : number){
     
     let url = SERVER_API+"reporte/generarFactura/"+id_factura+"/"+tipo+"/"+tipo_envio;
-    alert(url);
     return this.http.get(url);
   }
 }

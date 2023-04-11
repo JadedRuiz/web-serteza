@@ -1,11 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { FacturacionService } from 'src/app/services/Facturacion/Facturacion.service';
 import { SerieService } from 'src/app/services/Facturacion/Serie.service';
 import { COLOR, SERVER_API } from 'src/config/config';
+import Swal from 'sweetalert2';
+import { Loading } from 'notiflix/build/notiflix-loading-aio';
+
 
 @Component({
   selector: 'app-facturas',
@@ -159,4 +162,20 @@ export class FacturasComponent implements OnInit {
       })
     }
   }
+
+  
+
+  enviarCorreo(id : any){
+      Loading.standard();
+      this.factura_service.facGenerarFactura(id,4,0)
+      .subscribe((object : any) => {
+        if(object.ok){
+          Loading.remove();
+          Swal.fire("Buen trabajo","El correo ha sido re-enviado con exito","success");
+        }else{
+          Loading.remove();
+          Swal.fire("Ha ocurrido un error",object.message,"error");
+        }
+      });
+    }
 }

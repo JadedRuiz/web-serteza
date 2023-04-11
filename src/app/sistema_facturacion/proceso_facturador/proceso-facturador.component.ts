@@ -570,7 +570,6 @@ export class ProcesoFacturadorComponent implements OnInit {
     if(this.filterControlClave.value.length > 0){
       this.claves_unidad_copy = [];
       this.claves_unidad.forEach((element : any) => {
-        console.log(element.descripcion.includes(this.filterControlClave.value.toUpperCase()));
         if(element.descripcion.toLowerCase().includes(this.filterControlClave.value.toLowerCase()) || element.clave.includes(this.filterControlClave.value.toUpperCase())){ 
           this.claves_unidad_copy.push({
             "descripcion" : element.descripcion,
@@ -852,14 +851,14 @@ export class ProcesoFacturadorComponent implements OnInit {
     this.dataSource.data.forEach((element : any) => {
       if(element.id_row == id_row){
         let importe = parseFloat(element.cantidad) * parseFloat(element.precio);
-        element.importe = this.formatter.format(importe);
+        element.importe = importe;
         element.importe_print = formatter.format(importe);
         element.descuento = ((parseFloat(element.descuento_porcent+"") / 100) * importe);
         element.iva = ((parseFloat(element.iva_porcent+"") / 100) * importe).toFixed(2);
         element.ieps = ((parseFloat(element.ieps_porcent+"") / 100) * importe).toFixed(2);
         element.otros = ((parseFloat(element.otros_porcent+"") / 100) * importe).toFixed(2);
-        element.subtotal = (parseFloat(element.importe)+parseFloat(element.descuento)+parseFloat(element.iva)+
-        parseFloat(element.ieps)+parseFloat(element.otros)).toFixed(2);
+        element.subtotal = ((parseFloat(element.importe)+parseFloat(element.iva)+parseFloat(element.ieps)+
+        parseFloat(element.otros))-parseFloat(element.descuento)).toFixed(2);
         element.iva_r = ((parseFloat(element.iva_r_porcent+"") / 100) * importe).toFixed(2);
         element.isr_r = ((parseFloat(element.isr_r_porcent+"") / 100) * importe).toFixed(2);
         element.neto = (parseFloat(element.subtotal) - (parseFloat(element.iva_r)+parseFloat(element.isr_r))).toFixed(2);
@@ -982,7 +981,6 @@ export class ProcesoFacturadorComponent implements OnInit {
       }
     }
     this.datos_factura.id_empresa = this.id_empresa;
-    console.log(this.datos_factura);
     this.confirmar("Confirmación","¿Seguro que deseas guardar está factura?","info",null,3);
     return "";
   }

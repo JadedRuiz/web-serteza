@@ -94,6 +94,7 @@
                             <td mat-cell *matCellDef="let element">
                                 <button class="btn btn-sm btn-yellow text-white" (click)="descargar(element.id_factura, 1)">PDF <i class="far fa-file-pdf"></i></button>
                                 <button class="btn btn-sm btn-info" (click)="descargar(element.id_factura, 2)">XML <i class="fas fa-file-code"></i></button>
+                                <button class="btn btn-sm btn-success" (click)="enviarCorreo(element.id_factura)"><i class="fa fa-envelope" aria-hidden="true"></i> CORREO</button>                                
                             </td>
                         </ng-container>
 
