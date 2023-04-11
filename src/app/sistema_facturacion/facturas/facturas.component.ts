@@ -8,6 +8,7 @@ import { SerieService } from 'src/app/services/Facturacion/Serie.service';
 import { COLOR, SERVER_API } from 'src/config/config';
 import Swal from 'sweetalert2';
 import { Loading } from 'notiflix/build/notiflix-loading-aio';
+import { ClienteService } from 'src/app/services/Cliente/cliente.service';
 
 
 @Component({
@@ -23,24 +24,29 @@ export class FacturasComponent implements OnInit {
   filterControlEmpresa = new FormControl();
   filterControlSerie = new FormControl();
   empresas: any;
-  displayedColumns: string[] = ['Folio', 'Fecha','Status', 'Total', "Observaciones", "Accion"];
+  displayedColumns: string[] = ['Folio', 'Fecha','Cliente', 'Total', "Observaciones", "Estatus", "Accion"];
   dataSource  = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator : any;
   series: any;
   series_busqueda: any;
   busqueda = {
     id_empresa : 0,
-    id_serie : 0
+    id_cliente : 0
   };
+  clientes : any;
+  clientes_busqueda : any;
+  filterControlCliente = new FormControl();
 
   constructor(
     private empresa_service : EmpresaService,
     private serie_service : SerieService,
-    private factura_service : FacturacionService
+    private factura_service : FacturacionService,
+    private cliente_service : ClienteService
   ) { }
 
   ngOnInit(): void {
     this.mostrarEmpresas();
+    this.mostrarClientes();
   }
 
   mostrarEmpresas(){
@@ -53,7 +59,7 @@ export class FacturasComponent implements OnInit {
         this.busqueda.id_empresa = object.data[0].id_empresa;
         this.empresas_busqueda = object.data;
         this.filterControlEmpresa.setValue(object.data[0].empresa);
-        this.mostrarSeries(object.data[0].id_empresa);
+        this.mostrarFacturas();
       }
     });
   }
@@ -81,50 +87,49 @@ export class FacturasComponent implements OnInit {
 
   optionEmpresa(value : any){
     this.busqueda.id_empresa = value.option.id;
-    this.mostrarSeries(value.option.id);
     this.mostrarFacturas();
   }
-  
-  mostrarSeries(id_empresa : any){
-    this.series = [];
-    this.series_busqueda = [];
-    this.serie_service.obtenerSeries(id_empresa)
+
+  mostrarClientes(){
+    this.clientes = [];
+    this.clientes_busqueda = [];
+    this.cliente_service.facObtenerClientes(this.cliente_seleccionado)
     .subscribe((object : any) => {
       if(object.ok){
-        this.series = object.data;
-        this.series_busqueda = object.data;
-        this.filterControlSerie.setValue(object.data[0].serie);
-        this.busqueda.id_serie = object.data[0].id_serie;
-        this.mostrarFacturas();
+        this.clientes = object.data;
+        this.clientes_busqueda = object.data;
       }else{
-        this.filterControlSerie.setValue("Sin series");
+        this.clientes_busqueda.push({
+          id_catclientes : "0",
+          nombre : "Aún no se tiene clientes registrados"
+        });
       }
     });
   }
 
-  buscarSerie(){
-    this.series_busqueda = [];
-    this.series.forEach((element : any) => {
-      this.series_busqueda.push({
-        "serie" : element.serie,
-        "id_serie" : element.id_serie
+  buscarCliente(){
+    this.clientes_busqueda = [];
+    this.clientes.forEach((element : any) => {
+      this.clientes_busqueda.push({
+        "nombre" : element.nombre,
+        "id_catclientes" : element.id_catclientes
       });
     });
-    if(this.filterControlEmpresa.value.length > 0){
-      this.series_busqueda = [];
-      this.series.forEach((element : any) => {
-        if(element.serie.includes(this.filterControlEmpresa.value.toUpperCase())){ 
-          this.series_busqueda.push({
-            "serie" : element.serie,
-            "id_serie" : element.id_serie
-          })
+    if(this.filterControlCliente.value.length > 0){
+      this.clientes_busqueda = [];
+      this.clientes.forEach((element : any) => {
+        if(element.nombre.includes(this.filterControlCliente.value.toUpperCase())){ 
+          this.clientes_busqueda.push({
+            "nombre" : element.nombre,
+            "id_catclientes" : element.id_catclientes
+          });
         }
       });
     }
   }
 
-  optionSerie(value : any){
-    this.busqueda.id_serie = value.option.id;
+  optionCliente(value : any){
+    this.busqueda.id_cliente = value.option.id;
     this.mostrarFacturas();
   }
 

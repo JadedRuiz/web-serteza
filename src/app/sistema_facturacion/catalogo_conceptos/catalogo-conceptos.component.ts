@@ -34,6 +34,7 @@ export class CatalogoConceptosComponent implements OnInit {
   concepto = {
     id_empresa : 0,
     id_concepto : 0,
+    clave_producto : "",
     descripcion : "",
     id_servicio : 0,
     id_unidad : 0,
@@ -228,6 +229,7 @@ export class CatalogoConceptosComponent implements OnInit {
     this.concepto = {
       id_empresa : 0,
       id_concepto : 0,
+      clave_producto : "",
       descripcion : "",
       id_servicio : 0,
       id_unidad : 0,

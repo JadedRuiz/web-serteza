@@ -1359,7 +1359,16 @@ export class ProcesoFacturadorComponent implements OnInit {
                 Swal.fire("Buen trabajo","La factura ha sido almacenada y descargada correctamente","success");
               }
             }else{
-              Swal.fire("Ha ocurrido un error",object.message,"error");
+              if(typeof object.message.type == "string"){
+                Swal.fire("Ha ocurrido un error",object.message,"error");
+              }
+              if(typeof object.message == "object" && object.message.length > 0){
+                let message = "";
+                object.message.forEach((element : any) => {
+                  message += element + "\n"; 
+                });
+                Swal.fire("Ha ocurrido un error",message,"error");
+              }
             }
           });
         }
