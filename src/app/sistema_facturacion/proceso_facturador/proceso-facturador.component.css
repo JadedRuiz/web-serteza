@@ -1,7 +1,7 @@
 .editable{
   border:none;
   outline:none;
-  background:transparent;    
+  background:transparent;
   font-weight: bolder;
   max-width: 100px;
 }
@@ -131,7 +131,7 @@
 .mat-table {
     overflow-x: scroll;
 }
-  
+
 .mat-cell,
 .mat-header-cell {
     word-wrap: initial;
@@ -158,7 +158,7 @@
 
 .contenedor::-webkit-scrollbar-button:increment,.contenedor::-webkit-scrollbar-button {
   display: none;
-} 
+}
 
 .contenedor::-webkit-scrollbar:horizontal {
   height: 10px;
@@ -171,7 +171,7 @@
 }
 
 .contenedor::-webkit-scrollbar-track {
-  border-radius: 10px;  
+  border-radius: 10px;
 }
 .dropzone{
   height: 300px;
@@ -195,4 +195,16 @@
   font-size: 20px;
   font-weight: 600;
   color: #38424c;
+}
+.cardMovil {
+  display: none;
+}
+
+@media only screen and (min-width: 320px) and (max-width: 736px) {
+  .tblDestok {
+    display: none;
+  }
+  .cardMovil {
+    display: inline-block;
+  }
 }

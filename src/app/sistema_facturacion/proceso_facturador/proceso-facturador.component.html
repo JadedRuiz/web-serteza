@@ -60,7 +60,7 @@
                 <div class="card-body">
                     <div class="container">
                         <div class="row">
-                            <mat-tab-group mat-align-tabs="center" class="mt-2 w-100" 
+                            <mat-tab-group mat-align-tabs="center" class="mt-2 w-100"
                             [selectedIndex]="selectedTab">
                                 <mat-tab label="Datos de factura">
                                     <div class="container contenedor mt-3">
@@ -194,7 +194,7 @@
                                                     </mat-select>
                                                 </mat-form-field>
                                             </div>
-                                            
+
                                         </div>
                                         <div class="row d-flex justify-content-end">
                                             <button *ngIf="band_button" class="btn btn-warning" (click)="changeTab()">Siguiente</button>
@@ -274,20 +274,20 @@
                                                                 <div class="col-9">
                                                                     <div class="input-group">
                                                                         <input type="search" class="form-control"
-                                                                        [matAutocomplete]="autoOpe" 
+                                                                        [matAutocomplete]="autoOpe"
                                                                         required placeholder="Buscar operador" style="text-transform: uppercase;">
                                                                         <div class="input-group-append">
                                                                             <button class="btn btn-success btn-sm" title="Nuevo operador" (click)="nuevaPersona(1)"><i class="fas fa-user-plus"></i></button>
                                                                         </div>
                                                                         <input type="search" class="form-control"
-                                                                        [matAutocomplete]="autoTrans" 
+                                                                        [matAutocomplete]="autoTrans"
                                                                         required
                                                                         placeholder="Buscar transporte" style="text-transform: uppercase;">
                                                                         <div class="input-group-append">
                                                                             <button class="btn btn-success btn-sm" title="Nuevo autotransporte" (click)="nuevoTransporte(1)"><i class="fas fa-truck-moving"></i></button>
                                                                         </div>
                                                                         <input type="search" class="form-control"
-                                                                        [matAutocomplete]="autoRemo" 
+                                                                        [matAutocomplete]="autoRemo"
                                                                         required
                                                                         placeholder="Buscar remolque" style="text-transform: uppercase;">
                                                                         <div class="input-group-append">
@@ -313,7 +313,7 @@
                                                                 <div class="col-3">
                                                                     <div class="input-group">
                                                                         <input type="search" class="form-control"
-                                                                        [matAutocomplete]="autoProp" 
+                                                                        [matAutocomplete]="autoProp"
                                                                         required placeholder="Buscar propietario, arrendador o notificado"
                                                                         style="text-transform: uppercase;">
                                                                         <div class="input-group-append">
@@ -339,7 +339,7 @@
                                                             <div class="row">
                                                                 <div class="col-12">
                                                                     <table mat-table [dataSource]="UbicacionSource" class="w-100 h-100">
-                                                                        
+
                                                                         <ng-container matColumnDef="Lugar">
                                                                             <th mat-header-cell *matHeaderCellDef>Lugar</th>
                                                                             <td mat-cell *matCellDef="let element">
@@ -358,7 +358,7 @@
                                                                                     </mat-option>
                                                                                 </mat-autocomplete>
                                                                             </td>
-                                                                        </ng-container> 
+                                                                        </ng-container>
 
                                                                         <ng-container matColumnDef="Tipo">
                                                                             <th mat-header-cell *matHeaderCellDef> Tipo Ubicación </th>
@@ -369,23 +369,23 @@
                                                                                   </select>
                                                                             </td>
                                                                         </ng-container>
-                                                                        
+
                                                                         <ng-container matColumnDef="Ide">
                                                                             <th mat-header-cell *matHeaderCellDef> Identificador </th>
                                                                             <td mat-cell *matCellDef="let element">
                                                                                 <input type="text" [(ngModel)]="element.ide" class="form-control" disabled>
                                                                             </td>
                                                                         </ng-container>
-                        
+
                                                                         <ng-container matColumnDef="Distancia">
                                                                             <th mat-header-cell *matHeaderCellDef> Distancia recorrida </th>
                                                                             <td mat-cell *matCellDef="let element">
                                                                                 <input type="number" min="0" [(ngModel)]="element.distancia_recorrida" class="form-control" [disabled]="!element.btn">
                                                                             </td>
                                                                         </ng-container>
-                        
+
                                                                         <ng-container matColumnDef="Fecha">
-                                                                            <th mat-header-cell *matHeaderCellDef>  
+                                                                            <th mat-header-cell *matHeaderCellDef>
                                                                                 Facha salida / llegada
                                                                             </th>
                                                                             <td mat-cell *matCellDef="let element">
@@ -394,7 +394,7 @@
                                                                         </ng-container>
 
                                                                         <ng-container matColumnDef="Accion">
-                                                                            <th mat-header-cell *matHeaderCellDef>  
+                                                                            <th mat-header-cell *matHeaderCellDef>
                                                                                 <div class="container d-flex">
                                                                                     <button class="btn btn-info btn-sm ml-2" title="Nueva linea" (click)="nuevaLineaUbicacion()"><i class="fas fa-plus-circle"></i></button>
                                                                                 </div>
@@ -461,7 +461,7 @@
                                                             </div>
                                                         </div>
                                                     </mat-expansion-panel>
-                                                </mat-accordion>  
+                                                </mat-accordion>
                                             </div>
                                         </div>
                                         <div class="row d-flex justify-content-end mt-2">
@@ -471,16 +471,16 @@
                                 </mat-tab>
                                 <mat-tab label="Conceptos" [disabled]="concepto_disable">
                                     <div class="container mt-3">
-                                        <div class="row contenedor" style="max-height: 250px;overflow: auto;">
+                                        <div class="row contenedor tblDestok" style="max-height: 250px;overflow: auto;">
                                             <table mat-table [dataSource]="dataSource" class="w-100 h-100">
-                                
+
                                                 <ng-container matColumnDef="Descripcion">
                                                     <th mat-header-cell *matHeaderCellDef> Descripción </th>
                                                     <td mat-cell *matCellDef="let element">
-                                                        <textarea 
-                                                        style="width: 98%;" 
+                                                        <textarea
+                                                        style="width: 98%;"
                                                         rows="1"
-                                                        class="form-control" 
+                                                        class="form-control"
                                                         [(ngModel)]="element.descripcion"
                                                         [matAutocomplete]="auto"
                                                         (keyup)="mostrarConceptos(element.descripcion)"
@@ -492,20 +492,20 @@
                                                         </mat-autocomplete>
                                                     </td>
                                                 </ng-container>
-                                                
+
                                                 <ng-container matColumnDef="Cantidad">
                                                     <th mat-header-cell *matHeaderCellDef> Cantidad </th>
                                                     <td mat-cell *matCellDef="let element">
                                                         <input style="width: 98%;" type="number" class="form-control" [(ngModel)]="element.cantidad" required min="1" (change)="calcularRowTotal(element.id_row)">
                                                     </td>
                                                 </ng-container>
-                                                
+
                                                 <ng-container matColumnDef="Precio">
                                                     <th mat-header-cell *matHeaderCellDef> Precio unitario</th>
                                                     <td mat-cell *matCellDef="let element">
                                                         <input style="width: 98%;" type="text" class="form-control" [(ngModel)]="element.precio" required min="1" (change)="calcularRowTotal(element.id_row)">
                                                     </td>
-                                                </ng-container> 
+                                                </ng-container>
 
                                                 <ng-container matColumnDef="Total">
                                                     <th mat-header-cell *matHeaderCellDef> Total </th>
@@ -514,8 +514,8 @@
                                                 </ng-container>
 
                                                 <ng-container matColumnDef="Accion">
-                                                    <th mat-header-cell *matHeaderCellDef>  
-                                                        <button class="btn btn-info btn-sm ml-2" title="Nueva linea" (click)="nuevaLinea()">Nueva linea</button>
+                                                    <th mat-header-cell *matHeaderCellDef>
+                                                        <button class="btn btn-info btn-sm ml-2" title="Nueva linea" (click)="nuevaLinea('1')">Nueva linea</button>
                                                     </th>
                                                     <td mat-cell *matCellDef="let element">
                                                         <button *ngIf="element.btn" class="btn btn-warning btn-sm" (click)="eliminarLinea(element.id_row)"><i class="fas fa-trash-alt"></i></button>
@@ -526,7 +526,7 @@
                                                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                                             </table>
                                         </div>
-                                        <div class="row">
+                                        <div class="row tblDestok">
                                             <div class="col-12 table-responsive px-0 mx-0">
                                                 <table class="table table-light">
                                                     <thead>
@@ -547,7 +547,7 @@
                                                             <td class="bold">$ {{datos_factura.importe}}</td>
                                                             <td class="bold">$ {{datos_factura.descuento_t}}</td>
                                                             <td class="bold"> $ {{datos_factura.iva_t}} </td>
-                                                            <td class="bold"> 
+                                                            <td class="bold">
                                                                 $ <input type="text" [(ngModel)]="datos_factura.ieps_t" class="editable">
                                                             </td>
                                                             <td class="bold">
@@ -561,6 +561,45 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                        </div>
+                                        <div class="cardMovil container px-0 mx-0" >
+                                          <div class="col-12 px-0 mx-0" *ngFor="let dataRow of dataMovil">
+                                            <div class="card w-100 px-0 mx-0 mb-1" style="width: 18rem;">
+                                              <div class="card-body container">
+                                                <div class="row">
+                                                  <div class="col-12 mt-1">
+                                                    <textarea
+                                                        id="concepto"
+                                                        style="width: 98%;"
+                                                        rows="1"
+                                                        [(ngModel)]="dataRow.descripcion"
+                                                        (keyup)="mostrarConceptos(dataRow.descripcion)"
+                                                        class="form-control"
+                                                        [matAutocomplete]="auto"
+                                                        placeholder="Buscar concepto"
+                                                        required></textarea>
+                                                        <mat-autocomplete #auto="matAutocomplete" >
+                                                            <mat-option *ngFor="let concepto of conceptos" [value]="concepto.descripcion" [id]="concepto.id_concepto_empresa">
+                                                                {{concepto.descripcion}}
+                                                            </mat-option>
+                                                        </mat-autocomplete>
+                                                  </div>
+                                                  <div class="col-12 mt-1">
+                                                    <input style="width: 98%;" type="number" class="form-control" [(ngModel)]="dataRow.cantidad" required min="1" (change)="calcularRowTotal(dataRow.id_row)" placeholder="Ingresa la cantidad">
+                                                  </div>
+                                                  <div class="col-12 mt-1">
+                                                    <input style="width: 98%;" type="text" class="form-control" [(ngModel)]="dataRow.precio" required min="1" (change)="calcularRowTotal(dataRow.id_row)" placeholder="Ingresa el precio">
+                                                  </div>
+                                                  <div class="col-12 mt-1">
+                                                    <input style="width: 98%;" type="text" class="editable" [(ngModel)]="dataRow.importe_print" disabled value="$ 0.00">
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <button type="button" class="btn btn-primary mt-1 w-100" (click)="nuevaLinea('2')">
+                                            <i class="fa fa-plus-circle" aria-hidden="true"></i> Agregar concepto
+                                          </button>
                                         </div>
                                         <div class="row d-flex justify-content-end">
                                             <button class="btn btn-info mt-2" (click)="previsualizarPDF()">Previsualizar</button>
@@ -750,7 +789,7 @@
                         <mat-label>Propietario</mat-label>
                         <input matInput [(ngModel)]="datos_ubicacion.nombre" required [disabled]="mostrarDatos">
                     </mat-form-field>
-                </div> 
+                </div>
             </div>
             <div class="row">
                 <div class="col-12"><h3>Dirección</h3></div>

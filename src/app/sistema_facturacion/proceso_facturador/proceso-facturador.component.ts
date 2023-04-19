@@ -209,6 +209,7 @@ export class ProcesoFacturadorComponent implements OnInit {
   regimenes : any;
   cat_relaciones : any;
   formatter : any;
+  dataMovil : any;
 
   constructor(
     private empresa_service: EmpresaService,
@@ -256,6 +257,30 @@ export class ProcesoFacturadorComponent implements OnInit {
       neto : "0.00",
       btn : false
     });
+    this.dataMovil = [{
+      id_row : 0,
+      id_concepto : 0,
+      descripcion : "",
+      cantidad : "1",
+      precio : "0.00",
+      unidad : "",
+      importe : "0.00",
+      importe_print : "",
+      descuento_porcent : 0,
+      descuento : "0.00",
+      iva_porcent : 0,
+      iva : "0.00",
+      iva_r_porcent : 0,
+      iva_r : "0.00",
+      ieps : "0.00",
+      ieps_porcent : 0,
+      otros : "0.00",
+      otro_porcent : 0,
+      isr_r : "0.00",
+      isr_r_porcent : 0,
+      neto : "0.00",
+      btn : false
+    }]
     this.mercancias = [];
   }
 
@@ -301,7 +326,7 @@ export class ProcesoFacturadorComponent implements OnInit {
       }
     });
   }
-  
+
   mostrarTipoRela(){
     this.cat_relaciones = [];
     this.compartido_service.obtenerCatalogo("sat_catRelaciones")
@@ -343,7 +368,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     if(this.filterControlEmpresa.value.length > 0){
       this.empresas_busqueda = [];
       this.empresas.forEach((element : any) => {
-        if(element.empresa.includes(this.filterControlEmpresa.value.toUpperCase())){ 
+        if(element.empresa.includes(this.filterControlEmpresa.value.toUpperCase())){
           this.empresas_busqueda.push({
             "empresa" : element.empresa,
             "id_empresa" : element.id_empresa
@@ -394,7 +419,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     if(this.filterControlCliente.value.length > 0){
       this.clientes_busqueda = [];
       this.clientes.forEach((element : any) => {
-        if(element.nombre.includes(this.filterControlCliente.value.toUpperCase())){ 
+        if(element.nombre.includes(this.filterControlCliente.value.toUpperCase())){
           this.clientes_busqueda.push({
             "nombre" : element.nombre,
             "id_catclientes" : element.id_catclientes
@@ -408,7 +433,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     this.datos_factura.id_cliente = value.option.id;
     this.band_view = true;
   }
-  
+
   mostrarCliente(id : any){
     this.limpiarCampos();
     this.mostrarRegimen();
@@ -498,7 +523,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     if(this.filterControlEstado.value.length > 0){
       this.estados_busqueda = [];
       this.estados.forEach((element : any) => {
-        if(element.estado.includes(this.filterControlEstado.value.toUpperCase())){ 
+        if(element.estado.includes(this.filterControlEstado.value.toUpperCase())){
           this.estados_busqueda.push({
             "estado" : element.estado,
             "id_estado" : element.id_estado
@@ -570,7 +595,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     if(this.filterControlClave.value.length > 0){
       this.claves_unidad_copy = [];
       this.claves_unidad.forEach((element : any) => {
-        if(element.descripcion.toLowerCase().includes(this.filterControlClave.value.toLowerCase()) || element.clave.includes(this.filterControlClave.value.toUpperCase())){ 
+        if(element.descripcion.toLowerCase().includes(this.filterControlClave.value.toLowerCase()) || element.clave.includes(this.filterControlClave.value.toUpperCase())){
           this.claves_unidad_copy.push({
             "descripcion" : element.descripcion,
             "clave" : element.clave,
@@ -609,7 +634,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     if(this.filterControlEmbalaje.value.length > 0){
       this.embalajes_copy = [];
       this.embalajes.forEach((element : any) => {
-        if(element.descripcion.toLowerCase().includes(this.filterControlEmbalaje.value.toLowerCase()) || element.clave.includes(this.filterControlEmbalaje.value.toUpperCase())){ 
+        if(element.descripcion.toLowerCase().includes(this.filterControlEmbalaje.value.toLowerCase()) || element.clave.includes(this.filterControlEmbalaje.value.toUpperCase())){
           this.embalajes_copy.push({
             "descripcion" : element.descripcion,
             "clave" : element.clave,
@@ -619,11 +644,11 @@ export class ProcesoFacturadorComponent implements OnInit {
       });
     }
   }
-  
+
   optionEmbalaje(event : any){
     this.datos_mercancia.embalaje = event.option.id;
   }
-  
+
   buscarMoneda(){
     this.monedas_copy = [];
     this.monedas.forEach((element : any) => {
@@ -636,7 +661,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     if(this.filterControlMonedas.value.length > 0){
       this.monedas_copy = [];
       this.monedas.forEach((element : any) => {
-        if(element.descripcion.toLowerCase().includes(this.filterControlMonedas.value.toLowerCase()) || element.clave_moneda.includes(this.filterControlMonedas.value.toUpperCase())){ 
+        if(element.descripcion.toLowerCase().includes(this.filterControlMonedas.value.toLowerCase()) || element.clave_moneda.includes(this.filterControlMonedas.value.toUpperCase())){
           this.monedas_copy.push({
             "descripcion" : element.descripcion,
             "clave_moneda" : element.clave_moneda,
@@ -809,37 +834,66 @@ export class ProcesoFacturadorComponent implements OnInit {
       }
     });
   }
-  
+
   optionRegimen(event : any){
     this.cliente.id_regimenfiscal = event.value;
   }
 
-  nuevaLinea(){
-    this.dataSource.data.push({
-      id_row : this.dataSource.data.length+1,
-      id_concepto : 0,
-      descripcion : "",
-      cantidad : "1",
-      precio : "0.00",
-      unidad : "",
-      importe : "0.00",
-      importe_print : "0.00",
-      descuento_porcent : 0,
-      descuento : "0.00",
-      iva_porcent : 0,
-      iva : "0.00",
-      ieps : "0.00",
-      ieps_porcent : 0,
-      otros : "0.00",
-      otro_porcent : 0,
-      subtotal : "0.00",
-      iva_r_porcent : 0,
-      iva_r : "0.00",
-      isr_r_porcent : 0,
-      isr_r : "0.00",
-      neto : "0.00",
-      btn : false
-    });
+  nuevaLinea(tipo : string){
+    if(tipo == "1"){
+      this.dataSource.data.push({
+        id_row : this.dataSource.data.length+1,
+        id_concepto : 0,
+        descripcion : "",
+        cantidad : "1",
+        precio : "0.00",
+        unidad : "",
+        importe : "0.00",
+        importe_print : "0.00",
+        descuento_porcent : 0,
+        descuento : "0.00",
+        iva_porcent : 0,
+        iva : "0.00",
+        ieps : "0.00",
+        ieps_porcent : 0,
+        otros : "0.00",
+        otro_porcent : 0,
+        subtotal : "0.00",
+        iva_r_porcent : 0,
+        iva_r : "0.00",
+        isr_r_porcent : 0,
+        isr_r : "0.00",
+        neto : "0.00",
+        btn : false
+      });
+    }
+    if(tipo == "2"){
+      this.dataMovil.push({
+        id_row : this.dataSource.data.length+1,
+        id_concepto : 0,
+        descripcion : "",
+        cantidad : "1",
+        precio : "0.00",
+        unidad : "",
+        importe : "0.00",
+        importe_print : "0.00",
+        descuento_porcent : 0,
+        descuento : "0.00",
+        iva_porcent : 0,
+        iva : "0.00",
+        ieps : "0.00",
+        ieps_porcent : 0,
+        otros : "0.00",
+        otro_porcent : 0,
+        subtotal : "0.00",
+        iva_r_porcent : 0,
+        iva_r : "0.00",
+        isr_r_porcent : 0,
+        isr_r : "0.00",
+        neto : "0.00",
+        btn : false
+      })
+    }
     this.table.renderRows();
   }
 
@@ -890,7 +944,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     });
     // subtotal = (iva+ieps+descuento+otros+importe);
     // total = (subtotal-(iva_r+isr_r));
-    
+
     this.datos_factura.importe = this.formatter.format(importe);
     this.datos_factura.descuento_t = this.formatter.format(descuento);
     this.datos_factura.iva_t = this.formatter.format(iva);
@@ -901,7 +955,7 @@ export class ProcesoFacturadorComponent implements OnInit {
     this.datos_factura.isr_r_t = this.formatter.format(isr_r);
     this.datos_factura.total = this.formatter.format(total);
   }
-  
+
   eliminarLinea(id : any){
     this.dataSource.data.forEach((element : any, index : any) => {
       if(element.id_row == id){
@@ -1031,7 +1085,7 @@ export class ProcesoFacturadorComponent implements OnInit {
   }
 
   nuevaPersona(tipo : any){
-    this.tipo_persona = tipo; 
+    this.tipo_persona = tipo;
     this.openModal(4);
   }
 
@@ -1098,7 +1152,7 @@ export class ProcesoFacturadorComponent implements OnInit {
       this.modalUbicacion = this.modalService.open(this.contenidoDelModalUbicacion,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
     }
     if(tipo == 3){
-      
+
       if(this.tipo_vehiculo == 2){
         this.modalTransporte = this.modalService.open(this.contenidoDelModalTransporte,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop'});
       }
@@ -1315,7 +1369,7 @@ export class ProcesoFacturadorComponent implements OnInit {
           });
         }
         if(tipo == 2){  //Editar
-          
+
         }
         if(tipo == 3){  //Alta factura
           this.factura_service.facAltaFactura(this.datos_factura)
@@ -1324,7 +1378,7 @@ export class ProcesoFacturadorComponent implements OnInit {
               this.obtenerFolio(this.datos_factura.id_serie);
               this.limpiarCamposFactura();
               this.limpiarCamposCataporte();
-              if(object.data == "1"){ 
+              if(object.data == "1"){
                 Swal.fire("Buen trabajo","La factura ha sido almacenada correctamente","success");
               }else{
                 //DESCARGA PDF
@@ -1355,7 +1409,7 @@ export class ProcesoFacturadorComponent implements OnInit {
                   elem.click();
                   document.body.removeChild(elem);
                 }
-                
+
                 Swal.fire("Buen trabajo","La factura ha sido almacenada y descargada correctamente","success");
               }
             }else{
@@ -1365,7 +1419,7 @@ export class ProcesoFacturadorComponent implements OnInit {
               if(typeof object.message == "object" && object.message.length > 0){
                 let message = "";
                 object.message.forEach((element : any) => {
-                  message += element + "\n"; 
+                  message += element + "\n";
                 });
                 Swal.fire("Ha ocurrido un error",message,"error");
               }
@@ -1444,8 +1498,8 @@ export class ProcesoFacturadorComponent implements OnInit {
     });
   }
 
-  changeTab() { 
-    this.selectedTab += 1; 
+  changeTab() {
+    this.selectedTab += 1;
   }
 
   cambiarImagen(event: any){
@@ -1481,7 +1535,7 @@ export class ProcesoFacturadorComponent implements OnInit {
       Swal.fire("Aviso","Primero adjunta un arhivo valido","info");
     }else{
       this.openModal(5);
-      
+
     }
   }
 
