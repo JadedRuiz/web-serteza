@@ -1,0 +1,281 @@
+<div class="header {{color}}" style="height: 250px;">
+    <div class="container-fluid">
+    </div>
+  </div>
+  <div class="container-fluid mt--9">
+    <div class="row">
+        <div class="col-lg-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">VACACIONES</h4>
+                  <div class="card-category">
+                    <div class="row align-items-center">
+                        <div class="col-lg-4 col-sm-12 d-flex align-items-center">
+                            <mat-form-field class="w-100 px-1" *ngIf="id_perfil == 3">
+                                <mat-label>Buscar empleado</mat-label>
+                                <input type="text"
+                                        placeholder="Ingrese el nombre o id del empleado"
+                                        aria-label="Number"
+                                        matInput
+                                        (keyup)="buscarEmpleado()"
+                                        [formControl]="filterControlEmpleados"
+                                        [matAutocomplete]="auto"
+                                        style="text-transform: uppercase;"
+                                        name="empresa">
+                                <mat-autocomplete #auto="matAutocomplete">
+                                    <mat-option *ngFor="let empleado of objEmpleados" [value]="empleado.nombre" [id]="empleado.id_empleado">
+                                        {{empleado.nombre}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
+                            <button class="btn btn-sm btn-success"><i class="fa fa-search" aria-hidden="true"></i></button>
+                        </div>
+                        <div class="col-lg-4 col-sm-12" *ngIf="id_perfil == 7">
+                            <mat-form-field class="w-100">
+                                <mat-label>Empleado</mat-label>
+                                <input type="text"
+                                        placeholder="Nombre del empleado"
+                                        aria-label="Text"
+                                        matInput
+                                        style="text-transform: uppercase;"
+                                        name="empresa">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-xl-3 col-lg-4 col-sm-12" >
+                            <mat-form-field class="example-full-width w-100">
+                                <mat-label>Empresa</mat-label>
+                                <input matInput [(ngModel)]="objEmpleado.empresa" type="text" placeholder="Aqui va la empresa" readonly>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-sm-12">
+                            <mat-form-field class="example-full-width w-100">
+                                <mat-label>Sucursal</mat-label>
+                                <input matInput [(ngModel)]="objEmpleado.sucursal" type="text" placeholder="Aqui va la sucursal" readonly>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-sm-12">
+                            <mat-form-field class="example-full-width w-100">
+                                <mat-label>Fecha Ingreso</mat-label>
+                                <input matInput [(ngModel)]="objEmpleado.fecha_ing" type="date" readonly>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-sm-12">
+                            <mat-form-field class="example-full-width w-100">
+                                <mat-label>Depto</mat-label>
+                                <input matInput [(ngModel)]="objEmpleado.depto" type="text" placeholder="Aqui va el dept" readonly>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-sm-12">
+                            <mat-form-field class="example-full-width w-100">
+                                <mat-label>Puesto</mat-label>
+                                <input matInput [(ngModel)]="objEmpleado.puesto" type="text" placeholder="Aqui va el puesto" readonly>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-xl-9 col-lg-4 col-sm-12">
+                            <div class="row">
+                                <div class="col-xl-3 col-lg-3 col-sm-12 d-flex align-items-center">
+                                    <mat-form-field class="example-full-width w-100 px-1">
+                                        <mat-label>Vacaciones disp.</mat-label>
+                                        <input matInput [(ngModel)]="objEmpleado.vacaciones.disp" type="number" readonly>
+                                    </mat-form-field>
+                                    <button class="btn btn-sm {{btnColor}}" (click)="verDetalle()">
+                                        <i *ngIf="!bDisp" class="fa fa-eye" aria-hidden="true" title="Ver Detalle"></i>
+                                        <i *ngIf="bDisp" class="fa fa-times" aria-hidden="true" title="Cerrar"></i>
+                                    </button>
+                                </div>
+                                <div *ngIf="bDisp" class="col-xl-2 col-lg-2 col-sm-12">
+                                    <!-- <mat-form-field class="example-full-width w-100 px-1">
+                                        <mat-label>Ejercicio</mat-label>
+                                        <input matInput [(ngModel)]="objEmpleado.vacaciones.ejercicio" type="number" readonly>
+                                    </mat-form-field> -->
+                                    <mat-form-field class="example-full-width w-100">
+                                        <mat-label>Ejercicio</mat-label>
+                                        <mat-select [(ngModel)]="objEmpleado.vacaciones.ejercicio">
+                                          <mat-option *ngFor="let ejercicio of ejercicios" [value]="ejercicio">
+                                            {{ejercicio}}
+                                          </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div *ngIf="bDisp" class="col-xl-2 col-lg-2 col-sm-12">
+                                    <mat-form-field class="example-full-width w-100 px-1">
+                                        <mat-label>Autorizados</mat-label>
+                                        <input matInput [(ngModel)]="objEmpleado.vacaciones.autorizados" type="number" readonly>
+                                    </mat-form-field>
+                                </div>
+                                <div *ngIf="bDisp" class="col-xl-2 col-lg-2 col-sm-12 d-flex align-items-center">
+                                    <mat-form-field class="example-full-width w-100 px-1">
+                                        <mat-label>Gozados</mat-label>
+                                        <input matInput [(ngModel)]="objEmpleado.vacaciones.gozados" type="number" readonly>
+                                    </mat-form-field>
+                                    <button class="btn btn-sm btn-warning" (click)="vacacionesGozadas()" title="Ver vacaciones gozadas">
+                                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <div *ngIf="bDisp" class="col-xl-2 col-lg-2 col-sm-12">
+                                    <mat-form-field class="example-full-width w-100 px-1">
+                                        <mat-label>Saldo</mat-label>
+                                        <input matInput [(ngModel)]="objEmpleado.vacaciones.saldo" type="number" readonly>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="py-1 my-1">
+                    <div class="row">
+                        <div class="col-12 d-flex align-items-start text-center">
+                            <p class="w-100" style="font-size: 20px;">Ultimas Solicitudes de Vacaciones</p>
+                            <button class="btn btn-sm btn-success" (click)="nuevaSolicitud()"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                    <hr class="py-1 my-1">
+                    <div class="row">
+                        <div *ngFor="let solicitud of arraySolicitudes" class="col-lg-3 col-sm-12">
+                            <div class="card w-100 my-1">
+                                <div class="card-body">
+                                    <h5 class="card-title">Solcitud del 15 de Abril del 2022</h5>
+                                    <p class="badge badge-warning">Por autorizar</p>
+                                    <p class="card-text">Dias solicitados : 12</p>
+                                    <p class="card-text">Del 11-05-2023 a 23-05-2023</p>
+                                    <div *ngIf="id_perfil == 3" ngbDropdown class="d-inline-block">
+                                        <button type="button" class="btn btn-primary" id="dropdownBasic1" ngbDropdownToggle>
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        </button>
+                                        <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                                            <button ngbDropdownItem>Aceptar</button>
+                                            <button ngbDropdownItem>Rechazar</button>
+                                        </div>
+                                    </div>
+                                    <a *ngIf="id_perfil == 3" href="#" class="btn btn-primary" title="Subir Imagen"><i class="fa fa-upload" aria-hidden="true"></i></a>
+                                    <a  href="#" class="btn btn-primary" title="Imprimir"><i class="fa fa-print" aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-12">
+                            <div class="card w-100 my-1">
+                                <div class="card-body">
+                                    <h5 class="card-title">Solcitud del 15 de Abril del 2022</h5>
+                                    <p class="badge badge-success">Autorizado</p>
+                                    <p class="card-text">Dias solicitados : 12</p>
+                                    <p class="card-text">Del 11-05-2023 a 23-05-2023</p>
+                                    <a *ngIf="id_perfil == 3" href="#" class="btn btn-primary" title="Subir Imagen"><i class="fa fa-upload" aria-hidden="true"></i></a>
+                                    <a  href="#" class="btn btn-primary" title="Imprimir"><i class="fa fa-print" aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- MODAL VACACIONES GOZADAS -->
+<ng-template #modal_vac let-modal_vac>
+    <div class="modal-header">
+        <h2 class="modal-title">Vacaciones Gozadas</h2>
+    </div>
+    <div class="modal-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Dias gozados</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>15 de Febrero del 2021</td>
+                    </tr>
+                    <tr>
+                        <td>15 de Febrero del 2021</td>
+                    </tr>
+                    <tr>
+                        <td>15 de Febrero del 2021</td>
+                    </tr>
+                    <tr>
+                        <td>15 de Febrero del 2021</td>
+                    </tr>
+                    <tr>
+                        <td>15 de Febrero del 2021</td>
+                    </tr>
+                    <tr>
+                        <td>15 de Febrero del 2021</td>
+                    </tr>
+                    <tr>
+                        <td>15 de Febrero del 2021</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="modal_vac.close('Save click')">Cerrar</button>
+    </div>
+</ng-template>
+  <!-- MODAL SOLICITAR VACACIONES -->
+<ng-template #modal_sol let-modal_sol>
+    <div class="modal-header">
+        <h2 class="modal-title">Solicitar Vacaciones</h2>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-lg-4 col-sm-12">
+                <mat-form-field class="example-full-width w-100">
+                    <mat-label>Fecha Ingreso</mat-label>
+                    <input matInput [(ngModel)]="objEmpleado.fecha_ing" type="date" readonly>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-4 col-sm-12">
+                <mat-form-field class="example-full-width w-100">
+                    <mat-label>Fecha de Solicitud</mat-label>
+                    <input matInput [(ngModel)]="objEmpleado.fecha_ing" type="date" readonly>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-sm-12">
+                <mat-form-field class="example-full-width w-100">
+                    <mat-label>Fecha Inicial</mat-label>
+                    <input matInput [(ngModel)]="objEmpleado.fecha_ing" type="date">
+                </mat-form-field>
+            </div>
+            <div class="col-lg-3 col-sm-12">
+                <mat-form-field class="example-full-width w-100">
+                    <mat-label>Fecha Termino</mat-label>
+                    <input matInput [(ngModel)]="objEmpleado.fecha_ing" type="date">
+                </mat-form-field>
+            </div>
+            <div class="col-lg-3 col-sm-12">
+                <mat-form-field class="example-full-width w-100">
+                    <mat-label>Fecha Inicio Labores</mat-label>
+                    <input matInput [(ngModel)]="objEmpleado.fecha_ing" type="date">
+                </mat-form-field>
+            </div>
+            <div class="col-lg-3 col-sm-12">
+                <mat-form-field class="example-full-width w-100">
+                    <mat-label>Dias a disfrutar</mat-label>
+                    <input matInput [(ngModel)]="objEmpleado.fecha_ing" type="number" readonly>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-sm-12">
+                <mat-form-field class="example-full-width w-100">
+                    <mat-label>Observaciones</mat-label>
+                    <textarea matInput placeholder="Describe el motivo de tu solicitud"></textarea>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="enviarSolicitud()">Solicitar</button>
+        <button type="button" class="btn btn-warning" (click)="modal_sol.close('Save click')">Cerrar</button>
+    </div>
+</ng-template>

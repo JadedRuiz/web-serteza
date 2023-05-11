@@ -32,6 +32,7 @@ import {MatListModule} from '@angular/material/list';
 import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.component';
 import { CatalogoSucursalComponent } from './catalogo_sucursal/catalogo_sucursal.component';
 import { ComponentesModule } from '../componentes/compartido.module';
+import { ProcedVacacionesComponent } from './proced_vacaciones/proced_vacaciones.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { ComponentesModule } from '../componentes/compartido.module';
     CatalogoSucursalComponent,
     ProcedimientoContratacionComponent,
     ProcedimientoBajaComponent,
-    ProcedimientoModificacionComponent
+    ProcedimientoModificacionComponent,
+    ProcedVacacionesComponent
   ],
   imports: [
     CompartidoModule,
@@ -57,9 +59,9 @@ import { ComponentesModule } from '../componentes/compartido.module';
     ReactiveFormsModule,
     RouterModule,
     WebcamModule,
-    MatAutocompleteModule,
-    MatFormFieldModule,
     MatInputModule,
+    MatFormFieldModule,
+    MatAutocompleteModule,
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,

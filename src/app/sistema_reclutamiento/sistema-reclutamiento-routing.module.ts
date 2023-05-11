@@ -10,6 +10,7 @@ import { ProcedimientoBajaComponent } from './procedimiento_baja/procedimiento_b
 import { ProcedimientoContratacionComponent } from './procedimiento_contratacion/procedimiento_contratacion.component';
 import { ProcedimientoModificacionComponent } from './procedimiento_modificacion/procedimiento_modificacion.component';
 import { SistemaReclutamientoComponent } from './sistema-reclutamiento.component';
+import { ProcedVacacionesComponent } from './proced_vacaciones/proced_vacaciones.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,7 @@ const routes: Routes = [
         { path : "catalogo_usuario", component : CatalogoUsuarioComponent},
         { path : "catalogo_empresa", component : CatalogoEmpresaComponent},
         { path : "catalogo_sucursal", component : CatalogoSucursalComponent},
+        { path : "proced_vacaciones", component : ProcedVacacionesComponent},
         { path : "procedimiento_contratacion", component : ProcedimientoContratacionComponent},
         { path : "procedimiento_baja", component : ProcedimientoBajaComponent},
         { path : "procedimiento_modificacion", component : ProcedimientoModificacionComponent},

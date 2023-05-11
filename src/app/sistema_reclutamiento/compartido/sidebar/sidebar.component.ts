@@ -85,9 +85,18 @@ export class SidebarComponent implements OnInit {
         {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'}
       );
       procesos.push(
+        {path: 'proced_vacaciones', title: 'Vacaciones', icon: 'ni-calendar-grid-58'},
         {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17'},
         {path: 'procedimiento_modificacion', title: 'Modificaciones', icon: 'ni-curved-next'},
         {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove'},
+      );
+    }
+    //EMPLEADO
+    if(this.perfil == 7){
+      catalogos.push(
+      );
+      procesos.push(
+        {path: 'proced_vacaciones', title: 'Vacaciones', icon: 'ni-calendar-grid-58'}
       );
     }
     this.menuItems = [
