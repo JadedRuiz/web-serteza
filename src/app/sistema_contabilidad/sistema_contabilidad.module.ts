@@ -25,6 +25,7 @@ import { RouterModule } from '@angular/router';
 import { ConceptosComponent } from './conceptos/conceptos.component';
 import { CurrencyPipe} from '@angular/common';
 import { CalcularComponent } from './calcular_empleados/calcular/calcular.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { CalcularComponent } from './calcular_empleados/calcular/calcular.compon
     MatFormFieldModule,
     MatTableModule,
     MatPaginatorModule,
+    MatProgressBarModule,
     MatIconModule,
     MatMenuModule,
     MatTabsModule,

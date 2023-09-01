@@ -112,6 +112,7 @@ import { MovBancosComponent } from './sistema_contabilidad/mov-bancos/mov-bancos
     MatSliderModule,
     MatSlideToggleModule,
     MatSnackBarModule,
+    MatProgressBarModule,
     MatSortModule,
     MatTableModule,
     MatTabsModule,
@@ -122,7 +123,7 @@ import { MovBancosComponent } from './sistema_contabilidad/mov-bancos/mov-bancos
   providers: [
     CookieService,
     { provide: LocationStrategy, useClass: HashLocationStrategy }
-  
+
   ],
   bootstrap: [AppComponent]
 })
