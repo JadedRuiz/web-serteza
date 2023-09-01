@@ -1,0 +1,64 @@
+<div class="header " style="height: 250px;">
+</div>
+<div class="container-fluid mt--9">
+  <div class="row">
+    <div class="col">
+      <div class="card border-info">
+        <div class="card-header">
+          Calculo integrados de empleados
+        </div>
+        <div class="card-body">
+          <div class="container-fluid">
+            <div class="col-sm-12 col-lg-12">
+              <mat-form-field class="w-100">
+                <mat-label>Buscar empresa</mat-label>
+                <input type="text" placeholder="Ingrese el nombre o id de la empresa" aria-label="Number" matInput
+                  (keyup)="buscarEmpresa()" [formControl]="filterControlEmpresa" [matAutocomplete]="auto"
+                  style="text-transform: uppercase;">
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionEmpresa($event)">
+                  <mat-option *ngFor="let empresa of empresas_busqueda" [value]="empresa.empresa"
+                    [id]="empresa.id_empresa">
+                    {{empresa.empresa}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-lg-3">
+                <mat-form-field class="w-100">
+                  <mat-label>BIMESTRE</mat-label>
+                  <mat-select [(ngModel)]="mesActual" (selectionChange)="mesSeleccionado($event.value)">
+                    <mat-option *ngFor="let messel of bimestres" [value]="messel.Id">{{messel.meses}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col-sm-12 col-lg-3">
+                <mat-form-field class="w-100">
+                  <mat-label>EJERCICIO</mat-label>
+                  <mat-select [(ngModel)]="ejercicioActual" (selectionChange)="ejercicioSeleccionado($event)">
+                    <mat-option *ngFor="let ejersel of ejercicio"
+                      [value]="ejersel.ejercicio">{{ejersel.ejercicio}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-3 col-sm-12">
+                <button (click)="cargaPrincipal()" class="btn btn-success" title="Validar"><i class="fa fa-plus-circle" aria-hidden="true"></i>
+                  Validar</button>
+              </div>
+              <div class="col-lg-3 col-sm-12">
+                <button (click)="procesar()" class="btn btn-success" title="Validar"><i class="fa fa-plus-circle" aria-hidden="true"></i>
+                  procesar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-lg-3">
+          <h1 class="title text-center"> Proceso</h1>
+          <div>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

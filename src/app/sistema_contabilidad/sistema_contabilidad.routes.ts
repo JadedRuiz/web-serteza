@@ -9,6 +9,7 @@ import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.co
 import { SistemaContabilidadComponent } from './sistema_contabilidad.component';
 import { DescargaMasivaComponent } from './descarga-masiva/descarga-masiva.component';
 import { MovBancosComponent } from './mov-bancos/mov-bancos.component';
+import { CalcularComponent } from './calcular_empleados/calcular/calcular.component';
 
 
 const routes: Routes = [
@@ -20,9 +21,10 @@ const routes: Routes = [
           { path: 'xml-upload', component : XmlUploadComponent},
           { path: 'facturas', component : FacturasComponent},
           { path: 'bancos', component : BancosComponent},
-          { path: 'conceptos', component : ConceptosComponent}, 
-          { path : 'catalogo_empresa', component : CatalogoEmpresaComponent}, 
+          { path: 'conceptos', component : ConceptosComponent},
+          { path : 'catalogo_empresa', component : CatalogoEmpresaComponent},
           { path : 'descarga-masiva', component : DescargaMasivaComponent},
+          {path : 'calcular', component: CalcularComponent},
           { path : 'mov-banco', component : MovBancosComponent},
 
           { path: '', redirectTo: '/login', pathMatch: 'full'}

@@ -25,6 +25,7 @@ export class CandidatoService {
         return throwError(err);
       }));
   }
+  
   altaCandidato(candidato : Candidato){
     let url = SERVER_API+"candidato/altaCandidato";
     return this.http.post( url, candidato )

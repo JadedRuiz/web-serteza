@@ -29,7 +29,7 @@
                 <div class="file-upload">
                     <div class="file-select">
                       <div class="file-select-button" id="fileName">Seleccionar archivos</div>
-                      <div class="file-select-name" id="noFile">{{text_input}}</div> 
+                      <div class="file-select-name" id="noFile">{{text_input}}</div>
                       <input type="file" name="chooseFile" id="chooseFile" (change)="seleccionarDir($event)" multiple [disabled]="id_empresa != 0 ? false : true">
                     </div>
                 </div>

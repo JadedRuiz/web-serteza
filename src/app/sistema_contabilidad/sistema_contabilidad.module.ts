@@ -24,6 +24,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { RouterModule } from '@angular/router';
 import { ConceptosComponent } from './conceptos/conceptos.component';
 import { CurrencyPipe} from '@angular/common';
+import { CalcularComponent } from './calcular_empleados/calcular/calcular.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { CurrencyPipe} from '@angular/common';
     CatalogoEmpresaComponent,
     DescargaMasivaComponent,
     DashboardComponent,
-    ConceptosComponent
+    ConceptosComponent,
+    CalcularComponent
   ],
   imports: [
     CommonModule,

@@ -87,7 +87,7 @@ export class SidebarComponent implements OnInit {
     //   { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: false, tipo : ""}
     // ];
   }
-  
+
   cerrarSesion(){
     Swal.fire({
       title: '¿Estas que deseas cerrar sesión?',
