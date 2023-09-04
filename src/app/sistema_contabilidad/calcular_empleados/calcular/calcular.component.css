@@ -1,0 +1,7 @@
+/* Estilos para la barra de progreso */
+.mat-progress-bar {
+  height: 18px; /* Altura de la barra de progreso */
+  background-color: #f0f0f0; /* Color de fondo */
+  border-radius: 10px; /* Borde redondeado */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.349); /* Sombra suave */
+}

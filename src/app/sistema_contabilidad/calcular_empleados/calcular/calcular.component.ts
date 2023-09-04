@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContabilidadService } from 'src/app/services/contabilidad/contabilidad.service';
@@ -8,7 +8,6 @@ import { NominaService } from 'src/app/services/Nomina/Nomina.service';
 import Swal from 'sweetalert2';
 import { CurrencyPipe } from '@angular/common';
 import { CalculoService } from 'src/app/services/calculoIntegrado/calculo.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-calcular',
@@ -69,7 +68,7 @@ export class CalcularComponent implements OnInit {
     private currencyPipe: CurrencyPipe,
     private empresa_service: EmpresaService,
     private calcularService: CalculoService,
-    private snackBar: MatSnackBar
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -79,6 +78,16 @@ export class CalcularComponent implements OnInit {
     this.ejercicios();
     this.mostrarEmpresas();
   }
+ // PROCESAR EMPLEADOS
+ empleados: any = [];
+ loading = false;
+ totalRegistros: number = 0;
+ progreso: number = 0;
+ registrosProcesados = 0;
+ empleadoProcesado = {
+   rfc: '',
+   nombre: '',
+ };
 
   // CONSULTAR EMPLEADOS
   traerEmpleados() {
@@ -90,46 +99,92 @@ export class CalcularComponent implements OnInit {
     this.calcularService.obtenerEmpleados(json).subscribe((obj: any) => {
       if (obj.ok) {
         this.empleados = obj.data;
-        Swal.fire('Registros obtenidos');
-        console.log('obj :>> ', obj);
-        this.procesar()
-        console.log('json :>> ', json);
+        this.totalRegistros = this.empleados.length;
+        //console.log('algo seguramente:>> ', obj);
+        this.procesar();
+        //console.log('json :>> ', json);
+        Swal.fire({
+          icon: 'success',
+          title: 'Trabajadores obtenidos',
+        })
       } else {
+        Swal.fire('ha ocurrido un error');
       }
     });
+
   }
 
-  // PROCESAR EMPLEADOS
-  empleados: any = [];
-  loading = false;
   procesar() {
-    this.loading = true;
+    this.loading = true; // Activar la barra de carga
+    this.progreso = 0; // Inicializa el progreso
+    this.registrosProcesados = 0; // Inicializa la cantidad de registros procesados
 
-    this.empleados.forEach((empleado: any) => {
-      this.calcular(empleado.rfc);
-    })
+    // Crear un arreglo de Promesas para los cálculos
+    const promesas = this.empleados.map((empleado: any) => {
+      console.log(empleado);
 
-    console.log("hola");
-    // Mostrar notificación de proceso completado
-    this.snackBar.open('Proceso completado', 'Cerrar', {
-      duration: 3000, // Duración de la notificación en milisegundos
+      return this.calcular(empleado.rfc).then(() => {
+        this.empleadoProcesado = {
+          rfc: empleado.rfc,
+          nombre: empleado.nombre,
+        };
+
+        // Incrementa el número de registros procesados
+        this.registrosProcesados++;
+        // Calcula el progreso en función de los registros procesados
+        this.progreso =
+          (this.registrosProcesados / this.empleados.length) * 100;
+        // Detecta cambios en el componente para actualizar la vista
+        this.cdr.detectChanges();
+      });
     });
+
+    // Usar Promise.all para esperar a que todas las Promesas se resuelvan
+    return Promise.all(promesas)
+      .then(() => {
+        this.loading = false; // Desactivar la barra de carga
+
+        // Mostrar notificación de proceso completado
+        Swal.fire({
+          title: 'Proceso completado',
+          showClass: {
+            popup: 'animate__animated animate__fadeInDown',
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp',
+          },
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Ha ocurrido un error',
+        });
+      });
   }
 
-  // CALCULO INTEGRADo
-  calcular(rfc: string) {
+  calcular(rfc: string): Promise<void> {
+    console.log('hola');
     let json = {
       id_empresa: this.id_empresa,
       rfc: rfc,
       bimestre: this.mesActual,
       ejercicio: this.ejercicioActual,
     };
-    this.calcularService.calculoIntegrado(json).subscribe((obj: any) => {
-      if (obj.ok) {
-        console.log('Calculo :>> ', obj);
-        console.log(this.loading);
-      } else {
-      }
+
+    // Devolver la Promesa resultante de la llamada HTTP
+    return new Promise<void>((resolve, reject) => {
+      this.calcularService.calculoIntegrado(json).subscribe(
+        (resp) => {
+          console.log('hey', resp);
+          resolve(); // Resuelve la promesa cuando la llamada HTTP es exitosa
+        },
+        (error) => {
+          console.error('Error en la llamada HTTP:', error);
+          reject(error); // Rechaza la promesa en caso de error
+        }
+      );
     });
   }
 

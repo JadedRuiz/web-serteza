@@ -41,6 +41,15 @@
                   </mat-select>
                 </mat-form-field>
               </div>
+              <div class="col-sm-12 col-lg-3">
+                <mat-form-field class="w-100">
+                  <mat-label>RFC Trabajador</mat-label>
+                  <mat-select  (selectionChange)="ejercicioSeleccionado($event)">
+                    <mat-option *ngFor="let ejersel of ejercicio"
+                      [value]=""></mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
               <div class="col-lg-12 col-sm-12">
                 <button (click)="traerEmpleados()" class="btn btn-success" title="Validar"><i class="fa fa-plus-circle"
                     aria-hidden="true"></i>
@@ -49,7 +58,11 @@
                     aria-hidden="true"></i>
                   Descargar excel</button>
               </div>
-              <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+              <div *ngIf="loading" class="text-center mt-4 col">
+                <h1 class="title" >Proceso</h1>     <span><b>RFC:</b> {{empleadoProcesado.rfc}}   <b>Nombre:</b> {{empleadoProcesado.nombre}}</span> <br>
+                <span><b> {{ registrosProcesados }}</b> registros de <b>{{ totalRegistros }}</b></span>
+                <mat-progress-bar class="mat-progress-bar" mode="determinate"[value]="progreso" ></mat-progress-bar>
+              </div>
             </div>
           </div>
         </div>
