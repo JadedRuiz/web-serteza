@@ -10,6 +10,7 @@ import { SistemaContabilidadComponent } from './sistema_contabilidad.component';
 import { DescargaMasivaComponent } from './descarga-masiva/descarga-masiva.component';
 import { MovBancosComponent } from './mov-bancos/mov-bancos.component';
 import { CalcularComponent } from './calcular_empleados/calcular/calcular.component';
+import { RevisarXmlComponent } from './revisar-xml/revisar-xml.component';
 
 
 const routes: Routes = [
@@ -25,6 +26,7 @@ const routes: Routes = [
           { path : 'catalogo_empresa', component : CatalogoEmpresaComponent},
           { path : 'descarga-masiva', component : DescargaMasivaComponent},
           {path : 'calcular', component: CalcularComponent},
+          {path : 'revisar', component: RevisarXmlComponent},
           { path : 'mov-banco', component : MovBancosComponent},
 
           { path: '', redirectTo: '/login', pathMatch: 'full'}

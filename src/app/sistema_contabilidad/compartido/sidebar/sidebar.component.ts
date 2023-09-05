@@ -62,6 +62,7 @@ export class SidebarComponent implements OnInit {
           { path: 'facturas', title: 'Captura facturas',  icon:'ni-folder-17 text-yellow', id:"rh_header", band: true, tipo : "collapse"},
           { path: 'descarga-masiva', title: 'Descarga masiva',  icon:'ni-cloud-download-95 text-yellow', id:"rh_header", band: true, tipo : "collapse"},
           { path: 'calcular', title: 'Calcular',  icon:'ni-folder-17 text-yellow', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'revisar', title: 'Revisar XML',  icon:'ni-books text-yellow', id:"rh_header", band: true, tipo : "collapse"},
 
           // { path: '#', title: 'Captura pagos',  icon:'ni-collection text-yellow', id:"rh_header", band: true, tipo : "collapse"},
           // { path: 'xml-upload', title: 'Carga xml´s',  icon:'ni-cloud-upload-96 text-yellow', id:"rh_header", band: true, tipo : "collapse"},

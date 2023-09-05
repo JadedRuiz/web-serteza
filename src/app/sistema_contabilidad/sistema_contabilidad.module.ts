@@ -26,6 +26,7 @@ import { ConceptosComponent } from './conceptos/conceptos.component';
 import { CurrencyPipe} from '@angular/common';
 import { CalcularComponent } from './calcular_empleados/calcular/calcular.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { RevisarXmlComponent } from './revisar-xml/revisar-xml.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     DescargaMasivaComponent,
     DashboardComponent,
     ConceptosComponent,
-    CalcularComponent
+    CalcularComponent,
+    RevisarXmlComponent
   ],
   imports: [
     CommonModule,
