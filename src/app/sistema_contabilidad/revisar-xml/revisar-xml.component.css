@@ -1,0 +1,6 @@
+.mat-cell, .mat-header-cell  {
+  text-align: left; /* Centra el texto horizontalmente */
+  vertical-align: middle; /* Centra el texto verticalmente */
+  border-right: 1px solid #ccc; /* Agrega una línea de separación entre columnas */
+  padding: 8px; /* Añade un espacio interno para mejorar el aspecto */
+}

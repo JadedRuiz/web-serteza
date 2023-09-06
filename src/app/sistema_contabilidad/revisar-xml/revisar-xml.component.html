@@ -9,33 +9,25 @@
         </div>
         <div class="card-body">
           <div class="container-fluid">
-            <div class="col-sm-12 col-lg-12">
-              <!-- BUSCAR EMPRESA -->
-              <mat-form-field class="w-100">
-                <mat-label>Buscar empresa</mat-label>
-                <input type="text" placeholder="Ingrese el nombre o id de la empresa" aria-label="Number" matInput
-                  (keyup)="buscarEmpresa()" [formControl]="filterControlEmpresa" [matAutocomplete]="auto"
-                  style="text-transform: uppercase;">
-                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionEmpresa($event)">
-                  <mat-option *ngFor="let empresa of empresas_busqueda" [value]="empresa.empresa"
-                    [id]="empresa.id_empresa">
-                    {{empresa.empresa}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
-            </div>
+
             <div class="row">
-              <div class="col-sm-12 col-lg-3">
-                <!-- SELECIONAR BIMESTRE -->
+              <!-- BUSCAR EMPRESA -->
+              <div class="col-sm-12 col-lg-6">
                 <mat-form-field class="w-100">
-                  <mat-label>BIMESTRE</mat-label>
-                  <mat-select [(ngModel)]="mesActual" (selectionChange)="mesSeleccionado($event.value)">
-                    <mat-option *ngFor="let messel of bimestres" [value]="messel.Id">{{messel.meses}}</mat-option>
-                  </mat-select>
+                  <mat-label>BUSCAR EMPRESA</mat-label>
+                  <input type="text" placeholder="Ingrese el nombre o id de la empresa" aria-label="Number" matInput
+                    (keyup)="buscarEmpresa()" [formControl]="filterControlEmpresa" [matAutocomplete]="auto"
+                    style="text-transform: uppercase;">
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionEmpresa($event)">
+                    <mat-option *ngFor="let empresa of empresas_busqueda" [value]="empresa.empresa"
+                      [id]="empresa.id_empresa">
+                      {{empresa.empresa}}
+                    </mat-option>
+                  </mat-autocomplete>
                 </mat-form-field>
               </div>
-              <div class="col-sm-12 col-lg-3">
-                <!-- SELECIONAR EJERCICIO -->
+              <!-- SELECIONAR EJERCICIO -->
+              <div class="col-sm-12 col-lg-6">
                 <mat-form-field class="w-100">
                   <mat-label>EJERCICIO</mat-label>
                   <mat-select [(ngModel)]="ejercicioActual" (selectionChange)="ejercicioSeleccionado($event)">
@@ -44,13 +36,42 @@
                   </mat-select>
                 </mat-form-field>
               </div>
+            </div>
+            <div class="row">
+              <!--PERIODO-->
               <div class="col-sm-12 col-lg-3">
-                <!-- RFC TRABAJADOR -->
                 <mat-form-field class="w-100">
-                  <mat-label>RFC Trabajador</mat-label>
-                  <mat-select  (selectionChange)="ejercicioSeleccionado($event)">
-                    <mat-option *ngFor="let ejersel of ejercicio"
-                      [value]=""></mat-option>
+                  <mat-label>PERIODO</mat-label>
+                  <mat-select [(ngModel)]="mesActual" (selectionChange)="mesSeleccionado($event.value)">
+                    <mat-option *ngFor="let messel of bimestres" [value]="messel.Id">{{messel.meses}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <!-- MES DE PAGO -->
+              <div class="col-sm-12 col-lg-3">
+                <mat-form-field class="w-100">
+                  <mat-label>MES</mat-label>
+                  <mat-select [(ngModel)]="mesActual" (selectionChange)="mesSeleccionado($event.value)">
+                    <mat-option *ngFor="let messel of bimestres" [value]="messel.Id">{{messel.meses}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <!-- SELECIONAR BIMESTRE -->
+              <div class="col-sm-12 col-lg-3">
+                <mat-form-field class="w-100">
+                  <mat-label>BIMESTRE</mat-label>
+                  <mat-select [(ngModel)]="mesActual" (selectionChange)="mesSeleccionado($event.value)">
+                    <mat-option *ngFor="let messel of bimestres" [value]="messel.Id">{{messel.meses}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <!-- RFC TRABAJADOR -->
+              <div class="col-sm-12 col-lg-3">
+                <mat-form-field class="w-100">
+                  <mat-label>RFC TRABAJADOR</mat-label>
+                  <mat-select (selectionChange)="ejercicioSeleccionado($event)">
+                    <mat-option *ngFor="let ejersel of ejercicio" [value]=""></mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
@@ -59,11 +80,64 @@
                 <button (click)="traerEmpleados()" class="btn btn-success" title="Validar"><i class="fa fa-plus-circle"
                     aria-hidden="true"></i>
                   BOTON 1</button>
-                <button  class="btn btn-success" title="Validar"><i class="fa fa-plus-circle"
-                    aria-hidden="true"></i>
+                <button class="btn btn-success" title="Validar"><i class="fa fa-plus-circle" aria-hidden="true"></i>
                   BOTON 2</button>
               </div>
+              <hr>
+              <div class=" mt-2 col-sm-12 col-lg-12 text-center">
+                <h1>Tabla de resultados</h1>
+                <!-- TABLA DE RESULTADOS -->
+                <table mat-table [dataSource]="empleados" class="mat-elevation-z8">
+                  <!-- Columnas de la tabla -->
+                  <ng-container matColumnDef="num_empleado">
+                    <th mat-header-cell *matHeaderCellDef>Núm. Empleado</th>
+                    <td mat-cell *matCellDef="let row">{{ row.num_empleado }}</td>
+                  </ng-container>
 
+                  <ng-container matColumnDef="nombre">
+                    <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                    <td mat-cell *matCellDef="let row">{{ row.nombre }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="rfc">
+                    <th mat-header-cell *matHeaderCellDef>RFC</th>
+                    <td mat-cell *matCellDef="let row">{{ row.rfc }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="periodo">
+                    <th mat-header-cell *matHeaderCellDef>Periodo</th>
+                    <td mat-cell *matCellDef="let row">{{ row.periodo }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="fecha_inicial_pago">
+                    <th mat-header-cell *matHeaderCellDef>Fecha Inicial</th>
+                    <td mat-cell *matCellDef="let row">{{ row.fecha_inicial_pago }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="fecha_final_pago">
+                    <th mat-header-cell *matHeaderCellDef>Fecha final</th>
+                    <td mat-cell *matCellDef="let row">{{ row.fecha_final_pago }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="uuid">
+                    <th mat-header-cell *matHeaderCellDef>UUID</th>
+                    <td mat-cell *matCellDef="let row">{{ row.uuid }}</td>
+                  </ng-container>
+
+                  <!-- Columna de acciones -->
+                  <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                    <td mat-cell *matCellDef="let row">
+                      <button class="btn btn-success">Editar</button>
+                      <!-- Agrega botones de acciones si es necesario -->
+                    </td>
+                  </ng-container>
+
+                  <!-- Define las columnas a mostrar -->
+                  <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                  <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -73,8 +147,8 @@
 </div>
 
 
-  <!-- BARRA DE PROGRESO -->
-              <!-- <div *ngIf="loading" class="text-center mt-4 col">
+<!-- BARRA DE PROGRESO -->
+<!-- <div *ngIf="loading" class="text-center mt-4 col">
                 <h1 class="title" >Proceso</h1>     <span><b>RFC:</b> {{empleadoProcesado.rfc}}   <b>Nombre:</b> {{empleadoProcesado.nombre}}</span> <br>
                 <span><b> {{ registrosProcesados }}</b> registros de <b>{{ totalRegistros }}</b></span>
                 <mat-progress-bar class="mat-progress-bar" mode="determinate"[value]="progreso" ></mat-progress-bar>

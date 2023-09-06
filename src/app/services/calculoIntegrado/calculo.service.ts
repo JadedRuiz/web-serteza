@@ -30,6 +30,19 @@ return this.http.post(url,json)
  }
 
 
+//  OBTENER XML DEL TRABAJDOR
+ obtenerXml(json:any){
+let url = API_AUD + "empleadosXML";
+return this.http.post(url,json)
+.pipe(map((resp:any)=>{
+  return resp;
+}), catchError(err => {
+  Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+  return throwError(err);
+}));
+ }
+
+
 
 // Calculo Integrado
 calculoIntegrado(json:any){
@@ -42,5 +55,9 @@ return this.http.post(url,json)
   return throwError(err);
 }));
  }
+
+
+
+
 
 }

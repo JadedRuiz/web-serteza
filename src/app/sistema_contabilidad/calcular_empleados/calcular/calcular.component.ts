@@ -100,7 +100,7 @@ export class CalcularComponent implements OnInit {
       if (obj.ok) {
         this.empleados = obj.data;
         this.totalRegistros = this.empleados.length;
-        //console.log('algo seguramente:>> ', obj);
+        console.log('algo seguramente:>> ', obj);
         this.procesar();
         //console.log('json :>> ', json);
         Swal.fire({
