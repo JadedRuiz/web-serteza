@@ -42,9 +42,7 @@
               <div class="col-sm-12 col-lg-3">
                 <mat-form-field class="w-100">
                   <mat-label>PERIODO</mat-label>
-                  <mat-select [(ngModel)]="mesActual" (selectionChange)="mesSeleccionado($event.value)">
-                    <mat-option *ngFor="let messel of bimestres" [value]="messel.Id">{{messel.meses}}</mat-option>
-                  </mat-select>
+                  <input matInput type="number" [(ngModel)]="periodoActual" (input)="onPeriodChange()" />
                 </mat-form-field>
               </div>
               <!-- MES DE PAGO -->
@@ -52,7 +50,7 @@
                 <mat-form-field class="w-100">
                   <mat-label>MES</mat-label>
                   <mat-select [(ngModel)]="mesActual" (selectionChange)="mesSeleccionado($event.value)">
-                    <mat-option *ngFor="let messel of bimestres" [value]="messel.Id">{{messel.meses}}</mat-option>
+                    <mat-option *ngFor="let messel of meses" [value]="messel.Id">{{messel.meses}}</mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
@@ -60,31 +58,29 @@
               <div class="col-sm-12 col-lg-3">
                 <mat-form-field class="w-100">
                   <mat-label>BIMESTRE</mat-label>
-                  <mat-select [(ngModel)]="mesActual" (selectionChange)="mesSeleccionado($event.value)">
-                    <mat-option *ngFor="let messel of bimestres" [value]="messel.Id">{{messel.meses}}</mat-option>
+                  <mat-select [(ngModel)]="biMesActual" (selectionChange)="bimesSeleccionado($event.value)">
+                    <mat-option *ngFor="let bimessel of bimestres" [value]="bimessel.Id">{{bimessel.meses}}</mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
-
               <!-- RFC TRABAJADOR -->
               <div class="col-sm-12 col-lg-3">
                 <mat-form-field class="w-100">
                   <mat-label>RFC TRABAJADOR</mat-label>
-                  <mat-select (selectionChange)="ejercicioSeleccionado($event)">
-                    <mat-option *ngFor="let ejersel of ejercicio" [value]=""></mat-option>
-                  </mat-select>
+                  <input matInput type="text" [(ngModel)]="rfcTrabajador" (input)="onRFCChange()" />
                 </mat-form-field>
               </div>
               <!-- BOTONES -->
               <div class="text-center col-lg-12 col-sm-12">
-                <button (click)="traerEmpleados()" class="btn btn-success" title="Validar"><i class="fa fa-plus-circle"
-                    aria-hidden="true"></i>
-                  BOTON 1</button>
-                <button class="btn btn-success" title="Validar"><i class="fa fa-plus-circle" aria-hidden="true"></i>
-                  BOTON 2</button>
+                <button (click)="trabajadoresXML()" class="btn btn-success" title="Validar">
+                  Buscar <i class="fa fa-search"
+                  aria-hidden="true"></i></button>
+                <!-- <button class="btn btn-success" title="Validar"><i class="fa fa-plus-circle" aria-hidden="true"></i>
+                  BOTON 2</button> -->
               </div>
               <hr>
-              <div class=" mt-2 col-sm-12 col-lg-12 text-center">
+              <!-- TABLA DE TRABAJADORES  -->
+              <div *ngIf="loading" class=" mt-2 col-sm-12 col-lg-12 text-center">
                 <h1>Tabla de resultados</h1>
                 <!-- TABLA DE RESULTADOS -->
                 <table mat-table [dataSource]="empleados" class="mat-elevation-z8">
@@ -137,6 +133,7 @@
                   <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                   <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
                 </table>
+
               </div>
             </div>
           </div>

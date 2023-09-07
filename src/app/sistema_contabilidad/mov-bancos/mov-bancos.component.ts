@@ -66,7 +66,7 @@ export class MovBancosComponent implements OnInit {
   }
 
   cargarModal(content : any){
-    this.modal_alta.formulario.importe = "";  
+    this.modal_alta.formulario.importe = "";
     this.modal_alta.formulario.fecha.resu = new Date(this.ejercicioActual+'/'+this.mesActual+'/01');
     this.modal_alta.formulario.fecha.min_date = new Date(this.ejercicioActual+'/'+this.mesActual+'/01');
     this.modal_alta.formulario.fecha.max_date = new Date(this.ejercicioActual+'/'+this.mesActual+'/'+ (new Date(this.ejercicioActual+'/'+this.mesActual+'/0').getDate()));
@@ -82,10 +82,10 @@ export class MovBancosComponent implements OnInit {
     try {
       this.formattedAmount = this.currencyPipe.transform(element.target.value, '$');
     } catch (error) {
-      this.modal_alta.formulario.importe = "";                  
+      this.modal_alta.formulario.importe = "";
       Swal.fire('Aviso','Solo se permiten números','info');
     }
-    
+
     element.target.value = this.formattedAmount;
 }
   //#region [Carga principal - Catalogos]
@@ -111,7 +111,7 @@ export class MovBancosComponent implements OnInit {
       if(this.filterControlEmpresa.value.length > 0){
         this.empresas_busqueda = [];
         this.empresas.forEach((element : any) => {
-          if(element.empresa.includes(this.filterControlEmpresa.value.toUpperCase())){ 
+          if(element.empresa.includes(this.filterControlEmpresa.value.toUpperCase())){
             this.empresas_busqueda.push({
               "empresa" : element.empresa,
               "id_empresa" : element.id_empresa
@@ -136,6 +136,7 @@ export class MovBancosComponent implements OnInit {
       // this.ejercicioActual = this.contador - 1;
       this.ejercicioBuscado = this.ejercicio;
     }
+    
     Meses(){
       this.dashboard_sv.obtenerMeses()
       .subscribe((object : any) => {
@@ -154,13 +155,13 @@ export class MovBancosComponent implements OnInit {
         ejercicio : this.ejercicioActual,
         mes : this.mesActual
       };
-      
+
       this.nomina_service.periodosPorMes(json)
       .subscribe((object : any) => {
         if(object.ok){
-          
+
           this.periodos = object.data;
-          
+
         }
       });
     }
