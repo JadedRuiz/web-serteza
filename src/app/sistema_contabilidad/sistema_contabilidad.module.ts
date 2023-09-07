@@ -27,6 +27,8 @@ import { CurrencyPipe} from '@angular/common';
 import { CalcularComponent } from './calcular_empleados/calcular/calcular.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RevisarXmlComponent } from './revisar-xml/revisar-xml.component';
+import { MatCardModule } from '@angular/material/card';
+import { EditTrabajadorComponent } from './edit-trabajador/edit-trabajador.component';
 
 
 @NgModule({
@@ -42,6 +44,7 @@ import { RevisarXmlComponent } from './revisar-xml/revisar-xml.component';
     ConceptosComponent,
     CalcularComponent,
     RevisarXmlComponent,
+    EditTrabajadorComponent
 
   ],
   imports: [
@@ -61,7 +64,8 @@ import { RevisarXmlComponent } from './revisar-xml/revisar-xml.component';
     MatIconModule,
     MatMenuModule,
     MatTabsModule,
-    MatSelectModule
+    MatSelectModule,
+    MatCardModule
   ],
   providers : [
     CurrencyPipe

@@ -11,6 +11,7 @@ import { DescargaMasivaComponent } from './descarga-masiva/descarga-masiva.compo
 import { MovBancosComponent } from './mov-bancos/mov-bancos.component';
 import { CalcularComponent } from './calcular_empleados/calcular/calcular.component';
 import { RevisarXmlComponent } from './revisar-xml/revisar-xml.component';
+import { EditTrabajadorComponent } from './edit-trabajador/edit-trabajador.component';
 
 
 const routes: Routes = [
@@ -28,7 +29,7 @@ const routes: Routes = [
           {path : 'calcular', component: CalcularComponent},
           {path : 'revisar', component: RevisarXmlComponent},
           { path : 'mov-banco', component : MovBancosComponent},
-
+          {path : 'edit-trab', component: EditTrabajadorComponent},
           { path: '', redirectTo: '/login', pathMatch: 'full'}
       ]
     }
