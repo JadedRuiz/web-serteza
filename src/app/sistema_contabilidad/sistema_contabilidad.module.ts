@@ -28,6 +28,7 @@ import { CalcularComponent } from './calcular_empleados/calcular/calcular.compon
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RevisarXmlComponent } from './revisar-xml/revisar-xml.component';
 
+
 @NgModule({
   declarations: [
     SistemaContabilidadComponent,
@@ -40,7 +41,8 @@ import { RevisarXmlComponent } from './revisar-xml/revisar-xml.component';
     DashboardComponent,
     ConceptosComponent,
     CalcularComponent,
-    RevisarXmlComponent
+    RevisarXmlComponent,
+
   ],
   imports: [
     CommonModule,

@@ -75,15 +75,14 @@
                 <button (click)="trabajadoresXML()" class="btn btn-success" title="Validar">
                   Buscar <i class="fa fa-search"
                   aria-hidden="true"></i></button>
-                <!-- <button class="btn btn-success" title="Validar"><i class="fa fa-plus-circle" aria-hidden="true"></i>
-                  BOTON 2</button> -->
+                  <button class="btn btn-info" (click)="exportarAPDF()">Exportar PDF</button>
               </div>
               <hr>
               <!-- TABLA DE TRABAJADORES  -->
-              <div *ngIf="loading" class=" mt-2 col-sm-12 col-lg-12 text-center">
+              <div #tablaParaPDF *ngIf="loading" class=" mt-2 col-sm-12 col-lg-12 text-center">
                 <h1>Tabla de resultados</h1>
                 <!-- TABLA DE RESULTADOS -->
-                <table mat-table [dataSource]="empleados" class="mat-elevation-z8">
+                <table mat-table [dataSource]="empleados" class="mat-elevation-z8 col">
                   <!-- Columnas de la tabla -->
                   <ng-container matColumnDef="num_empleado">
                     <th mat-header-cell *matHeaderCellDef>Núm. Empleado</th>
@@ -142,11 +141,3 @@
     </div>
   </div>
 </div>
-
-
-<!-- BARRA DE PROGRESO -->
-<!-- <div *ngIf="loading" class="text-center mt-4 col">
-                <h1 class="title" >Proceso</h1>     <span><b>RFC:</b> {{empleadoProcesado.rfc}}   <b>Nombre:</b> {{empleadoProcesado.nombre}}</span> <br>
-                <span><b> {{ registrosProcesados }}</b> registros de <b>{{ totalRegistros }}</b></span>
-                <mat-progress-bar class="mat-progress-bar" mode="determinate"[value]="progreso" ></mat-progress-bar>
-              </div> -->
