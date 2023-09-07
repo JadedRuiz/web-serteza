@@ -1,14 +1,13 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ContabilidadService } from 'src/app/services/contabilidad/contabilidad.service';
-import { DashboardService } from 'src/app/services/Dashboard/Dashboard.service';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
-import { NominaService } from 'src/app/services/Nomina/Nomina.service';
 import Swal from 'sweetalert2';
-import { CurrencyPipe } from '@angular/common';
 import { CalculoService } from 'src/app/services/calculoIntegrado/calculo.service';
 import { jsPDF } from 'jspdf';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+
+
 
 import html2canvas from 'html2canvas';
 
@@ -18,13 +17,9 @@ import html2canvas from 'html2canvas';
   styleUrls: ['./revisar-xml.component.css'],
 })
 export class RevisarXmlComponent implements OnInit {
-
-
-
   public ejercicio: any;
   public periodos: any;
   public ejercicioBuscado: any;
-  public mesesBuscado: any;
   public periodosBuscados: any;
   public resultados: any;
   public totales: any;
@@ -119,36 +114,8 @@ export class RevisarXmlComponent implements OnInit {
     },
   ];
   public rfcTrabajador: string = '';
-
-  constructor(
-    private empresa_service: EmpresaService,
-    private calcularService: CalculoService,
-    private pdf: ElementRef,
-  ) {
-    this.tablaParaPDF = pdf;
-  }
-
-  @ViewChild('tablaParaPDF', { static: false }) tablaParaPDF!: ElementRef<HTMLElement>;
-
-
-
-  ngOnInit(): void {
-    this.cargaPrincipal();
-  }
-  cargaPrincipal() {
-    // this.trabajadoreXML();
-    this.ejercicios();
-    this.mostrarEmpresas();
-  }
-
-
-  // PROCESAR EMPLEADOS
-  empleados: any = [];
-  loading = false;
-  totalRegistros: number = 0;
-
-  // TABLA DE EMPLEADO
-  columnas: string[] = [
+   // TABLA DE EMPLEADO
+   public columnas: string[] = [
     'num_empleado',
     'nombre',
     'rfc',
@@ -159,29 +126,40 @@ export class RevisarXmlComponent implements OnInit {
     'acciones', // Agrega esto si necesitas columnas de acciones
   ];
 
+  constructor(
+    private empresa_service: EmpresaService,
+    private calcularService: CalculoService,
+    private pdf: ElementRef
+  ) {
+    this.tablaParaPDF = pdf;
+  }
+
+  @ViewChild('tablaParaPDF', { static: false })
+  tablaParaPDF!: ElementRef<HTMLElement>;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  ngOnInit(): void {
+    this.cargaPrincipal();
+  }
+  cargaPrincipal() {
+    // this.trabajadoreXML();
+    this.ejercicios();
+    this.mostrarEmpresas();
+  }
+
+  // PROCESAR EMPLEADOS
+  empleados: any = [];
+  loading = false;
+  totalRegistros: number = 0;
+
+
+
+  //PARA PAGINADOR
+  dataSource = new MatTableDataSource<any>();
+
   //EMPEADOS XML
-  // trabajadoresXML() {
-  //   let json = {
-  //     id_empresa: this.id_empresa,
-  //     rfc: '' || this.rfcTrabajador,
-  //     mes: 0 || this.mesActual,
-  //     bimestre: 0 || this.biMesActual,
-  //     periodo: 0 || this.periodoActual,
-  //     ejercicio: this.ejercicioActual,
-  //   };
-  //   this.calcularService.obtenerXml(json).subscribe((obj: any) => {
-  //     if (obj.ok) {
-  //       this.empleados = obj.data;
-  //       console.log('json :>> ', json);
-  //       console.log('obj :>> ', obj);
-  //       this.loading = true;
-  //     }else {
-  //       // Mostrar el mensaje de error al usuario
-  //     }
-  //   });
-  // }
   trabajadoresXML() {
-    // Muestra la alerta de progreso
     Swal.fire({
       title: 'Buscando trabajadores',
       text: 'Por favor, espere...',
@@ -202,14 +180,27 @@ export class RevisarXmlComponent implements OnInit {
       ejercicio: this.ejercicioActual,
     };
     this.calcularService.obtenerXml(json).subscribe((obj: any) => {
-      // Cierra la alerta de progreso una vez que se obtengan los datos
       Swal.close();
 
       if (obj.ok) {
         this.empleados = obj.data;
-        console.log('json :>> ', json);
-        console.log('obj :>> ', obj);
-        this.loading = true;
+        const numRegistros = obj.data.length;
+        this.dataSource.data = this.empleados;
+        // Después de obtener los datos, configura el paginador
+        this.paginator.pageSize = 10;
+        this.paginator.pageIndex = 0;
+        this.paginator.length = this.empleados.length; // Total de registros
+
+        // Asigna el paginador a tu fuente de datos
+        this.dataSource.paginator = this.paginator;
+
+        //PARA EL TITULO CON NUEMERO DE REGISTROS
+        const tituloTabla = document.getElementById('tituloTabla');
+        if (tituloTabla) {
+          tituloTabla.innerText = `Tabla de trabajadores (${numRegistros} registros)`;
+        }
+       // console.log('json :>> ', json);
+        //console.log('obj :>> ', obj);
       } else {
         // Mostrar el mensaje de error al usuario
         Swal.fire({
@@ -219,10 +210,8 @@ export class RevisarXmlComponent implements OnInit {
         });
       }
     });
+    this.loading = true;
   }
-
-
-
 
   // BUSCAR EMPRESA
   mostrarEmpresas() {
@@ -304,47 +293,61 @@ export class RevisarXmlComponent implements OnInit {
     console.log('Nuevo valor de RFC:', this.rfcTrabajador);
   }
 
-// EXPORTAR PDF
-exportarAPDF() {
-  const content: HTMLElement = this.tablaParaPDF.nativeElement;
-  const pdf = new jsPDF('landscape', 'mm', 'a4'); // Cambia 'landscape' para orientación horizontal
-  const pdfOptions = {
-    margin: 10,
-    filename: 'empleados_xml.pdf',
-  };
+  // EXPORTAR PDF
+  exportarAPDF() {
 
-  // Muestra la alerta de progreso
-  Swal.fire({
-    title: 'Generando PDF',
-    text: 'Por favor, espere...',
-    icon: 'info',
-    allowOutsideClick: false,
-    showConfirmButton: false,
-    onBeforeOpen: () => {
-      Swal.showLoading();
-    },
+const columnasAcciones = document.querySelectorAll('.mat-column-acciones');
+  columnasAcciones.forEach((columna) => {
+    columna.classList.add('hide-actions-column');
   });
 
-  // Genera el PDF después de un breve retraso para permitir que se muestre la alerta
-  setTimeout(() => {
-    html2canvas(content, { scale: 2 }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+    const content: HTMLElement = this.tablaParaPDF.nativeElement;
+    const pdf = new jsPDF('landscape', 'mm', 'a4'); // Cambia 'landscape' para orientación horizontal
+    const pdfOptions = {
+      margin: 10,
+      filename: 'trabajadores-XML.pdf',
+    };
 
-      // Calcula la altura del contenido y ajusta el tamaño de la página en función de la altura
-      const contentHeight = canvas.height * (pdf.internal.pageSize.width / canvas.width);
-      pdf.internal.pageSize.height = contentHeight;
-
-      // Agrega la imagen al PDF
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdf.internal.pageSize.width, contentHeight);
-
-      pdf.save(pdfOptions.filename);
-
-      // Cierra la alerta de progreso
-      Swal.close();
+    // Muestra la alerta de progreso
+    Swal.fire({
+      title: 'Generando PDF',
+      text: 'Por favor, espere...',
+      icon: 'info',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      onBeforeOpen: () => {
+        Swal.showLoading();
+      },
     });
-  }, 100);
-}
 
+    // Genera el PDF después de un breve retraso para permitir que se muestre la alerta
+    setTimeout(() => {
+      html2canvas(content, { scale: 2 }).then((canvas) => {
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
 
+        // Calcula la altura del contenido y ajusta el tamaño de la página en función de la altura
+        const contentHeight =
+          canvas.height * (pdf.internal.pageSize.width / canvas.width);
+        pdf.internal.pageSize.height = contentHeight;
 
+        // Agrega la imagen al PDF
+        pdf.addImage(
+          imgData,
+          'JPEG',
+          0,
+          0,
+          pdf.internal.pageSize.width,
+          contentHeight
+        );
+          // Elimina la clase CSS que oculta la columna de acciones
+      columnasAcciones.forEach((columna) => {
+        columna.classList.remove('hide-actions-column');
+      });
+
+        pdf.save(pdfOptions.filename);
+
+        Swal.close();
+      });
+    }, 100);
+  }
 }

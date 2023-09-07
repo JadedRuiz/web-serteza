@@ -4,3 +4,20 @@
   border-right: 1px solid #ccc; /* Agrega una línea de separación entre columnas */
   padding: 8px; /* Añade un espacio interno para mejorar el aspecto */
 }
+
+
+.card-header
+{
+  text-align: center;
+  font-weight: 500;
+}
+/* Estilos personalizados para el paginador */
+.mat-paginator {
+
+  font-weight: 500;
+}
+
+/* Estilo para ocultar la columna de acciones solo en el PDF */
+.hide-actions-column {
+  display: none;
+}

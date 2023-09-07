@@ -37,7 +37,11 @@ return this.http.post(url,json)
 .pipe(map((resp:any)=>{
   return resp;
 }), catchError(err => {
-  Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+  Swal.fire({
+    icon: 'error',
+    title: 'Error al buscar trabajadores',
+    text: 'Hubo un problema al buscar los trabajadores. Inténtalo de nuevo más tarde.',
+  });
   return throwError(err);
 }));
  }

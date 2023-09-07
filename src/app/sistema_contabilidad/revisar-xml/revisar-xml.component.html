@@ -72,17 +72,21 @@
               </div>
               <!-- BOTONES -->
               <div class="text-center col-lg-12 col-sm-12">
-                <button (click)="trabajadoresXML()" class="btn btn-success" title="Validar">
+                <button (click)="trabajadoresXML()" class="btn btn-success" title="Buscar">
                   Buscar <i class="fa fa-search"
                   aria-hidden="true"></i></button>
-                  <button class="btn btn-info" (click)="exportarAPDF()">Exportar PDF</button>
+                  <span style="margin: 0 20px;"></span>
+                  <button *ngIf="loading" class="btn btn-outline-info" title="Descarga segura" (click)="exportarAPDF()">
+                    Descargar PDF <i class="fa fa-download "
+                    aria-hidden="true"></i></button>
               </div>
               <hr>
               <!-- TABLA DE TRABAJADORES  -->
               <div #tablaParaPDF *ngIf="loading" class=" mt-2 col-sm-12 col-lg-12 text-center">
-                <h1>Tabla de resultados</h1>
+                <h1 id="tituloTabla"></h1>
+                <mat-paginator [pageSizeOptions]="[10, 25, 50, 100,500,1000]" [pageSize]="10" [showFirstLastButtons]="true"></mat-paginator>
                 <!-- TABLA DE RESULTADOS -->
-                <table mat-table [dataSource]="empleados" class="mat-elevation-z8 col">
+                <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 col">
                   <!-- Columnas de la tabla -->
                   <ng-container matColumnDef="num_empleado">
                     <th mat-header-cell *matHeaderCellDef>Núm. Empleado</th>
@@ -132,7 +136,6 @@
                   <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                   <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
                 </table>
-
               </div>
             </div>
           </div>
