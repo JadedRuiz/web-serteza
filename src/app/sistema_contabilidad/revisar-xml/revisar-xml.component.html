@@ -18,9 +18,9 @@
                   <input type="text" placeholder="Ingrese el nombre o id de la empresa" aria-label="Number" matInput
                     (keyup)="buscarEmpresa()" [formControl]="filterControlEmpresa" [matAutocomplete]="auto"
                     style="text-transform: uppercase;">
-                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionEmpresa($event)">
-                    <mat-option *ngFor="let empresa of empresas_busqueda" [value]="empresa.empresa"
-                      [id]="empresa.id_empresa">
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionEmpresa($event)"(optionSelected)="nomEmpresa($event)">
+                    <mat-option *ngFor="let empresa of empresas_busqueda" [value]="empresa.nombre"
+                      [id]="empresa.id_empresa" >
                       {{empresa.empresa}}
                     </mat-option>
                   </mat-autocomplete>

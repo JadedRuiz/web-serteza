@@ -6,6 +6,8 @@ import { CalculoService } from 'src/app/services/calculoIntegrado/calculo.servic
 import { jsPDF } from 'jspdf';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+
 
 
 
@@ -38,6 +40,10 @@ export class RevisarXmlComponent implements OnInit {
   public mesActual: any;
   public biMesActual: any;
   public meses: any[] = [
+    {
+      Id: 0,
+      meses: ['todos'],
+    },
     {
       Id: 1,
       meses: ['enero'],
@@ -86,8 +92,13 @@ export class RevisarXmlComponent implements OnInit {
       Id: 12,
       meses: ['diciembre'],
     },
+
   ];
   public bimestres: any[] = [
+    {
+      Id: 0,
+      meses: ['todos'],
+    },
     {
       Id: 1,
       meses: ['ene-feb'],
@@ -125,6 +136,8 @@ export class RevisarXmlComponent implements OnInit {
     'uuid',
     'acciones', // Agrega esto si necesitas columnas de acciones
   ];
+ public nomSel =''
+
 
   constructor(
     private empresa_service: EmpresaService,
@@ -152,14 +165,15 @@ export class RevisarXmlComponent implements OnInit {
   empleados: any = [];
   loading = false;
   totalRegistros: number = 0;
-
-
-
-  //PARA PAGINADOR
+   //PARA PAGINADOR
   dataSource = new MatTableDataSource<any>();
+  empresaNombre: string = '';
+
 
   //EMPEADOS XML
   trabajadoresXML() {
+  console.log('empresa :>> ', this.empresas);
+
     Swal.fire({
       title: 'Buscando trabajadores',
       text: 'Por favor, espere...',
@@ -185,6 +199,7 @@ export class RevisarXmlComponent implements OnInit {
       if (obj.ok) {
         this.empleados = obj.data;
         const numRegistros = obj.data.length;
+        const empresaSel = this.nomSel;
         this.dataSource.data = this.empleados;
         // Después de obtener los datos, configura el paginador
         this.paginator.pageSize = 10;
@@ -197,7 +212,7 @@ export class RevisarXmlComponent implements OnInit {
         //PARA EL TITULO CON NUEMERO DE REGISTROS
         const tituloTabla = document.getElementById('tituloTabla');
         if (tituloTabla) {
-          tituloTabla.innerText = `Tabla de trabajadores (${numRegistros} registros)`;
+          tituloTabla.innerText = `Trabajadores de ${empresaSel} (${numRegistros} registros)`;
         }
        // console.log('json :>> ', json);
         //console.log('obj :>> ', obj);
@@ -223,6 +238,7 @@ export class RevisarXmlComponent implements OnInit {
         if (object.ok) {
           this.empresas = object.data;
           this.empresas_busqueda = object.data;
+
         }
       });
   }
@@ -253,6 +269,11 @@ export class RevisarXmlComponent implements OnInit {
   optionEmpresa(value: any) {
     this.id_empresa = value.option.id;
   }
+
+//PARA EL NOMBRE DE LA EMPRESA SELECIONADA
+nomEmpresa(event: MatAutocompleteSelectedEvent) {
+  this.nomSel = event.option.value;
+}
 
   // PARA SELECCIONAR MES
   mesSeleccionado(MesSel: any) {
@@ -295,7 +316,7 @@ export class RevisarXmlComponent implements OnInit {
 
   // EXPORTAR PDF
   exportarAPDF() {
-
+//AGREGA CLASE DE CSS
 const columnasAcciones = document.querySelectorAll('.mat-column-acciones');
   columnasAcciones.forEach((columna) => {
     columna.classList.add('hide-actions-column');
