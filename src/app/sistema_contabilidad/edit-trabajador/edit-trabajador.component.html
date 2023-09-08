@@ -1,43 +1,35 @@
 <div class="header" style="height: 250px;"></div>
 
 <div class="container-fluid mt--9">
-  <h2 class="text-center col mb-2">Recibo de nómina de: {{nomina[0].nombre}}</h2>
+<h2 class="text-center col mb-1">{{nomina[0].empresa}}</h2>
+
 
   <!-- HEADER-->
 <div class="row">
   <div class="d-flex align-items-center justify-content-center  col-6">
-    <img style="width: 300px; height: 100px;" src="http://localhost:4200/assets/img/defaults/imagen-empresa-default.png" alt="Logo de la empresa">
+    <img style="width: 300px; height: 100px;" [src]="nomina[0].fotografia" alt="Logo de la empresa">
   </div>
-  <div class="col-6">
  <div class="col-6 mt-4">
-  <h4 class="text-center" style="background-color: rgba(0, 38, 255, 0.116);">Recibo de nomina</h4>
+  <h4 class="text-center" style="background-color: rgba(0, 38, 255, 0.116);">Fecha timbrado</h4>
 <table class="table">
-  <tr>
-    <th>Folio Fiscal:</th>
-    <td>{{ nomina[0].registro_patronal}}</td>
+  <tr class="text-center">
+    <th class="text-lg">{{ getfecha() | date: 'dd/MM/yyyy' }}</th>
   </tr>
   <tr>
-    <th>Fecha:</th>
-    <td>{{ getfecha() | date: 'dd/MM/yyyy' }}</td>
-
-  </tr>
-  <tr>
-    <th>UUID</th>
-    <td>{{nomina[0].uuid}}</td>
-  </tr>
 </table>
 </div>
-  </div>
 </div>
 <mat-divider></mat-divider>
+<h3 class="text-center col mb-1 mt-2">Recibo de nómina de: <u>{{nomina[0].nombre}}</u></h3>
 
 <!-- DATOS -->
   <div class="row mt-3">
   <!-- DATOS DEL RECEPTOR -->
   <div class="col-6">
-    <h4 class="text-center" style="background-color: rgba(0, 38, 255, 0.116);">Datos del receptor</h4>
-  <table class="table">
-    <tr>
+    <h4 class="text-center"
+    style="background-color: rgba(0, 38, 255, 0.116);">RECEPTOR</h4>
+  <table id="receptor" class="table ">
+    <tr class="p" >
       <th>RFC:</th>
       <td>{{ nomina[0].rfc }}</td>
     </tr>
@@ -62,60 +54,95 @@
       <td>{{ nomina[0].periodicidad_pago}}</td>
     </tr>
     <tr>
-      <th>Sueldo base:</th>
+      <th>Salario base cot:</th>
       <td>{{ nomina[0].salario_base}}</td>
     </tr>
+    <tr>
+      <th>Salario diario:</th>
+      <td>{{ nomina[0].salario_diario}}</td>
+    </tr>
   </table>
 </div>
 
-  <!-- DATOS DEL EMISOR -->
-  <div class="col-6 mt-4">
-    <h4 class="text-center" style="background-color: rgba(0, 38, 255, 0.116);">Datos del Emisor</h4>
+  <!-- EDITABLES -->
+  <div class="col-6">
+    <h4 class="text-center" style="background-color: rgba(0, 38, 255, 0.116);">EDITABLES</h4>
+
   <table class="table">
     <tr>
-      <th>{{ nomina[0].id_empresa }}</th>
+      <th class="text-lg">Registro patronal:</th>
+      <td class="text-lg" >{{ nomina[0].registro_patronal}}</td>
     </tr>
     <tr>
-      <th>Registro patronal:</th>
-      <td>{{ nomina[0].registro_patronal}}</td>
+      <td>
+        <mat-form-field appearance="fill" class="">
+          <mat-label>Periodo</mat-label>
+          <input class="text-lg" matInput [(ngModel)]="nomina[0].periodo" name="periodo" />
+        </mat-form-field>
+      </td>
+      <td>
+        <mat-form-field appearance="fill">
+          <mat-label class="text-md">Ejercicio</mat-label>
+          <input class="text-lg"  matInput [(ngModel)]="nomina[0].ejercicio" name="ejercicio" />
+        </mat-form-field>
+      </td>
     </tr>
-    <tr>
-      <th>Clave</th>
-      <td>{{ nomina[0].clave}}</td>
-    </tr>
-    <tr>
-      <th>UUID</th>
-      <td>{{nomina[0].uuid}}</td>
-    </tr>
-
-    <!-- Agrega más filas para mostrar otros datos de la nómina -->
   </table>
+  <div class="col text-center">
+    <span class="text-center text-md"><b>{{ nomina[0].descrip_periodo}}</b></span>
+  </div>
+  <!-- Boton exportar a PDF-->
+  <div class="col text-right">
+    <button class="btn btn-success">Exportar</button>
+  </div>
 </div>
+
+
 </div>
 <mat-divider></mat-divider>
 
 
-<div class="mat-elevation-z8">
-  <table mat-table [dataSource]="dataSource" matSort>
-    <!-- Definir las columnas -->
-    <ng-container *ngFor="let col of displayedColumns" [matColumnDef]="col">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ col }}</th>
-      <td mat-cell *matCellDef="let element">{{ element[col] }}</td>
-    </ng-container>
+<!-- TABS -->
+<mat-tab-group>
+  <!-- TAB-1 -->
+  <mat-tab label="Percepciones">
+    <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort>
+      <!-- Definir las columnas -->
+      <ng-container *ngFor="let col of displayedColumns" [matColumnDef]="col">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ col }}</th>
+        <td mat-cell *matCellDef="let element">{{ element[col] }}</td>
+      </ng-container>
 
-    <!-- Definir la fila de encabezado -->
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <!-- Definir las filas de datos -->
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-
-  <!-- Agregar paginador si es necesario -->
-  <!-- <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator> -->
-</div>
-
-
-  <!-- Botones para exportar a PDF o imprimir -->
-  <div class="text-center">
-    <button class="btn btn-success">Exportar</button>
+      <!-- Definir la fila de encabezado -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <!-- Definir las filas de datos -->
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
   </div>
+</mat-tab>
+<!-- TAB-2 -->
+  <mat-tab label="Deduciones">
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource2" matSort>
+        <!-- Definir las columnas -->
+        <ng-container *ngFor="let col of displayedColumns2" [matColumnDef]="col">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ col }}</th>
+          <td mat-cell *matCellDef="let element">{{ element[col] }}</td>
+        </ng-container>
+
+        <!-- Definir la fila de encabezado -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
+        <!-- Definir las filas de datos -->
+        <tr mat-row *matRowDef="let row; columns: displayedColumns2;"></tr>
+      </table>
+    </div>
+  </mat-tab>
+</mat-tab-group>
+
 </div>
+
+
+
+
+

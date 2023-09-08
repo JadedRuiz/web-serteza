@@ -12,20 +12,24 @@ export class EditTrabajadorComponent implements OnInit {
   nomina: any = {};
   fechaActual: Date = new Date();
   displayedColumns: string[] = [
-    "departamento",
-    "id_detallenomina",
     "tipo",
     "clave",
     "concepto",
     "importe",
     "importe_gravado",
-    "clave_tipo",
-    "gravado_imss",
-    "periodo",
-    "ejercicio",
+    "exento_isr",
+    "exento_imss",
+    "exento_ims"
+  ];
+  displayedColumns2: string[] = [
+    "tipo",
+    "clave",
+    "concepto",
+    "importe",
   ];
 
   dataSource: any[] = [];
+  dataSource2: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -35,6 +39,7 @@ export class EditTrabajadorComponent implements OnInit {
   ngOnInit(): void {
     this.cargautil();
     this.fechaActual = new Date();
+
 
   }
 
@@ -47,6 +52,7 @@ export class EditTrabajadorComponent implements OnInit {
     this.obtenerRegistros();
   }
 
+
   // ENVIAR ID_BOVEDA
   obtenerRegistros() {
     let json = {
@@ -55,6 +61,7 @@ export class EditTrabajadorComponent implements OnInit {
     this.calculoService.detalleXML(json).subscribe((obj: any) => {
       if (obj.ok) {
         // Asigna los datos del primer objeto de la respuesta a la variable nomina
+        this.dataSource2 = obj.data;
         this.dataSource = obj.data;
         this.nomina = obj.data;
         console.log('object :>> ', this.nomina);
@@ -62,6 +69,7 @@ export class EditTrabajadorComponent implements OnInit {
         // Manejo de error o mensaje de que no se encontraron datos
       }
     });
+
   }
 
  getfecha(): Date{

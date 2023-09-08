@@ -1,0 +1,25 @@
+/* Estilo para la tabla */
+.mat-table {
+  width: 100%;
+}
+
+/* Estilo para las celdas de encabezado */
+.mat-header-cell, .mat-cell {
+  padding: 8px;
+  text-align: left;
+}
+
+/* Estilo para la fila de encabezado */
+.mat-header-row {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+/* Estilo para la celda seleccionada (si estás usando selección) */
+.mat-row.mat-row:hover, .mat-row.mat-row.mat-selected {
+  background-color: #ccc;
+}
+
+#receptor th, #receptor td {
+  padding: 10px !important;
+}
