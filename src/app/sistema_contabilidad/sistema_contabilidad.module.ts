@@ -29,6 +29,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RevisarXmlComponent } from './revisar-xml/revisar-xml.component';
 import { MatCardModule } from '@angular/material/card';
 import { EditTrabajadorComponent } from './edit-trabajador/edit-trabajador.component';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 
 
 @NgModule({
@@ -65,7 +68,10 @@ import { EditTrabajadorComponent } from './edit-trabajador/edit-trabajador.compo
     MatMenuModule,
     MatTabsModule,
     MatSelectModule,
-    MatCardModule
+    MatCardModule,
+    MatGridListModule,
+    MatDividerModule,
+    MatListModule
   ],
   providers : [
     CurrencyPipe
