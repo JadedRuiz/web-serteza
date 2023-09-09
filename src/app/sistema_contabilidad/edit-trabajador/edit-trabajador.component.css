@@ -23,3 +23,8 @@
 #receptor th, #receptor td {
   padding: 10px !important;
 }
+
+
+.num-right {
+  text-align: right;
+}

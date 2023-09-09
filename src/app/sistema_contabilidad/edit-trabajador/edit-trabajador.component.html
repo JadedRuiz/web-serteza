@@ -111,7 +111,7 @@
       <!-- Definir las columnas -->
       <ng-container *ngFor="let col of displayedColumns" [matColumnDef]="col">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ col }}</th>
-        <td mat-cell *matCellDef="let element">
+        <td mat-cell *matCellDef="let element" [ngClass]="{'num-right': columnasFormateadas[col]}" >
           <span *ngIf="!columnasFormateadas[col]">{{ element[col] }}</span>
           <span *ngIf="columnasFormateadas[col]">{{ element[col] | currency:'MXN':'symbol-narrow':'1.2-2' }}</span>
         </td>

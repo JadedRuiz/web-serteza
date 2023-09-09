@@ -68,11 +68,22 @@ return this.http.post(url,json)
 .pipe(map((resp:any)=>{
   return resp;
 }), catchError(err=>{
-Swal.fire("HA ocurrido un error de servicio", err.message,'error');
+Swal.fire("Ha ocurrido un error de servicio", err.message,'error');
 return throwError(err);
 }));
 }
 
 
+//Exportar Exel
+exportarExcel(json: any){
+  let url = API_AUD + "exportarExcel";
+  return this.http.post(url,json)
+  .pipe(map((resp:any)=>{
+    return resp;
+  }), catchError(err=>{
+    Swal.fire("Ha ocurrido un error de servicio", err.message,'error');
+    return throwError(err);
+    }));
+    }
 
 }

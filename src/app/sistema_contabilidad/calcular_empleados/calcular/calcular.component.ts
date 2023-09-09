@@ -1,12 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ContabilidadService } from 'src/app/services/contabilidad/contabilidad.service';
-import { DashboardService } from 'src/app/services/Dashboard/Dashboard.service';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { NominaService } from 'src/app/services/Nomina/Nomina.service';
 import Swal from 'sweetalert2';
-import { CurrencyPipe } from '@angular/common';
 import { CalculoService } from 'src/app/services/calculoIntegrado/calculo.service';
 
 @Component({
@@ -62,10 +58,7 @@ export class CalcularComponent implements OnInit {
   ];
 
   constructor(
-    private dashboard_sv: DashboardService,
     private nomina_service: NominaService,
-    private contabilidad_service: ContabilidadService,
-    private currencyPipe: CurrencyPipe,
     private empresa_service: EmpresaService,
     private calcularService: CalculoService,
     private cdr: ChangeDetectorRef
@@ -78,6 +71,13 @@ export class CalcularComponent implements OnInit {
     this.ejercicios();
     this.mostrarEmpresas();
   }
+
+
+
+
+
+
+
  // PROCESAR EMPLEADOS
  empleados: any = [];
  loading = false;
@@ -88,6 +88,35 @@ export class CalcularComponent implements OnInit {
    rfc: '',
    nombre: '',
  };
+ regPatronal: string = '';
+ rfcTrab: string = '';
+
+
+// EXPORTAR EXCEL
+exportExel(){
+const  rfcTrabajador = this.rfcTrab;
+const regPatronal = this.regPatronal;
+  let json = {
+    id_empresa: this.id_empresa,
+    bimestre: this.mesActual,
+    ejercicio: this.ejercicioActual,
+    rfc : rfcTrabajador,
+    registro_patronal: regPatronal
+  };
+
+
+  console.log('jsonEx :>> ', json);
+
+this.calcularService.exportarExcel(json).subscribe((obj:any)=>{
+  if(obj.ok){
+    Swal.fire({
+      icon: 'success',
+      title: 'Excel Exportado',
+    })
+  }
+})
+}
+
 
   // CONSULTAR EMPLEADOS
   traerEmpleados() {
@@ -241,29 +270,14 @@ export class CalcularComponent implements OnInit {
     this.ejercicioBuscado = this.ejercicio;
   }
 
-  periodosMensual() {
-    let json = {
-      id_empresa: 78,
-      ejercicio: this.ejercicioActual,
-      mes: this.mesActual,
-    };
-
-    this.nomina_service.periodosPorMes(json).subscribe((object: any) => {
-      if (object.ok) {
-        this.periodos = object.data;
-      }
-    });
-  }
 
   mesSeleccionado(MesSel: any) {
     this.mesActual = MesSel;
-    this.periodosMensual();
   }
   ejercicioSeleccionado(EjercicioSel: any) {
     console.log(EjercicioSel.value);
     this.ejercicioActual = EjercicioSel.value;
   }
-  periodoSeleccionado(PeriodoSel: any) {
-    this.periodoActual = PeriodoSel;
-  }
+
+
 }

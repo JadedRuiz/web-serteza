@@ -9,7 +9,12 @@
         </div>
         <div class="card-body">
           <div class="container-fluid">
+
+
             <div class="col-sm-12 col-lg-12">
+              <div class="row">
+              <!-- BUSCAR EMPRESA -->
+              <div class="col-6">
               <mat-form-field class="w-100">
                 <mat-label>Buscar empresa</mat-label>
                 <input type="text" placeholder="Ingrese el nombre o id de la empresa" aria-label="Number" matInput
@@ -22,16 +27,28 @@
                   </mat-option>
                 </mat-autocomplete>
               </mat-form-field>
+               </div>
+               <!-- REGISTRO PATRONAL -->
+               <div class="col-6">
+                <mat-form-field class="w-100">
+                  <input matInput placeholder="Registro patronal" [(ngModel)]="regPatronal" name="regPatronal">
+                </mat-form-field>
+               </div>
+            </div>
+
             </div>
             <div class="row">
+              <!-- BIMESTRE -->
               <div class="col-sm-12 col-lg-3">
                 <mat-form-field class="w-100">
                   <mat-label>BIMESTRE</mat-label>
                   <mat-select [(ngModel)]="mesActual" (selectionChange)="mesSeleccionado($event.value)">
-                    <mat-option *ngFor="let messel of bimestres" [value]="messel.Id">{{messel.meses}}</mat-option>
+                    <mat-option *ngFor="let messel of bimestres"
+                    [value]="messel.Id">{{messel.meses}}</mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
+              <!-- EJERCICIO -->
               <div class="col-sm-12 col-lg-3">
                 <mat-form-field class="w-100">
                   <mat-label>EJERCICIO</mat-label>
@@ -41,23 +58,22 @@
                   </mat-select>
                 </mat-form-field>
               </div>
-              <div class="col-sm-12 col-lg-3">
+              <!-- RFC TRABAJADOR -->
+              <div class="col-sm-12 col-lg-6">
                 <mat-form-field class="w-100">
-                  <mat-label>RFC Trabajador</mat-label>
-                  <mat-select  (selectionChange)="ejercicioSeleccionado($event)">
-                    <mat-option *ngFor="let ejersel of ejercicio"
-                      [value]=""></mat-option>
-                  </mat-select>
+                  <input matInput placeholder="RFC Trabajador" [(ngModel)]="rfcTrab" name="rfcTrab">
                 </mat-form-field>
               </div>
+              <!-- BOTONES -->
               <div class="col-lg-12 col-sm-12">
                 <button (click)="traerEmpleados()" class="btn btn-success" title="Validar"><i class="fa fa-plus-circle"
                     aria-hidden="true"></i>
                   Calcular SDI</button>
-                <button  class="btn btn-success" title="Validar"><i class="fa fa-plus-circle"
+                <button  (click)="exportExel()"  class="btn btn-success" title="Validar"><i class="fa fa-plus-circle"
                     aria-hidden="true"></i>
                   Descargar excel</button>
               </div>
+              <!-- PROCESOS -->
               <div *ngIf="loading" class="text-center mt-4 col">
                 <h1 class="title" >Proceso</h1>     <span><b>RFC:</b> {{empleadoProcesado.rfc}}   <b>Nombre:</b> {{empleadoProcesado.nombre}}</span> <br>
                 <span><b> {{ registrosProcesados }}</b> registros de <b>{{ totalRegistros }}</b></span>
