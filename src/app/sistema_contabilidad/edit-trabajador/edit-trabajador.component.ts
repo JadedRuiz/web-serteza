@@ -79,7 +79,7 @@ columnasFormateadas: { [key: string]: boolean } = {
   // ENVIAR ID_BOVEDA
   obtenerRegistros() {
     let json = {
-      id_boveda: 350006, // <= cambiar por id_boveda
+      id_boveda: this.idObtenido, // <= cambiar por id_boveda
     };
     this.calculoService.detalleXML(json).subscribe((obj: any) => {
       if (obj.ok) {
