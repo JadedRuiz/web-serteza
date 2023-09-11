@@ -12,19 +12,6 @@ import { FacturacionService } from 'src/app/services/Facturacion/Facturacion.ser
   styleUrls: ['./calcular.component.css'],
 })
 export class CalcularComponent implements OnInit {
-  id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
-  filtros = {
-    id_empresa : 0,
-    id_sucursal : 0,
-    rfc : "",
-    fecha_inicial : "",
-    fecha_final : "",
-    fecha_pago_i : "",
-    fecha_pago_f : "",
-    tipo_nomina : "",
-    periodo : "",
-    ejercicio : ""
-  }
 
   public ejercicio: any;
   public periodos: any;
@@ -83,7 +70,6 @@ export class CalcularComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargaPrincipal();
-  console.log('this.id_cliente :>> ', this.id_cliente);
   }
   cargaPrincipal() {
     this.ejercicios();
@@ -122,29 +108,19 @@ const regPatronal = this.regPatronal;
     registro_patronal: regPatronal
   };
 
-
-  console.log('jsonEx :>> ', json);
-
-this.calcularService.exportarExcel(json).subscribe((obj:any)=>{
-  if(obj.ok){
+this.calcularService.exportarExcel(json).subscribe((object:any)=>{
+  if(object.ok){
     Swal.fire({
-      icon: 'success',
-      title: 'Excel Exportado',
-    })
-  }
-})
-}
-
-
-//DESCARGAR REPORTE
-descargaReporte(){
-  let json = {
-    id_cliente : this.id_cliente,
-    filtros : this.filtros
-  };
-  this.factura_service.generarExcel(json)
-  .subscribe((object : any) => {
-    if(object.ok){
+      title: 'Generando reporte',
+      text: 'Por favor, espere...',
+      icon: 'info',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      onBeforeOpen: () => {
+        Swal.showLoading();
+      },
+    });
+    setTimeout( ()=> {
       var arrayBuffer = this.base64ToArrayBuffer(object.data);
       var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
       var data = window.URL.createObjectURL(newBlob);
@@ -152,9 +128,13 @@ descargaReporte(){
       link.href = data;
       link.download = "ReporteCalculado.xlsx";
       link.click();
-    }
-  });
+      Swal.close();
+    },750)
+
+  }
+})
 }
+
 
 base64ToArrayBuffer(base64 : string) {
   var binary_string =  window.atob(base64);

@@ -69,13 +69,10 @@
                 <button (click)="traerEmpleados()" class="btn btn-success" title="Validar"><i class="fa fa-plus-circle"
                     aria-hidden="true"></i>
                   Calcular SDI</button>
-                <button  (click)="exportExel()"  class="btn btn-success" title="Validar"><i class="fa fa-plus-circle"
-                    aria-hidden="true"></i>
-                  Descargar excel</button>
                 <button  (click)="exportExel()"  class="btn btn-info" title="Validar"><i class="fa fa-plus-circle"
                     aria-hidden="true"></i>
-                  Descargar reporte</button>
-              </div>
+                  Descargar excel</button>
+                </div>
               <!-- PROCESOS -->
               <div *ngIf="loading" class="text-center mt-4 col">
                 <h1 class="title" >Proceso</h1>     <span><b>RFC:</b> {{empleadoProcesado.rfc}}   <b>Nombre:</b> {{empleadoProcesado.nombre}}</span> <br>

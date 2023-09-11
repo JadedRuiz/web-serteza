@@ -365,6 +365,6 @@ const columnasAcciones = document.querySelectorAll('.mat-column-acciones');
 
         Swal.close();
       });
-    }, 100);
+    }, 500);
   }
 }

@@ -124,8 +124,8 @@ export class AcumuladosDeNominaComponent implements OnInit {
   public registroPatronal: string = '';
   // TABLA
   public columnas: string[] = [
-    'clave',
     'tipo',
+    'clave',
     'concepto',
     'importe',
     'importe_gravado',
@@ -204,7 +204,7 @@ export class AcumuladosDeNominaComponent implements OnInit {
         }
 
         // Después de obtener los datos, configura el paginador
-        this.paginator.pageSize = 10;
+        this.paginator.pageSize = 25;
         this.paginator.pageIndex = 0;
         this.paginator.length = this.empleados.length; // Total de registros
 
