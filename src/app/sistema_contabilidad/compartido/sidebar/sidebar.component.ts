@@ -69,7 +69,11 @@ export class SidebarComponent implements OnInit {
           // { path: '#', title: 'Estado de cuenta',  icon:'ni-book-bookmark text-yellow', id:"rh_header", band: true, tipo : "collapse"}
         ]
       },
-      { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: false, tipo : ""}
+      { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: true, tipo : "collapse",
+      submenu : [
+        { path: 'acumulados-nomina', title: 'Acumulados de nomina', icon: 'fas fa-university text-green', id:'rh_reportes', band: true, tipo : "collapse"}
+      ]
+      },
     ];
   }
   mostrarLogo(){

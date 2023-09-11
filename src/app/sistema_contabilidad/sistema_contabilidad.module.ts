@@ -32,6 +32,7 @@ import { EditTrabajadorComponent } from './edit-trabajador/edit-trabajador.compo
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
+import { AcumuladosDeNominaComponent } from './acumulados-de-nomina/acumulados-de-nomina.component';
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import { MatListModule } from '@angular/material/list';
     ConceptosComponent,
     CalcularComponent,
     RevisarXmlComponent,
-    EditTrabajadorComponent
+    EditTrabajadorComponent,
+    AcumuladosDeNominaComponent
 
   ],
   imports: [

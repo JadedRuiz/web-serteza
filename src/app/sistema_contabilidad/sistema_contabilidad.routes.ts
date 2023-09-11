@@ -12,6 +12,7 @@ import { MovBancosComponent } from './mov-bancos/mov-bancos.component';
 import { CalcularComponent } from './calcular_empleados/calcular/calcular.component';
 import { RevisarXmlComponent } from './revisar-xml/revisar-xml.component';
 import { EditTrabajadorComponent } from './edit-trabajador/edit-trabajador.component';
+import { AcumuladosDeNominaComponent } from './acumulados-de-nomina/acumulados-de-nomina.component';
 
 
 const routes: Routes = [
@@ -26,10 +27,11 @@ const routes: Routes = [
           { path: 'conceptos', component : ConceptosComponent},
           { path : 'catalogo_empresa', component : CatalogoEmpresaComponent},
           { path : 'descarga-masiva', component : DescargaMasivaComponent},
-          {path : 'calcular', component: CalcularComponent},
-          {path : 'revisar', component: RevisarXmlComponent},
+          { path : 'calcular', component: CalcularComponent},
+          { path : 'revisar', component: RevisarXmlComponent},
           { path : 'mov-banco', component : MovBancosComponent},
-          {path : 'edit-trab', component: EditTrabajadorComponent},
+          { path : 'edit-trab', component: EditTrabajadorComponent},
+          { path: 'acumulados-nomina', component: AcumuladosDeNominaComponent},
           { path: '', redirectTo: '/login', pathMatch: 'full'}
       ]
     }

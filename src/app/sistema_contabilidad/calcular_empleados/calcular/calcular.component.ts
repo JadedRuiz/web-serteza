@@ -4,6 +4,7 @@ import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { NominaService } from 'src/app/services/Nomina/Nomina.service';
 import Swal from 'sweetalert2';
 import { CalculoService } from 'src/app/services/calculoIntegrado/calculo.service';
+import { FacturacionService } from 'src/app/services/Facturacion/Facturacion.service';
 
 @Component({
   selector: 'app-calcular',
@@ -11,6 +12,20 @@ import { CalculoService } from 'src/app/services/calculoIntegrado/calculo.servic
   styleUrls: ['./calcular.component.css'],
 })
 export class CalcularComponent implements OnInit {
+  id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
+  filtros = {
+    id_empresa : 0,
+    id_sucursal : 0,
+    rfc : "",
+    fecha_inicial : "",
+    fecha_final : "",
+    fecha_pago_i : "",
+    fecha_pago_f : "",
+    tipo_nomina : "",
+    periodo : "",
+    ejercicio : ""
+  }
+
   public ejercicio: any;
   public periodos: any;
   public ejercicioBuscado: any;
@@ -61,11 +76,14 @@ export class CalcularComponent implements OnInit {
     private nomina_service: NominaService,
     private empresa_service: EmpresaService,
     private calcularService: CalculoService,
+    private factura_service : FacturacionService,
+
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.cargaPrincipal();
+  console.log('this.id_cliente :>> ', this.id_cliente);
   }
   cargaPrincipal() {
     this.ejercicios();
@@ -117,6 +135,36 @@ this.calcularService.exportarExcel(json).subscribe((obj:any)=>{
 })
 }
 
+
+//DESCARGAR REPORTE
+descargaReporte(){
+  let json = {
+    id_cliente : this.id_cliente,
+    filtros : this.filtros
+  };
+  this.factura_service.generarExcel(json)
+  .subscribe((object : any) => {
+    if(object.ok){
+      var arrayBuffer = this.base64ToArrayBuffer(object.data);
+      var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
+      var data = window.URL.createObjectURL(newBlob);
+      let link  = document.createElement('a');
+      link.href = data;
+      link.download = "ReporteCalculado.xlsx";
+      link.click();
+    }
+  });
+}
+
+base64ToArrayBuffer(base64 : string) {
+  var binary_string =  window.atob(base64);
+  var len = binary_string.length;
+  var bytes = new Uint8Array( len );
+  for (var i = 0; i < len; i++)        {
+      bytes[i] = binary_string.charCodeAt(i);
+  }
+  return bytes;
+}
 
   // CONSULTAR EMPLEADOS
   traerEmpleados() {

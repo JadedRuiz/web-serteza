@@ -8,13 +8,14 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import html2canvas from 'html2canvas';
+import { CloseScrollStrategy } from '@angular/cdk/overlay';
 
 @Component({
-  selector: 'app-revisar-xml',
-  templateUrl: './revisar-xml.component.html',
-  styleUrls: ['./revisar-xml.component.css'],
+  selector: 'app-acumulados-de-nomina',
+  templateUrl: './acumulados-de-nomina.component.html',
+  styleUrls: ['./acumulados-de-nomina.component.css'],
 })
-export class RevisarXmlComponent implements OnInit {
+export class AcumuladosDeNominaComponent implements OnInit {
   public ejercicio: any;
   public periodos: any;
   public ejercicioBuscado: any;
@@ -88,7 +89,6 @@ export class RevisarXmlComponent implements OnInit {
       Id: 12,
       meses: ['diciembre'],
     },
-
   ];
   public bimestres: any[] = [
     {
@@ -121,27 +121,24 @@ export class RevisarXmlComponent implements OnInit {
     },
   ];
   public rfcTrabajador: string = '';
-   // TABLA DE EMPLEADO
-   public columnas: string[] = [
-    'num_empleado',
-    'nombre',
-    'rfc',
-    'periodo',
-    'fecha_inicial_pago',
-    'fecha_final_pago',
-    'uuid',
-    'acciones', // Agrega esto si necesitas columnas de acciones
+  public registroPatronal: string = '';
+  // TABLA
+  public columnas: string[] = [
+    'clave',
+    'tipo',
+    'concepto',
+    'importe',
+    'importe_gravado',
+    'gravado_imss',
+    'exento_isr',
+    'exento_imss', // Agrega esto si necesitas columnas de acciones
   ];
- public nomSel =''
-
+  public nomSel = '';
 
   constructor(
     private empresa_service: EmpresaService,
-    private calcularService: CalculoService,
-    private pdf: ElementRef
-  ) {
-    this.tablaParaPDF = pdf;
-  }
+    private calcularService: CalculoService
+  ) {}
 
   @ViewChild('tablaParaPDF', { static: false })
   tablaParaPDF!: ElementRef<HTMLElement>;
@@ -161,14 +158,13 @@ export class RevisarXmlComponent implements OnInit {
   empleados: any = [];
   loading = false;
   totalRegistros: number = 0;
-   //PARA PAGINADOR
+  //PARA PAGINADOR
   dataSource = new MatTableDataSource<any>();
   empresaNombre: string = '';
 
-
-  //EMPEADOS XML
-  trabajadoresXML() {
-  console.log('empresa :>> ', this.empresas);
+  //obtener acumuladod de nomina
+  acumulados() {
+    console.log('empresa :>> ', this.empresas);
 
     Swal.fire({
       title: 'Buscando trabajadores',
@@ -188,15 +184,25 @@ export class RevisarXmlComponent implements OnInit {
       bimestre: 0 || this.biMesActual,
       periodo: 0 || this.periodoActual,
       ejercicio: this.ejercicioActual,
+      registro_patronal: '' || this.registroPatronal,
     };
-    this.calcularService.obtenerXml(json).subscribe((obj: any) => {
+
+    console.log(json);
+    this.calcularService.acumuladosNomina(json).subscribe((obj: any) => {
       Swal.close();
 
       if (obj.ok) {
         this.empleados = obj.data;
+        console.log('this.empleados :>> ', this.empleados);
         const numRegistros = obj.data.length;
         const empresaSel = this.nomSel;
         this.dataSource.data = this.empleados;
+        //PARA EL TITULO CON NUEMERO DE REGISTROS
+        const tituloTabla = document.getElementById('tituloTabla');
+        if (tituloTabla) {
+          tituloTabla.innerText = `Acumulados de ${empresaSel} (${numRegistros} registros)`;
+        }
+
         // Después de obtener los datos, configura el paginador
         this.paginator.pageSize = 10;
         this.paginator.pageIndex = 0;
@@ -205,12 +211,7 @@ export class RevisarXmlComponent implements OnInit {
         // Asigna el paginador a tu fuente de datos
         this.dataSource.paginator = this.paginator;
 
-        //PARA EL TITULO CON NUEMERO DE REGISTROS
-        const tituloTabla = document.getElementById('tituloTabla');
-        if (tituloTabla) {
-          tituloTabla.innerText = `Trabajadores de ${empresaSel} (${numRegistros} registros)`;
-        }
-       // console.log('json :>> ', json);
+        // console.log('json :>> ', json);
         //console.log('obj :>> ', obj);
       } else {
         // Mostrar el mensaje de error al usuario
@@ -234,7 +235,6 @@ export class RevisarXmlComponent implements OnInit {
         if (object.ok) {
           this.empresas = object.data;
           this.empresas_busqueda = object.data;
-
         }
       });
   }
@@ -266,10 +266,10 @@ export class RevisarXmlComponent implements OnInit {
     this.id_empresa = value.option.id;
   }
 
-//PARA EL NOMBRE DE LA EMPRESA SELECIONADA
-nomEmpresa(event: MatAutocompleteSelectedEvent) {
-  this.nomSel = event.option.value;
-}
+  //PARA EL NOMBRE DE LA EMPRESA SELECIONADA
+  nomEmpresa(event: MatAutocompleteSelectedEvent) {
+    this.nomSel = event.option.value;
+  }
 
   // PARA SELECCIONAR MES
   mesSeleccionado(MesSel: any) {
@@ -311,18 +311,15 @@ nomEmpresa(event: MatAutocompleteSelectedEvent) {
   }
 
   // EXPORTAR PDF
+  // oculprar paginaodr
+  paginador = true
   exportarAPDF() {
-//AGREGA CLASE DE CSS
-const columnasAcciones = document.querySelectorAll('.mat-column-acciones');
-  columnasAcciones.forEach((columna) => {
-    columna.classList.add('hide-actions-column');
-  });
-
+    this.paginador = false;
     const content: HTMLElement = this.tablaParaPDF.nativeElement;
     const pdf = new jsPDF('landscape', 'mm', 'a4'); // Cambia 'landscape' para orientación horizontal
     const pdfOptions = {
       margin: 10,
-      filename: 'trabajadores-XML.pdf',
+      filename: 'acumuladosNomina.pdf',
     };
 
     // Muestra la alerta de progreso
@@ -356,15 +353,13 @@ const columnasAcciones = document.querySelectorAll('.mat-column-acciones');
           pdf.internal.pageSize.width,
           contentHeight
         );
-          // Elimina la clase CSS que oculta la columna de acciones
-      columnasAcciones.forEach((columna) => {
-        columna.classList.remove('hide-actions-column');
-      });
-
         pdf.save(pdfOptions.filename);
 
         Swal.close();
+        this.paginador = true;
       });
     }, 100);
   }
 }
+
+

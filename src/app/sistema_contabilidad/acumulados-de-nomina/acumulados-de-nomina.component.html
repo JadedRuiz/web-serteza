@@ -1,0 +1,154 @@
+<div class="header " style="height: 250px;">
+</div>
+<div class="container-fluid mt--9">
+  <div class="row">
+    <div class="col">
+      <div class="card border-success">
+        <div class="card-header">
+          Acumulados de nomina
+        </div>
+        <div class="card-body">
+          <div class="container-fluid">
+            <div class="row">
+              <!-- BUSCAR EMPRESA -->
+              <div class="col-sm-12 col-lg-5">
+                <mat-form-field class="w-100">
+                  <mat-label>BUSCAR EMPRESA</mat-label>
+                  <input type="text" placeholder="Ingrese el nombre o id de la empresa" aria-label="Number" matInput
+                    (keyup)="buscarEmpresa()" [formControl]="filterControlEmpresa" [matAutocomplete]="auto"
+                    style="text-transform: uppercase;">
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionEmpresa($event)"(optionSelected)="nomEmpresa($event)">
+                    <mat-option *ngFor="let empresa of empresas_busqueda" [value]="empresa.nombre"
+                      [id]="empresa.id_empresa" >
+                      {{empresa.empresa}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+               <!-- REGISTRO PATRONAL -->
+               <div class="col-sm-12 col-lg-4">
+                <mat-form-field class="w-100">
+                  <mat-label>Registro patronal</mat-label>
+                  <input matInput type="text" [(ngModel)]="registroPatronal" (input)="onRFCChange()" />
+                </mat-form-field>
+              </div>
+              <!-- SELECIONAR EJERCICIO -->
+              <div class="col-sm-12 col-lg-3">
+                <mat-form-field class="w-100">
+                  <mat-label>EJERCICIO</mat-label>
+                  <mat-select [(ngModel)]="ejercicioActual" (selectionChange)="ejercicioSeleccionado($event)">
+                    <mat-option *ngFor="let ejersel of ejercicio"
+                      [value]="ejersel.ejercicio">{{ejersel.ejercicio}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+            </div>
+
+            <div class="row">
+              <!--PERIODO-->
+              <div class="col-sm-12 col-lg-3">
+                <mat-form-field class="w-100">
+                  <mat-label>PERIODO</mat-label>
+                  <input matInput type="number" [(ngModel)]="periodoActual" (input)="onPeriodChange()" />
+                </mat-form-field>
+              </div>
+              <!-- MES DE PAGO -->
+              <div class="col-sm-12 col-lg-3">
+                <mat-form-field class="w-100">
+                  <mat-label>MES</mat-label>
+                  <mat-select [(ngModel)]="mesActual" (selectionChange)="mesSeleccionado($event.value)">
+                    <mat-option *ngFor="let messel of meses" [value]="messel.Id">{{messel.meses}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <!-- SELECIONAR BIMESTRE -->
+              <div class="col-sm-12 col-lg-3">
+                <mat-form-field class="w-100">
+                  <mat-label>BIMESTRE</mat-label>
+                  <mat-select [(ngModel)]="biMesActual" (selectionChange)="bimesSeleccionado($event.value)">
+                    <mat-option *ngFor="let bimessel of bimestres" [value]="bimessel.Id">{{bimessel.meses}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <!-- RFC TRABAJADOR -->
+              <div class="col-sm-12 col-lg-3">
+                <mat-form-field class="w-100">
+                  <mat-label>RFC TRABAJADOR</mat-label>
+                  <input matInput type="text" [(ngModel)]="rfcTrabajador" (input)="onRFCChange()" />
+                </mat-form-field>
+              </div>
+              <!-- BOTONES -->
+              <div class="text-center col-lg-12 col-sm-12">
+                <button (click)="acumulados()" class="btn btn-success" title="Buscar">
+                  Buscar <i class="fa fa-search"
+                  aria-hidden="true"></i></button>
+                  <span style="margin: 0 20px;"></span>
+                  <button *ngIf="loading" class="btn btn-outline-info" title="Descarga segura" (click)="exportarAPDF()">
+                    Descargar PDF <i class="fa fa-download "
+                    aria-hidden="true"></i></button>
+              </div>
+              <hr>
+
+            </div>
+      </div>
+
+ <!-- TABLA DE TRABAJADORES  -->
+ <div #tablaParaPDF *ngIf="loading" class=" mt-2 row">
+  <div class="col-12">
+    <h1 class="text-center" id="tituloTabla"></h1>
+  </div>
+  <mat-paginator *ngIf="paginador" [pageSizeOptions]="[10, 25, 50, 100,500,1000]" [pageSize]="100" [showFirstLastButtons]="true"></mat-paginator>
+  <!-- TABLA DE RESULTADOS -->
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 col-12">
+    <!-- Columnas de la tabla -->
+    <ng-container matColumnDef="clave">
+      <th mat-header-cell *matHeaderCellDef>Clave</th>
+      <td mat-cell *matCellDef="let row">{{ row.clave }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="tipo">
+      <th mat-header-cell *matHeaderCellDef>Tipo</th>
+      <td mat-cell *matCellDef="let row">{{ row.tipo }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="concepto">
+      <th mat-header-cell *matHeaderCellDef>Concepto</th>
+      <td mat-cell *matCellDef="let row">{{ row.concepto }}</td>
+    </ng-container>
+
+    <ng-container  matColumnDef="importe">
+      <th class="right" mat-header-cell *matHeaderCellDef>Importe</th>
+      <td class="right" mat-cell *matCellDef="let row">{{ row.importe | currency:'MXN':'symbol-narrow':'1.2-2' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="importe_gravado">
+      <th class="right" mat-header-cell *matHeaderCellDef>Importe gravado</th>
+      <td class="right" mat-cell *matCellDef="let row">{{ row.importe_gravado | currency:'MXN':'symbol-narrow':'1.2-2' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="gravado_imss">
+      <th class="right" mat-header-cell *matHeaderCellDef>Gravado imss</th>
+      <td  class="right" mat-cell *matCellDef="let row">{{ row.gravado_imss | currency:'MXN':'symbol-narrow':'1.2-2' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="exento_isr">
+      <th class="right" mat-header-cell *matHeaderCellDef>Exento ISR</th>
+      <td class="right" mat-cell *matCellDef="let row">{{ row.exento_isr | currency:'MXN':'symbol-narrow':'1.2-2' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="exento_imss">
+      <th  class="right" mat-header-cell *matHeaderCellDef>Exento IMSS</th>
+      <td class="right" mat-cell *matCellDef="let row">{{ row.exento_imss  | currency:'MXN':'symbol-narrow':'1.2-2'}}</td>
+    </ng-container>
+
+      <!-- Define las columnas a mostrar -->
+    <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+  </table>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
