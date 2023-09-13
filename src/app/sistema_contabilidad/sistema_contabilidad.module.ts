@@ -33,6 +33,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { AcumuladosDeNominaComponent } from './acumulados-de-nomina/acumulados-de-nomina.component';
+import { IntegracionComponent } from './integracion/integracion.component';
 
 
 @NgModule({
@@ -49,7 +50,8 @@ import { AcumuladosDeNominaComponent } from './acumulados-de-nomina/acumulados-d
     CalcularComponent,
     RevisarXmlComponent,
     EditTrabajadorComponent,
-    AcumuladosDeNominaComponent
+    AcumuladosDeNominaComponent,
+    IntegracionComponent
 
   ],
   imports: [

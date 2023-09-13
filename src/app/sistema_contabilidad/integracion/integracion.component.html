@@ -5,7 +5,7 @@
     <div class="col">
       <div class="card border-success">
         <div class="card-header">
-          Acumulados de nomina
+          Integración
         </div>
         <div class="card-body">
           <div class="container-fluid">
@@ -26,12 +26,12 @@
                 </mat-form-field>
               </div>
                <!-- REGISTRO PATRONAL -->
-               <div class="col-sm-12 col-lg-4">
+               <!-- <div class="col-sm-12 col-lg-4">
                 <mat-form-field class="w-100">
                   <mat-label>Registro patronal</mat-label>
                   <input matInput type="text" [(ngModel)]="registroPatronal" (input)="onRFCChange()" />
                 </mat-form-field>
-              </div>
+              </div> -->
               <!-- SELECIONAR EJERCICIO -->
               <div class="col-sm-12 col-lg-3">
                 <mat-form-field class="w-100">
@@ -47,21 +47,21 @@
 
             <div class="row">
               <!--PERIODO-->
-              <div class="col-sm-12 col-lg-3">
+              <!-- <div class="col-sm-12 col-lg-3">
                 <mat-form-field class="w-100">
                   <mat-label>PERIODO</mat-label>
                   <input matInput type="number" [(ngModel)]="periodoActual" (input)="onPeriodChange()" />
                 </mat-form-field>
-              </div>
+              </div> -->
               <!-- MES DE PAGO -->
-              <div class="col-sm-12 col-lg-3">
+              <!-- <div class="col-sm-12 col-lg-3">
                 <mat-form-field class="w-100">
                   <mat-label>MES</mat-label>
                   <mat-select [(ngModel)]="mesActual" (selectionChange)="mesSeleccionado($event.value)">
                     <mat-option *ngFor="let messel of meses" [value]="messel.Id">{{messel.meses}}</mat-option>
                   </mat-select>
                 </mat-form-field>
-              </div>
+              </div> -->
               <!-- SELECIONAR BIMESTRE -->
               <div class="col-sm-12 col-lg-3">
                 <mat-form-field class="w-100">
@@ -72,7 +72,7 @@
                 </mat-form-field>
               </div>
               <!-- RFC TRABAJADOR -->
-              <div class="col-sm-12 col-lg-3">
+              <div class="col-sm-12 col-lg-4">
                 <mat-form-field class="w-100">
                   <mat-label>RFC TRABAJADOR</mat-label>
                   <input matInput type="text" [(ngModel)]="rfcTrabajador" (input)="onRFCChange()" />
@@ -80,11 +80,11 @@
               </div>
               <!-- BOTONES -->
               <div class="text-center col-lg-12 col-sm-12">
-                <button (click)="acumulados()" class="btn btn-success" title="Buscar">
+                <button (click)="acumulados1()" class="btn btn-success" title="Buscar">
                   Buscar <i class="fa fa-search"
                   aria-hidden="true"></i></button>
                   <span style="margin: 0 20px;"></span>
-                  <button *ngIf="loading" class="btn btn-outline-info" title="Descarga segura" (click)="exportarAPDF()">
+                  <button *ngIf="loading" class="btn btn-outline-info" title="Descarga segura" (click)="exportarAPDF1()">
                     Descargar PDF <i class="fa fa-download "
                     aria-hidden="true"></i></button>
               </div>
@@ -129,14 +129,14 @@
       <td class="right" mat-cell *matCellDef="let row">{{ row.importe_gravado | currency:'MXN':'symbol-narrow':'1.2-2' }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="exento_isr">
-      <th class="right" mat-header-cell *matHeaderCellDef>Exento ISR</th>
-      <td  class="right" mat-cell *matCellDef="let row">{{ row.exento_isr | currency:'MXN':'symbol-narrow':'1.2-2' }}</td>
-    </ng-container>
-
     <ng-container matColumnDef="gravado_imss">
       <th class="right" mat-header-cell *matHeaderCellDef>Gravado imss</th>
-      <td class="right" mat-cell *matCellDef="let row">{{ row.gravado_imss | currency:'MXN':'symbol-narrow':'1.2-2' }}</td>
+      <td  class="right" mat-cell *matCellDef="let row">{{ row.gravado_imss | currency:'MXN':'symbol-narrow':'1.2-2' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="exento_isr">
+      <th class="right" mat-header-cell *matHeaderCellDef>Exento ISR</th>
+      <td class="right" mat-cell *matCellDef="let row">{{ row.exento_isr | currency:'MXN':'symbol-narrow':'1.2-2' }}</td>
     </ng-container>
 
     <ng-container matColumnDef="exento_imss">

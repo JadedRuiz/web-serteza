@@ -129,8 +129,8 @@ export class AcumuladosDeNominaComponent implements OnInit {
     'concepto',
     'importe',
     'importe_gravado',
-    'gravado_imss',
     'exento_isr',
+    'gravado_imss',
     'exento_imss', // Agrega esto si necesitas columnas de acciones
   ];
   public nomSel = '';
@@ -167,7 +167,7 @@ export class AcumuladosDeNominaComponent implements OnInit {
     console.log('empresa :>> ', this.empresas);
 
     Swal.fire({
-      title: 'Buscando trabajadores',
+      title: 'Buscando acumulados',
       text: 'Por favor, espere...',
       icon: 'info',
       allowOutsideClick: false,
@@ -187,7 +187,7 @@ export class AcumuladosDeNominaComponent implements OnInit {
       registro_patronal: '' || this.registroPatronal,
     };
 
-    console.log(json);
+   // console.log(json);
     this.calcularService.acumuladosNomina(json).subscribe((obj: any) => {
       Swal.close();
 

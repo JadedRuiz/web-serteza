@@ -79,9 +79,6 @@ export class CalcularComponent implements OnInit {
 
 
 
-
-
-
  // PROCESAR EMPLEADOS
  empleados: any = [];
  loading = false;
@@ -130,6 +127,7 @@ export class CalcularComponent implements OnInit {
     this.registrosProcesados = 0; // Inicializa la cantidad de registros procesados
 
 
+
     // Crear un arreglo de Promesas para los cálculos
     const promesas = this.empleados.map((empleado: any) => {
 
@@ -149,6 +147,8 @@ export class CalcularComponent implements OnInit {
       });
 
     });
+
+
 
     // Usar Promise.all para esperar a que todas las Promesas se resuelvan
     return Promise.all(promesas)
@@ -173,7 +173,9 @@ export class CalcularComponent implements OnInit {
           text: 'Ha ocurrido un error',
         });
       });
+
   }
+
 
   calcular(rfc: string): Promise<void> {
     let json = {
@@ -315,5 +317,6 @@ exportExel(){
     }
     return bytes;
   }
+
 
 }

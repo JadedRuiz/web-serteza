@@ -367,4 +367,6 @@ const columnasAcciones = document.querySelectorAll('.mat-column-acciones');
       });
     }, 500);
   }
+
+
 }

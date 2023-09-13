@@ -71,7 +71,8 @@ export class SidebarComponent implements OnInit {
       },
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: true, tipo : "collapse",
       submenu : [
-        { path: 'acumulados-nomina', title: 'Acumulados de nomina', icon: 'fas fa-university text-green', id:'rh_reportes', band: true, tipo : "collapse"}
+        { path: 'acumulados-nomina', title: 'Acumulados de nomina', icon: 'fas fa-university text-green', id:'rh_reportes', band: true, tipo : "collapse"},
+        { path: 'integracion', title: 'Integración', icon: 'ni-folder-17 text-green', id:'rh_reportes', band: true, tipo : "collapse"}
       ]
       },
     ];
