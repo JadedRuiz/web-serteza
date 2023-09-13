@@ -46,6 +46,7 @@ export class EditTrabajadorComponent implements OnInit {
   paraPDF!: ElementRef<HTMLElement>;
 
   ngOnInit(): void {
+
     this.cargautil();
     this.fechaActual = new Date();
 
@@ -53,12 +54,14 @@ export class EditTrabajadorComponent implements OnInit {
   }
 
   cargautil() {
+
     // Obtener los datos del empleado desde la ruta activa
     this.route.queryParams.subscribe((params) => {
       this.idObtenido = params;
       console.log('this.idObtenido :>> ', this.idObtenido);
     });
     this.obtenerRegistros();
+
   }
 
 // Mapeo de columnas a formatear
@@ -78,6 +81,16 @@ columnasFormateadas: { [key: string]: boolean } = {
 
   // ENVIAR ID_BOVEDA
   obtenerRegistros() {
+    Swal.fire({
+      title: 'Generando',
+      text: 'Por favor, espere...',
+      icon: 'info',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      onBeforeOpen: () => {
+        Swal.showLoading();
+      },
+    });
     let json = {
       id_boveda: this.idObtenido, // <= cambiar por id_boveda
     };
@@ -87,6 +100,7 @@ columnasFormateadas: { [key: string]: boolean } = {
         this.dataSource2 = obj.data.filter((element:any) => element.tipo === 'D');
         this.dataSource = obj.data;
         this.nomina = obj.data;
+        Swal.close();
 
         console.log('object :>> ', this.nomina);
       } else {

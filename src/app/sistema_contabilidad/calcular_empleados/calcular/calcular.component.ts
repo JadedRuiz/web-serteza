@@ -96,55 +96,7 @@ export class CalcularComponent implements OnInit {
  rfcTrab: string = '';
 
 
-// EXPORTAR EXCEL
-exportExel(){
-const  rfcTrabajador = this.rfcTrab;
-const regPatronal = this.regPatronal;
-  let json = {
-    id_empresa: this.id_empresa,
-    bimestre: this.mesActual,
-    ejercicio: this.ejercicioActual,
-    rfc : rfcTrabajador,
-    registro_patronal: regPatronal
-  };
 
-this.calcularService.exportarExcel(json).subscribe((object:any)=>{
-  if(object.ok){
-    Swal.fire({
-      title: 'Generando reporte',
-      text: 'Por favor, espere...',
-      icon: 'info',
-      allowOutsideClick: false,
-      showConfirmButton: false,
-      onBeforeOpen: () => {
-        Swal.showLoading();
-      },
-    });
-    setTimeout( ()=> {
-      var arrayBuffer = this.base64ToArrayBuffer(object.data);
-      var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
-      var data = window.URL.createObjectURL(newBlob);
-      let link  = document.createElement('a');
-      link.href = data;
-      link.download = "ReporteCalculado.xlsx";
-      link.click();
-      Swal.close();
-    },750)
-
-  }
-})
-}
-
-
-base64ToArrayBuffer(base64 : string) {
-  var binary_string =  window.atob(base64);
-  var len = binary_string.length;
-  var bytes = new Uint8Array( len );
-  for (var i = 0; i < len; i++)        {
-      bytes[i] = binary_string.charCodeAt(i);
-  }
-  return bytes;
-}
 
   // CONSULTAR EMPLEADOS
   traerEmpleados() {
@@ -157,7 +109,8 @@ base64ToArrayBuffer(base64 : string) {
       if (obj.ok) {
         this.empleados = obj.data;
         this.totalRegistros = this.empleados.length;
-        console.log('algo seguramente:>> ', obj);
+        //console.log('algo seguramente:>> ', obj);
+
         this.procesar();
         //console.log('json :>> ', json);
         Swal.fire({
@@ -176,24 +129,25 @@ base64ToArrayBuffer(base64 : string) {
     this.progreso = 0; // Inicializa el progreso
     this.registrosProcesados = 0; // Inicializa la cantidad de registros procesados
 
+
     // Crear un arreglo de Promesas para los cálculos
     const promesas = this.empleados.map((empleado: any) => {
-      console.log(empleado);
+
 
       return this.calcular(empleado.rfc).then(() => {
         this.empleadoProcesado = {
           rfc: empleado.rfc,
           nombre: empleado.nombre,
         };
-
-        // Incrementa el número de registros procesados
-        this.registrosProcesados++;
-        // Calcula el progreso en función de los registros procesados
-        this.progreso =
-          (this.registrosProcesados / this.empleados.length) * 100;
-        // Detecta cambios en el componente para actualizar la vista
-        this.cdr.detectChanges();
+          // Incrementa el número de registros procesados
+          this.registrosProcesados++;
+          // Calcula el progreso en función de los registros procesados
+          this.progreso =
+            (this.registrosProcesados / this.empleados.length) * 100;
+          // Detecta cambios en el componente para actualizar la vista
+          this.cdr.detectChanges();
       });
+
     });
 
     // Usar Promise.all para esperar a que todas las Promesas se resuelvan
@@ -222,7 +176,6 @@ base64ToArrayBuffer(base64 : string) {
   }
 
   calcular(rfc: string): Promise<void> {
-    console.log('hola');
     let json = {
       id_empresa: this.id_empresa,
       rfc: rfc,
@@ -234,16 +187,19 @@ base64ToArrayBuffer(base64 : string) {
     return new Promise<void>((resolve, reject) => {
       this.calcularService.calculoIntegrado(json).subscribe(
         (resp) => {
-          console.log('hey', resp);
-          resolve(); // Resuelve la promesa cuando la llamada HTTP es exitosa
+          console.log(resp.message, json);
+            resolve(); // Resuelve la promesa cuando la llamada HTTP es exitosa
+
         },
         (error) => {
-          console.error('Error en la llamada HTTP:', error);
           reject(error); // Rechaza la promesa en caso de error
         }
       );
     });
   }
+
+
+
 
   mostrarEmpresas() {
     this.empresas_busqueda = [];
@@ -307,5 +263,57 @@ base64ToArrayBuffer(base64 : string) {
     this.ejercicioActual = EjercicioSel.value;
   }
 
+
+  // EXPORTAR EXCEL
+exportExel(){
+  const  rfcTrabajador = this.rfcTrab;
+  const regPatronal = this.regPatronal;
+    let json = {
+      id_empresa: this.id_empresa,
+      bimestre: this.mesActual,
+      ejercicio: this.ejercicioActual,
+      rfc : rfcTrabajador,
+      registro_patronal: regPatronal
+    };
+
+  this.calcularService.exportarExcel(json).subscribe((object:any)=>{
+    if(object.ok){
+      Swal.fire({
+        title: 'Generando reporte',
+        text: 'Por favor, espere...',
+        icon: 'info',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        onBeforeOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      setTimeout( ()=> {
+    var arrayBuffer = this.base64ToArrayBuffer(object.data);
+      var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
+      var data = window.URL.createObjectURL(newBlob);
+      let link  = document.createElement('a');
+      link.href = data;
+      link.download = "ReporteCalculado.xlsx";
+      link.click();
+      Swal.close();
+      },500)
+
+
+
+    }
+  })
+  }
+
+
+  base64ToArrayBuffer(base64 : string) {
+    var binary_string =  window.atob(base64);
+    var len = binary_string.length;
+    var bytes = new Uint8Array( len );
+    for (var i = 0; i < len; i++)        {
+        bytes[i] = binary_string.charCodeAt(i);
+    }
+    return bytes;
+  }
 
 }

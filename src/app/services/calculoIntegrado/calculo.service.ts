@@ -5,6 +5,7 @@ import { map, catchError } from 'rxjs/operators';
 
 import Swal from 'sweetalert2';
 import { throwError } from 'rxjs';
+import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 
 
 @Injectable({
@@ -55,7 +56,7 @@ return this.http.post(url,json)
 .pipe(map((resp:any)=>{
   return resp;
 }), catchError(err => {
-  Swal.fire("Ha ocurrido un error en el servicio", err.error.message, 'error');
+  Swal.fire("Ha ocurrido un error en el servicio", err.message, 'error');
   return throwError(err);
 }));
  }
