@@ -124,14 +124,16 @@ export class IntegracionComponent implements OnInit {
     public registroPatronal: string = '';
     // TABLA
     public columnas: string[] = [
-      'tipo',
-      'clave',
-      'concepto',
-      'importe',
-      'importe_gravado',
-      'gravado_imss',
-      'exento_isr',
-      'exento_imss', // Agrega esto si necesitas columnas de acciones
+      'nombre',
+      'imss',
+      'rfc',
+      'dias_laborados',
+      'fecha_ingreso',
+      'antiguedad',
+      'sueldo_diario',
+      'factor',
+      'sdi_calculado',
+
     ];
     public nomSel = '';
 
@@ -171,7 +173,7 @@ export class IntegracionComponent implements OnInit {
       console.log('empresa :>> ', this.empresas);
 
       Swal.fire({
-        title: 'Buscando acumulados',
+        title: 'Cargando Integrados',
         text: 'Por favor, espere...',
         icon: 'info',
         allowOutsideClick: false,
@@ -184,15 +186,14 @@ export class IntegracionComponent implements OnInit {
       let json = {
         id_empresa: this.id_empresa,
         rfc: '' || this.rfcTrabajador,
-        mes: 0 || this.mesActual,
         bimestre: 0 || this.biMesActual,
-        periodo: 0 || this.periodoActual,
         ejercicio: this.ejercicioActual,
         registro_patronal: '' || this.registroPatronal,
+        exportar: 0
       };
 
      // console.log(json);
-      this.calcularService.acumuladosNomina(json).subscribe((obj: any) => {
+      this.calcularService.exportarExcel(json).subscribe((obj: any) => {
         Swal.close();
 
         if (obj.ok) {

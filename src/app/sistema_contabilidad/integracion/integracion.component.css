@@ -1,0 +1,5 @@
+.dVer {
+  border-left: 1px solid #ccc; /* Agrega un borde izquierdo */
+  border-right: 1px solid #ccc; /* Agrega un borde derecho */
+  text-align: right;
+}
