@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import Swal from 'sweetalert2';
 import { CalculoService } from 'src/app/services/calculoIntegrado/calculo.service';
+import { CacheTrabService } from 'src/app/services/cache/cache-trab.service';
 import { jsPDF } from 'jspdf';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -133,11 +134,19 @@ export class RevisarXmlComponent implements OnInit {
     'acciones', // Agrega esto si necesitas columnas de acciones
   ];
  public nomSel =''
+ loading = false;
+   // PROCESAR EMPLEADOS
+   empleados: any = [];
+   totalRegistros: number = 0;
+    //PARA PAGINADOR
+   dataSource = new MatTableDataSource<any>();
+   empresaNombre: string = '';
 
 
   constructor(
     private empresa_service: EmpresaService,
     private calcularService: CalculoService,
+    private cacheService: CacheTrabService,
     private pdf: ElementRef
   ) {
     this.tablaParaPDF = pdf;
@@ -150,20 +159,33 @@ export class RevisarXmlComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargaPrincipal();
+
+    const cachedData = this.cacheService.getData();
+    console.log('this.cahcheData :>> ', cachedData);
+  if (cachedData) {
+    this.loading = true;
+
+    this.empleados = cachedData;
+    // Configura el paginador y la tabla
+    this.dataSource.data = cachedData;
+    // Después de obtener los datos, configura el paginador
+    this.paginator.pageSize = 10;
+    this.paginator.pageIndex = 0;
+    this.paginator.length = this.empleados.length; // Total de registros
+
+    // Asigna el paginador a tu fuente de datos
+    this.dataSource.paginator = this.paginator;
   }
+  }
+
+
   cargaPrincipal() {
     // this.trabajadoreXML();
     this.ejercicios();
     this.mostrarEmpresas();
   }
 
-  // PROCESAR EMPLEADOS
-  empleados: any = [];
-  loading = false;
-  totalRegistros: number = 0;
-   //PARA PAGINADOR
-  dataSource = new MatTableDataSource<any>();
-  empresaNombre: string = '';
+
 
 
   //EMPEADOS XML
@@ -189,13 +211,15 @@ export class RevisarXmlComponent implements OnInit {
       periodo: 0 || this.periodoActual,
       ejercicio: this.ejercicioActual,
     };
-    this.calcularService.obtenerXml(json).subscribe((obj: any) => {
+    this.calcularService.obtenerXml(json)
+    .subscribe((obj: any) => {
       Swal.close();
 
       if (obj.ok) {
         this.empleados = obj.data;
         const numRegistros = obj.data.length;
         const empresaSel = this.nomSel;
+
         this.dataSource.data = this.empleados;
         // Después de obtener los datos, configura el paginador
         this.paginator.pageSize = 10;
@@ -204,6 +228,9 @@ export class RevisarXmlComponent implements OnInit {
 
         // Asigna el paginador a tu fuente de datos
         this.dataSource.paginator = this.paginator;
+
+        //Guardando en Cache
+        this.cacheService.saveData(this.empleados);
 
         //PARA EL TITULO CON NUEMERO DE REGISTROS
         const tituloTabla = document.getElementById('tituloTabla');

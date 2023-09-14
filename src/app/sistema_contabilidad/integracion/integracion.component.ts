@@ -133,6 +133,7 @@ export class IntegracionComponent implements OnInit {
       'sueldo_diario',
       'factor',
       'sdi_calculado',
+      'variable'
 
     ];
     public nomSel = '';
@@ -314,6 +315,60 @@ export class IntegracionComponent implements OnInit {
     onRFCChange() {
       console.log('Nuevo valor de RFC:', this.rfcTrabajador);
     }
+
+
+
+      // EXPORTAR EXCEL
+exportExel(){
+    let json = {
+      id_empresa: this.id_empresa,
+        rfc: '' || this.rfcTrabajador,
+        bimestre: 0 || this.biMesActual,
+        ejercicio: this.ejercicioActual,
+        registro_patronal: '' || this.registroPatronal,
+        exportar: 1
+    };
+
+  this.calcularService.exportarExcel(json).subscribe((object:any)=>{
+    if(object.ok){
+      Swal.fire({
+        title: 'Generando reporte',
+        text: 'Por favor, espere...',
+        icon: 'info',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        onBeforeOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      setTimeout( ()=> {
+    var arrayBuffer = this.base64ToArrayBuffer(object.data);
+      var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
+      var data = window.URL.createObjectURL(newBlob);
+      let link  = document.createElement('a');
+      link.href = data;
+      link.download = "ReporteCalculado.xlsx";
+      link.click();
+      Swal.close();
+      },500)
+
+
+
+    }
+  })
+  }
+
+
+  base64ToArrayBuffer(base64 : string) {
+    var binary_string =  window.atob(base64);
+    var len = binary_string.length;
+    var bytes = new Uint8Array( len );
+    for (var i = 0; i < len; i++)        {
+        bytes[i] = binary_string.charCodeAt(i);
+    }
+    return bytes;
+  }
+
 
     // EXPORTAR PDF
     // ocultar paginaodr

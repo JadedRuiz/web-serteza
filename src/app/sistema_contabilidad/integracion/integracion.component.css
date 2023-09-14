@@ -2,4 +2,15 @@
   border-left: 1px solid #ccc; /* Agrega un borde izquierdo */
   border-right: 1px solid #ccc; /* Agrega un borde derecho */
   text-align: right;
+  padding: 8px;
+
+}
+
+.mat-row.mat-row:hover {
+  background-color: #ccc;
+}
+
+.mat-header-row {
+  background-color: #f0f0f0;
+  font-weight: bold;
 }

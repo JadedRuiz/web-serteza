@@ -95,31 +95,39 @@ export class CalcularComponent implements OnInit {
 
 
 
-  // CONSULTAR EMPLEADOS
-  traerEmpleados() {
-    let json = {
-      id_empresa: this.id_empresa,
-      bimestre: this.mesActual,
-      ejercicio: this.ejercicioActual,
-    };
-    this.calcularService.obtenerEmpleados(json).subscribe((obj: any) => {
-      if (obj.ok) {
-        this.empleados = obj.data;
-        this.totalRegistros = this.empleados.length;
-        //console.log('algo seguramente:>> ', obj);
-
-        this.procesar();
-        //console.log('json :>> ', json);
-        Swal.fire({
-          icon: 'success',
-          title: 'Trabajadores obtenidos',
-        })
-      } else {
-        Swal.fire('ha ocurrido un error');
-      }
-    });
-
-  }
+// CONSULTAR EMPLEADOS
+traerEmpleados() {
+  // Mostrar una alerta de confirmación antes de realizar la consulta
+  Swal.fire({
+    title: '¿Desea calcular SDI?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí',
+    cancelButtonText: 'Cancelar',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Si el usuario confirma, procede a obtener los trabajadores
+      let json = {
+        id_empresa: this.id_empresa,
+        bimestre: this.mesActual,
+        ejercicio: this.ejercicioActual,
+      };
+      this.calcularService.obtenerEmpleados(json).subscribe((obj: any) => {
+        if (obj.ok) {
+          this.empleados = obj.data;
+          this.totalRegistros = this.empleados.length;
+          this.procesar();
+          Swal.fire({
+            icon: 'success',
+            title: 'Trabajadores obtenidos',
+          });
+        } else {
+          Swal.fire('Ha ocurrido un error');
+        }
+      });
+    }
+  });
+}
 
   procesar() {
     this.loading = true; // Activar la barra de carga
@@ -266,57 +274,7 @@ export class CalcularComponent implements OnInit {
   }
 
 
-  // EXPORTAR EXCEL
-exportExel(){
-  const  rfcTrabajador = this.rfcTrab;
-  const regPatronal = this.regPatronal;
-    let json = {
-      id_empresa: this.id_empresa,
-      bimestre: this.mesActual,
-      ejercicio: this.ejercicioActual,
-      rfc : rfcTrabajador,
-      registro_patronal: regPatronal
-    };
 
-  this.calcularService.exportarExcel(json).subscribe((object:any)=>{
-    if(object.ok){
-      Swal.fire({
-        title: 'Generando reporte',
-        text: 'Por favor, espere...',
-        icon: 'info',
-        allowOutsideClick: false,
-        showConfirmButton: false,
-        onBeforeOpen: () => {
-          Swal.showLoading();
-        },
-      });
-      setTimeout( ()=> {
-    var arrayBuffer = this.base64ToArrayBuffer(object.data);
-      var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
-      var data = window.URL.createObjectURL(newBlob);
-      let link  = document.createElement('a');
-      link.href = data;
-      link.download = "ReporteCalculado.xlsx";
-      link.click();
-      Swal.close();
-      },500)
-
-
-
-    }
-  })
-  }
-
-
-  base64ToArrayBuffer(base64 : string) {
-    var binary_string =  window.atob(base64);
-    var len = binary_string.length;
-    var bytes = new Uint8Array( len );
-    for (var i = 0; i < len; i++)        {
-        bytes[i] = binary_string.charCodeAt(i);
-    }
-    return bytes;
-  }
 
 
 }

@@ -37,6 +37,7 @@ export class EditTrabajadorComponent implements OnInit {
   dataSource: any[] = [];
   dataSource2: any[] = [];
 
+
   constructor(
     private route: ActivatedRoute,
     private calculoService: CalculoService,
@@ -78,6 +79,7 @@ columnasFormateadas: { [key: string]: boolean } = {
 
 
 
+neto: number = 0;
 
   // ENVIAR ID_BOVEDA
   obtenerRegistros() {
@@ -92,7 +94,7 @@ columnasFormateadas: { [key: string]: boolean } = {
       },
     });
     let json = {
-      id_boveda: this.idObtenido, // <= cambiar por id_boveda
+      id_boveda: this.idObtenido,
     };
     this.calculoService.detalleXML(json).subscribe((obj: any) => {
       if (obj.ok) {
@@ -100,8 +102,23 @@ columnasFormateadas: { [key: string]: boolean } = {
         this.dataSource2 = obj.data.filter((element:any) => element.tipo === 'D');
         this.dataSource = obj.data;
         this.nomina = obj.data;
-        Swal.close();
 
+
+       //PARA NETOS
+       const sumaPersepciones = this.nomina
+       .filter((element: any) => element.tipo === 'P' || element.tipo === 'O')
+       .reduce((acc: number, element: any) => acc + parseFloat(element.importe), 0)
+
+
+       const sumaDeducciones = this.nomina
+        .filter((element: any) => element.tipo === 'D')
+        .reduce((acc: number, element: any) => acc + parseFloat(element.importe), 0);
+
+        this.neto= sumaPersepciones - sumaDeducciones;
+
+
+        Swal.close();
+        console.log('this.neto :>> ', this.neto);
         console.log('object :>> ', this.nomina);
       } else {
         // Manejo de error o mensaje de que no se encontraron datos
