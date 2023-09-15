@@ -88,6 +88,18 @@ exportarExcel(json: any){
     }
 
 
+ //EXPORTAR VARIABLES
+ variables(json:any){
+  let url = API_AUD + "variables";
+  return this.http.post(url,json)
+  .pipe(map((resp:any)=>{
+    return resp;
+  }), catchError(err=>{
+    Swal.fire("Ha ocurrido un error de servicio", err.message,'error');
+    return throwError(err);
+    }));
+    }
+
 //Acumulados de nomina
 acumuladosNomina(json:any){
  let url = API_AUD + "acumulados";

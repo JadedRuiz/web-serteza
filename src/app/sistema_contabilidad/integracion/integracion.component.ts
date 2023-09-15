@@ -138,10 +138,12 @@ export class IntegracionComponent implements OnInit {
     ];
     public nomSel = '';
 
+
     constructor(
       private empresa_service: EmpresaService,
       private calcularService: CalculoService
     ) {}
+
 
     @ViewChild('tablaParaPDF', { static: false })
     tablaParaPDF!: ElementRef<HTMLElement>;
@@ -151,6 +153,7 @@ export class IntegracionComponent implements OnInit {
     ngOnInit(): void {
       this.cargaPrincipal();
     }
+
     cargaPrincipal() {
       // this.trabajadoreXML();
       this.ejercicios();
@@ -160,6 +163,8 @@ export class IntegracionComponent implements OnInit {
     //OJO -----------------<=
     exportarAPDF1(){}
     acumulados1(){ }
+
+
 
     // PROCESAR EMPLEADOS
     empleados: any = [];
@@ -317,8 +322,49 @@ export class IntegracionComponent implements OnInit {
     }
 
 
+//Exportar Variables
+exportarVariables(){
+    let json = {
+      id_empresa: this.id_empresa,
+        rfc: '' || this.rfcTrabajador,
+        bimestre: 0 || this.biMesActual,
+        ejercicio: this.ejercicioActual,
+        registro_patronal: '' || this.registroPatronal,
+        exportar: 1
+    };
 
-      // EXPORTAR EXCEL
+  this.calcularService.variables(json).subscribe((object:any)=>{
+    if(object.ok){
+      Swal.fire({
+        title: 'Generando variables',
+        text: 'Por favor, espere...',
+        icon: 'info',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        onBeforeOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      setTimeout( ()=> {
+    var arrayBuffer = this.base64ToArrayBuffer(object.data);
+      var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
+      var data = window.URL.createObjectURL(newBlob);
+      let link  = document.createElement('a');
+      link.href = data;
+      link.download = "ReporteVariables.xlsx";
+      link.click();
+      Swal.close();
+      },500)
+
+
+
+    }
+  })
+
+}
+
+
+// EXPORTAR EXCEL
 exportExel(){
     let json = {
       id_empresa: this.id_empresa,
@@ -347,7 +393,7 @@ exportExel(){
       var data = window.URL.createObjectURL(newBlob);
       let link  = document.createElement('a');
       link.href = data;
-      link.download = "ReporteCalculado.xlsx";
+      link.download = "ReporteIntegrado.xlsx";
       link.click();
       Swal.close();
       },500)
@@ -371,6 +417,7 @@ exportExel(){
 
 
     // EXPORTAR PDF
+
     // ocultar paginaodr
     paginador = true
     exportarAPDF() {
