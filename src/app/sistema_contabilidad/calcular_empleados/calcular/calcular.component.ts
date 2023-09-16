@@ -111,7 +111,12 @@ traerEmpleados() {
         id_empresa: this.id_empresa,
         bimestre: this.mesActual,
         ejercicio: this.ejercicioActual,
+        rfc: this.rfcTrab,
+        registro_patronal: this.regPatronal
       };
+
+      console.log('json :>> ', json);
+
       this.calcularService.obtenerEmpleados(json).subscribe((obj: any) => {
         if (obj.ok) {
           this.empleados = obj.data;
@@ -134,11 +139,8 @@ traerEmpleados() {
     this.progreso = 0; // Inicializa el progreso
     this.registrosProcesados = 0; // Inicializa la cantidad de registros procesados
 
-
-
     // Crear un arreglo de Promesas para los cálculos
     const promesas = this.empleados.map((empleado: any) => {
-
 
       return this.calcular(empleado.rfc).then(() => {
         this.empleadoProcesado = {

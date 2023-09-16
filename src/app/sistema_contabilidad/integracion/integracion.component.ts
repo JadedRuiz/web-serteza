@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import html2canvas from 'html2canvas';
@@ -8,6 +9,7 @@ import jsPDF from 'jspdf';
 import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
 import { CalculoService } from 'src/app/services/calculoIntegrado/calculo.service';
 import Swal from 'sweetalert2';
+import { ModalIntegraComponent } from '../modal-integra/modal-integra.component';
 
 @Component({
   selector: 'app-integracion',
@@ -141,7 +143,8 @@ export class IntegracionComponent implements OnInit {
 
     constructor(
       private empresa_service: EmpresaService,
-      private calcularService: CalculoService
+      private calcularService: CalculoService,
+      private dialog: MatDialog
     ) {}
 
 
@@ -160,9 +163,18 @@ export class IntegracionComponent implements OnInit {
       this.mostrarEmpresas();
     }
 
-    //OJO -----------------<=
-    exportarAPDF1(){}
-    acumulados1(){ }
+  //PARA EL MODAL
+  modalDetalle(row:any){
+    const dialogRef = this.dialog.open(ModalIntegraComponent, {
+      width: '800px',
+      data: row, // Pasamos los datos del trabajador al modal
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      // Aquí puedes realizar acciones después de cerrar el modal si es necesario
+    });
+
+  }
 
 
 
@@ -211,7 +223,7 @@ export class IntegracionComponent implements OnInit {
           //PARA EL TITULO CON NUEMERO DE REGISTROS
           const tituloTabla = document.getElementById('tituloTabla');
           if (tituloTabla) {
-            tituloTabla.innerText = `Acumulados de ${empresaSel} (${numRegistros} registros)`;
+            tituloTabla.innerText = ` ${empresaSel} (${numRegistros} registros)`;
           }
 
           // Después de obtener los datos, configura el paginador

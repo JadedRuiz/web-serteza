@@ -1,0 +1,64 @@
+<!-- detalle-modal.component.html -->
+
+<mat-dialog-content>
+  <h2>Detalles del Trabajador</h2>
+  <p><strong>Nombre:</strong> {{ trabajador.nombre }}</p>
+  <p><strong>IMSS:</strong> {{ trabajador.imss }}</p>
+  <p><strong>RFC:</strong> {{ trabajador.rfc }}</p>
+</mat-dialog-content>
+
+
+<mat-dialog-content>
+  <h2>Variables</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Clave</th>
+        <th>Concepto</th>
+        <th>Importe</th>
+        <th>Gravado IMSS</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngIf="trabajadorV.variables && trabajadorV.variables.length > 0; else loading">
+        <tr *ngFor="let variable of trabajadorV.variables">
+          <td>{{ variable.clave }}</td>
+          <td>{{ variable.concepto }}</td>
+          <td>{{ variable.importe }}</td>
+          <td>{{ variable.gravado_imss }}</td>
+        </tr>
+      </ng-container>
+      <ng-template #loading>
+        <tr>
+          <td colspan="4">Cargando variables...</td>
+        </tr>
+      </ng-template>
+    </tbody>
+  </table>
+  <!-- Mostrar los totales -->
+  <div class="totals">
+    <p><strong>Total Importes:</strong> {{ totalImportes | number }}</p>
+    <p><strong>Total Gravado IMSS:</strong> {{ totalGravadosIMSS | number }}</p>
+  </div>
+</mat-dialog-content>
+
+
+<!-- <mat-dialog-content>
+  <h2>Variables</h2>
+  <ul>
+    <li *ngFor="let variable of trabajadorV.variables">
+      Clave: {{ variable.clave }}
+      Concepto: {{ variable.concepto }}
+      Importe: {{ variable.importe }}
+      gravado_imss: {{ variable.gravado_imss }}
+    </li>
+    <div *ngIf="!(trabajadorV.variables && trabajadorV.variables.length > 0)">
+      Cargando variables...
+    </div>
+  </ul>
+</mat-dialog-content> -->
+
+
+<mat-dialog-actions align="end">
+  <button mat-button class="btn btn-danger" (click)="cerrarModal()">Cerrar</button>
+</mat-dialog-actions>

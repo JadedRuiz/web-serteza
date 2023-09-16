@@ -34,6 +34,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { AcumuladosDeNominaComponent } from './acumulados-de-nomina/acumulados-de-nomina.component';
 import { IntegracionComponent } from './integracion/integracion.component';
+import { ModalIntegraComponent } from './modal-integra/modal-integra.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 @NgModule({
@@ -51,7 +53,8 @@ import { IntegracionComponent } from './integracion/integracion.component';
     RevisarXmlComponent,
     EditTrabajadorComponent,
     AcumuladosDeNominaComponent,
-    IntegracionComponent
+    IntegracionComponent,
+    ModalIntegraComponent
 
   ],
   imports: [
@@ -75,7 +78,8 @@ import { IntegracionComponent } from './integracion/integracion.component';
     MatCardModule,
     MatGridListModule,
     MatDividerModule,
-    MatListModule
+    MatListModule,
+    MatDialogModule
   ],
   providers : [
     CurrencyPipe
