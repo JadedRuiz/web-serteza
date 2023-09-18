@@ -311,7 +311,7 @@ export class AcumuladosDeNominaComponent implements OnInit {
   }
 
   // EXPORTAR PDF
-  // oculprar paginaodr
+  // ocultar paginaodr
   paginador = true
   exportarAPDF() {
     this.paginador = false;
