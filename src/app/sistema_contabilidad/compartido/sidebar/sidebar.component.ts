@@ -37,7 +37,12 @@ export class SidebarComponent implements OnInit {
     private modalService: NgbModal
     ) {}
 
+
+    empresaH = '';
   ngOnInit() {
+    this.empresaH = window.sessionStorage["foto"];
+    console.log('=>|',this.empresaH);
+
     this.pintarMenu();
     this.mostrarLogo();
     this.router.events.subscribe((event) => {

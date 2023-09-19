@@ -1,208 +1,217 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { data } from 'jquery';
-import { Alert } from 'selenium-webdriver';
-
+import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { ChartDataSets } from 'chart.js';
+import { Label, Color } from 'ng2-charts';
 import { COLOR } from 'src/config/config';
 import { DashboardService } from 'src/app/services/Dashboard/Dashboard.service';
-import { EmpresaService } from 'src/app/services/Empresa/empresa.service';
-import { Label, Color } from 'ng2-charts';
-import { toBase64String } from '@angular/compiler/src/output/source_map';
-import { NominaService } from 'src/app/services/Nomina/Nomina.service';
 
 
-@Component({  
+
+@Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
-  myControl= new FormControl();
-  public color = COLOR;
-  // public id_cliente = window.sessionStorage.getItem("cliente");
-
-  public ejercicio : any;
-  public meses : any;
-  public periodos : any;
-  public ejercicioBuscado : any;
-  public mesesBuscado : any;
-  public periodosBuscados : any;
-  public resultados: any;
-  public totales: any;
-  public anio = new Date().getFullYear();
-  public ejercicioActual   = new Date().getFullYear();
-  public mesActual = new Date().getMonth();
-  public desMes : any;
-  public periodoActual = 0;
-
-  Suma_neto_fiscal = 0;
-  Suma_neto_exento = 0;
-  Suma_costo_social = 0;
-  Suma_impuesto_estatal = 0;
-  Suma_comision = 0;
+  myControl = new FormControl();
   contador = 0;
-  // public mesActual :any;
-  public empresas : any;
- 
-  constructor(
-    private dashboard_sv : DashboardService,
-    private empresa_service: EmpresaService,
-    private nomina_service: NominaService
-  ) { }
+  filterControlEmpresa = new FormControl();
+  public ejercicio: any;
+  public ejercicioBuscado: any;
+  public anio = new Date().getFullYear();
+  public ejercicioActual = new Date().getFullYear();
+  public periodoActual = 0;
+  public empresas: any;
+  public nomSel = '';
+  public cliente_seleccionado = window.sessionStorage.getItem('cliente');
+  public empresas_busqueda: any;
+  public id_empresa = 0;
 
+  constructor(
+    private empresa_service: EmpresaService,
+    private dashboard_sv : DashboardService,
+
+    ) {}
+    graficas=false;
   ngOnInit(): void {
-    this.ejercicios()
-    this.Meses()
-    this.mostrarDashboard();
-    this.buscarInformacion();
+    this.ejercicios();
+    this.mostrarEmpresas();
+    this.pintarAnios();
   }
 
-  ejercicios(){
+  // EJERCICIOS
+  ejercicios() {
     this.ejercicio = [];
     this.contador = 1;
-    for(let i=(this.anio-5);i<=this.anio;i++){
+    for (let i = this.anio - 5; i <= this.anio; i++) {
       this.ejercicio.push({
-        "id" : this.contador,
-        "ejercicio" : i
+        id: this.contador,
+        ejercicio: i,
       });
       this.contador = this.contador + 1;
     }
     // this.ejercicioActual = this.contador - 1;
     this.ejercicioBuscado = this.ejercicio;
   }
-
-  Meses(){
-    
-    this.dashboard_sv.obtenerMeses()
-    .subscribe((object : any) => {
-      if(object.ok){
-        this.meses = object.data;
-        this.mesesBuscado = object.data;
-        this.desMes = this.meses[this.mesActual+1].mes;
-        this.meses[this.mesActual+1].id = this.mesActual+1;
-        this.periodosMensual()
-      }
-    });
-  }
-
-  periodosMensual(){
-    let json = {
-      id_empresa : 78,
-      ejercicio : this.ejercicioActual,
-      mes : this.mesActual
-    };
-    
-    this.nomina_service.periodosPorMes(json)
-    .subscribe((object : any) => {
-      if(object.ok){
-        
-        this.periodos = object.data;
-        
-      }
-    });
-  }
-
-  buscarInformacion(){
-    let json = {
-      id_empresa : 78,
-      ejercicio : this.ejercicioActual,
-      mes : this.mesActual,
-      id_periodo: this.periodoActual
-    };
-    
-    this.dashboard_sv.obtenerCostosNomina(json)
-    .subscribe((object : any) => {
-      if(object.ok){
-        
-        this.resultados = object.data;
-        this.totales = object.totales;
-
-        this.Suma_neto_fiscal = this.totales["neto_fiscal"];
-        this.Suma_neto_exento = this.totales["neto_exento"];
-        this.Suma_costo_social = this.totales["costo_social"];
-        this.Suma_impuesto_estatal = this.totales["impuesto_estatal"];
-        this.Suma_comision = this.totales["comision"];
-
-        // for (let elemento of this.resultados) { 
-        //   this.Suma_neto_fiscal = this.Suma_neto_fiscal + elemento["neto_fiscal"];
-        //   this.Suma_neto_exento = this.Suma_neto_exento + elemento["neto_exento"];
-        //   this.Suma_costo_social = this.Suma_costo_social + elemento["costo_social"];
-        //   this.Suma_impuesto_estatal = this.Suma_impuesto_estatal + elemento["impuesto_estatal"];
-        //   this.Suma_comision = this.Suma_comision + elemento["comision"];
-        //  }
-        
-      }
-    });
-  }
-  mesSeleccionado(MesSel:any){
-    
-  this.mesActual = MesSel;
-  this.periodosMensual();
-  this.buscarInformacion();
-   
-  }
-
-  ejercicioSeleccionado(EjercicioSel:any){
+  ejercicioSeleccionado(EjercicioSel: any) {
     console.log(EjercicioSel.value);
-     this.ejercicioActual = EjercicioSel.value;
-     this.buscarInformacion();
-   
-  }
+    this.ejercicioActual = EjercicioSel.value;
+    this.graficas=true;
+    this.mostrarDashboard();
 
-  periodoSeleccionado(PeriodoSel:any){
-     this.periodoActual = PeriodoSel;
-     this.buscarInformacion();
-  }
-
-  mostrarDashboard(){
-    let json = {
-      id_cliente : 0,
-      anio : this.anio
-    };
-    this.dashboard_sv.obtenerDasboardFacturacion(json)
-    .subscribe((object : any) => {
-      if(object.ok){
-        
-        this.empresas = object.data.empresas;
-        // this.pintarChart(object.data.empresas[0].id_empresa);
-      }
-    });
-  }
-
-  limpiar(){
 
   }
-  desplegarInformacion(){
-
-    // alert(this.periodos.id);
-    this.periodosMensual();
-    this.buscarInformacion();
-    // alert("LLEGO"+this.meses.id);
-  }
-
-  buscarEjercicio(){
+  buscarEjercicio() {
     this.ejercicio = [];
-    this.ejercicioBuscado.forEach((element : any) => {
+    this.ejercicioBuscado.forEach((element: any) => {
       this.ejercicio.push({
-        "id" : element.id,
-        "ejercicio" : element.ejercicio
+        id: element.id,
+        ejercicio: element.ejercicio,
       });
     });
-    if(this.myControl.value.length > 0){
+    if (this.myControl.value.length > 0) {
       this.ejercicio = [];
-      this.ejercicioBuscado.forEach((element : any) => {
-        if(element.ejercicio.includes(this.myControl.value.toUpperCase())){ 
+      this.ejercicioBuscado.forEach((element: any) => {
+        if (element.ejercicio.includes(this.myControl.value.toUpperCase())) {
           this.ejercicio.push({
-            "id" : element.id,
-            "ejercicio" : element.ejercicio
+            id: element.id,
+            ejercicio: element.ejercicio,
           });
         }
       });
     }
   }
 
-  
+  // BUSCAR EMPRESA
+  mostrarEmpresas() {
+    this.empresas_busqueda = [];
+    this.empresas = [];
+    this.empresa_service
+      .obtenerEmpresasPorIdCliente(this.cliente_seleccionado)
+      .subscribe((object: any) => {
+        if (object.ok) {
+          this.empresas = object.data;
+          this.empresas_busqueda = object.data;
+        }
+      });
+  }
+  buscarEmpresa() {
+    this.empresas_busqueda = [];
+    this.empresas.forEach((element: any) => {
+      this.empresas_busqueda.push({
+        empresa: element.empresa,
+        id_empresa: element.id_empresa,
+      });
+    });
+    if (this.filterControlEmpresa.value.length > 0) {
+      this.empresas_busqueda = [];
+      this.empresas.forEach((element: any) => {
+        if (
+          element.empresa.includes(
+            this.filterControlEmpresa.value.toUpperCase()
+          )
+        ) {
+          this.empresas_busqueda.push({
+            empresa: element.empresa,
+            id_empresa: element.id_empresa,
+          });
+        }
+      });
+    }
+  }
+  optionEmpresa(value: any) {
+    this.id_empresa = value.option.id;
+  }
+  //PARA EL NOMBRE DE LA EMPRESA SELECIONADA
+  nomEmpresa(event: MatAutocompleteSelectedEvent) {
+    this.nomSel = event.option.value;
+  }
+
+
+  // --------------------------------
+  // =>GRAFICAS
+  public color = COLOR;
+  public id_cliente = window.sessionStorage.getItem("cliente");
+  public anios : any;
+  public targeta = [0,0,0,0];
+  public barChartData : ChartDataSets[] = [];
+  public barChartLabels: Label[] = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Nov","Dic"];
+  public barChartOptions = { responsive : true };
+  public chartColors : Color[] = [
+    {
+      borderColor : 'black',
+      backgroundColor : 'rgb(176,196,222,.5)'
+    }
+  ];
+  public barChartLegend = true;
+  public barChartPlugins = [];
+  public barChartType = "line";
+
+  public doughnutChartLabels: Label[] = [ 'Facturas', 'Pagadas', 'Por pagar' ];
+  public doughnutChartData: ChartDataSets[] = [];
+
+  mostrarDashboard(){
+    let json = {
+      id_cliente : this.id_cliente,
+      anio : this.anio
+    };
+    this.dashboard_sv.obtenerDasboardFacturacion(json)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.targeta = [object.data.empresas_t,object.data.total,object.data.pagadas_t,object.data.por_pagar_t];
+        this.empresas = object.data.empresas;
+        this.pintarChart(object.data.empresas[0].id_empresa);
+      }
+    });
+  }
+
+  pintarAnios(){
+    this.anios = [];
+    for(let i=(this.anio-10);i<=this.anio;i++){
+      this.anios.push(i);
+    }
+  }
+
+  pintarChart(id_empresa : any = 121){
+    let json = {
+      id_empresa : id_empresa,
+      anio : this.anio
+    };
+    let facturas : any ;
+    let pagadas : any ;
+    let por_pagar : any ;
+    this.empresas.forEach((element : any) => {
+      if(element.id_empresa == id_empresa){
+        this.doughnutChartData = [
+          { data: [ element.facturas, 30, 20 ] },
+          { data: [ 10, element.pagadas, element.por_pagar ] }
+        ];
+      }
+    });
+    facturas = [30, 40, 25, 50, 35, 20, 45, 60, 70, 55, 45, 30];
+    pagadas = [15, 25, 20, 30, 10, 30, 25, 40, 50, 35, 40, 20];
+    por_pagar = [15, 15, 5, 20, 25, 10, 20, 20, 20, 20, 5, 10];
+    this.dashboard_sv.obtenerDatosEmpresaFacturacion(json)
+    .subscribe((object : any) => {
+      if(object.ok){
+        object.data.forEach((element : any) => {
+          facturas.push(element.facturas);
+          pagadas.push(element.pagadas);
+          por_pagar.push(element.por_pagar);
+        });
+        this.barChartData = [
+          { data : facturas, label : "dato 1"},
+          { data : pagadas, label : "dato 2"},
+          { data : por_pagar, label : "dato 3"}
+        ];
+      }
+    });
+
+  }
+
+
+
 
 }

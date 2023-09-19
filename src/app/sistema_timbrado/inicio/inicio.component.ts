@@ -67,7 +67,7 @@ export class InicioComponent implements OnInit {
     private empresa_service  : EmpresaService,
     private sucursal_service : SucursalService,
     private dateAdapter: DateAdapter<Date>
-  ) { 
+  ) {
     this.dateAdapter.setLocale('en-GB');
     this.paginator = MatPaginator;
   }
@@ -124,7 +124,7 @@ export class InicioComponent implements OnInit {
     if(this.busqueda.length > 0){
       this.empresas_copy = [];
       this.empresas.forEach((element : any) => {
-        if(element.empresa.includes(this.busqueda.toUpperCase())){ 
+        if(element.empresa.includes(this.busqueda.toUpperCase())){
           this.empresas_copy.push({
             "empresa" : element.empresa,
             "id_empresa" : element.id_empresa
@@ -175,11 +175,11 @@ export class InicioComponent implements OnInit {
   cerrarModal(){
     this.modal.close();
   }
-  
+
   cerrarLoad(){
     this.modal_load.close();
   }
-  
+
   limpiarCampos(){
     this.filtros = {
       id_empresa : 0,
@@ -259,7 +259,7 @@ export class InicioComponent implements OnInit {
         }
       });
     }
-    
+
   }
 
   descargaMasiva(){

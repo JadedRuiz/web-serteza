@@ -36,6 +36,9 @@ import { AcumuladosDeNominaComponent } from './acumulados-de-nomina/acumulados-d
 import { IntegracionComponent } from './integracion/integracion.component';
 import { ModalIntegraComponent } from './modal-integra/modal-integra.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ChartsModule } from 'ng2-charts';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 
 @NgModule({
@@ -79,7 +82,12 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatGridListModule,
     MatDividerModule,
     MatListModule,
-    MatDialogModule
+    MatDialogModule,
+    ChartsModule,
+    MatRadioModule,
+    MatDatepickerModule
+
+
   ],
   providers : [
     CurrencyPipe

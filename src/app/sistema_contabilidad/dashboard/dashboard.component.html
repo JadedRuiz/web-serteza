@@ -1,104 +1,129 @@
-<div class="header " style="height: 250px;">
-  <div class="container-fluid">
-  </div>
-</div>
+<div class="header " style="height: 250px;"></div>
 <div class="container-fluid mt--9">
 <div class="row">
   <div class="col">
     <div class="card border-info">
         <div class="card-header">
-          Movimiento de Nominas
+          Graficas
         </div>
       <div class="card-body">
           <div class="container">
             <div class="row">
-              <div class="col-4 col-lg-4">
-                <mat-form-field class="w-100">
-                  <mat-label>EJERCICIO</mat-label>
-                  <mat-select [(ngModel)]="ejercicioActual" (selectionChange)="ejercicioSeleccionado($event)">
-                    <mat-option *ngFor="let ejersel of ejercicio" [value]="ejersel.ejercicio">{{ejersel.ejercicio}}</mat-option>
-                  </mat-select>
-                </mat-form-field>
+             <!-- BUSCAR EMPRESA -->
+             <div class="col-sm-12 col-lg-5">
+              <mat-form-field class="w-100">
+                <mat-label>BUSCAR EMPRESA</mat-label>
+                <input type="text" placeholder="Ingrese el nombre o id de la empresa" aria-label="Number" matInput
+                  (keyup)="buscarEmpresa()" [formControl]="filterControlEmpresa" [matAutocomplete]="auto"
+                  style="text-transform: uppercase;">
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionEmpresa($event)"(optionSelected)="nomEmpresa($event)">
+                  <mat-option *ngFor="let empresa of empresas_busqueda" [value]="empresa.nombre"
+                    [id]="empresa.id_empresa" >
+                    {{empresa.empresa}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+            <!-- EJERCICIO -->
+            <div class="col-4 col-lg-4">
+              <mat-form-field class="w-100">
+                <mat-label>EJERCICIO</mat-label>
+                <mat-select [(ngModel)]="ejercicioActual" (selectionChange)="ejercicioSeleccionado($event)">
+                  <mat-option *ngFor="let ejersel of ejercicio" [value]="ejersel.ejercicio">{{ejersel.ejercicio}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            </div>
+          </div>
+        <!-- GRAFICOS -->
+        <div *ngIf="this.graficas" class="container-fluid mt-3">
+          <div class="row">
+            <!-- TABLA DE EMPRESAS -->
+            <!-- <div class="col-12 mt-2 mx-0 py-0">
+              <div class="card shadow">
+                  <div class="table-responsive"  style="height: 250px; overflow-y: scroll;">
+                  <table class="table align-items-center table-flush">
+                    <thead class="thead-light">
+                      <tr class="text-center">
+                        <th scope="col" class="text-left">Empresa</th>
+                        <th scope="col">Facturas</th>
+                        <th scope="col">Pagadas</th>
+                        <th scope="col">No pagadas</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let empresa of empresas" class="text-center" style="cursor: pointer;" (click)="pintarChart(empresa.id_empresa)">
+                        <td class="text-left">{{empresa.empresa}}</td>
+                        <td>{{empresa.facturas}}</td>
+                        <td>{{empresa.pagadas}}</td>
+                        <td>{{empresa.por_pagar}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-              <div class="col-4 col-lg-4">
-                <mat-form-field class="w-100">
-                  <mat-label>MES</mat-label>
-                  <mat-select [(ngModel)]="mesActual" (selectionChange)="mesSeleccionado($event.value)">
-                    <mat-option *ngFor="let messel of meses" [value]="messel.id">{{messel.mes}}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>  
-              <div class="col-4 col-lg-4">
-                <mat-form-field class="w-100">
-                  <mat-label>PERIODO</mat-label>
-                  <mat-select [(ngModel)]="periodoActual" (selectionChange)="mesSeleccionado($event.value)">
-                    <mat-option *ngFor="let persel of periodos" [value]="persel.id_periodo">{{persel.descripcion}}</mat-option>
-                  </mat-select>
-                </mat-form-field>
+            </div> -->
+            <div class="col-12 mt-2 mx-0 py-0">
+              <div class="row">
+                <div class="col-5">
+                  <div class="card shadow h-100">
+                    <div class="card-header bg-transparent">
+                        <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-uppercase text-light ls-1 mb-1">GRAFICOS 1</h6>
+                            <h2 class="text-white mb-0"></h2>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Chart -->
+                        <canvas baseChart
+                          [datasets]="doughnutChartData"
+                          [labels]="doughnutChartLabels"
+                          [options]="barChartOptions"
+                          [plugins]="barChartPlugins"
+                          [legend]="barChartLegend"
+                          chartType="doughnut"
+                          [colors]="chartColors">
+                        </canvas>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-7">
+                  <div class="card shadow">
+                    <div class="card-header bg-transparent">
+                        <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-uppercase text-light ls-1 mb-1">GRAFICOS 2</h6>
+                            <h2 class="text-white mb-0"></h2>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Chart -->
+                        <canvas baseChart
+                          [datasets]="barChartData"
+                          [labels]="barChartLabels"
+                          [options]="barChartOptions"
+                          [plugins]="barChartPlugins"
+                          [legend]="barChartLegend"
+                          chartType="bar"
+                          [colors]="chartColors">
+                        </canvas>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>   
-          <div class="table-responsive">
-              <table class="table table-striped">
-                  <thead style="background-color: #3563ad;color: white;">
-                      <tr style="text-align: center;">
-                          <th scope="col">Cliente</th>
-                          <th scope="col">Estrategia</th>
-                          <th scope="col">Descripción</th>
-                          <th scope="col">Neto Fiscal</th>
-                          <th scope="col">Neto Exento</th>
-                          <th scope="col">Costo Social</th>
-                          <th scope="col">Impuesto Estatal</th>
-                          <th scope="col">Comisión</th>
-                      </tr>
-                  </thead>
-                  <tbody  class="">
-                    <tr *ngFor="let registro of resultados">
-                        <td colspan="1" style="vertical-align: middle;">{{registro.cliente}}</td>
-                        <td colspan="1" style="vertical-align: middle;">{{registro.estrategia}}</td>
-                        <td colspan="1" style="vertical-align: middle;">{{registro.descripcion}}</td>
-                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{registro.neto_fiscal | number: '3.1-2'}}</td>
-                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{registro.neto_exento | number: '3.1-2'}}</td>
-                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{registro.costo_social | number: '3.1-2'}}</td>
-                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{registro.impuesto_estatal | number: '3.1-2'}}</td>
-                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{registro.comision | number: '3.1-2'}}</td>
-                    </tr>
-                  </tbody>
-                  <thead style="background-color: #d89d25;color: white;">
-                    <tr style="text-align: center;">
-                        <th scope="col"></th>
-                        <th scope="col" colspan="2" >TOTALES</th>
-                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{Suma_neto_fiscal | number: '3.1-2'}}</td>
-                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{Suma_neto_exento | number: '3.1-2'}}</td>
-                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{Suma_costo_social | number: '3.1-2'}}</td>
-                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{Suma_impuesto_estatal | number: '3.1-2'}}</td>
-                        <td colspan="1" style="vertical-align: middle; text-align:right;">{{Suma_comision | number: '3.1-2'}}</td>
-                        
-                    </tr>
-                </thead>
-              </table>
-              <div class="filtros container mt-3">
-                  <div class="row">
-                      <div class="col-lg-4 col-sm-12"></div>
-                      <div class="col-lg-4 col-sm-12" style="text-align: center;display: flex;justify-content: center; align-items: center;">
-                          
-                      </div>
-                      <div class="col-lg-4 col-sm-12" style="text-align: end;">
-                          <!-- <select [(ngModel)]="taken" (change)="mostrarDepartamentos()" name="taken" id="taken" class="form-control" style="width: 100px;display: inline-block;">
-                              <option value="5">5</option>
-                              <option value="10">10</option>
-                              <option value="20">20</option>
-                              <option value="30">30</option>
-                              <option value="40">40</option>
-                              <option value="50">50</option>
-                              <option value="100">100</option>
-                          </select> -->
-                      </div>
-                  </div>
-              </div>
+
           </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 </div>
+
+
+
+
