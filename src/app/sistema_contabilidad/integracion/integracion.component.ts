@@ -188,7 +188,7 @@ export class IntegracionComponent implements OnInit {
 
     //obtener acumuladod de nomina
     acumulados() {
-      console.log('empresa :>> ', this.empresas);
+      //console.log('empresa :>> ', this.empresas);
 
       Swal.fire({
         title: 'Cargando Integrados',
@@ -216,7 +216,7 @@ export class IntegracionComponent implements OnInit {
 
         if (obj.ok) {
           this.empleados = obj.data;
-          console.log('this.empleados :>> ', this.empleados);
+         // console.log('this.empleados :>> ', this.empleados);
           const numRegistros = obj.data.length;
           const empresaSel = this.nomSel;
           this.dataSource.data = this.empleados;
@@ -306,7 +306,7 @@ export class IntegracionComponent implements OnInit {
 
     // PARA SELECIONAR PERIODO
     onPeriodChange() {
-      console.log('Nuevo valor de periodo:', this.periodoActual);
+     // console.log('Nuevo valor de periodo:', this.periodoActual);
     }
 
     // PARA SELECIONAR AÑO
@@ -324,13 +324,13 @@ export class IntegracionComponent implements OnInit {
       this.ejercicioBuscado = this.ejercicio;
     }
     ejercicioSeleccionado(EjercicioSel: any) {
-      console.log(EjercicioSel.value);
+     // console.log(EjercicioSel.value);
       this.ejercicioActual = EjercicioSel.value;
     }
 
     // PARA EL RFC DEL TRABAJDOR
     onRFCChange() {
-      console.log('Nuevo valor de RFC:', this.rfcTrabajador);
+     // console.log('Nuevo valor de RFC:', this.rfcTrabajador);
     }
 
 

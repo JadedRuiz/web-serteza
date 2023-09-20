@@ -37,12 +37,9 @@ export class SidebarComponent implements OnInit {
     private modalService: NgbModal
     ) {}
 
+    id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
 
-    empresaH = '';
   ngOnInit() {
-    this.empresaH = window.sessionStorage["foto"];
-    console.log('=>|',this.empresaH);
-
     this.pintarMenu();
     this.mostrarLogo();
     this.router.events.subscribe((event) => {
@@ -54,20 +51,20 @@ export class SidebarComponent implements OnInit {
       { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : [
-          { path: '#', title: 'Cliente / Proveedor',  icon:'ni-satisfied text-orange', id:"rh_header", band: true, tipo : "collapse"},
-          { path: 'catalogo_empresa', title: 'Empresas', icon: 'fas fa-home text-orange'},
+          { path: '#', title: 'Cliente / Proveedor',  icon:'ni-satisfied', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'catalogo_empresa', title: 'Empresas', icon: 'fas fa-home '},
            //{ path: '#', title: 'Ivas',  icon:'ni-money-coins text-orange', id:"rh_header", band: true, tipo : "collapse"},
-          { path: 'conceptos', title: 'Conceptos',  icon:'ni-books text-orange', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'conceptos', title: 'Conceptos',  icon:'ni-books text-black', id:"rh_header", band: true, tipo : "collapse"},
         //{ path: 'bancos', title: 'Bancos',  icon:'ni-building text-orange', id:"rh_header", band: true, tipo : "collapse"}
         ]
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
         submenu : [
-          { path: 'mov-banco', title: 'Movimiento de bancos',  icon:'fas fa-university text-yellow', id:"rh_header", band: true, tipo : "collapse"},
-          { path: 'facturas', title: 'Captura facturas',  icon:'ni-folder-17 text-yellow', id:"rh_header", band: true, tipo : "collapse"},
-          { path: 'descarga-masiva', title: 'Descarga masiva',  icon:'ni-cloud-download-95 text-yellow', id:"rh_header", band: true, tipo : "collapse"},
-          { path: 'calcular', title: 'Calcular',  icon:'ni-folder-17 text-yellow', id:"rh_header", band: true, tipo : "collapse"},
-          { path: 'revisar', title: 'Revisar XML',  icon:'ni-books text-yellow', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'mov-banco', title: 'Movimiento de bancos',  icon:'fas fa-university ', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'facturas', title: 'Captura facturas',  icon:'ni-folder-17 ', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'descarga-masiva', title: 'Descarga masiva',  icon:'ni-cloud-download-95 ', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'calcular', title: 'Calcular',  icon:'ni-folder-17', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'revisar', title: 'Revisar XML',  icon:'ni-books ', id:"rh_header", band: true, tipo : "collapse"},
 
           // { path: '#', title: 'Captura pagos',  icon:'ni-collection text-yellow', id:"rh_header", band: true, tipo : "collapse"},
           // { path: 'xml-upload', title: 'Carga xml´s',  icon:'ni-cloud-upload-96 text-yellow', id:"rh_header", band: true, tipo : "collapse"},
@@ -76,25 +73,44 @@ export class SidebarComponent implements OnInit {
       },
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: true, tipo : "collapse",
       submenu : [
-        { path: 'acumulados-nomina', title: 'Acumulados de nomina', icon: 'fas fa-university text-green', id:'rh_reportes', band: true, tipo : "collapse"},
-        { path: 'integracion', title: 'Integración', icon: 'ni-folder-17 text-green', id:'rh_reportes', band: true, tipo : "collapse"}
+        { path: 'acumulados-nomina', title: 'Acumulados de nomina', icon: 'fas fa-university ', id:'rh_reportes', band: true, tipo : "collapse"},
+        { path: 'integracion', title: 'Integración', icon: 'ni-folder-17 ', id:'rh_reportes', band: true, tipo : "collapse"}
       ]
       },
     ];
   }
+
+
+
   mostrarLogo(){
-    if(window.sessionStorage.getItem("empresa") != null){
-      let id_empresa = parseInt(window.sessionStorage.getItem("empresa")+"");
-      this.empresa.obtenerEmpresaPorId(id_empresa)
+    if(window.sessionStorage.getItem("cliente") != null){
+      this.cliente_service.obtenerClientesPorId(this.id_cliente)
       .subscribe( (object : any) => {
         if(object.ok){
-          this.foto_empresa = ""+object.data[0].fotografia;
+          this.foto_empresa = ""+object.data[0].fotografia+"";
         }
       });
     }else{
       this.foto_empresa = "./assets/img/defaults/imagen-empresa-default.png";
     }
   }
+  // mostrarLogo(){
+  //   if(window.sessionStorage.getItem("empresa") != null){
+  //     let id_empresa = parseInt(window.sessionStorage.getItem("empresa")+"");
+  //     this.empresa.obtenerEmpresaPorId(id_empresa)
+  //     .subscribe( (object : any) => {
+  //       if(object.ok){
+  //         this.foto_empresa = ""+object.data[0].fotografia;
+  //       }
+  //     });
+  //   }else{
+  //     this.foto_empresa = "./assets/img/defaults/imagen-empresa-default.png";
+  //   }
+  //   console.log('this.foto_empresa :>> ', this.foto_empresa);
+  // }
+
+
+
   cerrarSesion(){
     this.usuario.logout();
     window.sessionStorage.removeItem("sistema");
@@ -104,5 +120,14 @@ export class SidebarComponent implements OnInit {
     window.sessionStorage.removeItem("user");
     window.sessionStorage.removeItem("foto_user");
     this.router.navigateByUrl("login");
+  }
+
+  public menuAbierto: string = '';
+  toggleMenu(menuId: string) {
+    if (this.menuAbierto === menuId) {
+      this.menuAbierto = ''; // Cierra el menú si ya está abierto
+    } else {
+      this.menuAbierto = menuId; // Abre el menú si está cerrado
+    }
   }
 }

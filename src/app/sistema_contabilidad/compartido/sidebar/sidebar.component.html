@@ -26,7 +26,7 @@
                 <a class="nav-link" role="button">
                     <div class="media align-items-center">
                         <span class="avatar avatar-sm rounded-circle">
-              <img alt="Image placeholder" src="./assets/img/defaults/ico_default_admin.jpg">
+              <img alt="Image placeholder" src="{{foto_empresa}}">
             </span>
                     </div>
                 </a>
@@ -53,13 +53,14 @@
             <!-- Menu -->
             <ul class="navbar-nav">
                 <li *ngFor="let menuItem of menuItems" class="nav-item">
-                    <a *ngIf="menuItem.band == true" [attr.data-target]="'#' + menuItem.id" class="nav-link collapse.hide" [attr.data-toggle]="menuItem.tipo" [attr.aria-expanded]="false" [attr.aria-controls]="menuItem.id" style="cursor: pointer;">
+                    <a (click)="toggleMenu(menuItem.id)" *ngIf="menuItem.band == true" [attr.data-target]="'#' + menuItem.id" class="nav-link collapse.hide"
+                     [attr.data-toggle]="menuItem.tipo" [attr.aria-expanded]="menuAbierto === menuItem.id ? true : false" [attr.aria-controls]="menuItem.id" style="cursor: pointer;" >
+                         <i class="ni {{menuItem.icon}}"></i> {{menuItem.title}}
+                    </a>
+                    <a *ngIf="menuItem.band == false" routerLinkActive="active" [routerLink]="[menuItem.path]" class="nav-link" >
                         <i class="ni {{menuItem.icon}}"></i> {{menuItem.title}}
                     </a>
-                    <a *ngIf="menuItem.band == false" routerLinkActive="active" [routerLink]="[menuItem.path]" class="nav-link">
-                        <i class="ni {{menuItem.icon}}"></i> {{menuItem.title}}
-                    </a>
-                    <div *ngIf="menuItem.band == true" class="collapse pl-4" id="{{menuItem.id}}">
+                    <div  *ngIf="menuItem.band == true && menuAbierto === menuItem.id" class="collapse pl-4" id="{{menuItem.id}}">
                         <ul class="navbar-nav">
                             <li *ngFor="let submenu of menuItem.submenu" class="nav-item">
                                 <a routerLinkActive="active" [routerLink]="[submenu.path]" class="nav-link">
