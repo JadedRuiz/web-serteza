@@ -26,7 +26,7 @@
                 <a class="nav-link" role="button">
                     <div class="media align-items-center">
                         <span class="avatar avatar-sm rounded-circle">
-              <img alt="Image placeholder" src="{{foto_empresa}}">
+              <img alt="Image placeholder" src="{{foto_empresa}}" >
             </span>
                     </div>
                 </a>
@@ -62,7 +62,7 @@
                     </a>
                     <div  *ngIf="menuItem.band == true && menuAbierto === menuItem.id" class="collapse pl-4" id="{{menuItem.id}}">
                         <ul class="navbar-nav">
-                            <li *ngFor="let submenu of menuItem.submenu" class="nav-item">
+                            <li class="ico" *ngFor="let submenu of menuItem.submenu" class="nav-item">
                                 <a routerLinkActive="active" [routerLink]="[submenu.path]" class="nav-link">
                                     <i class="ni {{submenu.icon}}"></i> {{submenu.title}}
                                 </a>

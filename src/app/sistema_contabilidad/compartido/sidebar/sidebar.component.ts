@@ -60,11 +60,11 @@ export class SidebarComponent implements OnInit {
       },
       { path: '#', title: 'Procedimientos', icon: 'ni-settings text-yellow', id:'rh_procesos', band: true, tipo : "collapse",
         submenu : [
-          { path: 'mov-banco', title: 'Movimiento de bancos',  icon:'fas fa-university ', id:"rh_header", band: true, tipo : "collapse"},
-          { path: 'facturas', title: 'Captura facturas',  icon:'ni-folder-17 ', id:"rh_header", band: true, tipo : "collapse"},
-          { path: 'descarga-masiva', title: 'Descarga masiva',  icon:'ni-cloud-download-95 ', id:"rh_header", band: true, tipo : "collapse"},
-          { path: 'calcular', title: 'Calcular',  icon:'ni-folder-17', id:"rh_header", band: true, tipo : "collapse"},
-          { path: 'revisar', title: 'Revisar XML',  icon:'ni-books ', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'mov-banco', title: 'Movimiento de bancos',  icon:'fas fa-university fa-fw', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'facturas', title: 'Captura facturas',  icon:'ni-folder-17 fa-fw', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'descarga-masiva', title: 'Descarga masiva',  icon:'ni-cloud-download-95 fa-fw', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'calcular', title: 'Calcular',  icon:'ni-folder-17 fa-fw', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'revisar', title: 'Revisar XML',  icon:'ni-books fa-fw', id:"rh_header", band: true, tipo : "collapse"},
 
           // { path: '#', title: 'Captura pagos',  icon:'ni-collection text-yellow', id:"rh_header", band: true, tipo : "collapse"},
           // { path: 'xml-upload', title: 'Carga xml´s',  icon:'ni-cloud-upload-96 text-yellow', id:"rh_header", band: true, tipo : "collapse"},
@@ -73,8 +73,8 @@ export class SidebarComponent implements OnInit {
       },
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: true, tipo : "collapse",
       submenu : [
-        { path: 'acumulados-nomina', title: 'Acumulados de nomina', icon: 'fas fa-university ', id:'rh_reportes', band: true, tipo : "collapse"},
-        { path: 'integracion', title: 'Integración', icon: 'ni-folder-17 ', id:'rh_reportes', band: true, tipo : "collapse"}
+        { path: 'acumulados-nomina', title: 'Acumulados de nomina', icon: 'ni-folder-17 fa-fw', id:'rh_reportes', band: true, tipo : "collapse"},
+        { path: 'integracion', title: 'Integración', icon: 'ni-books fa-fw', id:'rh_reportes', band: true, tipo : "collapse"}
       ]
       },
     ];

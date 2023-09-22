@@ -1,0 +1,11 @@
+/* Estilo para la línea inferior */
+.nav-link.active {
+  border-bottom: 1px solid rgba(165, 202, 252, 0.795); /* Cambia el color de la línea inferior aquí */
+}
+
+/* Estilo para el ícono cuando está activo */
+.nav-link.active i {
+  font-size: 12px !important;
+  color: rgb(103, 194, 247); /* Cambia el color del ícono aquí */
+}
+
