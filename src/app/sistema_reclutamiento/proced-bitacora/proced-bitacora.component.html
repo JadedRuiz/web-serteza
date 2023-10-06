@@ -1,0 +1,149 @@
+<div class="header {{color}}" style="height: 250px;">
+  <div class="container-fluid">
+  </div>
+</div>
+<div class="container-fluid mt--9">
+  <div class="row">
+    <div class="col-lg-12 col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">BITACORA DE INSIDENCIAS</h4>
+          <div class="card-category">
+            <!-- BUSCADOR -->
+            <div class="row align-items-center">
+              <div class="col-lg-4 col-sm-12 d-flex align-items-center">
+                <mat-form-field class="w-100 px-1" *ngIf="id_perfil == 3">
+                  <mat-label>Buscar empleado</mat-label>
+                  <input type="text" placeholder="nombre o id" aria-label="Number" matInput (keyup)="buscarEmpleado()"
+                    [formControl]="filterControlEmpleados" [matAutocomplete]="auto" style="text-transform: uppercase;"
+                    name="empresa">
+                  <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let empleado of objEmpleados" [value]="empleado.nombre"
+                      [id]="empleado.id_empleado">
+                      {{empleado.nombre}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+                <button class="btn btn-sm btn-success"><i class="fa fa-search" aria-hidden="true"></i></button>
+              </div>
+
+            </div>
+            <!-- PERFIL -->
+            <div class="row align-items-center offset-1">
+              <div class="col-lg-2 col-md-6 col-sm-12 text-center">
+                <img src="https://serp-api.serteza.com/storage/candidato/Cliente5/candidato_img_1450.jpg"
+                  alt="Foto de perfil" class="img-fluid rounded-circle" style="width: 100px; height: 100px;">
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12 text-center">
+                <h3>Nombre del Trabajador</h3>
+                <strong>Nombre del Departamento</strong>
+              </div>
+
+              <div class="col-lg-4 col-md-6 col-sm-12 text-center">
+                <h3>turno</h3>
+                <strong>horario</strong>
+              </div>
+            </div>
+
+            <!-- TABLA -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-12 col-sm-12" style="overflow-x: scroll;">
+                  <table mat-table [dataSource]="dataSource" class="w-100 custom-table">
+
+                    <ng-container matColumnDef="fecha">
+                      <th mat-header-cell *matHeaderCellDef>FECHA</th>
+                      <td mat-cell *matCellDef="let element"> {{element.fecha}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="entrada">
+                      <th mat-header-cell *matHeaderCellDef>ENTRADA</th>
+                      <td mat-cell *matCellDef="let element"> {{element.entrada}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="salida">
+                      <th mat-header-cell *matHeaderCellDef>SALIDA</th>
+                      <td mat-cell *matCellDef="let element"> {{element.salida}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="tipoF">
+                      <th mat-header-cell *matHeaderCellDef> FAL </th>
+                      <td mat-cell *matCellDef="let element">
+                        <i *ngIf="element.tipoF == 'A'" class="fas fa-long-arrow-alt-up text-success"></i>
+                        <i *ngIf="element.tipoF == 'M'" class="fas fa-retweet text-warning"></i>
+                        <i *ngIf="element.tipoF == 'B'" class="fas fa-long-arrow-alt-down text-danger"></i>
+                        {{element.tipoF}}
+                      </td>
+                    </ng-container>
+                    <ng-container matColumnDef="tipoD">
+                      <th mat-header-cell *matHeaderCellDef> D F </th>
+                      <td mat-cell *matCellDef="let element">
+                        <i *ngIf="element.tipoD == 'A'" class="fas fa-long-arrow-alt-up text-success"></i>
+                        <i *ngIf="element.tipoD == 'M'" class="fas fa-retweet text-warning"></i>
+                        <i *ngIf="element.tipoD == 'B'" class="fas fa-long-arrow-alt-down text-danger"></i>
+                        {{element.tipoD}}
+                      </td>
+                    </ng-container>
+                    <ng-container matColumnDef="tipoV">
+                      <th mat-header-cell *matHeaderCellDef> VAC </th>
+                      <td mat-cell *matCellDef="let element">
+                        <i *ngIf="element.tipoV == 'A'" class="fas fa-long-arrow-alt-up text-success"></i>
+                        <i *ngIf="element.tipoV == 'M'" class="fas fa-retweet text-warning"></i>
+                        <i *ngIf="element.tipoV == 'B'" class="fas fa-long-arrow-alt-down text-danger"></i>
+                        {{element.tipoV}}
+                      </td>
+                    </ng-container>
+                    <ng-container matColumnDef="tipoR">
+                      <th mat-header-cell *matHeaderCellDef> RET </th>
+                      <td mat-cell *matCellDef="let element">
+                        <i *ngIf="element.tipoR == 'A'" class="fas fa-long-arrow-alt-up text-success"></i>
+                        <i *ngIf="element.tipoR == 'M'" class="fas fa-retweet text-warning"></i>
+                        <i *ngIf="element.tipoR == 'B'" class="fas fa-long-arrow-alt-down text-danger"></i>
+                        {{element.tipoR}}
+                      </td>
+                    </ng-container>
+
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="descripcion">
+                      <th mat-header-cell *matHeaderCellDef>DESCRIPCIÓN</th>
+                      <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"  (click)="openModal(row)"></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- MODAL -->
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-body" style="overflow-x: hidden;">
+    <div class="modal-content">
+      <!-- Agrega los detalles de la fila seleccionada aquí -->
+      <h2>Detalles de la Fila</h2>
+      <p>Fecha: {{ selectedRowData.fecha }}</p>
+      <p>Entrada: {{ selectedRowData.entrada }}</p>
+      <p>Salida: {{ selectedRowData.salida }}</p>
+      <p>FAL: {{ selectedRowData.tipoF }}</p>
+      <p>D F: {{ selectedRowData.tipoD }}</p>
+      <p>VAC: {{ selectedRowData.tipoV }}</p>
+      <p>RET: {{ selectedRowData.tipoR }}</p>
+      <p>Descripción: {{ selectedRowData.descripcion }}</p>
+
+      <!-- Botón para cerrar el modal -->
+      <button (click)="closeModal()">Cerrar Modal</button>
+    </div>
+  </div>
+</ng-template>
+

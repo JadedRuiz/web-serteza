@@ -51,10 +51,10 @@ export class SidebarComponent implements OnInit {
       { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-red', id:"dashboard_header", band: false, tipo : ""},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : [
-          { path: '#', title: 'Cliente / Proveedor',  icon:'ni-satisfied', id:"rh_header", band: true, tipo : "collapse"},
-          { path: 'catalogo_empresa', title: 'Empresas', icon: 'fas fa-home '},
+          { path: '#', title: 'Cliente / Proveedor',  icon:'ni-satisfied fa-fw', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'catalogo_empresa', title: 'Empresas', icon: 'fas fa-home fa-fw'},
            //{ path: '#', title: 'Ivas',  icon:'ni-money-coins text-orange', id:"rh_header", band: true, tipo : "collapse"},
-          { path: 'conceptos', title: 'Conceptos',  icon:'ni-books text-black', id:"rh_header", band: true, tipo : "collapse"},
+          { path: 'conceptos', title: 'Conceptos',  icon:'ni-books text-black fa-fw', id:"rh_header", band: true, tipo : "collapse"},
         //{ path: 'bancos', title: 'Bancos',  icon:'ni-building text-orange', id:"rh_header", band: true, tipo : "collapse"}
         ]
       },

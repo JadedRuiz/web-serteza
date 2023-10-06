@@ -29,7 +29,7 @@ export class SidebarComponent implements OnInit {
   public isCollapsed = true;
   public foto_empresa : any //
   public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
-  public perfil = parseInt(window.sessionStorage.getItem("perfil")+""); 
+  public perfil = parseInt(window.sessionStorage.getItem("perfil")+"");
 
   constructor(
     private router: Router,
@@ -85,6 +85,7 @@ export class SidebarComponent implements OnInit {
         {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'}
       );
       procesos.push(
+        {path: 'bitacora-insidencias', title: 'Bitacora', icon: 'ni-calendar-grid-58'},
         {path: 'proced_vacaciones', title: 'Vacaciones', icon: 'ni-calendar-grid-58'},
         {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17'},
         {path: 'procedimiento_modificacion', title: 'Modificaciones', icon: 'ni-curved-next'},

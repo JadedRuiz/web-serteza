@@ -33,6 +33,7 @@ import { CatalogoEmpresaComponent } from './catalogo_empresa/catalogo_empresa.co
 import { CatalogoSucursalComponent } from './catalogo_sucursal/catalogo_sucursal.component';
 import { ComponentesModule } from '../componentes/compartido.module';
 import { ProcedVacacionesComponent } from './proced_vacaciones/proced_vacaciones.component';
+import { ProcedBitacoraComponent } from './proced-bitacora/proced-bitacora.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { ProcedVacacionesComponent } from './proced_vacaciones/proced_vacaciones
     ProcedimientoContratacionComponent,
     ProcedimientoBajaComponent,
     ProcedimientoModificacionComponent,
-    ProcedVacacionesComponent
+    ProcedVacacionesComponent,
+    ProcedBitacoraComponent
   ],
   imports: [
     CompartidoModule,
