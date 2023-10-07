@@ -34,6 +34,9 @@ import { CatalogoSucursalComponent } from './catalogo_sucursal/catalogo_sucursal
 import { ComponentesModule } from '../componentes/compartido.module';
 import { ProcedVacacionesComponent } from './proced_vacaciones/proced_vacaciones.component';
 import { ProcedBitacoraComponent } from './proced-bitacora/proced-bitacora.component';
+import { ProcedIncapacidadComponent } from './proced-incapacidad/proced-incapacidad.component';
+import { CatalogoTurnosComponent } from './catalogo-turnos/catalogo-turnos.component';
+import { CatalogoFestivosComponent } from './catalogo-festivos/catalogo-festivos.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +51,10 @@ import { ProcedBitacoraComponent } from './proced-bitacora/proced-bitacora.compo
     ProcedimientoBajaComponent,
     ProcedimientoModificacionComponent,
     ProcedVacacionesComponent,
-    ProcedBitacoraComponent
+    ProcedBitacoraComponent,
+    ProcedIncapacidadComponent,
+    CatalogoTurnosComponent,
+    CatalogoFestivosComponent
   ],
   imports: [
     CompartidoModule,

@@ -12,6 +12,9 @@ import { ProcedimientoModificacionComponent } from './procedimiento_modificacion
 import { SistemaReclutamientoComponent } from './sistema-reclutamiento.component';
 import { ProcedVacacionesComponent } from './proced_vacaciones/proced_vacaciones.component';
 import { ProcedBitacoraComponent } from './proced-bitacora/proced-bitacora.component';
+import { ProcedIncapacidadComponent } from './proced-incapacidad/proced-incapacidad.component';
+import { CatalogoFestivosComponent } from './catalogo-festivos/catalogo-festivos.component';
+import { CatalogoTurnosComponent } from './catalogo-turnos/catalogo-turnos.component';
 
 const routes: Routes = [
   {
@@ -24,8 +27,11 @@ const routes: Routes = [
         { path : "catalogo_usuario", component : CatalogoUsuarioComponent},
         { path : "catalogo_empresa", component : CatalogoEmpresaComponent},
         { path : "catalogo_sucursal", component : CatalogoSucursalComponent},
+        { path : "catalogo_festivos", component : CatalogoFestivosComponent},
+        { path : "catalogo_turnos", component : CatalogoTurnosComponent},
         { path : "proced_vacaciones", component : ProcedVacacionesComponent},
         { path : "bitacora-insidencias", component : ProcedBitacoraComponent},
+        { path : "proced_incapacidades", component : ProcedIncapacidadComponent},
         { path : "procedimiento_contratacion", component : ProcedimientoContratacionComponent},
         { path : "procedimiento_baja", component : ProcedimientoBajaComponent},
         { path : "procedimiento_modificacion", component : ProcedimientoModificacionComponent},
