@@ -71,7 +71,6 @@ export class CatalogoDepartamentoComponent implements OnInit {
     this.mostrarDepartamentos();
     this.mostrarEmpresas();
   }
-
   transformAmount(element : any, tipo : number){
     if(tipo == 1){
       this.puesto.sueldo_tipo_a = this.currencyPipe.transform(this.puesto.sueldo_tipo_a, '$');
@@ -109,7 +108,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
     if(this.filterControlDepartamento.value.length > 0){
       this.departamentos_busqueda = [];
       this.departamentos.forEach((element : any) => {
-        if(element.departamento_busqueda.includes(this.filterControlDepartamento.value.toUpperCase())){ 
+        if(element.departamento_busqueda.includes(this.filterControlDepartamento.value.toUpperCase())){
           this.departamentos_busqueda.push({
             "departamento_busqueda" : element.departamento_busqueda,
             "id_departamento" : element.id_departamento
@@ -148,7 +147,7 @@ export class CatalogoDepartamentoComponent implements OnInit {
     if(this.filterControlEmpresa.value.length > 0){
       this.empresas_busqueda = [];
       this.empresas.forEach((element : any) => {
-        if(element.empresa.includes(this.filterControlEmpresa.value.toUpperCase())){ 
+        if(element.empresa.includes(this.filterControlEmpresa.value.toUpperCase())){
           this.empresas_busqueda.push({
             "empresa" : element.empresa,
             "id_empresa" : element.id_empresa

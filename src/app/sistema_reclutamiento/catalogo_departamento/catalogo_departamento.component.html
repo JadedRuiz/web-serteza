@@ -1,261 +1,259 @@
 <div class="header {{color}}" style="height: 250px;">
-    <div class="container-fluid">
-    </div>
+  <div class="container-fluid">
+  </div>
 </div>
 <div class="container-fluid mt--9">
-    <div class="row">
-        <div class="col-lg-12 col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                  <h4 class="card-title">DEPARTAMENTOS Y PUESTOS</h4>
-                  <div class="card-category">
-                    <div class="row align-items-center">
-                        <div class="col-lg-4 col-sm-12">
-                            <mat-form-field class="w-100">
-                                <mat-label>Buscar empresa</mat-label>
-                                <input type="text"
-                                        placeholder="Ingrese el nombre o id de la empresa"
-                                        aria-label="Number"
-                                        matInput
-                                        (keyup)="buscarEmpresa()"
-                                        [formControl]="filterControlEmpresa"
-                                        [matAutocomplete]="auto"
-                                        style="text-transform: uppercase;">
-                                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionEmpresa($event)">
-                                    <mat-option *ngFor="let empresa of empresas_busqueda" [value]="empresa.empresa" [id]="empresa.id_empresa">
-                                        {{empresa.empresa}}
-                                    </mat-option>
-                                </mat-autocomplete>
-                            </mat-form-field>
-                        </div>
-                        <div class="col-lg-4 col-sm-12">
-                            <mat-form-field class="w-100">
-                                <mat-label>Buscar departamento</mat-label>
-                                <input type="text"
-                                        placeholder="Ingrese el nombre o id del departamento"
-                                        aria-label="Number"
-                                        matInput
-                                        (keyup)="buscarDepartamento()"
-                                        [formControl]="filterControlDepartamento"
-                                        [matAutocomplete]="autoDos"
-                                        style="text-transform: uppercase;">
-                                <mat-autocomplete #autoDos="matAutocomplete" (optionSelected)="optionDepartamento($event)">
-                                    <mat-option *ngFor="let departamento of departamentos_busqueda" [value]="departamento.departamento_busqueda" [id]="departamento.id_departamento">
-                                        {{departamento.departamento_busqueda}}
-                                    </mat-option>
-                                </mat-autocomplete>
-                            </mat-form-field>
-                        </div>
-                        <div class="col-lg-4 col-sm-12 text-right">
-                            <button [matMenuTriggerFor]="menu" class="btn btn-info"><i class="fas fa-ellipsis-v"></i></button>
-                            <mat-menu #menu="matMenu">
-                                <button mat-menu-item (click)="nuevoDepartamento()">
-                                    <mat-icon><i class="fas fa-plus"></i></mat-icon>
-                                    <span>Nuevo departamento</span>
-                                </button>
-                                <button mat-menu-item (click)="descagar(busqueda.id_empresa)">
-                                    <mat-icon><i class="fas fa-file-download"></i></mat-icon>
-                                    <span>Reporte de departamentos</span>
-                                </button>
-                            </mat-menu>
-                        </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-12 col-sm-12" style="overflow-x: scroll;">
-                            <table mat-table [dataSource]="dataSource" class="w-100">
-                                
-                                <ng-container matColumnDef="id_departamento">
-                                    <th mat-header-cell *matHeaderCellDef> Id </th>
-                                    <td mat-cell *matCellDef="let element"> {{element.id_departamento}} </td>
-                                </ng-container>
-                                
-                                <ng-container matColumnDef="departamento">
-                                    <th mat-header-cell *matHeaderCellDef> Departamento </th>
-                                    <td mat-cell *matCellDef="let element"> {{element.departamento}} </td>
-                                </ng-container>
-                                
-                                <ng-container matColumnDef="estatus">
-                                    <th mat-header-cell *matHeaderCellDef> Estatus </th>
-                                    <td mat-cell *matCellDef="let element"> {{element.estatus}} </td>
-                                </ng-container>
-    
-                                <ng-container matColumnDef="vacantes">
-                                  <th mat-header-cell *matHeaderCellDef> Vacantes </th>
-                                  <td mat-cell *matCellDef="let element"> {{element.vacantes}} </td>
-                                </ng-container>
-                              
-                                <!-- Name Column -->
-                                <ng-container matColumnDef="autorizados">
-                                  <th mat-header-cell *matHeaderCellDef> Autorizados </th>
-                                  <td mat-cell *matCellDef="let element"> {{element.autorizados}} </td>
-                                </ng-container>
-    
-                                <ng-container matColumnDef="accion">
-                                    <th mat-header-cell *matHeaderCellDef> Acción </th>
-                                    <td mat-cell *matCellDef="let element">  
-                                        <button [matMenuTriggerFor]="menu" class="btn btn-info btn-sm"><i class="fas fa-ellipsis-v"></i></button>
-                                        <mat-menu #menu="matMenu">
-                                            <button mat-menu-item (click)="editar(element.id_departamento)">
-                                                <mat-icon>edit</mat-icon>
-                                                <span>Editar</span>
-                                            </button>
-                                        </mat-menu>
-                                    </td>
-                                </ng-container>
-        
-                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                            </table>
-                            <mat-paginator 
-                                [pageSizeOptions]="[5, 10, 20]"
-                                showFirstLastButtons 
-                                aria-label="Select page of periodic elements">
-                            </mat-paginator>
-                        </div>
-                    </div>
-                </div>
+  <div class="row">
+    <div class="col-lg-12 col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">DEPARTAMENTOS Y PUESTOS</h4>
+          <div class="card-category">
+            <div class="row align-items-center">
+              <div class="col-lg-4 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Buscar empresa</mat-label>
+                  <input type="text" placeholder="Ingrese el nombre o id de la empresa" aria-label="Number" matInput
+                    (keyup)="buscarEmpresa()" [formControl]="filterControlEmpresa" [matAutocomplete]="auto"
+                    style="text-transform: uppercase;">
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionEmpresa($event)">
+                    <mat-option *ngFor="let empresa of empresas_busqueda" [value]="empresa.empresa"
+                      [id]="empresa.id_empresa">
+                      {{empresa.empresa}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Buscar departamento</mat-label>
+                  <input type="text" placeholder="Ingrese el nombre o id del departamento" aria-label="Number" matInput
+                    (keyup)="buscarDepartamento()" [formControl]="filterControlDepartamento" [matAutocomplete]="autoDos"
+                    style="text-transform: uppercase;">
+                  <mat-autocomplete #autoDos="matAutocomplete" (optionSelected)="optionDepartamento($event)">
+                    <mat-option *ngFor="let departamento of departamentos_busqueda"
+                      [value]="departamento.departamento_busqueda" [id]="departamento.id_departamento">
+                      {{departamento.departamento_busqueda}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4 col-sm-12 text-right">
+                <button [matMenuTriggerFor]="menu" class="btn btn-info"><i class="fas fa-ellipsis-v"></i></button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="nuevoDepartamento()">
+                    <mat-icon><i class="fas fa-plus"></i></mat-icon>
+                    <span>Nuevo departamento</span>
+                  </button>
+                  <button mat-menu-item (click)="descagar(busqueda.id_empresa)">
+                    <mat-icon><i class="fas fa-file-download"></i></mat-icon>
+                    <span>Reporte de departamentos</span>
+                  </button>
+                </mat-menu>
+              </div>
             </div>
+          </div>
         </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-12 col-sm-12" style="overflow-x: scroll;">
+              <table mat-table [dataSource]="dataSource" class="w-100">
+
+                <ng-container matColumnDef="id_departamento">
+                  <th mat-header-cell *matHeaderCellDef> Id </th>
+                  <td mat-cell *matCellDef="let element"> {{element.id_departamento}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="departamento">
+                  <th mat-header-cell *matHeaderCellDef> Departamento </th>
+                  <td mat-cell *matCellDef="let element"> {{element.departamento}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="estatus">
+                  <th mat-header-cell *matHeaderCellDef> Estatus </th>
+                  <td mat-cell *matCellDef="let element"> {{element.estatus}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="vacantes">
+                  <th mat-header-cell *matHeaderCellDef> Vacantes </th>
+                  <td mat-cell *matCellDef="let element"> {{element.vacantes}} </td>
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="autorizados">
+                  <th mat-header-cell *matHeaderCellDef> Autorizados </th>
+                  <td mat-cell *matCellDef="let element"> {{element.autorizados}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="accion">
+                  <th mat-header-cell *matHeaderCellDef> Acción </th>
+                  <td mat-cell *matCellDef="let element">
+                    <button [matMenuTriggerFor]="menu" class="btn btn-info btn-sm"><i
+                        class="fas fa-ellipsis-v"></i></button>
+                    <mat-menu #menu="matMenu">
+                      <button mat-menu-item (click)="editar(element.id_departamento)">
+                        <mat-icon>edit</mat-icon>
+                        <span>Editar</span>
+                      </button>
+                    </mat-menu>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+              <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+                aria-label="Select page of periodic elements">
+              </mat-paginator>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 <ng-template #content let-c="close" let-d="dismiss">
-    <div class="modal-body" style="overflow-x: hidden;">
-        <mat-tab-group mat-align-tabs="center" style="height: 300px;">
-            <mat-tab label="Datos del departamento">
-                <div class="form mt-2" style="overflow-x: hidden;">
-                    <div class="form-row">
-                        <div class="form-group col-lg-9 col-sm-12">
-                            <mat-form-field class="w-100">
-                                <mat-label>Nombre del departamento</mat-label>
-                                <input matInput [(ngModel)]="departamento.departamento" style="text-transform: uppercase;">
-                            </mat-form-field>
-                        </div>
-                        <div class="form-group col-lg-3 col-sm-12">
-                            <mat-form-field class="w-100">
-                                <mat-label>Autorizados</mat-label>
-                                <input matInput [(ngModel)]="autorizados" type="number" min="0" disabled>
-                              </mat-form-field>
-                        </div>
-                        <!-- <div class="form-group col-lg-2 col-sm-12">
+  <div class="modal-body" style="overflow-x: hidden;">
+    <mat-tab-group mat-align-tabs="center" style="height: 300px;">
+      <mat-tab label="Datos del departamento">
+        <div class="form mt-2" style="overflow-x: hidden;">
+          <div class="form-row">
+            <div class="form-group col-lg-9 col-sm-12">
+              <mat-form-field class="w-100">
+                <mat-label>Nombre del departamento</mat-label>
+                <input matInput [(ngModel)]="departamento.departamento" style="text-transform: uppercase;">
+              </mat-form-field>
+            </div>
+            <div class="form-group col-lg-3 col-sm-12">
+              <mat-form-field class="w-100">
+                <mat-label>Autorizados</mat-label>
+                <input matInput [(ngModel)]="autorizados" type="number" min="0" disabled>
+              </mat-form-field>
+            </div>
+            <!-- <div class="form-group col-lg-2 col-sm-12">
                             <mat-form-field class="w-100">
                                 <mat-label>Vacantes</mat-label>
                                 <input matInput [(ngModel)]="vacantes" type="number" min="0" disabled>
-                            </mat-form-field> 
+                            </mat-form-field>
                         </div> -->
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-lg-12 col-sm-12">
-                            <mat-form-field class="w-100">
-                                <mat-label>Descripción del departamento</mat-label>
-                                <textarea matInput [(ngModel)]="departamento.descripcion" style="text-transform: uppercase;"></textarea>
-                            </mat-form-field> 
-                        </div>
-                    </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-lg-12 col-sm-12">
+              <mat-form-field class="w-100">
+                <mat-label>Descripción del departamento</mat-label>
+                <textarea matInput [(ngModel)]="departamento.descripcion" style="text-transform: uppercase;"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+      <mat-tab label="Puestos">
+        <div class="form mt-2" style="overflow-x: hidden;">
+          <div class="form-row justify-content-center mx-auto">
+            <div class="form-group col-lg-12 col-sm-12">
+              <mat-list class="w-100">
+                <div class="row align-items-center">
+                  <div class="col-6">
+                    <div mat-subheader>Puestos</div>
+                  </div>
+                  <div class="col-6 text-right">
+                    <button class="btn btn-success btn-sm" (click)="nuevoPuesto()"
+                      title="Agregar puesto al departamento"><i class="fas fa-plus"></i></button>
+                  </div>
                 </div>
-            </mat-tab>
-            <mat-tab label="Puestos">
-                <div class="form mt-2" style="overflow-x: hidden;">
-                    <div class="form-row justify-content-center mx-auto">
-                        <div class="form-group col-lg-12 col-sm-12">
-                            <mat-list class="w-100">
-                                <div class="row align-items-center">
-                                    <div class="col-6">
-                                        <div mat-subheader>Puestos</div>
-                                    </div>
-                                    <div class="col-6 text-right">
-                                        <button class="btn btn-success btn-sm" (click)="nuevoPuesto()" title="Agregar puesto al departamento"><i class="fas fa-plus"></i></button>
-                                    </div>
-                                </div>
-                                <div class="contenedor" *ngIf="departamento.puestos.length > 0; else pintaVacio">
-                                    <div class="list" *ngFor="let puesto of departamento.puestos">
-                                        <mat-list-item>
-                                            <div mat-line>{{puesto.puesto}}</div>
-                                            <div mat-line> {{puesto.descripcion}} </div>
-                                            <div mat-line> Autorizados : {{puesto.autorizados}} </div>
-                                            <div mat-line class="text-right">
-                                                <button class="btn btn-info btn-sm" (click)="editarPuesto(puesto.id_arreglo)" title="Editar puesto"><i class="fas fa-edit"></i></button>
-                                                <button class="btn btn-danger btn-sm" [disabled]="puesto.band_puesto" title="Eliminar puesto" (click)="eliminarPuesto(puesto.id_arreglo)"><i class="fas fa-trash-alt"></i></button>
-                                            </div>
-                                        </mat-list-item>
-                                        <mat-divider></mat-divider>
-                                    </div>
-                                </div>
-                                <ng-template #pintaVacio>
-                                    <mat-list-item>
-                                        <div mat-line class="text-center">Este departamento aún no cuenta con puestos</div>
-                                    </mat-list-item>
-                                    <mat-divider></mat-divider>
-                                </ng-template>
-                            </mat-list>
-                        </div>
-                    </div>
+                <div class="contenedor" *ngIf="departamento.puestos.length > 0; else pintaVacio">
+                  <div class="list" *ngFor="let puesto of departamento.puestos">
+                    <mat-list-item>
+                      <div mat-line>{{puesto.puesto}}</div>
+                      <div mat-line> {{puesto.descripcion}} </div>
+                      <div mat-line> Autorizados : {{puesto.autorizados}} </div>
+                      <div mat-line class="text-right">
+                        <button class="btn btn-info btn-sm" (click)="editarPuesto(puesto.id_arreglo)"
+                          title="Editar puesto"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" [disabled]="puesto.band_puesto" title="Eliminar puesto"
+                          (click)="eliminarPuesto(puesto.id_arreglo)"><i class="fas fa-trash-alt"></i></button>
+                      </div>
+                    </mat-list-item>
+                    <mat-divider></mat-divider>
+                  </div>
                 </div>
-            </mat-tab>
-          </mat-tab-group>
-    </div>
-    <div class="modal-footer">
-        <button type="button"class="btn btn-warning" (click)="cerrarModal(1)">Cerrar</button>
-        <button type="button" *ngIf="departamento.puestos.length > 0 && tipo_modal == 1" class="btn btn-success" (click)="altaDepartamento()" id="guardar">Guardar</button>
-        <button type="button" *ngIf="departamento.puestos.length > 0 && tipo_modal == 2"  class="btn btn-success" (click)="modificarDepartamento()" id="editar" >Editar</button>
-    </div>
+                <ng-template #pintaVacio>
+                  <mat-list-item>
+                    <div mat-line class="text-center">Este departamento aún no cuenta con puestos</div>
+                  </mat-list-item>
+                  <mat-divider></mat-divider>
+                </ng-template>
+              </mat-list>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-warning" (click)="cerrarModal(1)">Cerrar</button>
+    <button type="button" *ngIf="departamento.puestos.length > 0 && tipo_modal == 1" class="btn btn-success"
+      (click)="altaDepartamento()" id="guardar">Guardar</button>
+    <button type="button" *ngIf="departamento.puestos.length > 0 && tipo_modal == 2" class="btn btn-success"
+      (click)="modificarDepartamento()" id="editar">Editar</button>
+  </div>
 </ng-template>
 <ng-template #content_puesto let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <h2 *ngIf="tipo_modal_puesto == 1" class="modal-title" id="tituloModal">Nuevo puesto</h2>
-        <h2 *ngIf="tipo_modal_puesto == 2" class="modal-title" id="tituloModal">Editar puesto</h2>
-    </div>
-    <div class="modal-body">
-        <div class="form">
-            <div class="form-row">
-                <div class="form-group col-lg-9 col-sm-12">
-                    <mat-form-field class="w-100">
-                        <mat-label>Nombre del puesto</mat-label>
-                        <input matInput [(ngModel)]="puesto.puesto" style="text-transform: uppercase;">
-                    </mat-form-field>
-                </div>
-                <div class="form-group col-lg-3 col-sm-12">
-                    <mat-form-field class="w-100">
-                        <mat-label>Autorizados</mat-label>
-                        <input matInput [(ngModel)]="puesto.autorizados" type="number" min="0">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-lg-4 col-sm-12">
-                    <mat-form-field class="w-100">
-                        <mat-label>Sueldo A</mat-label>
-                        <input matInput (blur)="transformAmount($event,1)" [(ngModel)]="puesto.sueldo_tipo_a" type="text" min="0">
-                    </mat-form-field>
-                </div>
-                <div class="form-group col-lg-4 col-sm-12">
-                    <mat-form-field class="w-100">
-                        <mat-label>Sueldo B</mat-label>
-                        <input matInput (blur)="transformAmount($event,2)" [(ngModel)]="puesto.sueldo_tipo_b" type="text" min="0">
-                    </mat-form-field>
-                </div>
-                <div class="form-group col-lg-4 col-sm-12">
-                    <mat-form-field class="w-100">
-                        <mat-label>Sueldo C</mat-label>
-                        <input matInput (blur)="transformAmount($event,3)" [(ngModel)]="puesto.sueldo_tipo_c" type="text" min="0">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-lg-12 col-sm-12">
-                    <mat-form-field class="w-100">
-                        <mat-label>Descripción del puesto</mat-label>
-                        <textarea matInput [(ngModel)]="puesto.descripcion" style="text-transform: uppercase;"></textarea>
-                    </mat-form-field> 
-                </div>
-            </div>
+  <div class="modal-header">
+    <h2 *ngIf="tipo_modal_puesto == 1" class="modal-title" id="tituloModal">Nuevo puesto</h2>
+    <h2 *ngIf="tipo_modal_puesto == 2" class="modal-title" id="tituloModal">Editar puesto</h2>
+  </div>
+  <div class="modal-body">
+    <div class="form">
+      <div class="form-row">
+        <div class="form-group col-lg-9 col-sm-12">
+          <mat-form-field class="w-100">
+            <mat-label>Nombre del puesto</mat-label>
+            <input matInput [(ngModel)]="puesto.puesto" style="text-transform: uppercase;">
+          </mat-form-field>
         </div>
+        <div class="form-group col-lg-3 col-sm-12">
+          <mat-form-field class="w-100">
+            <mat-label>Autorizados</mat-label>
+            <input matInput [(ngModel)]="puesto.autorizados" type="number" min="0">
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-lg-4 col-sm-12">
+          <mat-form-field class="w-100">
+            <mat-label>Sueldo A</mat-label>
+            <input matInput (blur)="transformAmount($event,1)" [(ngModel)]="puesto.sueldo_tipo_a" type="text" min="0">
+          </mat-form-field>
+        </div>
+        <div class="form-group col-lg-4 col-sm-12">
+          <mat-form-field class="w-100">
+            <mat-label>Sueldo B</mat-label>
+            <input matInput (blur)="transformAmount($event,2)" [(ngModel)]="puesto.sueldo_tipo_b" type="text" min="0">
+          </mat-form-field>
+        </div>
+        <div class="form-group col-lg-4 col-sm-12">
+          <mat-form-field class="w-100">
+            <mat-label>Sueldo C</mat-label>
+            <input matInput (blur)="transformAmount($event,3)" [(ngModel)]="puesto.sueldo_tipo_c" type="text" min="0">
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-lg-12 col-sm-12">
+          <mat-form-field class="w-100">
+            <mat-label>Descripción del puesto</mat-label>
+            <textarea matInput [(ngModel)]="puesto.descripcion" style="text-transform: uppercase;"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-warning" (click)="cerrarModal(2)">Cerrar</button>
-        <button type="button" *ngIf="tipo_modal_puesto == 1" class="btn btn-success" (click)="agregarPuesto()">Guardar</button>
-        <button type="button" *ngIf="tipo_modal_puesto == 2" class="btn btn-success" (click)="modificarPuesto()">Guardar</button>
-    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-warning" (click)="cerrarModal(2)">Cerrar</button>
+    <button type="button" *ngIf="tipo_modal_puesto == 1" class="btn btn-success"
+      (click)="agregarPuesto()">Guardar</button>
+    <button type="button" *ngIf="tipo_modal_puesto == 2" class="btn btn-success"
+      (click)="modificarPuesto()">Guardar</button>
+  </div>
 </ng-template>

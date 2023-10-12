@@ -4,74 +4,178 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { COLOR } from 'src/config/config';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-
+import { FestivosService } from 'src/app/services/festivos/festivos.service';
+import { Festivos } from 'src/app/models/festivos';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-catalogo-festivos',
   templateUrl: './catalogo-festivos.component.html',
-  styleUrls: ['./catalogo-festivos.component.css']
+  styleUrls: ['./catalogo-festivos.component.css'],
 })
 export class CatalogoFestivosComponent implements OnInit {
   public color = COLOR;
+  public festivo = new Festivos(0, 0, 0, '', '', '', 1, 0, 1);
+  public id_perfil = parseInt(window.sessionStorage.getItem('perfil') + '');
+  filterControlEmpleados = new FormControl();
+  objEmpleados: any;
+  // VARIABLES TABLA
+  displayedColumns: string[] = ['fecha', 'descripcion'];
+  dataSource = new MatTableDataSource();
+  @ViewChild(MatPaginator) paginator: any;
+  @ViewChild('content', { static: false }) modal_mov: any;
+  selectedYear: number; // Variable para almacenar el año seleccionado
+  availableYears: number[] = [2023, 2024, 2025, 2026]; // Aquí puedes definir los años disponibles
+  showModal = false;
+  selectedRowData: any;
+  modal: any;
+  festivos: any;
+  modalActivo = false;
 
-    public id_perfil = parseInt(window.sessionStorage.getItem('perfil') + '');
-    filterControlEmpleados = new FormControl();
-    objEmpleados: any;
-    // VARIABLES TABLA
-    displayedColumns: string[] = [
-      'fecha',
-      'descripcion',
-    ];
-    dataSource = new MatTableDataSource();
-    @ViewChild(MatPaginator) paginator: any;
-    @ViewChild('content', { static: false }) modal_mov: any;
+  constructor(
+    private modalService: NgbModal,
+    private festivosService: FestivosService
+  ) {
+    // Genera datos de prueba
+    this.selectedYear = new Date().getFullYear();
+  }
 
-    showModal = false;
-    selectedRowData: any;
-    modal: any;
+  ngOnInit(): void {
+    this.obtenerfestivos();
+  }
 
-    constructor(private modalService: NgbModal) {
-      // Genera datos de prueba
-      this.objEmpleados = this.generateTestData();
-      this.dataSource.data = this.generateTableData();
-    }
+  buscarEmpleado() {}
 
-    ngOnInit(): void {}
+  obtenerfestivos() {
+    let json = {
+      id_dia_festivo: 0,
+      id_cliente: 5,
+      ejercicio: 2023,
+      descripcion: '',
+      solo_activos: 1,
+      token: '012354SDSDS01',
+    };
+    this.festivosService.obternerFestivos(json).subscribe((resp) => {
+      this.dataSource.data = resp.data;
+    });
+  }
 
-    buscarEmpleado() {}
+  // PARA FOTMATEAR FECHA
+  formatFecha() {
+    const fechaOriginal = new Date(
+      this.festivo.fecha
+    );
 
-    private generateTestData(): any[] {
-      const testData = [];
-      for (let i = 1; i <= 10; i++) {
-        testData.push({
-          id_empleado: i,
-          nombre: `Empleado ${i}`,
-        });
+    const año = fechaOriginal.getFullYear();
+    const mes = fechaOriginal.getMonth() + 1;
+    const dia = fechaOriginal.getDate();
+    const fechaFormateada = `${año}-${mes.toString().padStart(2, '0')}-${dia
+      .toString()
+      .padStart(2, '0')}`;
+
+    //console.log(fechaFormateada);
+    this.festivo.fecha = fechaFormateada
+  }
+
+  guadarfestivos() {
+    this.formatFecha();
+    let json = {
+      id_dia_festivo: 0,
+      id_cliente: 5,
+      ejercicio: 2023,
+      descripcion: this.festivo.descripcion,
+      fecha: this.festivo.fecha,
+      token: '012354SDSDS01',
+      activo: 1,
+      id_usuario: 1,
+    };
+    this.festivosService.guardarFestivos(json).subscribe((resp) => {
+      if(resp.ok){
+        Swal.fire(
+          'Fecha guardada',
+          '',
+          'success'
+        )
+
+        this.modalActivo = false; // Cierra el modal
+        this.festivo.fecha = ''; // Limpia la fecha
+        this.festivo.descripcion = ''; // Limpia la descripción
+        this.obtenerfestivos();
       }
-      return testData;
-    }
+    });
+   // console.log('guardarFest=>', json);
+  }
 
-    private generateTableData(): any[] {
-      const tableData = [];
-      for (let i = 1; i <= 5; i++) {
-        tableData.push({
-          fecha: `2023-10-${i}`,
-          descripcion: `Descripción ${i}`,
-        });
-      }
-      return tableData;
-    }
 
-    // MODAL
-    openModal(rowData: any) {
-      this.modal = this.modalService.open(this.modal_mov, {
-        size: 'md',
-        centered: true,
+  // MODAL
+  openEditarModal(rowData: any) {
+    this.selectedRowData = rowData; // Asigna los datos de la fila a la variable selectedRowData
+    this.modalActivo = true; // Abre el modal de edición
+  }
+
+  editarfestivos() {
+    if (this.selectedRowData) {
+      this.formatFecha();
+
+      // Asigna el ID del festivo desde los datos seleccionados
+      this.festivo.id_dia_festivo = this.selectedRowData.id_dia_festivo;
+
+      let json = {
+        id_dia_festivo: this.festivo.id_dia_festivo,
+        id_cliente: 5,
+        ejercicio: 2023,
+        descripcion: this.festivo.descripcion,
+        fecha: this.festivo.fecha,
+        token: '012354SDSDS01',
+        activo: 1,
+        id_usuario: 1,
+      };
+
+      // Realiza la solicitud para editar el festivo
+      this.festivosService.guardarFestivos(json).subscribe((resp) => {
+        if (resp.ok) {
+          Swal.fire('Festivo editado', resp.data.mensaje, 'success');
+          this.festivo.fecha = '';
+          this.festivo.descripcion = ''; 
+          this.obtenerfestivos();
+        }
       });
-      this.selectedRowData = rowData;
-    }
 
-    closeModal() {
-      this.modal.close();
+      // Cierra el modal de edición
+      this.modalActivo = false;
     }
   }
+
+  // editarfestivos() {
+  //   this.formatFecha();
+  //    this.festivo.id_dia_festivo = this.selectedRowData.id_dia_festivo
+  //   let json = {
+  //     id_dia_festivo: this.festivo.id_dia_festivo,
+  //     id_cliente: 5,
+  //     ejercicio: 2023,
+  //     descripcion: this.festivo.descripcion,
+  //     fecha: this.festivo.fecha,
+  //     token: '012354SDSDS01',
+  //     activo: 1,
+  //     id_usuario: 1,
+  //   };
+  //   console.log('editarFest=>', json);
+
+    // this.festivosService.guardarFestivos(json).subscribe((resp) => {
+    //   if(resp.ok){
+    //     Swal.fire(
+    //       'Éxito',
+    //       resp.data.mensaje,
+    //       'success'
+    //     )
+
+    //     this.festivo.fecha = ''; // Limpia la fecha
+    //     this.festivo.descripcion = ''; // Limpia la descripción
+    //     this.obtenerfestivos();
+    //   }
+    // });
+  }
+
+
+
+
