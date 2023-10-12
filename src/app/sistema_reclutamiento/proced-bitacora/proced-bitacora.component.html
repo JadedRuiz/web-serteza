@@ -99,7 +99,6 @@
                         <i *ngIf="element.tipoR == 'A'" class="fas fa-long-arrow-alt-up text-success"></i>
                         <i *ngIf="element.tipoR == 'M'" class="fas fa-retweet text-warning"></i>
                         <i *ngIf="element.tipoR == 'B'" class="fas fa-long-arrow-alt-down text-danger"></i>
-                        {{element.tipoR}}
                       </td>
                     </ng-container>
 
@@ -128,21 +127,29 @@
 
 <!-- MODAL -->
 <ng-template #content let-c="close" let-d="dismiss">
-  <div class="modal-body" style="overflow-x: hidden;">
+  <div class="modal-body" style="overflow-x: hidden;" >
     <div class="modal-content">
-      <!-- Agrega los detalles de la fila seleccionada aquí -->
-      <h2>Detalles de la Fila</h2>
-      <p>Fecha: {{ selectedRowData.fecha }}</p>
-      <p>Entrada: {{ selectedRowData.entrada }}</p>
-      <p>Salida: {{ selectedRowData.salida }}</p>
-      <p>FAL: {{ selectedRowData.tipoF }}</p>
-      <p>D F: {{ selectedRowData.tipoD }}</p>
-      <p>VAC: {{ selectedRowData.tipoV }}</p>
-      <p>RET: {{ selectedRowData.tipoR }}</p>
-      <p>Descripción: {{ selectedRowData.descripcion }}</p>
+      <div class="col text-center">
+        <h2>Nombre del trabajador</h2>
+      </div>
+        <div class="col">
+          <h3>Fecha: {{ selectedRowData.fecha }}</h3>
+        <form class="mt-2 example-form">
+          <mat-form-field class="col-10 offset-1">
+            <mat-label>Justificación</mat-label>
+            <textarea matInput
+                      cdkTextareaAutosize
+                      cdkAutosizeMinRows="2"
+                      cdkAutosizeMaxRows="7"></textarea>
+          </mat-form-field>
+        </form>
+      </div>
 
       <!-- Botón para cerrar el modal -->
-      <button (click)="closeModal()">Cerrar Modal</button>
+      <div class="col d-flex justify-content-end m-2">
+        <button class="btn btn-success" (click)="closeModal()">Guardar</button>
+        <button class="btn btn-danger" (click)="closeModal()">Cerrar</button>
+      </div>
     </div>
   </div>
 </ng-template>

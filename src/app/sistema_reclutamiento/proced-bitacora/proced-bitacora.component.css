@@ -12,7 +12,7 @@
 }
 
 .custom-table tr:hover {
-  background-color: #f3f1f1; /* Cambia el color de fondo al pasar el mouse por encima */
+  background-color: #c4ebf796; /* Cambia el color de fondo al pasar el mouse por encima */
 }
 
 /* Estilo para las celdas */
@@ -23,7 +23,7 @@
 
 /* Estilo para las celdas de encabezado */
 .custom-table th {
-  background-color: #e9e4e4a2; /* Cambia el color de fondo de las celdas de encabezado */
+  background-color: #d8d6d6a2; /* Cambia el color de fondo de las celdas de encabezado */
   font-weight: bold; /* Hace que el texto en las celdas de encabezado sea negrita */
   position: sticky; /* Hace que las celdas de encabezado se mantengan pegadas al desplazarse horizontalmente */
   top: 0; /* Coloca las celdas de encabezado en la parte superior de la tabla */

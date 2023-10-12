@@ -17,7 +17,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
-import { MatNativeDateModule } from '@angular/material/core'; 
+import { MatNativeDateModule } from '@angular/material/core';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule} from '@angular/material/paginator';
@@ -37,6 +37,7 @@ import { ProcedBitacoraComponent } from './proced-bitacora/proced-bitacora.compo
 import { ProcedIncapacidadComponent } from './proced-incapacidad/proced-incapacidad.component';
 import { CatalogoTurnosComponent } from './catalogo-turnos/catalogo-turnos.component';
 import { CatalogoFestivosComponent } from './catalogo-festivos/catalogo-festivos.component';
+import { MatCard, MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -73,6 +74,7 @@ import { CatalogoFestivosComponent } from './catalogo-festivos/catalogo-festivos
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatCardModule,
     CompartidoModuleGeneral,
     MatTableModule,
     MatPaginatorModule,

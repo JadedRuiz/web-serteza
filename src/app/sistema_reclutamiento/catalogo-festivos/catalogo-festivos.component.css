@@ -1,0 +1,31 @@
+
+/* Estilo para la tabla */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse; /* Elimina los espacios entre celdas */
+}
+
+/* Estilo para las filas */
+.custom-table tr {
+  cursor: pointer; /* Cambia el cursor a pointer en las filas */
+  transition: background-color 0.3s; /* Agrega una transición suave para el cambio de color de fondo */
+}
+
+.custom-table tr:hover {
+  background-color: #c4ebf796; /* Cambia el color de fondo al pasar el mouse por encima */
+}
+
+/* Estilo para las celdas */
+.custom-table td, .custom-table th {
+  padding: 12px 16px; /* Agrega un relleno a las celdas para un aspecto más espaciado */
+  text-align: left; /* Alinea el texto a la izquierda en las celdas */
+}
+
+/* Estilo para las celdas de encabezado */
+.custom-table th {
+  background-color: #d8d6d6a2; /* Cambia el color de fondo de las celdas de encabezado */
+  font-weight: bold; /* Hace que el texto en las celdas de encabezado sea negrita */
+  position: sticky; /* Hace que las celdas de encabezado se mantengan pegadas al desplazarse horizontalmente */
+  top: 0; /* Coloca las celdas de encabezado en la parte superior de la tabla */
+}
+
