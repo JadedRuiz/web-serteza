@@ -38,7 +38,7 @@ import { ProcedIncapacidadComponent } from './proced-incapacidad/proced-incapaci
 import { CatalogoTurnosComponent } from './catalogo-turnos/catalogo-turnos.component';
 import { CatalogoFestivosComponent } from './catalogo-festivos/catalogo-festivos.component';
 import { MatCard, MatCardModule } from '@angular/material/card';
-
+import {MatCheckboxModule} from '@angular/material/checkbox';
 @NgModule({
   declarations: [
     SistemaReclutamientoComponent,
@@ -80,6 +80,7 @@ import { MatCard, MatCardModule } from '@angular/material/card';
     MatPaginatorModule,
     MatIconModule,
     MatMenuModule,
+    MatCheckboxModule,
     MatTabsModule,
     BrowserAnimationsModule,
     MatListModule

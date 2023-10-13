@@ -1,6 +1,5 @@
 /* catalogo-turnos.component.css */
 .card-container {
-  flex-wrap: wrap;
   gap: 20px;
 }
 
@@ -9,7 +8,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   width: 100%;
-  padding: 15px;
+  /* padding: 15px; */
   transition: transform 0.2s;
   cursor: pointer;
 }
@@ -19,7 +18,7 @@
 }
 
 .card-header {
-  background-color: #b3d0f0;
+  background-color: #9dc4ee;
   color: #fff;
   padding: 10px;
   border-top-left-radius: 10px;
@@ -27,25 +26,38 @@
 }
 
 .card-body {
-  margin-top: 12px;
+  margin-top: 2px;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  padding: 0px;
+
 }
 
 table, th, td {
   border: 1px solid #ddd;
+  padding: 0px;
+
 }
 
 th, td {
-  padding: 10px;
+  /* padding: 6px; */
   text-align: left;
+  padding: 0px;
 }
 
 th {
-  background-color: #a5b7ca;
+  background-color: #b0c5db;
   color: #fff;
-  font-size: 1.1rem;
+  font-size: 14px;
+}
+
+.card-body{
+  padding-top: 0px;
+}
+.table td, .table th {
+  padding: 0.30rem;
+  text-align: center;
 }
