@@ -30,8 +30,5 @@
 }
 
 /* Aumenta la especificidad para asegurarte de que tus estilos tengan precedencia */
-body .mat-datepicker-content {
-  position: fixed;
-  z-index: 1052;
-}
+
 

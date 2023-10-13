@@ -1,0 +1,51 @@
+/* catalogo-turnos.component.css */
+.card-container {
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.card {
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  width: 100%;
+  padding: 15px;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.card-header {
+  background-color: #b3d0f0;
+  color: #fff;
+  padding: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.card-body {
+  margin-top: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #a5b7ca;
+  color: #fff;
+  font-size: 1.1rem;
+}
