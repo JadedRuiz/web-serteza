@@ -5,5 +5,6 @@ export class DetalleTurno {
    public hr_entrada: string,
    public hr_salida: string,
    public descanso: number,
+   public dia_descrip?: string
   ){}
 }

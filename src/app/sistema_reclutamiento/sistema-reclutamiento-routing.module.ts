@@ -15,6 +15,7 @@ import { ProcedBitacoraComponent } from './proced-bitacora/proced-bitacora.compo
 import { ProcedIncapacidadComponent } from './proced-incapacidad/proced-incapacidad.component';
 import { CatalogoFestivosComponent } from './catalogo-festivos/catalogo-festivos.component';
 import { CatalogoTurnosComponent } from './catalogo-turnos/catalogo-turnos.component';
+import { AsistenciaComponent } from './asistencia/asistencia.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,7 @@ const routes: Routes = [
     component : SistemaReclutamientoComponent,
     children : [
         { path : "dashboard",component : DashboardComponent},
+        { path : "asistencia",component : AsistenciaComponent},
         { path : "catalogo_candidato", component : CatalogoCandidatosComponent},
         { path : "catalogo_departamento", component : CatalogoDepartamentoComponent},
         { path : "catalogo_usuario", component : CatalogoUsuarioComponent},

@@ -39,6 +39,7 @@ import { CatalogoTurnosComponent } from './catalogo-turnos/catalogo-turnos.compo
 import { CatalogoFestivosComponent } from './catalogo-festivos/catalogo-festivos.component';
 import { MatCard, MatCardModule } from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import { AsistenciaComponent } from './asistencia/asistencia.component';
 @NgModule({
   declarations: [
     SistemaReclutamientoComponent,
@@ -55,7 +56,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     ProcedBitacoraComponent,
     ProcedIncapacidadComponent,
     CatalogoTurnosComponent,
-    CatalogoFestivosComponent
+    CatalogoFestivosComponent,
+    AsistenciaComponent
   ],
   imports: [
     CompartidoModule,

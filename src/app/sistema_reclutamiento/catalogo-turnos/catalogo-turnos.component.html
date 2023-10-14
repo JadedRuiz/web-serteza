@@ -9,7 +9,7 @@
         <div class="card-header">
           <h2 class="card-title">TURNOS</h2>
           <div class="col text-right mb-3">
-            <button class="btn btn-info" data-toggle="modal" data-target="#turnoModal2">Agregar Turno</button>
+            <button (click)="nuevoturno()" class="btn btn-info" data-toggle="modal" data-target="#turnoModal2">Agregar Turno</button>
           </div>
           <div class="cardo mb-3" *ngFor="let turno of turnos | keyvalue">
 
@@ -114,11 +114,11 @@
               <td>{{ dia.dia_descrip }}</td>
               <td>
                 <span *ngIf="!editando">{{ dia.hr_entrada }}</span>
-                <input *ngIf="editando" [(ngModel)]="dia.hr_entrada" class="form-control">
+                <input type="time" *ngIf="editando" [(ngModel)]="dia.hr_entrada" class="form-control">
               </td>
               <td>
                 <span *ngIf="!editando">{{ dia.hr_salida }}</span>
-                <input *ngIf="editando" [(ngModel)]="dia.hr_salida" class="form-control">
+                <input type="time" *ngIf="editando" [(ngModel)]="dia.hr_salida" class="form-control">
               </td>
               <td>
                 <i *ngIf="dia.descanso == '1'" class="fa fa-circle text-danger"></i>

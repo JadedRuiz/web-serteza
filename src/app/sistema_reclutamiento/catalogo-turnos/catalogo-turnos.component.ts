@@ -15,7 +15,8 @@ import { MatTableDataSource } from '@angular/material/table';
 export class CatalogoTurnosComponent implements OnInit {
   public color = COLOR;
   public turnos: { [key: string]: any; } | undefined;
-  public turno = new Turno(0,5,'','',0,0,0,0,0,'',1,0,[]);
+  public detalle = new DetalleTurno(0,0,'','',0,)
+  public turno = new Turno(0,5,'','',0,0,0,0,0,'',1,0,[this.detalle]);
   editando = false;
   displayedColumns: string[] = ['clave', 'turno'];
   dataSource = new MatTableDataSource();
@@ -32,20 +33,6 @@ export class CatalogoTurnosComponent implements OnInit {
     this.obtenerTurnos();
   }
 
-longitud:any = '';
-latitud:any = '';
-ubicacion() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      this.longitud = position.coords.longitude;
-      this.latitud = position.coords.latitude;
-      console.log('Lat Long', this.latitud, this.longitud);
-    }, (error) => {
-    });
-  } else {
-    console.error('El navegador no admite geolocalización.');
-  }
-}
 
 
   agregarDetalle() {
@@ -152,9 +139,29 @@ ubicacion() {
   }
 
 
+  nuevoturno(){
+ let detTurno = new Array<DetalleTurno>();
+ detTurno.push(new DetalleTurno(0,0,'','',0,'Lunes'));
+ detTurno.push(new DetalleTurno(0,1,'','',0,'Martes'));
+ detTurno.push(new DetalleTurno(0,2,'','',0,'Miercoles'));
+ detTurno.push(new DetalleTurno(0,3,'','',0,'Jueves'));
+ detTurno.push(new DetalleTurno(0,4,'','',0,'Viernes'));
+ detTurno.push(new DetalleTurno(0,5,'','',0,'Sabado'));
+ detTurno.push(new DetalleTurno(0,6,'','',0,'Domingo'));
+
+ this.turnoSeleccionado = new Turno(0,5,'','',0,0,0,0,0,'',1,0,detTurno);
+ console.log('OK nunevo', this.turno);
+ this.editando = true;
+let json = this.turnoSeleccionado
+this.turnosService.agregarTurnos(json).subscribe((resp)=>{
+if (resp.ok){
+
+}
+})
+  }
+
 // --------------
 turnoSeleccionado:any =''
-turnoSeleccionadoOriginal:any =''
 editarTurno(turnoSeleccionado: any) {
   //this.editando = true; // Indica que estás editando un turno existente
   this.turnoSeleccionado = {
@@ -162,23 +169,43 @@ editarTurno(turnoSeleccionado: any) {
     turno: turnoSeleccionado.value[0].turno,
     traslapa_turno: turnoSeleccionado.value[0].traslapa_turno,
     rota_turno: turnoSeleccionado.value[0].rota_turno,
-    detalle: turnoSeleccionado.value // Asegúrate de que esto esté definido
+    detalle: turnoSeleccionado.value
   };
-  this.turno = JSON.parse(JSON.stringify(turnoSeleccionado));
   //console.log("=>>",this.turnoSeleccionado)
 }
 
 
+horaEntrada :any = ''
 toggleEditingMode() {
   if (this.editando) {
-
       this.turno.clave = this.turnoSeleccionado.clave
       this.turno.turno = this.turnoSeleccionado.turno
       this.turno.traslapa_turno = this.turnoSeleccionado.traslapa_turno
       this.turno.rota_turno = this.turnoSeleccionado.rota_turno
+      this.turno.detalle = this.turnoSeleccionado.detalle
+      this.turno.id_turno = this.turnoSeleccionado.id_turno
+   // console.log("DetalleTurno=>>",this.turno.detalle)
 
-    this.turno.detalle = this.turnoSeleccionado.detalle
-    console.log("=>>",this.turno.detalle)
+    for (const dia of this.turno.detalle) {
+      const diaSeleccionado = this.turnoSeleccionado.detalle.find((d: any) => d.dia === dia.dia);
+      if (diaSeleccionado) {
+        dia.hr_entrada = diaSeleccionado.hr_entrada;
+        dia.hr_salida = diaSeleccionado.hr_salida;
+      }
+    }
+
+    console.log("Turno actualizado:", this.turno);
+
+    let json = this.turno
+
+
+    this.turnosService.agregarTurnos(json).subscribe((resp)=>{
+      if (resp.ok){
+        console.log('OK');
+      }
+    console.log("==", json);
+
+    });
 
 
     this.editando = false;
@@ -186,6 +213,7 @@ toggleEditingMode() {
     // Activa el modo de edición.
     this.editando = true;
   }
+
 }
 
 updateTraslapa() {

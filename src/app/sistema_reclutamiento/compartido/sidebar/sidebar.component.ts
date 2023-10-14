@@ -105,6 +105,7 @@ export class SidebarComponent implements OnInit {
     }
     this.menuItems = [
       { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-yellow', id:"dashboard_header", band: false, tipo : "", bg : "red"},
+      { path: 'asistencia', title: 'Asistencia',  icon: 'fa fa-users text-green', id:"asistencia_header", band: false, tipo : "", bg : "red"},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : catalogos, bg : "orange"
       },
