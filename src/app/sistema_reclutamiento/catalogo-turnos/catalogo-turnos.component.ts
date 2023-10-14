@@ -191,6 +191,7 @@ toggleEditingMode() {
       if (diaSeleccionado) {
         dia.hr_entrada = diaSeleccionado.hr_entrada;
         dia.hr_salida = diaSeleccionado.hr_salida;
+        dia.descanso = diaSeleccionado.descanso;
       }
     }
 

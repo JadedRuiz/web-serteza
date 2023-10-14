@@ -3,23 +3,27 @@
   gap: 20px;
 }
 
-.card {
+.cardo {
   background-color: #fff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0); */
   border-radius: 10px;
   width: 100%;
   /* padding: 15px; */
   transition: transform 0.2s;
   cursor: pointer;
+  border: solid 1px rgba(201, 197, 197, 0.616);
 }
 
 .cardo:hover {
   transform: scale(1.02);
+  background-color: #d3def49f;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.365);
+
 }
 
 .cardo-header {
-  background-color: #8f9a9b;
-  color: #fff;
+  /* background-color: #8f9a9b; */
+  /* color: #fff; */
   padding: 10px;
   border-radius: 7px;
   /* border-top-right-radius: 10px; */

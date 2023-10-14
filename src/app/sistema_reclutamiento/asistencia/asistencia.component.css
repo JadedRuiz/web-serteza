@@ -1,0 +1,36 @@
+.card {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardo {
+  width: 300px;
+  margin: 0 auto;
+  transition: transform 0.2s;
+  border: solid 1px rgba(187, 181, 181, 0.64);
+  border-radius: 7px;
+  text-align: center; /* Alinea el contenido en el centro horizontalmente */
+  padding: 10px; /* Agrega un poco de espacio alrededor del contenido */
+}
+
+.cardo:hover {
+  transform: scale(1.05); /* Aumenta ligeramente el tamaño en hover */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Agrega una sombra en hover */
+}
+
+.cardo-header {
+  /* background-color: #007bff; Cambia el color de fondo del título */
+  color: #000000; /* Cambia el color del texto del título */
+  padding: 10px;
+  text-align: center;
+}
+
+.cardo-body {
+  padding: 20px;
+}
+
+.btn {
+  width: 100%;
+}

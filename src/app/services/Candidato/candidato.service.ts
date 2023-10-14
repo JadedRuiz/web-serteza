@@ -16,7 +16,7 @@ export class CandidatoService {
   ) { }
 
   obtenerCandidatos(json : any){
-    let url = SERVER_API+"candidato/obtenerCandidatos";
+    let url = SERVER_API+"candidato/consultarCandidatosContratados";
     return this.http.post( url, json )
       .pipe(map( (resp: any) => {
         return resp;
@@ -25,7 +25,7 @@ export class CandidatoService {
         return throwError(err);
       }));
   }
-  
+
   altaCandidato(candidato : Candidato){
     let url = SERVER_API+"candidato/altaCandidato";
     return this.http.post( url, candidato )
