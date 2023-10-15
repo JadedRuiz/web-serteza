@@ -14,9 +14,14 @@
               <div class="col-lg-4 col-sm-12 d-flex align-items-center">
                 <mat-form-field class="w-100 px-1" *ngIf="id_perfil == 3">
                   <mat-label>Buscar empleado</mat-label>
-                  <input type="text" placeholder="nombre o id" aria-label="Number" matInput (keyup)="buscarEmpleado()"
-                    [formControl]="filterControlEmpleados" [matAutocomplete]="auto" style="text-transform: uppercase;"
-                    name="empresa">
+                  <input type="text"
+                   placeholder="NOMBRE o RFC"
+                   aria-label="Number"
+                   matInput
+                   (keyup)="buscarCandidato()"
+                   [formControl]="filterControl"
+                  [matAutocomplete]="auto" style="text-transform: uppercase;"
+                  >
                   <mat-autocomplete #auto="matAutocomplete">
                     <mat-option *ngFor="let empleado of objEmpleados" [value]="empleado.nombre"
                       [id]="empleado.id_empleado">
@@ -35,8 +40,8 @@
                   alt="Foto de perfil" class="img-fluid rounded-circle" style="width: 100px; height: 100px;">
               </div>
               <div class="col-lg-4 col-md-6 col-sm-12 text-center">
-                <h3>Nombre del Trabajador</h3>
-                <strong>Nombre del Departamento</strong>
+                <!-- <h3>{{empleado.nombre}}</h3>
+                <strong>ID {{id_candidato.nombre}}</strong> -->
               </div>
 
               <div class="col-lg-4 col-md-6 col-sm-12 text-center">
