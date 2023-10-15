@@ -25,10 +25,9 @@
   cursor: pointer;
 }
 
-.card-image {
-  max-width: 100px;
-  max-height: 60px;
-  margin: 10px auto 0; /* Cambia el valor de margin-bottom a margin-top */
-  display: block;
-}
+  /* Estilo de la imagen */
+  .card-image {
+    max-width: 100%; /* Ajusta la imagen al ancho de su contenedor */
+    height: 25%;
+  }
 

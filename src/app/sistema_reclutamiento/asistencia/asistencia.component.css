@@ -13,11 +13,11 @@
   border-radius: 7px;
   text-align: center; /* Alinea el contenido en el centro horizontalmente */
   padding: 10px; /* Agrega un poco de espacio alrededor del contenido */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .cardo:hover {
-  transform: scale(1.05); /* Aumenta ligeramente el tamaño en hover */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Agrega una sombra en hover */
+  /* transform: scale(1.05); Aumenta ligeramente el tamaño en hover */
 }
 
 .cardo-header {

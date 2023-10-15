@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { COLOR } from 'src/config/config';
+import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
+
 import Swal from 'sweetalert2';
 
 
@@ -16,20 +18,18 @@ export class AsistenciaComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private candidato_service: CandidatoService,
+
 
   ) { }
 
   ngOnInit(): void {
   }
 
+// GUARDAR COORDENADAS
 
   registrar(){
     this.ubicacion()
-    Swal.fire(
-      'Excelente',
-      'Asistencia registrada',
-      'success'
-    )
   }
 
   ubicacion() {
@@ -38,13 +38,35 @@ export class AsistenciaComponent implements OnInit {
         this.longitud = position.coords.longitude;
         this.latitud = position.coords.latitude;
         console.log('Lat Long', this.latitud, this.longitud);
+        this.check();
       }, (error) => {
       });
     } else {
       console.error('El navegador no admite geolocalización.');
     }
+
   }
 
+
+check(){
+  let json = {
+    id_candidato: 1249,
+    id_cliente: 5,
+    fecha: "",
+    hora: "",
+    id_reloj: 0,
+    reloj_checador: 0,
+    longitud: this.latitud,
+    latitud: this.longitud,
+  }
+  this.candidato_service.guardarChecada(json).subscribe((resp)=>{
+    if(resp.ok){
+      Swal.fire(
+        'Exito',resp.message,'success'
+      )
+    }
+  })
+}
 
   entradasSalidas(){
     this.router.navigate(['/sistema_reclutamiento/bitacora-insidencias']);

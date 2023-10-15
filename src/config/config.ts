@@ -5,7 +5,7 @@ const API_SERTEZA = "https://serp-api.serteza.com/public/api/";
 const CLASS_COLOR = "bg-gradient-danger";
 const token_cp  = "c9a268f4-1791-4926-9177-e23f62de2eb7";
 const API_SERTEZA_AUDI = "https://serp-api.serteza.com/public/api/auditoria/"
-
+const API_CHECK = "https://serp-api.serteza.com/public/api/checadas/guardarChecada"
 
 
 
@@ -14,3 +14,4 @@ export const COLOR = CLASS_COLOR;
 export const SERVER_API = API_SERTEZA;
 export const TOKEN_CP = token_cp;
 export const API_AUD = API_SERTEZA_AUDI
+export const CHECK_API = API_CHECK

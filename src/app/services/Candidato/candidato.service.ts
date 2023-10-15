@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SERVER_API } from 'src/config/config';
+import { CHECK_API } from 'src/config/config';
 import { HttpClient } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
@@ -80,4 +81,18 @@ export class CandidatoService {
     let url = SERVER_API+"candidato/obtenerMovientosCandidato/"+id;
     return this.http.get(url);
   }
+
+
+
+  guardarChecada(json : any){
+    let url = CHECK_API;
+    return this.http.post( url, json )
+      .pipe(map( (resp: any) => {
+        return resp;
+      }), catchError(err => {
+        Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+        return throwError(err);
+      }));
+  }
+
 }

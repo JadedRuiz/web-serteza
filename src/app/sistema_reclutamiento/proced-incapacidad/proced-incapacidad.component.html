@@ -8,35 +8,29 @@
       <div class="card">
         <div class="card-header">
           <h4 class="card-title">BITACORA DE INCAPACIDADES</h4>
+          <!-- BUSCADOR -->
           <div class="card-category">
-            <div class="row align-items-center">
-              <div class="col-lg-4 col-sm-12 d-flex align-items-center">
+            <div class="row">
+              <div class="col-md-6 col-sm-12 d-flex align-items-center">
                 <mat-form-field class="w-100 px-1" *ngIf="id_perfil == 3">
-                  <mat-label>Buscar empleado</mat-label>
-                  <input
-                    type="text"
-                    placeholder="nombre o id"
-                    aria-label="Number"
-                    matInput
-                    (keyup)="buscarEmpleado()"
-                    [formControl]="filterControlEmpleados"
-                    [matAutocomplete]="auto"
-                    style="text-transform: uppercase;"
-                    name="empresa"
-                  />
+                  <mat-label class="d-flex justify-content-between align-items-center" >Buscar trabajador <i class="fa fa-search" aria-hidden="true"></i></mat-label>
+                  <input type="text"
+                   placeholder="NOMBRE o RFC"
+                   aria-label="Number"
+                   matInput
+                   (keyup)="buscarCandidato()"
+                   [formControl]="filterControl"
+                  [matAutocomplete]="auto" style="text-transform: uppercase;"
+                  >
                   <mat-autocomplete #auto="matAutocomplete">
-                    <mat-option
-                      *ngFor="let empleado of objEmpleados"
-                      [value]="empleado.nombre"
-                      [id]="empleado.id_empleado"
-                    >
+                    <mat-option *ngFor="let empleado of objEmpleados" [value]="empleado.nombre"
+                      [id]="empleado.id_empleado">
                       {{empleado.nombre}}
                     </mat-option>
                   </mat-autocomplete>
                 </mat-form-field>
-                <button class="btn btn-sm btn-success"><i class="fa fa-search" aria-hidden="true"></i></button>
+                <!-- <button class="btn btn-sm btn-success"><i class="fa fa-search" aria-hidden="true"></i></button> -->
               </div>
-
               <div class="col">
                 <button class="btn btn-outline-danger" >Agregar incapacidad</button>
               </div>
