@@ -62,12 +62,18 @@ export class SidebarComponent implements OnInit {
         {path: 'catalogo_departamento', title: 'Departamentos', icon: 'ni-archive-2'},
         {path: 'catalogo_empresa', title: 'Empresas', icon: 'far fa-building'},
         {path: 'catalogo_sucursal', title: 'Sucursales', icon: 'fas fa-map-marker-alt'},
-        {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'}
+        {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'},
+        {path: 'catalogo_turnos', title: 'Turnos', icon: 'fa fa-users'},
+        {path: 'proced_xml', title: 'Xml', icon: 'fa fa-users'},
+        {path: 'catalogo_festivos', title: 'Festivos', icon: 'fa fa-bookmark'}
       );
       procesos.push(
         {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17'},
         {path: 'procedimiento_modificacion', title: 'Modificaciones', icon: 'ni-curved-next'},
         {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove'},
+        {path: 'bitacora-insidencias', title: 'Bitacora', icon: 'fa fa-id-badge'},
+        {path: 'proced_vacaciones', title: 'Vacaciones', icon: 'ni-calendar-grid-58'},
+        {path: 'proced_incapacidades', title: 'Incapacidades', icon: 'fa fa-medkit'},
       );
     }
     //JEFE INMEDIATO
@@ -84,6 +90,7 @@ export class SidebarComponent implements OnInit {
         {path: 'catalogo_sucursal', title: 'Sucursales', icon: 'fas fa-map-marker-alt'},
         {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'},
         {path: 'catalogo_turnos', title: 'Turnos', icon: 'fa fa-users'},
+        {path: 'proced_xml', title: 'Xml', icon: 'fa fa-users'},
         {path: 'catalogo_festivos', title: 'Festivos', icon: 'fa fa-bookmark'}
       );
       procesos.push(
@@ -93,6 +100,8 @@ export class SidebarComponent implements OnInit {
         {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17'},
         {path: 'procedimiento_modificacion', title: 'Modificaciones', icon: 'ni-curved-next'},
         {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove'},
+        {path: 'bitacora-insidencias', title: 'Bitacora', icon: 'fa fa-id-badge'},
+
       );
     }
     //EMPLEADO

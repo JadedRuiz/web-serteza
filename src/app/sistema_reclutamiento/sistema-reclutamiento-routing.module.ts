@@ -16,6 +16,7 @@ import { ProcedIncapacidadComponent } from './proced-incapacidad/proced-incapaci
 import { CatalogoFestivosComponent } from './catalogo-festivos/catalogo-festivos.component';
 import { CatalogoTurnosComponent } from './catalogo-turnos/catalogo-turnos.component';
 import { AsistenciaComponent } from './asistencia/asistencia.component';
+import { ProcedXmlComponent } from './proced-xml/proced-xml.component';
 
 const routes: Routes = [
   {
@@ -37,6 +38,7 @@ const routes: Routes = [
         { path : "procedimiento_contratacion", component : ProcedimientoContratacionComponent},
         { path : "procedimiento_baja", component : ProcedimientoBajaComponent},
         { path : "procedimiento_modificacion", component : ProcedimientoModificacionComponent},
+        { path : "proced_xml", component : ProcedXmlComponent},
         // { path : "catalogo_cliente/:id", component : CatalogoClienteComponent},
     ]
   }

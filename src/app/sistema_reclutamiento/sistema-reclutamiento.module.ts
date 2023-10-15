@@ -40,6 +40,7 @@ import { CatalogoFestivosComponent } from './catalogo-festivos/catalogo-festivos
 import { MatCard, MatCardModule } from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { AsistenciaComponent } from './asistencia/asistencia.component';
+import { ProcedXmlComponent } from './proced-xml/proced-xml.component';
 @NgModule({
   declarations: [
     SistemaReclutamientoComponent,
@@ -57,7 +58,8 @@ import { AsistenciaComponent } from './asistencia/asistencia.component';
     ProcedIncapacidadComponent,
     CatalogoTurnosComponent,
     CatalogoFestivosComponent,
-    AsistenciaComponent
+    AsistenciaComponent,
+    ProcedXmlComponent
   ],
   imports: [
     CompartidoModule,

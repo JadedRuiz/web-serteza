@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { COLOR } from 'src/config/config';
 import Swal from 'sweetalert2';
 
@@ -13,7 +14,10 @@ export class AsistenciaComponent implements OnInit {
   longitud:any = '';
   latitud:any = '';
 
-  constructor() { }
+  constructor(
+    private router: Router,
+
+  ) { }
 
   ngOnInit(): void {
   }
@@ -41,4 +45,16 @@ export class AsistenciaComponent implements OnInit {
     }
   }
 
+
+  entradasSalidas(){
+    this.router.navigate(['/sistema_reclutamiento/bitacora-insidencias']);
+
+  }
+
+  recibos(){
+    this.router.navigate(['/sistema_reclutamiento/proced_xml']);
+
+  }
+
 }
+
