@@ -26,14 +26,14 @@
                   </button>
                 </div>
                 <div class="col">
-                  <span>Turno:</span><b>{{ turno.value[0].turno }}</b>
-                </div>
-                <div class="col">
                   <span>Clave:</span><b>{{ turno.value[0].clave }}</b>
                 </div>
                 <div class="col">
+                  <span>Turno:</span><b>{{ turno.value[0].turno }}</b>
+                </div>
+                <div class="col">
                   <span><b>Traslapa turno:</b></span><i *ngIf="turno.value[0].traslapa_turno == '0'"
-                    class="fa fa-circle text-info ml-2"></i>
+                    class="fa fa-circle text-warning ml-2"></i>
                 </div>
               </div>
               <!-- <div class="card-body">
@@ -139,7 +139,8 @@
       </div>
       <div class="row text-center">
         <div class="col m-2 mb-1">
-          <button (click)="toggleEditingMode()" class="btn btn-block btn-primary">{{ editando ? 'Guardar' : 'Editar'}}</button>
+          <button  (click)="toggleEditingMode()" class="btn btn-block btn-primary">{{ editando ? 'Guardar' : 'Editar'}}</button>
+          <!-- <button  (click)="editarTurno(turno)" class="btn btn-block btn-secondary">{{ editando ? 'Guardar' : 'Editar'}}</button> -->
         </div>
       </div>
 

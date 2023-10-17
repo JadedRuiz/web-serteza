@@ -216,7 +216,7 @@ incapacidades:any=''
 
   // FORMATEAR
   formatearFechaParaGuardar(fecha: any) {
-    return formatDate(fecha, 'yyyy-MM-dd', 'en-US'); // Ajusta 'en-US' según tu localización
+    return formatDate(fecha, 'yyyy-MM-dd', 'en-US'); 
   }
 
   // CALCULAR

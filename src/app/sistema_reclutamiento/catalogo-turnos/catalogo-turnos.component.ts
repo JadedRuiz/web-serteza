@@ -13,13 +13,14 @@ import Swal from 'sweetalert2';
   templateUrl: './catalogo-turnos.component.html',
   styleUrls: ['./catalogo-turnos.component.css'],
 })
+
+
 export class CatalogoTurnosComponent implements OnInit {
   public color = COLOR;
   public turnos: { [key: string]: any } | undefined;
   public detalle = new DetalleTurno(0, 0, '', '', 0);
-  public turno = new Turno(0, 5, '', '', 0, 0, 0, 0, 0, '', 1, 0, [
-    this.detalle,
-  ]);
+  public turno = new Turno(0, 5, '', '', 0, 0, 0, 0, 0, '', 1, 0, [this.detalle,]);
+  public isChecked: any;
   editando = false;
   displayedColumns: string[] = ['clave', 'turno'];
   dataSource = new MatTableDataSource();
@@ -30,10 +31,6 @@ export class CatalogoTurnosComponent implements OnInit {
     this.obtenerTurnos();
   }
 
-  agregarDetalle() {
-    let detalleTurno = new DetalleTurno(0, 0, '', '', 0);
-    this.turno.detalle.push(detalleTurno);
-  }
 
   obtenerTurnos() {
     let json = {
@@ -44,7 +41,7 @@ export class CatalogoTurnosComponent implements OnInit {
       token: '012354SDSDS01',
     };
     this.turnosService.obtenerTurnos(json).subscribe((resp) => {
-      console.log('Turnos :>> ', resp.data);
+      // console.log('Turnos :>> ', resp.data);
       // Agrupar los datos por id_turno
       this.turnos = this.groupTurnos(resp.data);
     });
@@ -63,13 +60,26 @@ export class CatalogoTurnosComponent implements OnInit {
     return grouped;
   }
 
-  public isChecked: any;
 
   onCheckboxChange(event: any) {
     // Si el checkbox está marcado, establece isChecked en 1; de lo contrario, en 0.
     this.isChecked = event.checked ? 1 : 0;
   }
+  updateTraslapa() {
+    if (this.turnoSeleccionado) {
+      this.turnoSeleccionado.traslapa_turno = 1;
+      this.turnoSeleccionado.rota_turno = 1;
+      this.turnoSeleccionado.dia.descanso = 1;
+    } else {
+      this.turnoSeleccionado.traslapa_turno = 0;
+      this.turnoSeleccionado.rota_turno = 0;
+      this.turnoSeleccionado.dia.descanso = 0;
+    }
+  }
 
+
+
+  // Creamos turno seleccionado
   nuevoturno() {
     let detTurno = new Array<DetalleTurno>();
     detTurno.push(new DetalleTurno(0, 0, '', '', 0, 'Lunes'));
@@ -96,28 +106,33 @@ export class CatalogoTurnosComponent implements OnInit {
       detTurno
     );
     this.editando = true;
-    let json = this.turnoSeleccionado;
 
-    console.log('OK nunevo', json);
-    this.turnosService.agregarTurnos(json).subscribe((resp) => {
-      if (resp.ok) {
-        Swal.fire('Exito', resp.message, 'success');
-      }
-    });
+
+    // let json = this.turnoSeleccionado;
+
+    //  console.log('OK nuevo', json);
+    // this.turnosService.agregarTurnos(json).subscribe((resp) => {
+    //   if (resp.ok) {
+    //     Swal.fire('Exito', resp.message, 'success');
+    //   }
+    // });
   }
+
+
 
   // --------------
   turnoSeleccionado: any = '';
   editarTurno(turnoSeleccionado: any) {
-    //this.editando = true; // Indica que estás editando un turno existente
+    // this.editando =false; // Indica que estás editando un turno existente
     this.turnoSeleccionado = {
       clave: turnoSeleccionado.value[0].clave,
       turno: turnoSeleccionado.value[0].turno,
+      turno_id: turnoSeleccionado.value[0].id_turno,
       traslapa_turno: turnoSeleccionado.value[0].traslapa_turno,
       rota_turno: turnoSeleccionado.value[0].rota_turno,
       detalle: turnoSeleccionado.value,
     };
-    //console.log("=>>",this.turnoSeleccionado)
+    console.log("Turno Selecionado=>>",this.turnoSeleccionado)
   }
 
   horaEntrada: any = '';
@@ -128,7 +143,7 @@ export class CatalogoTurnosComponent implements OnInit {
       this.turno.traslapa_turno = this.turnoSeleccionado.traslapa_turno;
       this.turno.rota_turno = this.turnoSeleccionado.rota_turno;
       this.turno.detalle = this.turnoSeleccionado.detalle;
-      this.turno.id_turno = this.turnoSeleccionado.id_turno;
+      this.turno.id_turno = this.turnoSeleccionado.turno_id;
       // console.log("DetalleTurno=>>",this.turno.detalle)
 
       for (const dia of this.turno.detalle) {
@@ -142,37 +157,33 @@ export class CatalogoTurnosComponent implements OnInit {
         }
       }
 
-      //console.log("Turno actualizado:", this.turno);
-
-      let json = this.turno;
-
-      this.turnosService.agregarTurnos(json).subscribe((resp) => {
-        if (resp.ok) {
-          console.log('OK');
-        }
-        // console.log("==", json);
-      });
-
+      this.guardar();
       this.editando = false;
     } else {
       // Activa el modo de edición.
       this.editando = true;
     }
+    this.obtenerTurnos();
+
   }
 
-  updateTraslapa() {
-    if (this.turnoSeleccionado) {
-      this.turnoSeleccionado.traslapa_turno = 1;
-      this.turnoSeleccionado.rota_turno = 1;
-      this.turnoSeleccionado.dia.descanso = 1;
-    } else {
-      this.turnoSeleccionado.traslapa_turno = 0;
-      this.turnoSeleccionado.rota_turno = 0;
-      this.turnoSeleccionado.dia.descanso = 0;
-    }
-  }
+guardar(){
+   let json = this.turno;
+
+      this.turnosService.agregarTurnos(json).subscribe((resp) => {
+        if (resp.ok) {
+          console.log('OK');
+        }
+      });
+      console.log("==", json);
+}
+
+
+
 
   activar(turnoSeleccionado: any) {
+    this.editando = false;
+
     Swal.fire({
       title: '¿Quieres desactivar el turno?',
       text: '',
@@ -272,4 +283,7 @@ export class CatalogoTurnosComponent implements OnInit {
   //   }
   //   console.log('=>',json);
   // }
+
+
+
 }
