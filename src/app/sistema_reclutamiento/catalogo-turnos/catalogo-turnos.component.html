@@ -19,9 +19,9 @@
 
               <div class="row ">
                 <div class="col-2">
-                  <button (click)="editarTurno(turno)" class="btn btn-sm btn-success" data-toggle="modal"
+                  <button (click)="activar(turno)" class="btn btn-sm btn-success"
                     data-target="#turnoModal2">
-                    Editar
+                    ACTIVAR
                     <i class="ml-2 fa fa-check"></i></button>
                 </div>
                 <div class="col">
@@ -71,7 +71,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 class="modal-title">{{ editando ? 'Editar turno' : 'Nuevo turno' }}</h2>
+        <!-- <h2 class="modal-title">{{ editando ? 'Editar turno' : 'Nuevo turno' }}</h2> -->
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
