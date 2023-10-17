@@ -52,10 +52,10 @@
                   </div>
                   <div class="row">
                     <div class="col">
-                      <p class="card-label">Fecha Inicio: <strong>{{incapacidad.fecha_inicial}}</strong></p>
+                      <p class="card-label">Fecha Inicio: <br> <strong>{{incapacidad.fecha_inicial}}</strong></p>
                     </div>
                     <div class="col">
-                      <p class="card-label">Fecha Final: <strong>{{incapacidad.fecha_final}}</strong> </p>
+                      <p class="card-label">Fecha Final: <br> <strong>{{incapacidad.fecha_final}}</strong> </p>
                     </div>
                   </div>
 
@@ -98,7 +98,7 @@
               </div>
               <div class="col">
                 <mat-form-field class="example-full-width">
-                  <input matInput placeholder="Folio" value="FSD095">
+                  <input [(ngModel)]="incapacidad.folio"  style="text-transform: uppercase;" name="folio" matInput placeholder="Folio">
                 </mat-form-field>
               </div>
             </div>
@@ -106,23 +106,23 @@
         <div class="row">
           <div class="col">
             <mat-form-field>
-              <input matInput [matDatepicker]="picker" placeholder="Choose a date">
+              <input  [(ngModel)]="incapacidad.fecha_inicial" name="fecha_inicial"  matInput [matDatepicker]="picker" placeholder="Fecha Inicio">
               <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
           </div>
           <div class="col">
             <mat-form-field>
-              <input matInput [matDatepicker]="picker2" placeholder="Choose a date">
+              <input   [(ngModel)]="incapacidad.fecha_final" name="fecha_final" matInput [matDatepicker]="picker2" placeholder="Fecha Final">
               <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
               <mat-datepicker #picker2></mat-datepicker>
-            </mat-form-field>>
+            </mat-form-field>
           </div>
         </div>
         <div class="row pb-2">
           <div class="col-md-12 d-flex justify-content-end">
-            <button class="btn btn-secondary">Cancelar</button>
-            <button  type="submit" class="btn btn-primary">Guardar</button>
+            <button (click)="closeModal()" class="btn btn-secondary">Cancelar</button>
+            <button  (click)="guardarIncapacidad()"  type="submit"t class="btn btn-primary">Guardar</button>
           </div>
         </div>
 

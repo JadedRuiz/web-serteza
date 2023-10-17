@@ -11,6 +11,9 @@ import { Candidato } from 'src/app/models/Candidato';
 import { Direccion } from 'src/app/models/Direccion';
 import { Fotografia } from 'src/app/models/Fotografia';
 import Swal from 'sweetalert2';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { formatDate } from '@angular/common';
+
 
 @Component({
   selector: 'app-proced-incapacidad',
@@ -63,7 +66,7 @@ public direccion: Direccion = new Direccion(
   public status = -1; //Status default
   public palabra = '';
   filterControl = new FormControl();
-  candidatos_busqueda: any;
+  public candidatos_busqueda: any ;
   public id_perfil = parseInt(window.sessionStorage.getItem('perfil') + '');
   filterControlEmpleados = new FormControl();
   objEmpleados: any;
@@ -146,7 +149,7 @@ incapacidades:any=''
       if (object.ok) {
         // this.dataSource.data = object.data;
         // this.dataSource.paginator = this.paginator;
-        this.candidatos_busqueda = object.data;
+        // this.candidatos_busqueda = object.data;
         this.objEmpleados = object.data;
       }
     });
@@ -163,7 +166,7 @@ incapacidades:any=''
   }
 
   autocomplete(palabra: string) {
-    // this.candidatos_busqueda = [];
+    //  this.candidatos_busqueda = [];
     if (palabra.length > 2) {
       let json = {
         nombre_candidato: this.palabra.toUpperCase(),
@@ -175,6 +178,8 @@ incapacidades:any=''
         .subscribe((object: any) => {
           if (object.ok) {
             this.objEmpleados = object.data;
+            this.candidatos_busqueda = object.data;
+            //  console.log('=>>this.candidatos',this.candidatos_busqueda[0].id_candidato)
             // this.dataSource.data = object.data;
             // this.dataSource.paginator = this.paginator;
           }
@@ -185,6 +190,7 @@ incapacidades:any=''
   // INCAPACIDADES
 
   // OBTENER
+
   obternerIncapacidades() {
     let json = {
       id_incapacidad: 0,
@@ -203,26 +209,57 @@ incapacidades:any=''
     });
   }
 
+
+
+
+  // GUARDAR
+
+  // FORMATEAR
+  formatearFechaParaGuardar(fecha: any) {
+    return formatDate(fecha, 'yyyy-MM-dd', 'en-US'); // Ajusta 'en-US' según tu localización
+  }
+
+  // CALCULAR
+  calcularDiasIncapacidad() {
+    const fechaInicial = new Date(this.incapacidad.fecha_inicial);
+    const fechaFinal = new Date(this.incapacidad.fecha_final);
+
+    // Calcula la diferencia en milisegundos entre las dos fechas
+    const diferenciaMilisegundos = fechaFinal.getTime() - fechaInicial.getTime();
+
+    // Convierte la diferencia en milisegundos a días
+    const diasIncapacidad = Math.floor(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
+
+    return diasIncapacidad;
+  }
+
   // GUARDAR
   guardarIncapacidad() {
+    const fechaInicialFormateada = this.formatearFechaParaGuardar(this.incapacidad.fecha_inicial);
+    const fechaFinalFormateada = this.formatearFechaParaGuardar(this.incapacidad.fecha_final);
+    const diasIncapacidad = this.calcularDiasIncapacidad();
+
     let json = {
       id_incapacidad: 0,
       id_cliente: 5,
-      id_candidato: this.incapacidad.id_candidato,
+      id_candidato: this.candidatos_busqueda[0].id_candidato,
       folio: this.incapacidad.folio,
-      dias_incapacidad: this.incapacidad.dias_incapacidad,
-      fecha_inicial: this.incapacidad.fecha_inicial,
-      fecha_final: this.incapacidad.fecha_final,
+      dias_incapacidad: diasIncapacidad,
+      fecha_inicial: fechaInicialFormateada,
+      fecha_final: fechaFinalFormateada,
       activo: 1,
       token: '012354SDSDS01',
-      id_usuario: this.incapacidad.id_usuario,
+      id_usuario: 1,
     };
     console.log('json :>> ', json);
-    // this.incapacidadService.guardarIncapacidad(json).subscribe((resp) => {
-    //   if (resp.ok) {
-    //     Swal.fire('Exito', resp.message, 'success');
-    //   }
-    // });
+    this.incapacidadService.guardarIncapacidad(json).subscribe((resp) => {
+      if (resp.ok) {
+        Swal.fire('Incapacidad Guardada', '', 'success');
+      }
+    });
+    this.closeModal();
+    this.obternerIncapacidades();
+
   }
 
 
