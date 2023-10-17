@@ -16,8 +16,8 @@
 
 .cardo:hover {
   transform: scale(1.02);
-  background-color: #d3def49f;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.365);
+  /* background-color: #d3def49f; */
+  box-shadow: 0 0 10px rgba(96, 96, 96, 0.274);
 
 }
 

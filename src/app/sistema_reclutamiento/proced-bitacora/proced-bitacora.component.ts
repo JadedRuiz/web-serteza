@@ -21,7 +21,13 @@ export class ProcedBitacoraComponent implements OnInit {
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
   public candidato = new Candidato(0,this.id_cliente,6,"","","","","","","","",0,"","","","","",0,this.direccion,this.fotografia);
   public candidatos : any;
-
+  showModal = false;
+  selectedRowData: any;
+  modal: any;
+  public status = -1; //Status default
+  public palabra = "";
+  filterControl = new FormControl();
+  candidatos_busqueda : any;
 
   public id_perfil = parseInt(window.sessionStorage.getItem('perfil') + '');
   filterControlEmpleados = new FormControl();
@@ -41,13 +47,7 @@ export class ProcedBitacoraComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: any;
   @ViewChild('content', { static: false }) modal_mov: any;
 
-  showModal = false;
-  selectedRowData: any;
-  modal: any;
-  public status = -1; //Status default
-  public palabra = "";
-  filterControl = new FormControl();
-  candidatos_busqueda : any;
+
 
 
   constructor(

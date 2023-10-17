@@ -3,6 +3,10 @@ import { FormControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { VacacionesService } from 'src/app/services/Reclutamiento/Vacaciones.service';
 import { COLOR } from 'src/config/config';
+import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
+import { Candidato } from 'src/app/models/Candidato';
+import { Direccion } from 'src/app/models/Direccion';
+import { Fotografia } from 'src/app/models/Fotografia';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -11,16 +15,28 @@ import Swal from 'sweetalert2';
   styleUrls: ['./proced_vacaciones.component.css']
 })
 export class ProcedVacacionesComponent implements OnInit {
+  public direccion : Direccion = new Direccion(0,"","","","","","","","","","","");
+  public fotografia = new Fotografia(0,"","","");
+  public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
+  public candidato = new Candidato(0,this.id_cliente,6,"","","","","","","","",0,"","","","","",0,this.direccion,this.fotografia);
+  public candidatos : any;
+  showModal = false;
+  selectedRowData: any;
+  modal: any;
+  public status = -1; //Status default
+  public palabra = "";
+  filterControl = new FormControl();
+  candidatos_busqueda : any;
 
+  public id_perfil = parseInt(window.sessionStorage.getItem('perfil') + '');
+  filterControlEmpleados = new FormControl();
+  objEmpleados: any;
     //Variables config
     public color = COLOR;
     public id_usuario = parseInt(window.sessionStorage.getItem("user")+"");
-    public id_perfil = parseInt(window.sessionStorage.getItem("perfil")+""); 
-    public id_empleado = parseInt(window.sessionStorage.getItem("id_empleado")+""); 
-    filterControlEmpleados = new FormControl();
+    public id_empleado = parseInt(window.sessionStorage.getItem("id_empleado")+"");
     bDisp = false;
     btnColor = "btn-info";
-    objEmpleados : any;
     objEmpleado = {
       empresa : 'SERTEZA',
       sucursal : 'ORIENTE',
@@ -50,6 +66,7 @@ export class ProcedVacacionesComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
+    private candidato_service: CandidatoService,
     private serv_vacaciones : VacacionesService) { }
 
   ngOnInit(): void {
@@ -114,4 +131,60 @@ export class ProcedVacacionesComponent implements OnInit {
   open(content : any) {
     this.modalService.open(content,{ size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
   }
+
+
+// BARRA DE BUSQUEDA
+mostrarCandidatos(){
+  let json = {
+    palabra : this.palabra.toUpperCase(),
+    status : this.status,
+    id_cliente : this.id_cliente,
+    tipo : 1
+  };
+  this.candidatos = [];
+  this.candidato_service.obtenerCandidatos(json)
+  .subscribe( (object : any) =>{
+      if(object.ok){
+        // this.dataSource.data = object.data;
+        // this.dataSource.paginator = this.paginator;
+       this.candidatos_busqueda= object.data;
+       this.objEmpleados = object.data
+      }
+  });
+}
+
+
+
+buscarCandidato(){
+  this.palabra = this.filterControl.value;
+  if(this.filterControl.value.length < 1){
+    this.mostrarCandidatos();
+  }
+  if(this.filterControl.value.length > 2){
+    this.autocomplete(this.filterControl.value);
+  }
+}
+
+
+
+autocomplete(palabra : string){
+ // this.candidatos_busqueda = [];
+  if(palabra.length > 2){
+    let json = {
+      nombre_candidato : this.palabra.toUpperCase(),
+      status : this.status,
+      id_cliente : this.id_cliente
+    };
+    this.candidato_service.autoCompleteCandidato(json)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.objEmpleados = object.data;
+        // this.dataSource.data = object.data;
+        // n this.dataSource.paginator = this.paginator;
+      }
+    })
+  }
+}
+
+
 }

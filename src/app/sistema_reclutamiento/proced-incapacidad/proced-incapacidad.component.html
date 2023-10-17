@@ -13,15 +13,10 @@
             <div class="row">
               <div class="col-md-6 col-sm-12 d-flex align-items-center">
                 <mat-form-field class="w-100 px-1" *ngIf="id_perfil == 3">
-                  <mat-label class="d-flex justify-content-between align-items-center" >Buscar trabajador <i class="fa fa-search" aria-hidden="true"></i></mat-label>
-                  <input type="text"
-                   placeholder="NOMBRE o RFC"
-                   aria-label="Number"
-                   matInput
-                   (keyup)="buscarCandidato()"
-                   [formControl]="filterControl"
-                  [matAutocomplete]="auto" style="text-transform: uppercase;"
-                  >
+                  <mat-label class="d-flex justify-content-between align-items-center">Buscar trabajador <i
+                      class="fa fa-search" aria-hidden="true"></i></mat-label>
+                  <input type="text" placeholder="NOMBRE o RFC" aria-label="Number" matInput (keyup)="buscarCandidato()"
+                    [formControl]="filterControl" [matAutocomplete]="auto" style="text-transform: uppercase;">
                   <mat-autocomplete #auto="matAutocomplete">
                     <mat-option *ngFor="let empleado of objEmpleados" [value]="empleado.nombre"
                       [id]="empleado.id_empleado">
@@ -32,7 +27,7 @@
                 <!-- <button class="btn btn-sm btn-success"><i class="fa fa-search" aria-hidden="true"></i></button> -->
               </div>
               <div class="col">
-                <button class="btn btn-outline-danger" >Agregar incapacidad</button>
+                <button (click)="openModal2()" class="btn btn-outline-danger">Agregar incapacidad</button>
               </div>
             </div>
           </div>
@@ -40,14 +35,30 @@
         <!-- CARDS -->
         <div class="card-body">
           <div class="row">
-            <div class="col-md-4" *ngFor="let element of dataSource.data">
-              <mat-card class="custom-card" (click)="openModal(element)">
+            <div class="col-md-4 mb-3" *ngFor="let incapacidad of incapacidades">
+              <mat-card class="custom-card" (click)="openModal(incapacidad)">
                 <mat-card-content>
-                  <p class="card-label"><strong>Folio:</strong> F324FR</p>
-                  <p class="card-title"><strong>Dias:</strong> 5</p>
-                  <p class="card-label">Fecha:  <strong>14/2/2023</strong></p>
-                  <p class="card-label">Fecha Final: <strong>14/2/2023</strong> </p>
-                  <img src=".\assets\img\brand\mi_gato_fake.jpg" alt="Imagen" class="card-image">
+                  <div class="row">
+                    <div class="col">
+                   <img [src]=fotoIncapacidad alt="Imagen" class="card-image border ">
+                 </div>
+                 <div class="col text_info">
+                      <p class="nomobre">{{incapacidad.nombre_completo}}</p>
+                      <p class="card-label"><strong>Folio:</strong>{{incapacidad.folio}}</p>
+                      <p class="card-label"><strong>Dias:</strong> {{incapacidad.dias_incapacidad}}</p>
+                    </div>
+                    <!-- <div class="col">
+                    </div> -->
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <p class="card-label">Fecha Inicio: <strong>{{incapacidad.fecha_inicial}}</strong></p>
+                    </div>
+                    <div class="col">
+                      <p class="card-label">Fecha Final: <strong>{{incapacidad.fecha_final}}</strong> </p>
+                    </div>
+                  </div>
+
 
                 </mat-card-content>
               </mat-card>
@@ -60,23 +71,79 @@
 </div>
 
 
+<!-- MODAL AGREGAR INCAPACIODAD -->
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1>Agregar Incapacidad</h1>
+      </div>
+      <form class="container">
+          <!-- BUSCADOR -->
+          <div class="card-category">
+            <div class="row">
+              <div class="col-md-6 col-sm-12 d-flex align-items-center">
+                <mat-form-field class="w-100 px-1" *ngIf="id_perfil == 3">
+                  <mat-label class="d-flex justify-content-between align-items-center">Buscar trabajador <i
+                      class="fa fa-search" aria-hidden="true"></i></mat-label>
+                  <input type="text" placeholder="NOMBRE o RFC" aria-label="Number" matInput (keyup)="buscarCandidato()"
+                    [formControl]="filterControl" [matAutocomplete]="auto" style="text-transform: uppercase;">
+                  <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let empleado of objEmpleados" [value]="empleado.nombre"
+                      [id]="empleado.id_empleado">
+                      {{empleado.nombre}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <mat-form-field class="example-full-width">
+                  <input matInput placeholder="Folio" value="FSD095">
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        <div class="row">
+          <div class="col">
+            <mat-form-field>
+              <input matInput [matDatepicker]="picker" placeholder="Choose a date">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field>
+              <input matInput [matDatepicker]="picker2" placeholder="Choose a date">
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>>
+          </div>
+        </div>
+        <div class="row pb-2">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button class="btn btn-secondary">Cancelar</button>
+            <button  type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</ng-template>
 
 <!-- MODAL -->
 <ng-template #content let-c="close" let-d="dismiss">
-  <div class="modal-body" style="overflow-x: hidden;" >
+  <div class="modal-body" style="overflow-x: hidden;">
     <div class="modal-content">
       <div class="col text-center">
         <h2>Nombre del trabajador</h2>
       </div>
-        <div class="col">
-          <h3>Fecha: {{ selectedRowData.fecha }}</h3>
+      <div class="col">
+        <h3>Fecha: {{ selectedRowData.fecha }}</h3>
         <form class="mt-2 example-form">
           <mat-form-field class="col-10 offset-1">
             <mat-label>Justificación</mat-label>
-            <textarea matInput
-                      cdkTextareaAutosize
-                      cdkAutosizeMinRows="2"
-                      cdkAutosizeMaxRows="7"></textarea>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="7"></textarea>
           </mat-form-field>
         </form>
       </div>
@@ -89,3 +156,5 @@
     </div>
   </div>
 </ng-template>
+
+

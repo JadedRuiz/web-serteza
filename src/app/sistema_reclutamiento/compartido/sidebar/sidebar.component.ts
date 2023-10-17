@@ -100,8 +100,6 @@ export class SidebarComponent implements OnInit {
         {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17'},
         {path: 'procedimiento_modificacion', title: 'Modificaciones', icon: 'ni-curved-next'},
         {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove'},
-        {path: 'bitacora-insidencias', title: 'Bitacora', icon: 'fa fa-id-badge'},
-
       );
     }
     //EMPLEADO

@@ -4,6 +4,7 @@ import { TurnosService } from 'src/app/services/turnos/turnos.service';
 import { Turno } from 'src/app/models/Turno';
 import { DetalleTurno } from 'src/app/models/DetalleTurno';
 import { MatTableDataSource } from '@angular/material/table';
+import Swal from 'sweetalert2';
 
 
 
@@ -69,77 +70,14 @@ export class CatalogoTurnosComponent implements OnInit {
   }
 
 
-  agregarTurno(){
-    let json = {
-    id_turno: 0,
-    id_cliente: 5,
-    clave: this.turno.clave,
-    turno: this.turno.turno,
-    traslapa_turno: 0,
-    rota_turno: 0,
-    id_turno_rota: 0,
-    tolerancia: this.turno.tolerancia,
-    tiempo_comida: 0,
-    token: "012354SDSDS01",
-    activo: 1,
-    id_usuario: 1,
-    detalle: [
-      {
-          id_det_turno: 0,
-          dia: 1,
-          hr_entrada: "07:00",
-          hr_salida: "13:00",
-          descanso: 0
-      },
-      {
-          id_det_turno: 0,
-          dia: 2,
-          hr_entrada: "07:00",
-          hr_salida: "13:00",
-          descanso: 0
-      },
-      {
-          id_det_turno: 0,
-          dia: 3,
-          hr_entrada: "07:00",
-          hr_salida: "13:00",
-          descanso: 0
-      },
-      {
-          id_det_turno: 0,
-          dia: 4,
-          hr_entrada: "09:00",
-          hr_salida: "17:00",
-          descanso: 0
-      },
-      {
-          id_det_turno: 0,
-          dia: 5,
-          hr_entrada: "09:00",
-          hr_salida: "17:00",
-          descanso: 0
-      },
-      {
-          id_det_turno: 0,
-          dia: 6,
-          hr_entrada: "09:00",
-          hr_salida: "17:00",
-          descanso: 1
-      },
-      {
-          id_det_turno: 0,
-          dia: 7,
-          hr_entrada: "7:00",
-          hr_salida: "17:00",
-          descanso: 1
-      }
-  ]
-    }
-    console.log('=>',json);
+  public isChecked: any;
+
+  onCheckboxChange(event: any) {
+    // Si el checkbox está marcado, establece isChecked en 1; de lo contrario, en 0.
+    this.isChecked = event.checked ? 1 : 0;
   }
 
-
-  nuevoturno(){
+nuevoturno(){
  let detTurno = new Array<DetalleTurno>();
  detTurno.push(new DetalleTurno(0,0,'','',0,'Lunes'));
  detTurno.push(new DetalleTurno(0,1,'','',0,'Martes'));
@@ -150,13 +88,17 @@ export class CatalogoTurnosComponent implements OnInit {
  detTurno.push(new DetalleTurno(0,6,'','',0,'Domingo'));
 
  this.turnoSeleccionado = new Turno(0,5,'','',0,0,0,0,0,'',1,0,detTurno);
- console.log('OK nunevo', this.turno);
  this.editando = true;
-let json = this.turnoSeleccionado
+ let json = this.turnoSeleccionado
+
+ console.log('OK nunevo', json);
 this.turnosService.agregarTurnos(json).subscribe((resp)=>{
 if (resp.ok){
-
-}
+  Swal.fire(
+    'Exito',
+    resp.message,
+    'success'
+  )}
 })
   }
 
@@ -195,7 +137,7 @@ toggleEditingMode() {
       }
     }
 
-    console.log("Turno actualizado:", this.turno);
+    //console.log("Turno actualizado:", this.turno);
 
     let json = this.turno
 
@@ -204,7 +146,7 @@ toggleEditingMode() {
       if (resp.ok){
         console.log('OK');
       }
-    console.log("==", json);
+   // console.log("==", json);
 
     });
 
@@ -218,16 +160,90 @@ toggleEditingMode() {
 }
 
 updateTraslapa() {
-  if (this.turnoSeleccionado.traslapa_turno) {
+  if (this.turnoSeleccionado) {
     this.turnoSeleccionado.traslapa_turno = 1;
     this.turnoSeleccionado.rota_turno = 1;
+    this.turnoSeleccionado.dia.descanso = 1;
   } else {
     this.turnoSeleccionado.traslapa_turno = 0;
     this.turnoSeleccionado.rota_turno = 0;
+    this.turnoSeleccionado.dia.descanso = 0;
   }
 }
 
 updateDescanso(){
 }
+
+
+// --------------------------- Sin usar
+
+// agregarTurno(){
+//   let json = {
+//   id_turno: 0,
+//   id_cliente: 5,
+//   clave: this.turno.clave,
+//   turno: this.turno.turno,
+//   traslapa_turno: 0,
+//   rota_turno: 0,
+//   id_turno_rota: 0,
+//   tolerancia: this.turno.tolerancia,
+//   tiempo_comida: 0,
+//   token: "012354SDSDS01",
+//   activo: 1,
+//   id_usuario: 1,
+//   detalle: [
+//     {
+//         id_det_turno: 0,
+//         dia: 1,
+//         hr_entrada: "07:00",
+//         hr_salida: "13:00",
+//         descanso: 0
+//     },
+//     {
+//         id_det_turno: 0,
+//         dia: 2,
+//         hr_entrada: "07:00",
+//         hr_salida: "13:00",
+//         descanso: 0
+//     },
+//     {
+//         id_det_turno: 0,
+//         dia: 3,
+//         hr_entrada: "07:00",
+//         hr_salida: "13:00",
+//         descanso: 0
+//     },
+//     {
+//         id_det_turno: 0,
+//         dia: 4,
+//         hr_entrada: "09:00",
+//         hr_salida: "17:00",
+//         descanso: 0
+//     },
+//     {
+//         id_det_turno: 0,
+//         dia: 5,
+//         hr_entrada: "09:00",
+//         hr_salida: "17:00",
+//         descanso: 0
+//     },
+//     {
+//         id_det_turno: 0,
+//         dia: 6,
+//         hr_entrada: "09:00",
+//         hr_salida: "17:00",
+//         descanso: 1
+//     },
+//     {
+//         id_det_turno: 0,
+//         dia: 7,
+//         hr_entrada: "7:00",
+//         hr_salida: "17:00",
+//         descanso: 1
+//     }
+// ]
+//   }
+//   console.log('=>',json);
+// }
 
 }
