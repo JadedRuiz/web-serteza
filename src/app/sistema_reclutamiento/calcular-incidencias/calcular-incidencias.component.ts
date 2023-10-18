@@ -94,7 +94,6 @@ export class CalcularIncidenciasComponent implements OnInit {
   // PROCESAR EMPLEADOS
   public empleados: any = [];
   public totalRegistros: number = 0;
-  //PARA PAGINADOR
   public empresaNombre: string = '';
 
   constructor(
@@ -291,13 +290,12 @@ export class CalcularIncidenciasComponent implements OnInit {
 
 
     let json = {
-      empresa : this.id_empresa,
-      trabajador : this.incidencia.id_empleado,
+      empresa: 0 || this.id_empresa,
+      trabajador: this.incidencia.id_empleado,
       fechaInicio:fechaInicial,
       fechaFinal:fechaFinal,
     }
     console.log('json :>> ', json);
-    console.log('empresa :>> ', this.id_empresa);
 
 
 
