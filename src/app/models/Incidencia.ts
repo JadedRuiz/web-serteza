@@ -6,9 +6,11 @@ export class Incidencia {
         public fotografia : string,
         public conceptos : Array<Concepto>,
         public editar : boolean,
-        public concepto_seleccionado : number
+        public concepto_seleccionado : number,
+        public fecha_Inicial: string,
+        public fecha_Final: string,
     ){}
-    
+
 }
 export class Concepto{
     constructor(

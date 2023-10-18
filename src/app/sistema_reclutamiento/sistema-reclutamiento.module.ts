@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { SistemaReclutamientoComponent } from './sistema-reclutamiento.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -93,6 +93,6 @@ import { ReporteIncidenciasComponent } from './reporte-incidencias/reporte-incid
     BrowserAnimationsModule,
     MatListModule
   ],
-  providers: [CurrencyPipe]
+  providers: [CurrencyPipe,DatePipe]
 })
 export class SistemaReclutamientoModule { }

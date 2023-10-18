@@ -10,6 +10,10 @@ import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
 import { Candidato } from 'src/app/models/Candidato';
 import { Direccion } from 'src/app/models/Direccion';
 import { Fotografia } from 'src/app/models/Fotografia';
+import { Incidencia } from 'src/app/models/Incidencia';
+import { formatDate } from '@angular/common';
+import { DatePipe } from '@angular/common';
+
 
 @Component({
   selector: 'app-calcular-incidencias',
@@ -66,6 +70,7 @@ export class CalcularIncidenciasComponent implements OnInit {
     this.direccion,
     this.fotografia
   );
+  public incidencia = new Incidencia (0,0,'','',[],true,0,'','');
   public candidatos: any;
   public ejercicio: any;
   public periodos: any;
@@ -95,7 +100,7 @@ export class CalcularIncidenciasComponent implements OnInit {
   constructor(
     private empresa_service: EmpresaService,
     private candidato_service: CandidatoService,
-
+    private datePipe: DatePipe,
     private pdf: ElementRef
   ) {
     this.tablaParaPDF = pdf;
@@ -107,31 +112,15 @@ export class CalcularIncidenciasComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargaPrincipal();
-
+     this.obtenerFecha();
 
   }
 
-  cargaCache() {}
 
   cargaPrincipal() {
     this.mostrarEmpresas();
   }
 
-  //CALCULAR
-  calcular() {
-    // Swal.fire({
-    //   title: 'Buscando trabajadores',
-    //   text: 'Por favor, espere...',
-    //   icon: 'info',
-    //   allowOutsideClick: false,
-    //   showConfirmButton: false,
-    //   onBeforeOpen: () => {
-    //     Swal.showLoading();
-    //   },
-    // });
-
-    this.loading = true;
-  }
 
   // BUSCAR EMPRESA
   mostrarEmpresas() {
@@ -288,4 +277,58 @@ export class CalcularIncidenciasComponent implements OnInit {
         });
     }
   }
+
+
+   // FORMATEAR
+   formatearFecha(fecha: any) {
+    return formatDate(fecha, 'yyyy-MM-dd', 'en-US');
+  }
+
+  //CALCULAR INCIDENCIAS
+  calcular() {
+   const fechaInicial = this.formatearFecha(this.dateInicio.value);
+   const fechaFinal = this.formatearFecha(this.dateFinal.value);
+
+
+    let json = {
+      empresa : this.id_empresa,
+      trabajador : this.incidencia.id_empleado,
+      fechaInicio:fechaInicial,
+      fechaFinal:fechaFinal,
+    }
+    console.log('json :>> ', json);
+    console.log('empresa :>> ', this.id_empresa);
+
+
+
+    // Swal.fire({
+    //   title: 'Buscando trabajadores',
+    //   text: 'Por favor, espere...',
+    //   icon: 'info',
+    //   allowOutsideClick: false,
+    //   showConfirmButton: false,
+    //   onBeforeOpen: () => {
+    //     Swal.showLoading();
+    //   },
+    // });
+
+    this.loading = true;
+  }
+
+  obtenerFecha(){
+    const today = new Date();
+
+    // Obtener la fecha del día anterior
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    // Formatear las fechas como cadenas en el formato deseado
+    const todayFormatted = this.datePipe.transform(today, 'yyyy-MM-dd');
+    const yesterdayFormatted = this.datePipe.transform(yesterday, 'yyyy-MM-dd');
+
+    // Establecer las fechas iniciales y finales en los FormControl
+    this.dateInicio.setValue(yesterdayFormatted);
+     this.dateFinal.setValue(todayFormatted);
+  }
+
 }
