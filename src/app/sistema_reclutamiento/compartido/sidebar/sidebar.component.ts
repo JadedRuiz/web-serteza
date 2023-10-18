@@ -74,6 +74,7 @@ export class SidebarComponent implements OnInit {
         {path: 'bitacora-insidencias', title: 'Bitacora', icon: 'fa fa-id-badge'},
         {path: 'proced_vacaciones', title: 'Vacaciones', icon: 'ni-calendar-grid-58'},
         {path: 'proced_incapacidades', title: 'Incapacidades', icon: 'fa fa-medkit'},
+        {path: 'calcular_incidencia', title: 'Incidencias', icon: 'fa fa-medkit'},
       );
     }
     //JEFE INMEDIATO
@@ -100,6 +101,8 @@ export class SidebarComponent implements OnInit {
         {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17'},
         {path: 'procedimiento_modificacion', title: 'Modificaciones', icon: 'ni-curved-next'},
         {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove'},
+        {path: 'calcular_incidencia', title: 'Calcular Incidencias', icon: 'ni-archive-2 text-white'},
+
       );
     }
     //EMPLEADO
@@ -122,6 +125,7 @@ export class SidebarComponent implements OnInit {
       { path: '#', title: 'Reportes', icon: 'ni-books text-green', id:'rh_reportes', band: true, tipo : "collapse",
         submenu : [
           {path: 'reporte_general', title: 'Reporte General', icon: 'ni-archive-2 text-white'},
+          {path: 'reporte_incidencia', title: 'Reporte Incidencias', icon: 'ni-archive-2 text-white'},
         ], bg : "green"
     }
     ];

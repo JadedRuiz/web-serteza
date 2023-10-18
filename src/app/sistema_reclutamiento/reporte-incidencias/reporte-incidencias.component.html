@@ -1,0 +1,86 @@
+<div class="header {{color}}" style="height: 250px;">
+  <div class="container-fluid">
+  </div>
+</div>
+<div class="container-fluid mt--9">
+  <div class="row">
+    <div class="col-lg-12 col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">REPORTE DE INCIDENCIAS</h4>
+          <div class="card-body">
+            <div class="container-fluid">
+              <!-- BUSCADORES -->
+              <div class="row">
+                <!-- BUSCAR EMPRESA -->
+                <div class="col-md-6 col-sm-12 d-flex align-items-center">
+                  <mat-form-field class="w-100">
+                    <mat-label class="d-flex justify-content-between align-items-center">Buscar empresa <i
+                        class="fa fa-search" aria-hidden="true"></i></mat-label>
+
+                    <input type="text" placeholder="Ingrese el nombre o id de la empresa" aria-label="Number" matInput
+                      (keyup)="buscarEmpresa()" [formControl]="filterControlEmpresa" [matAutocomplete]="auto"
+                      style="text-transform: uppercase;">
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionEmpresa($event)"
+                      (optionSelected)="nomEmpresa($event)">
+                      <mat-option *ngFor="let empresa of empresas_busqueda" [value]="empresa.nombre"
+                        [id]="empresa.id_empresa">
+                        {{empresa.empresa}}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </div>
+                <!-- BUSCAR TRABAJADOR  -->
+                <div class="col-md-6 col-sm-12 d-flex align-items-center">
+                  <mat-form-field class="w-100 px-1" *ngIf="id_perfil == 3">
+                    <mat-label class="d-flex justify-content-between align-items-center">Buscar trabajador <i
+                        class="fa fa-search" aria-hidden="true"></i></mat-label>
+                    <input type="text" placeholder="NOMBRE o RFC" aria-label="Number" matInput
+                      (keyup)="buscarCandidato()" [formControl]="filterControl" [matAutocomplete]="auto"
+                      style="text-transform: uppercase;">
+                    <mat-autocomplete #auto="matAutocomplete">
+                      <mat-option *ngFor="let empleado of objEmpleados" [value]="empleado.nombre"
+                        [id]="empleado.id_empleado">
+                        {{empleado.nombre}}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                  <!-- <button class="btn btn-sm btn-success"><i class="fa fa-search" aria-hidden="true"></i></button> -->
+                </div>
+              </div>
+              <!-- FECHAS -->
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field>
+                    <input matInput [matDatepicker]="picker1" placeholder="Fecha Inicial" [formControl]="dateInicio">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+
+                  <mat-form-field>
+                    <input matInput [matDatepicker]="picker1" placeholder="Fecha Final" [formControl]="dateFinal">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- BOTONES -->
+              <div class="row">
+                <div class="text-center col-lg-12 col-sm-12">
+                  <button (click)="trabajadoresXML()" class="btn btn-success" title="Buscar">
+                    Buscar <i class="fa fa-search" aria-hidden="true"></i></button>
+                  <span style="margin: 0 20px;"></span>
+                  <!-- <button *ngIf="loading" class="btn btn-outline-info" title="Descarga segura" (click)="exportarAPDF()">
+                         Descargar PDF <i class="fa fa-download "
+                         aria-hidden="true"></i></button> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

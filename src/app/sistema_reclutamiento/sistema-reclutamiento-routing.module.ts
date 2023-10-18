@@ -17,6 +17,8 @@ import { CatalogoFestivosComponent } from './catalogo-festivos/catalogo-festivos
 import { CatalogoTurnosComponent } from './catalogo-turnos/catalogo-turnos.component';
 import { AsistenciaComponent } from './asistencia/asistencia.component';
 import { ProcedXmlComponent } from './proced-xml/proced-xml.component';
+import { CalcularIncidenciasComponent } from './calcular-incidencias/calcular-incidencias.component';
+import { ReporteIncidenciasComponent } from './reporte-incidencias/reporte-incidencias.component';
 
 const routes: Routes = [
   {
@@ -39,6 +41,8 @@ const routes: Routes = [
         { path : "procedimiento_baja", component : ProcedimientoBajaComponent},
         { path : "procedimiento_modificacion", component : ProcedimientoModificacionComponent},
         { path : "proced_xml", component : ProcedXmlComponent},
+        { path : "calcular_incidencia", component : CalcularIncidenciasComponent},
+        { path : "reporte_incidencia", component : ReporteIncidenciasComponent},
         // { path : "catalogo_cliente/:id", component : CatalogoClienteComponent},
     ]
   }

@@ -41,6 +41,8 @@ import { MatCard, MatCardModule } from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { AsistenciaComponent } from './asistencia/asistencia.component';
 import { ProcedXmlComponent } from './proced-xml/proced-xml.component';
+import { CalcularIncidenciasComponent } from './calcular-incidencias/calcular-incidencias.component';
+import { ReporteIncidenciasComponent } from './reporte-incidencias/reporte-incidencias.component';
 @NgModule({
   declarations: [
     SistemaReclutamientoComponent,
@@ -59,7 +61,9 @@ import { ProcedXmlComponent } from './proced-xml/proced-xml.component';
     CatalogoTurnosComponent,
     CatalogoFestivosComponent,
     AsistenciaComponent,
-    ProcedXmlComponent
+    ProcedXmlComponent,
+    CalcularIncidenciasComponent,
+    ReporteIncidenciasComponent
   ],
   imports: [
     CompartidoModule,
