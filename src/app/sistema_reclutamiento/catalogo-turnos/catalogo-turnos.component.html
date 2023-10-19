@@ -9,31 +9,45 @@
         <div class="card-header">
           <h2 class="card-title">TURNOS</h2>
           <div class="col text-right mb-3">
-            <button (click)="nuevoturno()" class="btn btn-primary" data-toggle="modal"
-              data-target="#turnoModal2">Agregar Turno</button>
+            <button
+             (click)="nuevoturno()"
+            class="btn btn-primary"
+            data-toggle="modal"
+            data-target="#turnoModal2"
+            >Agregar Turno</button>
           </div>
-          <div data-toggle="modal" data-target="#turnoModal2" (click)="editarTurno(turno)" class="cardo mb-3"
+          <div data-toggle="modal" data-target="#turnoModal2"
+           (click)="editarTurno(turno)" class="cardo mb-3"
             *ngFor="let turno of turnos | keyvalue">
 
             <div class="cardo-header">
-
+              <!-- TURNOS FILAS -->
               <div class="row ">
+                <!-- BOTON -->
                 <div class="col-2">
-                  <button (click)="activar(turno)" class="btn btn-sm btn-danger"
+                  <button (click)="activar(turno)" class="btn btn-sm btn-danger px-2"
                     >
                     DESACTIVAR
                     <!-- <i class="ml-2 fa fa-check"></i> -->
                   </button>
                 </div>
+                <!-- CLAVE -->
                 <div class="col">
                   <span>Clave:</span><b>{{ turno.value[0].clave }}</b>
                 </div>
+                <!-- TURNO -->
                 <div class="col">
                   <span>Turno:</span><b>{{ turno.value[0].turno }}</b>
                 </div>
+                <!-- TRASLAPA -->
                 <div class="col">
                   <span><b>Traslapa turno:</b></span><i *ngIf="turno.value[0].traslapa_turno == '0'"
-                    class="fa fa-circle text-warning ml-2"></i>
+                    class="fa fa-circle text-danger ml-2"></i>
+                </div>
+                <!-- ROTA -->
+                <div class="col">
+                  <span><b>Traslapa turno:</b></span><i *ngIf="turno.value[0].rota_turno == '0'"
+                    class="fa fa-circle text-danger ml-2"></i>
                 </div>
               </div>
               <!-- <div class="card-body">
@@ -71,42 +85,66 @@
 <div class="modal" id="turnoModal2">
   <div class="modal-dialog">
     <div class="modal-content">
+      <!-- HEADER -->
       <div class="modal-header">
-        <!-- <h2 class="modal-title">{{ editando ? 'Editar turno' : 'Nuevo turno' }}</h2> -->
+        <h2 class="modal-title">{{ editando ? 'Editar turno' : 'Nuevo turno' }}</h2>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="card-body">
+        <!-- TURNO -->
         <div class="row">
           <div class="col">
             <h3>Clave: <span *ngIf="!editando">{{ turnoSeleccionado.clave }}</span>
               <input *ngIf="editando" [(ngModel)]="turnoSeleccionado.clave" class="form-control">
+              <input *ngIf="newTurno" [(ngModel)]="turnoSeleccionado.clave" class="form-control">
             </h3>
           </div>
           <div class="col">
             <h3>Turno: <span *ngIf="!editando">{{ turnoSeleccionado.turno }}</span>
               <input *ngIf="editando" [(ngModel)]="turnoSeleccionado.turno" class="form-control">
+              <input *ngIf="newTurno" [(ngModel)]="turnoSeleccionado.turno" class="form-control">
             </h3>
           </div>
         </div>
+        <!-- TOLERANCIA COMIDA -->
         <div class="row">
           <div class="col">
-            <h3>Traslapa turno: <span *ngIf="!editando">{{ turnoSeleccionado.traslapa_turno ? '1' : '0' }}</span>
+            <h3>Tolerancia: <span *ngIf="!editando"> {{ turnoSeleccionado.torelanciaa }} min</span>
+              <input type="number" *ngIf="editando" [(ngModel)]="turnoSeleccionado.tolerancia" name="tolerancia">
+              <input type="number" *ngIf="newTurno" [(ngModel)]="turnoSeleccionado.tolerancia" name="tolerancia">
+            </h3>
+          </div>
+          <!-- <div class="col">
+            <h3>Comida: <span *ngIf="!editando"> {{ turnoSeleccionado.tiempo_comidaa }} min</span>
+              <input   type="number" *ngIf="editando" [(ngModel)]="turnoSeleccionado.tiempo_comida" name="tiempo_comida">
+              <input   type="number" *ngIf="newTurno" [(ngModel)]="turnoSeleccionado.tiempo_comida" name="tiempo_comida">
+            </h3>
+          </div> -->
+        </div>
+        <!-- CHECK BOXs -->
+        <div class="row">
+          <div class="col">
+            <h3>Traslapa turno: <span style="color: rgb(84, 84, 230);" *ngIf="!editando">{{ turnoSeleccionado.traslapa_turno ? 'SI' : 'NO' }}</span>
               <mat-checkbox class="mt-1 ml-2" *ngIf="editando" [(ngModel)]="turnoSeleccionado.traslapa_turno"
+                (change)="updateTraslapa()"></mat-checkbox>
+              <mat-checkbox class="mt-1 ml-2" *ngIf="newTurno" [(ngModel)]="turnoSeleccionado.traslapa_turno"
                 (change)="updateTraslapa()"></mat-checkbox>
             </h3>
           </div>
           <div class="col">
-            <h3>Rota turno: <span *ngIf="!editando">{{ turnoSeleccionado.rota_turno ? '1' : '0' }}</span>
+            <h3>Rota turno: <span style="color: rgb(84, 84, 230);" *ngIf="!editando">{{ turnoSeleccionado.rota_turno ? 'SI' : 'NO' }}</span>
               <mat-checkbox class="mt-1 ml-2" *ngIf="editando" [(ngModel)]="turnoSeleccionado.rota_turno"
+                (change)="updateTraslapa()"></mat-checkbox>
+              <mat-checkbox class="mt-1 ml-2" *ngIf="newTurno" [(ngModel)]="turnoSeleccionado.rota_turno"
                 (change)="updateTraslapa()"></mat-checkbox>
             </h3>
           </div>
         </div>
       </div>
+      <!-- TABLA -->
       <div class="col">
-
         <table class="table">
           <thead>
             <tr>
@@ -122,14 +160,19 @@
               <td>
                 <span *ngIf="!editando">{{ dia.hr_entrada }}</span>
                 <input type="time" *ngIf="editando" [(ngModel)]="dia.hr_entrada" class="form-control">
+                <input type="time" *ngIf="newTurno" [(ngModel)]="dia.hr_entrada" class="form-control">
               </td>
               <td>
                 <span *ngIf="!editando">{{ dia.hr_salida }}</span>
                 <input type="time" *ngIf="editando" [(ngModel)]="dia.hr_salida" class="form-control">
+                <input type="time" *ngIf="newTurno" [(ngModel)]="dia.hr_salida" class="form-control">
               </td>
               <td>
                 <mat-checkbox class="mt-2" *ngIf="editando"
-                [(ngModel)]="dia.descanso" (change)="updateTraslapa()"
+                [(ngModel)]="dia.descanso"
+                ></mat-checkbox>
+                <mat-checkbox class="mt-2" *ngIf="newTurno"
+                [(ngModel)]="dia.descanso"
                 ></mat-checkbox>
                 <i *ngIf="dia.descanso == '1' && editando == false" class="fa fa-circle text-danger"></i>
               </td>
@@ -137,246 +180,27 @@
           </tbody>
         </table>
       </div>
+      <!-- BOTONES -->
       <div class="row text-center">
-        <div class="col m-2 mb-1">
-          <button  (click)="toggleEditingMode()" class="btn btn-block btn-primary">{{ editando ? 'Guardar' : 'Editar'}}</button>
-          <!-- <button  (click)="editarTurno(turno)" class="btn btn-block btn-secondary">{{ editando ? 'Guardar' : 'Editar'}}</button> -->
+        <div class="col m-1 mb-3">
+          <button class="close px-4" data-dismiss="modal"
+          aria-label="Close" class="btn  btn-outline-danger"
+          >Cancelar</button>
         </div>
+        <div *ngIf="editando" class="col m-1 mb-3">
+          <button (click)="turnoEditado()"
+           class="btn btn-primary px-6"
+           >Actualizar</button>
+        </div>
+        <div *ngIf="newTurno" class="col m-1 mb-3">
+          <button  (click)="guardarNuevo()"
+          class="btn btn-primary px-6">
+          Guardar</button>
+        </div>
+
+
       </div>
 
     </div>
   </div>
 </div>
-
-
-
-
-<!-- MODAL EDITAR TURNO || -->
-<!-- <div class="modal" id="turnoModal2">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Nuevo turno</h2>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-
-      <div class="card-body">
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Día</th>
-              <th>Hora de Entrada</th>
-              <th>Hora de Salida</th>
-              <th>Descanso</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let dia of turno.value">
-              <td>{{ dia.dia_descrip }}</td>
-              <td>{{ dia.hr_entrada }}</td>
-              <td>{{ dia.hr_salida }}</td>
-              <td> <i *ngIf="dia.descanso == '1'" class="fa fa-circle text-danger"></i></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-    </div>
-  </div>
-</div> -->
-
-<!-- MODAL AGREGAR TURNO -->
-<!-- <div class="modal" id="turnoModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Nuevo turno</h2>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form class="example-form container" (submit)="agregarTurno()">
-          <div class="row">
-            <div class="col-6">
-              <mat-form-field class="">
-                <input name="turno" [(ngModel)]="turno.turno" matInput placeholder="Turno">
-              </mat-form-field>
-            </div>
-            <div class="col-6">
-              <mat-form-field class="example-full-width">
-                <input name="clave" [(ngModel)]="turno.clave" matInput placeholder="clave" value="">
-                <mat-hint align="end"></mat-hint>
-              </mat-form-field>
-
-            </div>
-            <div class="col-6">
-              <mat-form-field class="example-full-width">
-                <input matInput name="tolerancia" [(ngModel)]="turno.tolerancia" placeholder="Tolerancia" value="10">
-                <mat-hint align="end">min</mat-hint>
-              </mat-form-field>
-            </div>
-            <div class="col-6">
-              <mat-form-field class="">
-                <input matInput #postalCode maxlength="5" placeholder="Tiempo comida" value="30">
-                <mat-hint align="end">min</mat-hint>
-              </mat-form-field>
-            </div>
-
-          </div>
-          <div class="row justify-content-between mt-2">
-            <div class="col-6">
-              <mat-checkbox class="example-margin">Traslapa turno</mat-checkbox>
-
-            </div>
-            <div class="col-6">
-              <mat-checkbox class="example-margin">Rota turno</mat-checkbox>
-
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-2 pr-0">
-              <h4>Lunes</h4>
-            </div>
-            <div class="col-3">
-              <mat-form-field>
-                <input matInput #postalCode placeholder="Hora entrada" value="07:00">
-              </mat-form-field>
-            </div>
-
-            <div class="col-3">
-              <mat-form-field>
-                <input matInput #postalCode placeholder="Hora Salida" value="017:00">
-              </mat-form-field>
-            </div>
-            <div class="col-3">
-              <mat-checkbox class="example-margin">Descanso</mat-checkbox>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-2 pr-0">
-              <h4>Martes</h4>
-            </div>
-            <div class="col-3">
-              <mat-form-field>
-                <input matInput #postalCode placeholder="Hora entrada" value="07:00">
-              </mat-form-field>
-            </div>
-
-            <div class="col-3">
-              <mat-form-field>
-                <input matInput #postalCode placeholder="Hora Salida" value="017:00">
-              </mat-form-field>
-            </div>
-            <div class="col-3">
-              <mat-checkbox class="example-margin">Descanso</mat-checkbox>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-2 pr-0">
-              <h4>Miercoles</h4>
-            </div>
-            <div class="col-3">
-              <mat-form-field>
-                <input matInput #postalCode placeholder="Hora entrada" value="07:00">
-              </mat-form-field>
-            </div>
-
-            <div class="col-3">
-              <mat-form-field>
-                <input matInput #postalCode placeholder="Hora Salida" value="017:00">
-              </mat-form-field>
-            </div>
-            <div class="col-3">
-              <mat-checkbox class="example-margin">Descanso</mat-checkbox>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-2 pr-0">
-              <h4>Jueves</h4>
-            </div>
-            <div class="col-3">
-              <mat-form-field>
-                <input matInput #postalCode placeholder="Hora entrada" value="07:00">
-              </mat-form-field>
-            </div>
-
-            <div class="col-3">
-              <mat-form-field>
-                <input matInput #postalCode placeholder="Hora Salida" value="017:00">
-              </mat-form-field>
-            </div>
-            <div class="col-3">
-              <mat-checkbox class="example-margin">Descanso</mat-checkbox>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-2 pr-0">
-              <h4>Viernes</h4>
-            </div>
-            <div class="col-3">
-              <mat-form-field>
-                <input matInput #postalCode placeholder="Hora entrada" value="07:00">
-              </mat-form-field>
-            </div>
-
-            <div class="col-3">
-              <mat-form-field>
-                <input matInput #postalCode placeholder="Hora Salida" value="017:00">
-              </mat-form-field>
-            </div>
-            <div class="col-3">
-              <mat-checkbox class="example-margin">Descanso</mat-checkbox>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-2 pr-0">
-              <h4>Sabado</h4>
-            </div>
-            <div class="col-3">
-              <mat-form-field>
-                <input matInput #postalCode placeholder="Hora entrada" value="07:00">
-              </mat-form-field>
-            </div>
-
-            <div class="col-3">
-              <mat-form-field>
-                <input matInput #postalCode placeholder="Hora Salida" value="017:00">
-              </mat-form-field>
-            </div>
-            <div class="col-3">
-              <mat-checkbox class="example-margin">Descanso</mat-checkbox>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-2 pr-0">
-              <h4>Domingo</h4>
-            </div>
-            <div class="col-3">
-              <mat-form-field>
-                <input matInput #postalCode placeholder="Hora entrada" value="07:00">
-              </mat-form-field>
-            </div>
-
-            <div class="col-3">
-              <mat-form-field>
-                <input matInput #postalCode placeholder="Hora Salida" value="017:00">
-              </mat-form-field>
-            </div>
-            <div class="col-3">
-              <mat-checkbox class="example-margin">Descanso</mat-checkbox>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-          </div>
-        </form>
-      </div>
-
-    </div>
-  </div>
-</div> -->
