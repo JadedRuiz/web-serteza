@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ElementRef, ViewChild } from '@angular/core';
 import { COLOR } from 'src/config/config';
 import { TurnosService } from 'src/app/services/turnos/turnos.service';
 import { Turno } from 'src/app/models/Turno';
@@ -27,7 +27,6 @@ export class CatalogoTurnosComponent implements OnInit {
   public turnoSeleccionado: any = '';
   public editTurno : boolean = false;
   public newTurno : boolean = false;
-
   constructor(
     private turnosService: TurnosService,
     private modalService: NgbModal
@@ -236,4 +235,6 @@ export class CatalogoTurnosComponent implements OnInit {
       }
     });
   }
+
+
 }

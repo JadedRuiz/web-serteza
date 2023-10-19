@@ -29,7 +29,7 @@
                     </mat-option>
                   </mat-autocomplete>
                 </mat-form-field>
-                <!-- <button class="btn btn-sm btn-success"><i class="fa fa-search" aria-hidden="true"></i></button> -->
+                <!-- <button class="btn btn-sm btn-danger"><i class="fa fa-search" aria-hidden="true"></i></button> -->
               </div>
 
             </div>
@@ -83,39 +83,39 @@
                     <ng-container matColumnDef="falta">
                       <th mat-header-cell *matHeaderCellDef> FAL </th>
                       <td mat-cell *matCellDef="let element">
-                        <i *ngIf="element.falta == '1'" class="fa fa-check text-success"></i>
-                        <i *ngIf="element.falta == '0'" class="fa fa-minus-square text-danger"></i>
+                        <i *ngIf="element.falta == '1'" class="fa fa-check text-danger"></i>
+                        <i *ngIf="element.falta == '0'" class=""></i>
                       </td>
                     </ng-container>
 
                     <ng-container matColumnDef="dia_festivo">
                       <th mat-header-cell *matHeaderCellDef> D F </th>
                       <td mat-cell *matCellDef="let element">
-                        <i *ngIf="element.dia_festivo == '1'" class="fa fa-check text-success"></i>
-                        <i *ngIf="element.dia_festivo == '0'" class="fa fa-minus-square text-danger"></i>
+                        <i *ngIf="element.dia_festivo == '1'" class="fa fa-check text-danger"></i>
+                        <i *ngIf="element.dia_festivo == '0'" class=""></i>
                       </td>
                     </ng-container>
 
                     <ng-container matColumnDef="vacaciones">
                       <th mat-header-cell *matHeaderCellDef> VAC </th>
                       <td mat-cell *matCellDef="let element">
-                        <i *ngIf="element.vacaciones == '1'" class="fa fa-check text-success"></i>
-                        <i *ngIf="element.vacaciones == '0'" class="fa fa-minus-square text-danger"></i>
+                        <i *ngIf="element.vacaciones == '1'" class="fa fa-check text-danger"></i>
+                        <i *ngIf="element.vacaciones == '0'" class=""></i>
                       </td>
                     </ng-container>
 
                     <ng-container matColumnDef="retardos">
                       <th mat-header-cell *matHeaderCellDef> RET </th>
                       <td mat-cell *matCellDef="let element">
-                        <i *ngIf="element.retardos == '1'" class="fa fa-check text-success"></i>
-                        <i *ngIf="element.retardos == '0'" class="fa fa-minus-square text-danger"></i>
+                        <i *ngIf="element.retardos == '1'" class="fa fa-check text-danger"></i>
+                        <i *ngIf="element.retardos == '0'" class=""></i>
                       </td>
                     </ng-container>
 
                     <!-- <ng-container matColumnDef="tipoR">
                       <th mat-header-cell *matHeaderCellDef> RET </th>
                       <td mat-cell *matCellDef="let element">
-                        <i *ngIf="element.tipoR == 'A'" class="fas fa-long-arrow-alt-up text-success"></i>
+                        <i *ngIf="element.tipoR == 'A'" class="fas fa-long-arrow-alt-up text-danger"></i>
                         <i *ngIf="element.tipoR == 'M'" class="fas fa-retweet text-warning"></i>
                         <i *ngIf="element.tipoR == 'B'" class="fas fa-long-arrow-alt-down text-danger"></i>
                       </td>

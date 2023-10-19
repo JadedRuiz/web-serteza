@@ -7,12 +7,14 @@ import { jsPDF } from 'jspdf';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import html2canvas from 'html2canvas';
 import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
+import { IncidenciaService } from 'src/app/services/incidencias/incidencia.service';
 import { Candidato } from 'src/app/models/Candidato';
 import { Direccion } from 'src/app/models/Direccion';
 import { Fotografia } from 'src/app/models/Fotografia';
 import { Incidencia } from 'src/app/models/Incidencia';
 import { formatDate } from '@angular/common';
 import { DatePipe } from '@angular/common';
+import { forkJoin } from 'rxjs';
 
 
 @Component({
@@ -72,6 +74,7 @@ export class CalcularIncidenciasComponent implements OnInit {
   );
   public incidencia = new Incidencia (0,0,'','',[],true,0,'','');
   public candidatos: any;
+  public calcularCandidatos: any;
   public ejercicio: any;
   public periodos: any;
   public ejercicioBuscado: any;
@@ -95,10 +98,12 @@ export class CalcularIncidenciasComponent implements OnInit {
   public empleados: any = [];
   public totalRegistros: number = 0;
   public empresaNombre: string = '';
+  public candidato_id: any ='';
 
   constructor(
     private empresa_service: EmpresaService,
     private candidato_service: CandidatoService,
+    private incidencia_service: IncidenciaService,
     private datePipe: DatePipe,
     private pdf: ElementRef
   ) {
@@ -118,6 +123,7 @@ export class CalcularIncidenciasComponent implements OnInit {
 
   cargaPrincipal() {
     this.mostrarEmpresas();
+    this.mostrarCandidatos();
   }
 
 
@@ -131,6 +137,7 @@ export class CalcularIncidenciasComponent implements OnInit {
         if (object.ok) {
           this.empresas = object.data;
           this.empresas_busqueda = object.data;
+
         }
       });
   }
@@ -239,12 +246,17 @@ export class CalcularIncidenciasComponent implements OnInit {
       tipo: 1,
     };
     this.candidatos = [];
+    console.log('ObjEmpleados=>',json);
     this.candidato_service.obtenerCandidatos(json).subscribe((object: any) => {
       if (object.ok) {
         // this.dataSource.data = object.data;
         // this.dataSource.paginator = this.paginator;
         this.candidatos_busqueda = object.data;
         this.objEmpleados = object.data;
+        this.calcularCandidatos = object.data;
+    // console.log('Candidatos===>',this.CalcularCandidatos);
+
+
       }
     });
   }
@@ -261,6 +273,8 @@ export class CalcularIncidenciasComponent implements OnInit {
 
   autocomplete(palabra: string) {
     // this.candidatos_busqueda = [];
+    this.calcularCandidatos = [];
+
     if (palabra.length > 2) {
       let json = {
         nombre_candidato: this.palabra.toUpperCase(),
@@ -272,6 +286,8 @@ export class CalcularIncidenciasComponent implements OnInit {
         .subscribe((object: any) => {
           if (object.ok) {
             this.objEmpleados = object.data;
+           this.calcularCandidatos = object.data;
+            console.log('newCalcular>>>',this.calcularCandidatos);
           }
         });
     }
@@ -283,35 +299,80 @@ export class CalcularIncidenciasComponent implements OnInit {
     return formatDate(fecha, 'yyyy-MM-dd', 'en-US');
   }
 
-  //CALCULAR INCIDENCIAS
   calcular() {
-   const fechaInicial = this.formatearFecha(this.dateInicio.value);
-   const fechaFinal = this.formatearFecha(this.dateFinal.value);
+    const fechaInicial = this.formatearFecha(this.dateInicio.value);
+    const fechaFinal = this.formatearFecha(this.dateFinal.value);
 
+    // Configura la alerta de progreso
+    let swalAlert: any; // Declara una variable para almacenar la instancia de la alerta
 
-    let json = {
-      empresa: 0 || this.id_empresa,
-      trabajador: this.incidencia.id_empleado,
-      fechaInicio:fechaInicial,
-      fechaFinal:fechaFinal,
-    }
-    console.log('json :>> ', json);
+    Swal.fire({
+      title: 'Enviando datos',
+      text: 'Por favor, espere...',
+      icon: 'info',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      onBeforeOpen: () => {
+        Swal.showLoading();
+        swalAlert = Swal; // Almacena la instancia de la alerta en la variable swalAlert
+      },
+    });
 
+    // Inicializa la variable para llevar el control de la progresión
+    let progreso = 0;
 
+    // Itera a través de los candidatos
+    this.calcularCandidatos.forEach((candidato: any) => {
 
-    // Swal.fire({
-    //   title: 'Buscando trabajadores',
-    //   text: 'Por favor, espere...',
-    //   icon: 'info',
-    //   allowOutsideClick: false,
-    //   showConfirmButton: false,
-    //   onBeforeOpen: () => {
-    //     Swal.showLoading();
-    //   },
-    // });
+        const json = {
+          id_candidato: candidato.id_candidato,
+          fecha_inicial: fechaInicial,
+          fecha_final: fechaFinal,
+          id_usuario: 1,
+        };
+        console.log('oio');
 
-    this.loading = true;
+      progreso += 1;
+      // Actualiza el contenido de la alerta de progreso si la instancia no es nula
+        if (swalAlert) {
+        swalAlert.getContent().textContent = `Progreso: ${progreso}/${this.calcularCandidatos.length}`;
+      }
+      console.log('jsonEnviado-<',json);
+      // Realiza la solicitud para el candidato actual
+      this.incidencia_service.calcularIncidencias(json).subscribe((resp) => {
+        if (resp) {
+          // console.log('Incidencias calculadas para candidato:', candidato.nombre_completo);
+        if (progreso === this.calcularCandidatos.length) {
+          // Agrega un retraso de 1 segundo antes de cerrar la alerta
+          setTimeout(() => {
+            if (swalAlert) {
+              Swal.close(); // Cierra la alerta después del retraso
+              Swal.fire({
+                title: 'Calculo realizado',
+                text: '',
+                icon: 'success',
+                allowOutsideClick: true,
+                showConfirmButton: false,
+                timer: 1000,
+                didClose: () => {
+                  this.filterControl = new FormControl();
+
+                },
+              });
+            }
+          }, 1000);
+        }
+        }
+      });
+    });
+
+    // Puedes mostrar un mensaje o realizar otras acciones después de las solicitudes.
+    this.loading = false;
+
   }
+
+
+
 
   obtenerFecha(){
     const today = new Date();

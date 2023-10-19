@@ -46,7 +46,7 @@
                 </div>
                 <!-- ROTA -->
                 <div class="col">
-                  <span><b>Traslapa turno:</b></span><i *ngIf="turno.value[0].rota_turno == '0'"
+                  <span><b>Rota turno:</b></span><i *ngIf="turno.value[0].rota_turno == '0'"
                     class="fa fa-circle text-danger ml-2"></i>
                 </div>
               </div>
@@ -81,8 +81,7 @@
 </div>
 
 <!-- MODAL PRINCIPAL -->
-
-<div class="modal" id="turnoModal2">
+<div class="modal" id="turnoModal2"  role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <!-- HEADER -->
@@ -183,8 +182,7 @@
       <!-- BOTONES -->
       <div class="row text-center">
         <div class="col m-1 mb-3">
-          <button class="close px-4" data-dismiss="modal"
-          aria-label="Close" class="btn  btn-outline-danger"
+          <button class="close px-4" data-dismiss="modal" class="btn  btn-outline-danger"
           >Cancelar</button>
         </div>
         <div *ngIf="editando" class="col m-1 mb-3">
