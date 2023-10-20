@@ -1,0 +1,178 @@
+<div class="header {{color}}" style="height: 250px;">
+  <div class="container-fluid">
+  </div>
+</div>
+<div class="container-fluid mt--9">
+  <div class="row">
+    <div class="col-lg-12 col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">USUARIOS</h2>
+          <div class="row offset-1">
+            <div class="col-5 ">
+              <mat-form-field class="w-100">
+                  <mat-label>Buscar usuario</mat-label>
+                  <input type="text"
+                          placeholder="Ingrese el nombre o id del usuario"
+                          aria-label="Number"
+                          matInput
+                          (keyup)="buscarUsuario()"
+                          [formControl]="filterControl"
+                          [matAutocomplete]="auto"
+                          style="text-transform: uppercase;">
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionUsuario($event)">
+                      <mat-option *ngFor="let usuario of usuarios_busqueda" [value]="usuario.usuario" [id]="usuario">
+                          {{usuario.nombre}}
+                      </mat-option>
+                  </mat-autocomplete>
+              </mat-form-field>
+          </div>
+          <div class="col-5  text-center ">
+            <button (click)="agregarUsuario()" class=" btn btn-primary" >AGREGAR USUARIO</button>
+          </div>
+
+          </div>
+        </div>
+        <div *ngIf="formUsuario == true" class="usuarios-container">
+          <!-- FORMULARIO -->
+          <form class="usuario__form" #usuarioForm="ngForm" (ngSubmit)="guardarUsuario()">
+            <div class="row">
+                <!-- FOTO -->
+                <div class="col col-md-4 ms-4 mt-4 d-flex flex-column offset-1" style="width: 100px">
+                  <img
+                  [src]="perfilStock" alt="Perfil de Stock" *ngIf="mainImage == ''" class="img-thumbnail mt-4 mb-2" />
+                  <img [src]="mainImage" class="img-thumbnail mt-4 mb-2" alt="imagen principal"
+                    *ngIf="mainImage !== ''" />
+
+                </div>
+
+                <!-- INPUTS -->
+                <div class="usuario__data-form__section1 mt-3 col-12 col-md-5">
+                  <div class="mt-2">
+                    <label class="label-label" for="inputPerfil"
+                      >Seleccionar perfil:</label
+                    >
+                    <select
+                      type="text"
+                      class="form-control"
+                      title="perfil"
+                      name="perfil"
+                      placeholder="..."
+                      [(ngModel)]="nuevoUsuario.id_perfil"
+                      #inputProvForm >
+                      <option
+                        name="perfil"
+                        value="{{ perfil.id_perfil }}"
+                        *ngFor="let perfil of perfiles">
+                        {{ perfil.perfil }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="form-label mt-2">
+                    <label for="nombre">Nombre</label>
+                    <input class="form-control" autocomplete="off" type="text" name="nombre" required #inputProvForm
+                    [(ngModel)]="nuevoUsuario.nombre" />
+                  </div>
+                  <div class="form-label mt-2">
+                    <label for="correo">Correo</label>
+                    <input class="form-control" autocomplete="off" type="email" name="usuario" required
+                      #inputProvForm [(ngModel)]="nuevoUsuario.usuario" />
+                  </div>
+                  <div class="form-label mt-2">
+                    <label for="contraseña">Contraseña</label>
+                    <input class="form-control" autocomplete="off" type="password" name="password" required
+                      #inputProvForm [(ngModel)]="nuevoUsuario.password" />
+                  </div>
+
+                  <div class=" row form-label justify-content-between  mt-2">
+                    <button (click)="togglePhotosModal()" type="button" class="btn btn-outline-primary px-5"
+                    data-mdb-ripple-color="dark">
+                    Añadir foto
+                  </button>
+                    <button class="px-3 btn btn-primary text-center" type="submit" data-toggle="tooltip" title="Guardar">
+                      Guardar
+                    </button>
+                  </div>
+                </div>
+
+                <!-- BOTONES FOOTER -->
+                <!-- <footer class="row tab-footer">
+                  <div class=" footer-buttons">
+                    <button class="general-btn mr-2" type="button" data-toggle="tooltip"
+                      title="Editar">
+                      Editar
+                    </button>
+                    <button class="search-btn text-center" type="submit" data-toggle="tooltip" title="Guardar">
+                      Guardar
+                    </button>
+                  </div>
+                </footer> -->
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<!-- MODAL PARA SUBIR FOTOS DEL USUARIO -->
+<div class="usuario-modal" *ngIf="extraModal">
+  <div class="usuario-modal__extra">
+    <button class="usuario-modal__close icon-btn" (click)="togglePhotosModal()">
+      <i i class="fa fa-times"></i>
+    </button>
+    <!-- TÍTULO -->
+    <h3 class="extras-title title">Añadir foto de usuario</h3>
+
+    <!-- CUERPO DEL MODAL -->
+    <div class="usuario-modal__extra-container mt-3">
+      <!-- IMAGEN PRINCIPAL -->
+      <div class="usuario-modal__extra-image">
+        <img
+        [src]="perfilStock"
+          alt="placeholder"
+          *ngIf="mainImage == ''"
+        />
+        <img
+        [src]="mainImage"
+        alt="imagen principal"
+        *ngIf="mainImage !== ''"
+        />
+      </div>
+      <div class="upload-buttons">
+        <!-- BOTÓN PARA AÑADIR FOTO -->
+        <button class="btn btn-outline-info" (click)="subirImagen()">
+          Subir imagen
+        </button>
+        <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
+        <!-- BOTÓN PARA TOMAR FOTO -->
+        <button  class="btn btn-outline-primary" (click)="openWebcam()">Tomar foto</button>
+      </div>
+      <!-- WEBCAM -->
+      <div *ngIf="takingPhoto" class="webcam">
+        <button class="webcam-close icon-btn" (click)="closeWebcam()">
+          <i i class="fa fa-times"></i>
+        </button>
+        <webcam [trigger]="triggerObservable"></webcam>
+        <button class="icon-btn webcam-btn" (click)="capturePhoto()">
+          <i class="fa fa-camera"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- SECCIÓN DE BOTONES -->
+    <div class="usuario-modal__buttons">
+      <button class="danger-btn" (click)="togglePhotosModal()">
+        Cancelar
+      </button>
+      <button class="search-btn" (click)="togglePhotosModal()">
+        Guardar
+      </button>
+    </div>
+  </div>
+</div>

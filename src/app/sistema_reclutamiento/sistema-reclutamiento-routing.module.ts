@@ -19,6 +19,7 @@ import { AsistenciaComponent } from './asistencia/asistencia.component';
 import { ProcedXmlComponent } from './proced-xml/proced-xml.component';
 import { CalcularIncidenciasComponent } from './calcular-incidencias/calcular-incidencias.component';
 import { ReporteIncidenciasComponent } from './reporte-incidencias/reporte-incidencias.component';
+import { UsuariosComponent } from './usuarios/usuarios.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,7 @@ const routes: Routes = [
     children : [
         { path : "dashboard",component : DashboardComponent},
         { path : "asistencia",component : AsistenciaComponent},
+        { path : "usuarios",component : UsuariosComponent},
         { path : "catalogo_candidato", component : CatalogoCandidatosComponent},
         { path : "catalogo_departamento", component : CatalogoDepartamentoComponent},
         { path : "catalogo_usuario", component : CatalogoUsuarioComponent},

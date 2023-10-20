@@ -142,4 +142,48 @@ export class UsuarioService {
       return throwError(err);
     }));
   }
+
+
+// NUEVOS METODOS
+consultarUsuarios(json : any){
+  let url = SERVER_API+"usuario/consultarUsuarios";
+  return this.http.post( url, json )
+  .pipe(map( (resp: any) => {
+    return resp;
+  }), catchError(err => {
+    Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+    return throwError(err);
+  }));
+}
+guardarUsuario(json : any){
+  let url = SERVER_API+"usuario/guardarUsuario";
+  return this.http.post( url, json )
+  .pipe(map( (resp: any) => {
+    return resp;
+  }), catchError(err => {
+    Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+    return throwError(err);
+  }));
+}
+activarUsuario(json : any){
+  let url = SERVER_API+"usuarios/activarUsuario";
+  return this.http.post( url, json )
+  .pipe(map( (resp: any) => {
+    return resp;
+  }), catchError(err => {
+    Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+    return throwError(err);
+  }));
+}
+consultarPerfiles(json : any){
+  let url = SERVER_API+"perfiles/consultarPerfiles";
+  return this.http.post( url, json )
+  .pipe(map( (resp: any) => {
+    return resp;
+  }), catchError(err => {
+    Swal.fire("Ha ocurrido un error", err.error.message, 'error');
+    return throwError(err);
+  }));
+}
+
 }

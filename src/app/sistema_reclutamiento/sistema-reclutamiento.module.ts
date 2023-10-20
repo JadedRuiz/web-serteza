@@ -43,6 +43,8 @@ import { AsistenciaComponent } from './asistencia/asistencia.component';
 import { ProcedXmlComponent } from './proced-xml/proced-xml.component';
 import { CalcularIncidenciasComponent } from './calcular-incidencias/calcular-incidencias.component';
 import { ReporteIncidenciasComponent } from './reporte-incidencias/reporte-incidencias.component';
+import { UsuariosComponent } from './usuarios/usuarios.component';
+
 @NgModule({
   declarations: [
     SistemaReclutamientoComponent,
@@ -63,7 +65,8 @@ import { ReporteIncidenciasComponent } from './reporte-incidencias/reporte-incid
     AsistenciaComponent,
     ProcedXmlComponent,
     CalcularIncidenciasComponent,
-    ReporteIncidenciasComponent
+    ReporteIncidenciasComponent,
+    UsuariosComponent
   ],
   imports: [
     CompartidoModule,

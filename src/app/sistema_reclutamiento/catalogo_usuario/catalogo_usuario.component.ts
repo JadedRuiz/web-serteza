@@ -54,7 +54,7 @@ export class CatalogoUsuarioComponent implements OnInit {
     activo : 1,
     sistemas : [
       {
-        id_sistema : 2, 
+        id_sistema : 2,
         id_perfil : 0
       }
     ],
@@ -70,7 +70,7 @@ export class CatalogoUsuarioComponent implements OnInit {
   usuarios_busqueda : any;
   usuarios : any;
   tipo_modal = 0;
-  
+
   constructor(
     private usuario_service : UsuarioService,
     private modalService: NgbModal,
@@ -125,7 +125,7 @@ export class CatalogoUsuarioComponent implements OnInit {
     if(this.filterControl.value.length > 0){
       this.usuarios_busqueda = [];
       this.usuarios.forEach((element : any) => {
-        if(element.nombre.includes(this.filterControl.value.toUpperCase())){ 
+        if(element.nombre.includes(this.filterControl.value.toUpperCase())){
           this.usuarios_busqueda.push({
             "nombre" : element.nombre,
             "id_usuario" : element.id_usuario
@@ -242,7 +242,7 @@ export class CatalogoUsuarioComponent implements OnInit {
       activo : 1,
       sistemas : [
         {
-          id_sistema : 2, 
+          id_sistema : 2,
           id_perfil : 0
         }
       ],

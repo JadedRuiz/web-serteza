@@ -65,7 +65,8 @@ export class SidebarComponent implements OnInit {
         {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'},
         {path: 'catalogo_turnos', title: 'Turnos', icon: 'fa fa-users'},
         {path: 'proced_xml', title: 'Xml', icon: 'fa fa-users'},
-        {path: 'catalogo_festivos', title: 'Festivos', icon: 'fa fa-bookmark'}
+        {path: 'catalogo_festivos', title: 'Festivos', icon: 'fa fa-bookmark'},
+        {path: 'user', title: 'Usuarios', icon: 'fa fa-bookmark'},
       );
       procesos.push(
         {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17'},
@@ -86,13 +87,16 @@ export class SidebarComponent implements OnInit {
     //RECURSOS HUMANOS
     if(this.perfil == 3){
       catalogos.push(
+        {path: 'usuarios', title: 'Usuarios', icon: 'ni-circle-08'},
         {path: 'catalogo_departamento', title: 'Departamentos', icon: 'ni-archive-2'},
         {path: 'catalogo_empresa', title: 'Empresas', icon: 'far fa-building'},
         {path: 'catalogo_sucursal', title: 'Sucursales', icon: 'fas fa-map-marker-alt'},
         {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'},
         {path: 'catalogo_turnos', title: 'Turnos', icon: 'fa fa-users'},
         {path: 'proced_xml', title: 'Xml', icon: 'fa fa-users'},
-        {path: 'catalogo_festivos', title: 'Festivos', icon: 'fa fa-bookmark'}
+        {path: 'catalogo_festivos', title: 'Festivos', icon: 'fa fa-bookmark'},
+         {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08'},
+
       );
       procesos.push(
         {path: 'bitacora-insidencias', title: 'Bitacora', icon: 'fa fa-id-badge'},
