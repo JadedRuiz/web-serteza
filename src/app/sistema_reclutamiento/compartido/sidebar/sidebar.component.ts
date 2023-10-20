@@ -95,7 +95,7 @@ export class SidebarComponent implements OnInit {
         {path: 'catalogo_turnos', title: 'Turnos', icon: 'fa fa-users'},
         {path: 'proced_xml', title: 'Xml', icon: 'fa fa-users'},
         {path: 'catalogo_festivos', title: 'Festivos', icon: 'fa fa-bookmark'},
-         {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08'},
+        //  {path: 'catalogo_usuario', title: 'Usuarios', icon: 'ni-circle-08'},
 
       );
       procesos.push(

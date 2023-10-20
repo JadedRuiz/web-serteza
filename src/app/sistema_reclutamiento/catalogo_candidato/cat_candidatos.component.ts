@@ -18,7 +18,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { filter } from 'rxjs/operators';
 import { CompartidoService } from 'src/app/services/Compartido/Compartido.service';
 import { DateAdapter } from '@angular/material/core';
-  
+
 @Component({
   selector: 'app-candidatos-original',
   templateUrl: './cat_candidatos.component.html',
@@ -76,7 +76,7 @@ export class CatalogoCandidatosComponent implements OnInit {
 
   @ViewChild('file_input', {read: ElementRef}) foto : any;
 
-  constructor( 
+  constructor(
     public cp_service: LocalidadService,
     private candidato_service: CandidatoService,
     private sanitizer: DomSanitizer,
@@ -106,7 +106,7 @@ export class CatalogoCandidatosComponent implements OnInit {
       palabra : this.palabra.toUpperCase(),
       status : this.status,
       id_cliente : this.id_cliente,
-      tipo : 1 
+      tipo : 1
     };
     this.candidatos = [];
     this.candidato_service.obtenerCandidatos(json)
@@ -170,7 +170,7 @@ export class CatalogoCandidatosComponent implements OnInit {
     if(this.filterControlEstado.value.length > 0){
       this.estados_busqueda = [];
       this.estados.forEach((element : any) => {
-        if(element.estado.includes(this.filterControlEstado.value.toUpperCase())){ 
+        if(element.estado.includes(this.filterControlEstado.value.toUpperCase())){
           this.estados_busqueda.push({
             "estado" : element.estado,
             "id_estado" : element.id_estado
@@ -272,7 +272,7 @@ export class CatalogoCandidatosComponent implements OnInit {
         this.candidato.direccion.colonia = object.data[0].colonia;
         this.candidato.direccion.localidad = object.data[0].localidad;
         this.candidato.direccion.municipio = object.data[0].municipio;
-        
+
         this.filterControlEstado.setValue(object.data[0].estado);
         this.candidato.direccion.estado = object.data[0].id_estado;
         this.candidato.direccion.descripcion = object.data[0].descripcion_direccion;
@@ -280,7 +280,7 @@ export class CatalogoCandidatosComponent implements OnInit {
         this.candidato.id_candidato = object.data[0].id_candidato;
         this.candidato.apellido_paterno = object.data[0].apellido_paterno;
         this.candidato.apellido_materno = object.data[0].apellido_materno;
-        
+
         this.candidato.id_statu = object.data[0].id_status;
         this.candidato.nombre = object.data[0].nombre;
         this.candidato.rfc = object.data[0].rfc;
@@ -364,7 +364,7 @@ export class CatalogoCandidatosComponent implements OnInit {
 
   limpiarCampos(){
     this.direccion  = new Direccion(0,"","","","","","","","","","","");
-    this.fotografia = new Fotografia(0,"","",""); 
+    this.fotografia = new Fotografia(0,"","","");
     this.candidato = new Candidato(0,this.id_cliente,6,"","","","","","","","",0,"","","","","",this.usuario_logueado,this.direccion,this.fotografia);
     this.foto_user = "./assets/img/defaults/usuario_por_defecto.svg";
   }
@@ -407,7 +407,7 @@ export class CatalogoCandidatosComponent implements OnInit {
       this.estatus_color = "bg-success";
     }
   }
-  
+
 
   mostrarPersiana(){
     this.band_persiana = false;
@@ -451,7 +451,7 @@ export class CatalogoCandidatosComponent implements OnInit {
       }
     }
   }
-  
+
   openModal() {
     this.bandera_activo = false;
     this.modal = this.modalService.open(this.contenidoDelModal,{ size: 'xl', centered : true, backdropClass : 'light-blue-backdrop', backdrop: 'static', keyboard: false});
