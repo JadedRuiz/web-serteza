@@ -3,7 +3,7 @@ import { COLOR } from 'src/config/config';
 import Swal from 'sweetalert2';
 import { NgForm } from '@angular/forms';
 import { Usuario }  from 'src/app/models/Usuario'
-import { UsuarioService} from 'src/app/services/Usuario/usuario.service'; 
+import { UsuarioService} from 'src/app/services/Usuario/usuario.service';
 import { Router } from '@angular/router';
 import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import { ClienteService } from 'src/app/services/Cliente/cliente.service';
@@ -32,14 +32,14 @@ export class LoginComponent implements OnInit {
   public busqueda = "";
   public empresas_copy : any;
 
-  constructor( 
+  constructor(
     public usuario_service : UsuarioService,
     private router : Router,
     private modalService: NgbModal,
     private cliente_service: ClienteService,
     private empresa : EmpresaService,
     private nomina_service : NominaService
-    ) { 
+    ) {
       this.modal = NgbModalRef;
     }
 
@@ -59,6 +59,7 @@ export class LoginComponent implements OnInit {
           window.sessionStorage["user"] = resp.data.info_usuario.id;
           window.sessionStorage["nombre"] = resp.data.info_usuario.nombre;
           window.sessionStorage["foto"] = resp.data.info_usuario.url_foto;
+          console.log('respLogin :>> ', resp.data);
           if(resp.data.info_usuario.sistemas.length > 1){ //Tiene más de un sistema
             for(let i=0; i<resp.data.info_usuario.sistemas.length; i++){
               let json = {
@@ -67,7 +68,7 @@ export class LoginComponent implements OnInit {
                 id_perfil : resp.data.info_usuario.sistemas[i].id_perfil
               };
               this.sistemas.push(json);
-            } 
+            }
             this.openModal();
           }else{
             this.sistema_elegido = resp.data.info_usuario.sistemas[0].id;
@@ -77,7 +78,7 @@ export class LoginComponent implements OnInit {
         }else{
           Swal.fire("Ha ocurrio un error",resp.message,"error");
         }
-      });      
+      });
     }
   }
 
@@ -151,7 +152,7 @@ export class LoginComponent implements OnInit {
     }
     return "";
   }
-  
+
   openModal() {
     this.modal = this.modalService.open(this.contenidoDelModal,{ centered : true, backdropClass : 'light-blue-backdrop'});
   }
@@ -188,7 +189,7 @@ export class LoginComponent implements OnInit {
             this.openModal();
           }else{
             window.sessionStorage["tipo_nomina"] = object.data[0].id_nomina;
-            this.router.navigate(["sistema_nomina/dashboard"]); 
+            this.router.navigate(["sistema_nomina/dashboard"]);
           }
         }else{
           Swal.fire("Ha ocurrido un error","Este empresa no tipos de nómina","error");
@@ -208,7 +209,7 @@ export class LoginComponent implements OnInit {
       this.closeModal();
       window.sessionStorage.setItem("cliente",id);
       this.router.navigate(["contabilidad/dashboard"]);
-      
+
     }
     if(this.sistema_elegido == "7"){
       window.sessionStorage.setItem("cliente",id);
@@ -241,7 +242,7 @@ export class LoginComponent implements OnInit {
             this.openModal();
           }else{
             window.sessionStorage["tipo_nomina"] = object.data[0].id_nomina;
-            this.router.navigate(["sistema_bitacora/dashboard"]); 
+            this.router.navigate(["sistema_bitacora/dashboard"]);
           }
         }else{
           Swal.fire("Ha ocurrido un error","Este empresa no cuenta con tipos de nómina, pidele a tu administrador que le agregué los tipos de nómina que tiene tu empresa.","error");
@@ -253,10 +254,10 @@ export class LoginComponent implements OnInit {
     this.closeModal();
     window.sessionStorage["tipo_nomina"] = id;
     if(this.sistema_elegido == "3"){
-      this.router.navigate(["sistema_nomina/dashboard"]); 
+      this.router.navigate(["sistema_nomina/dashboard"]);
     }
     if(this.sistema_elegido == "9"){
-      this.router.navigate(["sistema_bitacora/dashboard"]); 
+      this.router.navigate(["sistema_bitacora/dashboard"]);
     }
   }
   buscarEmpresa(){
@@ -270,7 +271,7 @@ export class LoginComponent implements OnInit {
     if(this.busqueda.length > 0){
       this.empresas = [];
       this.empresas_copy.forEach((element : any) => {
-        if(element.empresa.includes(this.busqueda.toUpperCase())){ 
+        if(element.empresa.includes(this.busqueda.toUpperCase())){
           this.empresas.push({
             "empresa" : element.empresa,
             "id_empresa" : element.id_empresa

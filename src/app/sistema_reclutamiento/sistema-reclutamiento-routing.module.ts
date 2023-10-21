@@ -20,6 +20,7 @@ import { ProcedXmlComponent } from './proced-xml/proced-xml.component';
 import { CalcularIncidenciasComponent } from './calcular-incidencias/calcular-incidencias.component';
 import { ReporteIncidenciasComponent } from './reporte-incidencias/reporte-incidencias.component';
 import { UsuariosComponent } from './usuarios/usuarios.component';
+import { ProcedAsignarTurnoComponent } from './proced-asignar-turno/proced-asignar-turno.component';
 
 const routes: Routes = [
   {
@@ -45,6 +46,7 @@ const routes: Routes = [
         { path : "proced_xml", component : ProcedXmlComponent},
         { path : "calcular_incidencia", component : CalcularIncidenciasComponent},
         { path : "reporte_incidencia", component : ReporteIncidenciasComponent},
+        { path : "asignar_turno", component : ProcedAsignarTurnoComponent},
         // { path : "catalogo_cliente/:id", component : CatalogoClienteComponent},
     ]
   }

@@ -99,6 +99,7 @@ export class SidebarComponent implements OnInit {
 
       );
       procesos.push(
+        {path: 'asignar_turno', title: 'Asignar turnos', icon: 'fa fa-id-badge'},
         {path: 'bitacora-insidencias', title: 'Bitacora', icon: 'fa fa-id-badge'},
         {path: 'proced_vacaciones', title: 'Vacaciones', icon: 'ni-calendar-grid-58'},
         {path: 'proced_incapacidades', title: 'Incapacidades', icon: 'fa fa-medkit'},

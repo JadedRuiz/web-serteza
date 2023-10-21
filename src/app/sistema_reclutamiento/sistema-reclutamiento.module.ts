@@ -44,6 +44,7 @@ import { ProcedXmlComponent } from './proced-xml/proced-xml.component';
 import { CalcularIncidenciasComponent } from './calcular-incidencias/calcular-incidencias.component';
 import { ReporteIncidenciasComponent } from './reporte-incidencias/reporte-incidencias.component';
 import { UsuariosComponent } from './usuarios/usuarios.component';
+import { ProcedAsignarTurnoComponent } from './proced-asignar-turno/proced-asignar-turno.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import { UsuariosComponent } from './usuarios/usuarios.component';
     ProcedXmlComponent,
     CalcularIncidenciasComponent,
     ReporteIncidenciasComponent,
-    UsuariosComponent
+    UsuariosComponent,
+    ProcedAsignarTurnoComponent
   ],
   imports: [
     CompartidoModule,

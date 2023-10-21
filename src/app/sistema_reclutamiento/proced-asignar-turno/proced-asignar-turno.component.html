@@ -1,0 +1,60 @@
+<div class="header {{color}}" style="height: 250px;">
+  <div class="container-fluid">
+  </div>
+</div>
+<div class="container-fluid mt--9">
+  <div class="row">
+    <div class="col-lg-12 col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">ASIGNAR TURNO TRABAJADOR</h2>
+          <div class="row offset-1">
+            <div class="col-5 ">
+              <mat-form-field class="w-100">
+                  <mat-label>Buscar usuario</mat-label>
+                  <input type="text"
+                          placeholder="Ingrese el nombre o rfc del usuario"
+                          aria-label="Number"
+                          matInput
+                          (keyup)="buscarUsuario()"
+                          [formControl]="filterControl"
+                          [matAutocomplete]="auto"
+                          style="text-transform: uppercase;">
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionUsuario($event)">
+                      <mat-option *ngFor="let usuario of usuarios_busqueda" [value]="usuario.nombre" [id]="usuario">
+                          {{usuario.nombre}}
+                      </mat-option>
+                  </mat-autocomplete>
+              </mat-form-field>
+          </div>
+
+
+          </div>
+          <div class="card-body">
+            <div class="row offset-1">
+              <div class="col-5 text-center">
+                <mat-form-field>
+                  <mat-label>Turnos</mat-label>
+                  <mat-select>
+                    <mat-option *ngFor="let turno of turnoSelect" [value]="turno.id_turno">
+                      {{turno.turno}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <mat-form-field class="example-full-width">
+                <input matInput placeholder="Jefe directo" value="Jefe directo">
+              </mat-form-field>
+              <div class="col-1"></div> <!-- Columna vacía para empujar hacia la derecha -->
+              <div class="col-auto">
+                <button class="btn btn-primary">ASIGNAR TURNO</button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+        </div>
+        </div>
+        </div>
+      </div>
