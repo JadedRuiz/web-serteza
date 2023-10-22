@@ -27,7 +27,31 @@ export class JustificacionService {
 
 
   guardarJustificacion(json: any) {
-    let url = SERVER_API + 'incidencias/consultarJustificaciones';
+    let url = SERVER_API + 'incidencias/guardarJustificacion';
+    return this.http.post(url, json).pipe(
+      map((resp: any) => {
+        return resp;
+      }),
+      catchError((err) => {
+        Swal.fire('Ha ocurrido un error', err.error.message, 'error');
+        return throwError(err);
+      })
+    );
+  }
+  activarJustificacion(json: any) {
+    let url = SERVER_API + 'incidencias/activarJustificacion';
+    return this.http.post(url, json).pipe(
+      map((resp: any) => {
+        return resp;
+      }),
+      catchError((err) => {
+        Swal.fire('Ha ocurrido un error', err.error.message, 'error');
+        return throwError(err);
+      })
+    );
+  }
+  autorizarJustificacion(json: any) {
+    let url = SERVER_API + 'incidencias/autorizarJustificacion';
     return this.http.post(url, json).pipe(
       map((resp: any) => {
         return resp;

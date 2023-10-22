@@ -50,7 +50,6 @@
 
               <div class="col-lg-4 col-md-6 col-sm-12 text-center">
                 <h3>{{empleadosIns[0].turno}}</h3>
-                <strong>07:00 - 15:00</strong>
               </div>
             </div>
 
@@ -112,22 +111,12 @@
                       </td>
                     </ng-container>
 
-                    <!-- <ng-container matColumnDef="tipoR">
-                      <th mat-header-cell *matHeaderCellDef> RET </th>
-                      <td mat-cell *matCellDef="let element">
-                        <i *ngIf="element.tipoR == 'A'" class="fas fa-long-arrow-alt-up text-danger"></i>
-                        <i *ngIf="element.tipoR == 'M'" class="fas fa-retweet text-warning"></i>
-                        <i *ngIf="element.tipoR == 'B'" class="fas fa-long-arrow-alt-down text-danger"></i>
-                      </td>
-                    </ng-container> -->
-
-                    <!-- Name Column -->
                     <ng-container matColumnDef="observaciones">
                       <th mat-header-cell *matHeaderCellDef>DESCRIPCIÓN</th>
                       <td mat-cell *matCellDef="let element"> {{element.observaciones}} </td>
                     </ng-container>
                     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"  (click)="openModal(row)"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" title="Agregar Justiciación" (click)="openModal(row)"></tr>
                   </table>
                 </div>
               </div>
@@ -149,26 +138,20 @@
   <div class="modal-body" style="overflow-x: hidden;" >
     <div class="">
       <div class="col text-center">
-        <h2>{{justi[0].nombre_completo}}</h2>
+        <h2>{{justi.nombre_completo}}</h2>
       </div>
         <div class="col">
           <div class="row">
-            <h4 class="ml-3 mr-1">Fecha:{{justi[0].fecha}}</h4><span>{{justi[0].dia_descrip}}</span>
+            <h4 class="ml-3 mr-1">Fecha:{{justi.fecha}}</h4><span>{{justi.dia_descrip}}</span>
           </div>
-        <form class="mt-2 example-form">
-          <mat-form-field class="col-10 offset-1">
-            <mat-label>Justificación</mat-label>
-            <textarea matInput
-                      cdkTextareaAutosize
-                      cdkAutosizeMinRows="2"
-                      cdkAutosizeMaxRows="7"
-                      value={{justi[0].motivo}}
-                      name="motivo"
-
-                      >
-                    </textarea>
+          <mat-form-field class="example-full-width">
+            <input
+              name= "motivo"
+             [(ngModel)]="justi.motivo"
+             matInput placeholder="Justificación"
+              >
           </mat-form-field>
-        </form>
+
       </div>
 
       <!-- Botón para cerrar el modal -->

@@ -151,28 +151,56 @@
         </button>
         <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
         <!-- BOTÓN PARA TOMAR FOTO -->
-        <button  class="btn btn-outline-primary" (click)="openWebcam()">Tomar foto</button>
+        <button  class="btn btn-outline-primary" (click)="openModalCamera()">Tomar foto</button>
       </div>
-      <!-- WEBCAM -->
-      <div *ngIf="takingPhoto" class="webcam">
-        <button class="webcam-close icon-btn" (click)="closeWebcam()">
-          <i i class="fa fa-times"></i>
-        </button>
-        <webcam [trigger]="triggerObservable"></webcam>
-        <button class="icon-btn webcam-btn" (click)="capturePhoto()">
-          <i class="fa fa-camera"></i>
-        </button>
-      </div>
+
     </div>
 
     <!-- SECCIÓN DE BOTONES -->
-    <div class="usuario-modal__buttons">
+    <!-- <div class="usuario-modal__buttons">
       <button class="danger-btn" (click)="togglePhotosModal()">
         Cancelar
       </button>
       <button class="search-btn" (click)="togglePhotosModal()">
         Guardar
       </button>
-    </div>
+    </div> -->
   </div>
 </div>
+
+
+<ng-template #modal_camera let-c="close" let-d="dismiss">
+  <div class="modal-header">
+      <h2 class="modal-title" id="tituloModal">Tomar fotografia</h2>
+  </div>
+  <div class="modal-body">
+      <div class="container">
+          <div class="row">
+              <div *ngIf="isCameraExist; else noCameraExist" class="col-12">
+                  <div class="border border-success rounded text-center" style="width: 100%;height: 265px;">
+                      <webcam [height]="450" [width]="350" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
+                          *ngIf="showWebcam" [switchCamera]="nextWebcamObservable"></webcam>
+                  </div>
+
+                  <div *ngIf="errors.length > 0">
+                      <h4>Error Messages:</h4>
+                      <ul *ngFor="let error of errors">
+                          <li>{{ error | json }}</li>
+                      </ul>
+                  </div>
+              </div>
+
+              <ng-template #noCameraExist>
+                  <div class="border border-danger rounded text-center"
+                  style="display: flex;justify-content: center;align-items: center;width: 450px;height: 350px;">
+                      Este dispositivo no cuenta con una camara disponible
+                  </div>
+              </ng-template>
+          </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="cerrarModalCamera()">Cerrar</button>
+      <button *ngIf="isCameraExist" type="button" class="btn btn-success" (click)="takeSnapshot()">Tomar foto</button>
+  </div>
+</ng-template>

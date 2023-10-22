@@ -55,15 +55,15 @@
                 <div class="row">
                     <div class="col-lg-12 col-sm-12" style="overflow-x: scroll;">
                         <table mat-table [dataSource]="dataSource" class="w-100">
-                            
+
                             <ng-container matColumnDef="id_candidato">
                                 <th mat-header-cell *matHeaderCellDef> Id </th>
                                 <td mat-cell *matCellDef="let element"> {{element.id_candidato}} </td>
                             </ng-container>
-                            
+
                             <ng-container matColumnDef="fotografia">
                                 <th mat-header-cell *matHeaderCellDef> Fotografía </th>
-                                <td mat-cell *matCellDef="let element"> 
+                                <td mat-cell *matCellDef="let element">
                                   <img src="{{element.fotografia}}" alt="" height="50" width="50" style="object-fit: cover;
                                     object-position: center center;">
                                 </td>
@@ -86,7 +86,7 @@
 
                             <ng-container matColumnDef="accion">
                                 <th mat-header-cell *matHeaderCellDef> Acción </th>
-                                <td mat-cell *matCellDef="let element">  
+                                <td mat-cell *matCellDef="let element">
                                     <button [matMenuTriggerFor]="menu" class="btn btn-info btn-sm"><i class="fas fa-ellipsis-v"></i></button>
                                     <mat-menu #menu="matMenu">
                                         <button mat-menu-item (click)="editar(element.id_candidato)">
@@ -100,13 +100,13 @@
                                     </mat-menu>
                                 </td>
                             </ng-container>
-    
+
                             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                         </table>
-                        <mat-paginator 
+                        <mat-paginator
                             [pageSizeOptions]="[5, 10, 20]"
-                            showFirstLastButtons 
+                            showFirstLastButtons
                             aria-label="Select page of periodic elements">
                         </mat-paginator>
                     </div>
@@ -145,7 +145,7 @@
                                   <div [class]="band_persiana ? 'persiana' : 'persiana_mostrar'">
                                       <div class="container">
                                           <div class="row mt-5 text-center justify-content-center">
-                                              <a style="cursor: pointer;" class="text-info tomar_foto" (click)="openModalCamera()">Tomar fotografía</a>  
+                                              <a style="cursor: pointer;" class="text-info tomar_foto" (click)="openModalCamera()">Tomar fotografía</a>
                                           </div>
                                           <div class="row mt-3 justify-content-center">
                                               <a class="text-info">ó</a>
@@ -203,7 +203,7 @@
                             </div>
                         </div>
                         <div class="row">
-                          
+
                         </div>
                         <div class="row">
                           <div class="col-lg-4 col-sm-12">
@@ -241,7 +241,7 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <div class="form-group"> 
+                                <div class="form-group">
                                     <label for="desc_cempresa">Descripción de habilidades</label>
                                     <textarea [(ngModel)]="candidato.descripcion" name="desc_cempresa" class="form-control" rows="5" id="desc_cempresa" style="text-transform: uppercase;"></textarea>
                                 </div>
@@ -333,7 +333,7 @@
                     </div>
                   </div>
                 </div>
-                
+
               </div>
               <div *ngIf="bandera_activo" class="tab-pane col-12" id="movientos_tab" role="tabpanel" style="height: 450px;overflow-y: auto;">
                 <div class="row">
@@ -363,7 +363,7 @@
                         <input matInput [matDatepicker]="picker" [(ngModel)]="info_contrato.informacion_contrato.fecha_alta">
                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
-                      </mat-form-field> 
+                      </mat-form-field>
                     </div>
                     <div class="col-lg-3 col-sm-12">
                       <mat-form-field class="w-100">
@@ -399,7 +399,7 @@
                       </thead>
                       <tbody>
                         <tr *ngFor="let movimiento of info_contrato.movimientos">
-                          
+
                           <td>
                             <i *ngIf="movimiento.tipo_movimiento == 'A'" class="fas fa-long-arrow-alt-up text-success mr-3"></i>
                             <i *ngIf="movimiento.tipo_movimiento == 'M'" class="fas fa-retweet text-warning mr-3"></i>
@@ -436,7 +436,7 @@
                       <webcam [height]="450" [width]="350" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
                           *ngIf="showWebcam" [switchCamera]="nextWebcamObservable"></webcam>
                   </div>
-              
+
                   <div *ngIf="errors.length > 0">
                       <h4>Error Messages:</h4>
                       <ul *ngFor="let error of errors">
@@ -444,9 +444,10 @@
                       </ul>
                   </div>
               </div>
-              
+
               <ng-template #noCameraExist>
-                  <div class="border border-danger rounded text-center" style="display: flex;justify-content: center;align-items: center;width: 450px;height: 350px;">
+                  <div class="border border-danger rounded text-center"
+                  style="display: flex;justify-content: center;align-items: center;width: 450px;height: 350px;">
                       Este dispositivo no cuenta con una camara disponible
                   </div>
               </ng-template>

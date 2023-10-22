@@ -19,7 +19,7 @@ import Swal from 'sweetalert2';
 })
 export class ProcedBitacoraComponent implements OnInit {
   public color = COLOR;
-  public justificacion : Justificacion = new Justificacion(0,0,0,'','');
+  public justificacion = new Justificacion(0,0,0,'','');
   public direccion : Direccion = new Direccion(0,"","","","","","","","","","","");
   public fotografia = new Fotografia(0,"","","");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
@@ -80,14 +80,20 @@ consulta = false;
 
 // MODAL
  openModal(rowData: any) {
-   this.selectedRowData = rowData;
-   this.consultarjusticaciones()
 
-   this.modal = this.modalService.open(this.modal_mov, {
-     size: 'md',
-    centered: true,
-  });
-  // console.log(this.selectedRowData);
+   if(rowData){
+     this.selectedRowData = rowData;
+     this.justi = this.selectedRowData;
+    this.justificacion.fecha = this.selectedRowData.fecha;
+    this.justificacion.id_candidato = this.selectedRowData.id_candidato;
+    this.justificacion.id_cliente = this.selectedRowData.id_cliente;
+    this.modal = this.modalService.open(this.modal_mov, {
+      size: 'md',
+      centered: true,
+    });
+  }
+  this.consultarjusticaciones()
+  //  console.log(this.selectedRowData);
 }
 
 closeModal() {
@@ -149,7 +155,7 @@ autocomplete(palabra : string){
 // Consultar
 
 consultarIncidencias(){
-  this.justi= [];
+  // this.justi= [];
   this.diaEmpleado = '';
 this.consulta = true;
   let json = {
@@ -183,87 +189,56 @@ this.consulta = true;
 // => JUSTIFICACIONES <=
 // Consultar
 consultarjusticaciones(){
-  this.justi = ''
-
   let json = {
     id_justificacion: 0,
-    id_cliente: 5,
-    id_candidato: this.selectedRowData.id_candidato,
+    id_cliente: this.justificacion.id_cliente,
+    id_candidato: this.justificacion.id_candidato,
     id_empresa: 0,
     id_sucursal: 0,
     id_departamento: 0,
     id_puesto: 0,
     sin_autorizar: 1,
-    fecha_incial: this.selectedRowData.fecha,
-    fecha_final: this.selectedRowData.fecha,
+    fecha_inicial: this.justificacion.fecha,
+    fecha_final: this.justificacion.fecha,
     token: "012354SDSDS01"
   }
   console.log('=><', json)
   this.just_service.obternerJustificaciones(json).subscribe((resp)=>{
     if (resp.ok){
-
-      this.justi = resp.data
-      console.log('JUSTI :>> ', this.justi);
+      this.justificacion = resp.data
+      this.justi.motivo = resp.data[0].motivo;
+       this.justificacion.id_justificacion = resp.data[0].id_justificacion;
+      console.log('justificacion :>> ', this.justificacion);
     }
   })
 
 }
 
-guardarJustificacion(){
-  let json = {
-    id_justificacion: 0,
-    id_cliente: 5,
-    id_candidato: this.justi[0].id_candidato,
-    motivo: this.justi[0].motivo,
-    fecha: this.justi[0].fecha
-  }
-  console.log('Guardar justi=>',json);
-  // this.just_service.guardarJustificacion(json).subscribe((resp)=>{
-  //   if (resp.ok){
-  //     Swal.fire(
-  //       'Exito',
-  //       'Justificacion actulizada',
-  //       'success'
-  //     )
-  //   }
-  // })
-  Swal.fire(
-    'Exito',
-    'Justificacion actulizada',
-    'success'
-  )
 
+guardarJustificacion(){
+  const motivoEdit = this.justi.motivo;
+  let json = {
+    id_justificacion: this.justificacion.id_justificacion,
+    id_cliente: 5,
+    id_candidato: this.justi.id_candidato,
+    motivo: motivoEdit,
+    fecha: this.justi.fecha
+  }
+
+  console.log('Guardar justi=>',this.justificacion.motivo);
+  console.log('Guardar justi=>',json);
+  this.just_service.guardarJustificacion(json).subscribe((resp)=>{
+    if (resp.ok){
+      Swal.fire(
+        'Exito',
+        'Justificacion actulizada',
+        'success'
+      )
+    }
+  })
   this.closeModal();
 
 }
 
 
 }
-// PARA DATOS FIGTICIOS
-  // private generateTestData(): any[] {
-  //   const testData = [];
-  //   for (let i = 1; i <= 10; i++) {
-  //     testData.push({
-  //       id_empleado: i,
-  //       nombre: `Empleado ${i}`,
-  //     });
-  //   }
-  //   return testData;
-  // }
-
-  // private generateTableData(): any[] {
-  //   const tableData = [];
-  //   for (let i = 1; i <= 15; i++) {
-  //     tableData.push({
-  //       fecha: `2023-10-${i}`,
-  //       entrada: `Entrada ${i}`,
-  //       salida: `Salida ${i}`,
-  //       tipoF: 'A',
-  //       tipoD: 'M',
-  //       tipoV: 'B',
-  //       tipoR: 'A',
-  //       descripcion: `Descripción ${i}`,
-  //     });
-  //   }
-  //   return tableData;
-  // }

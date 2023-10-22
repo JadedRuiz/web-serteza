@@ -9,6 +9,7 @@ import { Perfil } from 'src/app/models/Perfil';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Fotografia } from 'src/app/models/Fotografia';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 
 
@@ -21,7 +22,7 @@ export class UsuariosComponent implements OnInit {
   public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
 
-  public perfilStock =
+  public perfilStock : any =
     'https://th.bing.com/th/id/R.20836a4a6bf6d8ee3031d28e133a9eb7?rik=gG%2bcRJRZ4jd0Cw&riu=http%3a%2f%2fconstantcontinuity.com%2fconstantcontinuity%2fimages%2fbig1.png&ehk=TtGb2WLFcbckjNT98147tFsMNaunQxrZpJ2JeMw0i84%3d&risl=&pid=ImgRaw&r=0';
   public color = COLOR;
   filterControl = new FormControl();
@@ -47,6 +48,7 @@ export class UsuariosComponent implements OnInit {
   public foto_user : any;
   public docB64 = "";
   @ViewChild('file_input', {read: ElementRef}) foto : any;
+  @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
 
   nuevoUsuario = new NuevoUsuario(
     0,
@@ -68,8 +70,11 @@ export class UsuariosComponent implements OnInit {
   @ViewChildren('inputProvForm') provInputs!: QueryList<ElementRef>;
 
 
-    constructor(private usuarioService: UsuarioService,
-      private sanitizer: DomSanitizer) {}
+    constructor(
+      private usuarioService: UsuarioService,
+      private sanitizer: DomSanitizer,
+      private modalService: NgbModal,
+    ) {}
 
   ngOnInit(): void {
     this.obtenerUsuarios();
@@ -114,8 +119,8 @@ export class UsuariosComponent implements OnInit {
       activo: 1,
       id_usuario_guardar: 1,
       id_fotografia: 0,
-      extencion: '',
-      foto_base64: '',
+      extencion: this.fotografia.extension,
+      foto_base64: this.fotografia.docB64,
     };
     console.log('jsonGuardar :>> ', json);
     this.usuarioService.guardarUsuario(json).subscribe((resp) => {
@@ -128,6 +133,7 @@ export class UsuariosComponent implements OnInit {
         // console.log('resp.mensaje :>> ', resp.data.mensaje);
       }
     });
+
     this.nuevoUsuario = new NuevoUsuario(
       0,
       0,
@@ -269,7 +275,8 @@ optionUsuario(value : any){
   imageAfterResize: any;
   mainImage: string = '';
   takingPhoto: boolean = false;
-  public triggerObservable: Observable<void> = this.trigger.asObservable();
+  // public triggerObservable: Observable<void> = this.trigger.asObservable();
+  public modal_camera : any;
 
 
   subirImagen(){
@@ -296,10 +303,11 @@ optionUsuario(value : any){
       if(extension == "jpg" || extension == "png"){
         this.convertirImagenAB64(archivos).then( respuesta => {
           let img = "data:image/"+extension+";base64, "+respuesta;
-          this.foto_user = this.sanitizer.bypassSecurityTrustResourceUrl(img);
+          this.perfilStock = this.sanitizer.bypassSecurityTrustResourceUrl(img);
           this.docB64 = respuesta+"";
           this.fotografia.docB64 = respuesta+"";
           this.fotografia.extension = extension;
+          console.log('oio>',this.foto_user);
         });
       }else{
         Swal.fire("Ha ocurrido un error","Tipo de imagen no permitida","error");
@@ -318,41 +326,49 @@ optionUsuario(value : any){
     console.log(this.extraModal);
   }
 
-  //Función para subir fotografía desde el dispositivo
-  async uploadImage() {
-    //  return this.imageCompress
-    //     .uploadFile()
-    //     .then(({ image, orientation }: UploadResponse) => {
-    //        console.log(image);
-    //        if (this.imageCompress.byteCount(image) > 5 * 1024 * 1024) {
-    //           alert('El tamaño de la imagen excede el límite de 5 MB');
-    //           return;
-    //        }
-    //        this.imageCompress
-    //           .compressFile(image, orientation, 40, 40, 400, 400)
-    //           .then((result: DataUrl) => {
-    //              this.mainImage = result
-    //              this.usuario.foto_base64 = result.slice(22);
-    //              this.usuario.extencion = 'jpeg';
-    //              console.log(this.usuario.foto_base64);
-    //           });
-    //     });
+  openModalCamera(){
+    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop', backdrop: 'static', keyboard: false});
+    // this.showWebcam = true;
   }
 
-  //Función para abrir la cámara
-  openWebcam() {
-    this.takingPhoto = true;
+  cerrarModalCamera(){
+    this.modal_camera.close();
   }
 
-  //Función para cerrar la cámara
-  closeWebcam() {
-    this.takingPhoto = false;
+  takeSnapshot(): void {
+    let foto = this.trigger.next();
   }
 
-  //Función para tomar la fotografía
-  capturePhoto() {
-    this.trigger.next();
+  onOffWebCame() {
+    this.showWebcam = !this.showWebcam;
   }
 
+  handleInitError(error: WebcamInitError) {
+    this.errors.push(error);
+  }
+
+  changeWebCame(directionOrDeviceId: boolean | string) {
+    this.nextWebcam.next(directionOrDeviceId);
+  }
+
+  handleImage(webcamImage: WebcamImage) {
+    this.getPicture.emit(webcamImage);
+    this.foto_user = webcamImage.imageAsDataUrl;
+    this.perfilStock = webcamImage.imageAsDataUrl;
+    let docB64 = this.foto_user.split(",");
+    this.fotografia.docB64 = docB64[1];
+    this.fotografia.extension = "jpeg";
+    this.fotografia.nombre = "foto_user";
+    this.cerrarModalCamera();
+    // console.log(webcamImage.imageAsDataUrl)
+  }
+
+  get triggerObservable(): Observable<void> {
+    return this.trigger.asObservable();
+  }
+
+  get nextWebcamObservable(): Observable<boolean | string> {
+    return this.nextWebcam.asObservable();
+  }
 
 }
