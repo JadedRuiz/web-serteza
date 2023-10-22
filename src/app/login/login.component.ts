@@ -56,10 +56,10 @@ export class LoginComponent implements OnInit {
           this.tipo_arreglo = 0;
           this.sistemas = [];
           this.sistema_elegido = "";
+          window.sessionStorage["candidato"] = resp.data.info_usuario.id_candidato;
           window.sessionStorage["user"] = resp.data.info_usuario.id;
           window.sessionStorage["nombre"] = resp.data.info_usuario.nombre;
           window.sessionStorage["foto"] = resp.data.info_usuario.url_foto;
-          console.log('respLogin :>> ', resp.data);
           if(resp.data.info_usuario.sistemas.length > 1){ //Tiene más de un sistema
             for(let i=0; i<resp.data.info_usuario.sistemas.length; i++){
               let json = {
@@ -74,6 +74,7 @@ export class LoginComponent implements OnInit {
             this.sistema_elegido = resp.data.info_usuario.sistemas[0].id;
             window.sessionStorage.setItem("sistema",this.sistema_elegido);
             this.eleccion(this.sistema_elegido,resp.data.info_usuario.sistemas[0].id_perfil,1);
+            console.log('this.sistema_elegido :>> ', this.sistema_elegido);
           }
         }else{
           Swal.fire("Ha ocurrio un error",resp.message,"error");
@@ -167,10 +168,11 @@ export class LoginComponent implements OnInit {
     }
     if(this.sistema_elegido == "2"){
       window.sessionStorage.setItem("cliente",id);
+
       if(tipo != 1){
         this.closeModal();
       }
-      this.router.navigate(["sistema_reclutamiento/dashboard"]);
+      this.router.navigate(["sistema_reclutamiento/asistencia"]);
     }
     if(this.sistema_elegido == "3"){
       window.sessionStorage["empresa"] = id;

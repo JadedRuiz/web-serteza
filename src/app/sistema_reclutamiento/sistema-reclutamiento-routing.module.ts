@@ -21,6 +21,7 @@ import { CalcularIncidenciasComponent } from './calcular-incidencias/calcular-in
 import { ReporteIncidenciasComponent } from './reporte-incidencias/reporte-incidencias.component';
 import { UsuariosComponent } from './usuarios/usuarios.component';
 import { ProcedAsignarTurnoComponent } from './proced-asignar-turno/proced-asignar-turno.component';
+import { ProcedRecibosComponent } from './proced-recibos/proced-recibos.component';
 
 const routes: Routes = [
   {
@@ -47,6 +48,7 @@ const routes: Routes = [
         { path : "calcular_incidencia", component : CalcularIncidenciasComponent},
         { path : "reporte_incidencia", component : ReporteIncidenciasComponent},
         { path : "asignar_turno", component : ProcedAsignarTurnoComponent},
+        { path : "recibosTrab", component : ProcedRecibosComponent},
         // { path : "catalogo_cliente/:id", component : CatalogoClienteComponent},
     ]
   }

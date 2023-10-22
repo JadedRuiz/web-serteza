@@ -366,63 +366,7 @@ export class ReporteIncidenciasComponent implements OnInit {
         console.log('Nuevo valor de RFC:', this.rfcTrabajador);
       }
 
-      // EXPORTAR PDF
-      exportarAPDF() {
-    //AGREGA CLASE DE CSS
-    const columnasAcciones = document.querySelectorAll('.mat-column-acciones');
-      columnasAcciones.forEach((columna) => {
-        columna.classList.add('hide-actions-column');
-      });
 
-        const content: HTMLElement = this.tablaParaPDF.nativeElement;
-        const pdf = new jsPDF('landscape', 'mm', 'a4'); // Cambia 'landscape' para orientación horizontal
-        const pdfOptions = {
-          margin: 10,
-          filename: 'trabajadores-XML.pdf',
-        };
-
-        // Muestra la alerta de progreso
-        Swal.fire({
-          title: 'Generando PDF',
-          text: 'Por favor, espere...',
-          icon: 'info',
-          allowOutsideClick: false,
-          showConfirmButton: false,
-          onBeforeOpen: () => {
-            Swal.showLoading();
-          },
-        });
-
-        // Genera el PDF después de un breve retraso para permitir que se muestre la alerta
-        setTimeout(() => {
-          html2canvas(content, { scale: 2 }).then((canvas) => {
-            const imgData = canvas.toDataURL('image/jpeg', 1.0);
-
-            // Calcula la altura del contenido y ajusta el tamaño de la página en función de la altura
-            const contentHeight =
-              canvas.height * (pdf.internal.pageSize.width / canvas.width);
-            pdf.internal.pageSize.height = contentHeight;
-
-            // Agrega la imagen al PDF
-            pdf.addImage(
-              imgData,
-              'JPEG',
-              0,
-              0,
-              pdf.internal.pageSize.width,
-              contentHeight
-            );
-              // Elimina la clase CSS que oculta la columna de acciones
-          columnasAcciones.forEach((columna) => {
-            columna.classList.remove('hide-actions-column');
-          });
-
-            pdf.save(pdfOptions.filename);
-
-            Swal.close();
-          });
-        }, 500);
-      }
 
 
 
@@ -479,5 +423,211 @@ export class ReporteIncidenciasComponent implements OnInit {
         }
       }
 
+//Exportar Variables
+exportarVariables(){
+  let json = {
+    id_empresa: this.id_empresa,
+      rfc: '' || this.rfcTrabajador,
+      bimestre: 0 || this.biMesActual,
+      ejercicio: this.ejercicioActual,
+      registro_patronal: '',
+      exportar: 1
+  };
+
+this.calcularService.variables(json).subscribe((object:any)=>{
+  if(object.ok){
+    Swal.fire({
+      title: 'Generando variables',
+      text: 'Por favor, espere...',
+      icon: 'info',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      onBeforeOpen: () => {
+        Swal.showLoading();
+      },
+    });
+    setTimeout( ()=> {
+  var arrayBuffer = this.base64ToArrayBuffer(object.data);
+    var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
+    var data = window.URL.createObjectURL(newBlob);
+    let link  = document.createElement('a');
+    link.href = data;
+    link.download = "ReporteVariables.xlsx";
+    link.click();
+    Swal.close();
+    },500)
+
+
+
+  }
+})
 
 }
+
+
+// EXPORTAR EXCEL
+exportExel(){
+  let json = {
+    id_empresa: this.id_empresa,
+      rfc: '' || this.rfcTrabajador,
+      bimestre: 0 || this.biMesActual,
+      ejercicio: this.ejercicioActual,
+      registro_patronal: '' ,
+      exportar: 1
+  };
+
+this.calcularService.exportarExcel(json).subscribe((object:any)=>{
+  if(object.ok){
+    Swal.fire({
+      title: 'Generando reporte',
+      text: 'Por favor, espere...',
+      icon: 'info',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      onBeforeOpen: () => {
+        Swal.showLoading();
+      },
+    });
+    setTimeout( ()=> {
+  var arrayBuffer = this.base64ToArrayBuffer(object.data);
+    var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
+    var data = window.URL.createObjectURL(newBlob);
+    let link  = document.createElement('a');
+    link.href = data;
+    link.download = "ReporteIntegrado.xlsx";
+    link.click();
+    Swal.close();
+    },500)
+
+
+
+  }
+})
+}
+
+
+base64ToArrayBuffer(base64 : string) {
+  var binary_string =  window.atob(base64);
+  var len = binary_string.length;
+  var bytes = new Uint8Array( len );
+  for (var i = 0; i < len; i++)        {
+      bytes[i] = binary_string.charCodeAt(i);
+  }
+  return bytes;
+}
+
+
+  // EXPORTAR PDF
+
+  // ocultar paginaodr
+  paginador = true
+  exportarAPDF() {
+    this.paginador = false;
+    const content: HTMLElement = this.tablaParaPDF.nativeElement;
+    const pdf = new jsPDF('landscape', 'mm', 'a4'); // Cambia 'landscape' para orientación horizontal
+    const pdfOptions = {
+      margin: 10,
+      filename: 'acumuladosNomina.pdf',
+    };
+
+    // Muestra la alerta de progreso
+    Swal.fire({
+      title: 'Generando PDF',
+      text: 'Por favor, espere...',
+      icon: 'info',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      onBeforeOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    // Genera el PDF después de un breve retraso para permitir que se muestre la alerta
+    setTimeout(() => {
+      html2canvas(content, { scale: 2 }).then((canvas) => {
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+
+        // Calcula la altura del contenido y ajusta el tamaño de la página en función de la altura
+        const contentHeight =
+          canvas.height * (pdf.internal.pageSize.width / canvas.width);
+        pdf.internal.pageSize.height = contentHeight;
+
+        // Agrega la imagen al PDF
+        pdf.addImage(
+          imgData,
+          'JPEG',
+          0,
+          0,
+          pdf.internal.pageSize.width,
+          contentHeight
+        );
+        pdf.save(pdfOptions.filename);
+
+        Swal.close();
+        this.paginador = true;
+      });
+    }, 100);
+  }
+
+
+
+
+}
+
+// OPCION PDF 2
+ // EXPORTAR PDF
+//  exportarAPDF() {
+//   const columnasAcciones = document.querySelectorAll('.mat-column-acciones');
+//     columnasAcciones.forEach((columna) => {
+//       columna.classList.add('hide-actions-column');
+//     });
+
+//       const content: HTMLElement = this.tablaParaPDF.nativeElement;
+//       const pdf = new jsPDF('landscape', 'mm', 'a4');
+//       const pdfOptions = {
+//         margin: 10,
+//         filename: 'trabajadores-XML.pdf',
+//       };
+
+//       // Muestra la alerta de progreso
+//       Swal.fire({
+//         title: 'Generando PDF',
+//         text: 'Por favor, espere...',
+//         icon: 'info',
+//         allowOutsideClick: false,
+//         showConfirmButton: false,
+//         onBeforeOpen: () => {
+//           Swal.showLoading();
+//         },
+//       });
+
+//       // Genera el PDF después de un breve retraso para permitir que se muestre la alerta
+//       setTimeout(() => {
+//         html2canvas(content, { scale: 2 }).then((canvas) => {
+//           const imgData = canvas.toDataURL('image/jpeg', 1.0);
+
+//           // Calcula la altura del contenido y ajusta el tamaño de la página en función de la altura
+//           const contentHeight =
+//             canvas.height * (pdf.internal.pageSize.width / canvas.width);
+//           pdf.internal.pageSize.height = contentHeight;
+
+//           // Agrega la imagen al PDF
+//           pdf.addImage(
+//             imgData,
+//             'JPEG',
+//             0,
+//             0,
+//             pdf.internal.pageSize.width,
+//             contentHeight
+//           );
+//             // Elimina la clase CSS que oculta la columna de acciones
+//         columnasAcciones.forEach((columna) => {
+//           columna.classList.remove('hide-actions-column');
+//         });
+
+//           pdf.save(pdfOptions.filename);
+
+//           Swal.close();
+//         });
+//       }, 500);
+//     }

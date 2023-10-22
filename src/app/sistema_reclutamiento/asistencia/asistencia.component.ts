@@ -12,6 +12,9 @@ import Swal from 'sweetalert2';
   styleUrls: ['./asistencia.component.css']
 })
 export class AsistenciaComponent implements OnInit {
+  public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
+  public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
+  public id_candidato = parseInt(window.sessionStorage.getItem("candidato")+"");
   public color = COLOR;
   longitud:any = '';
   latitud:any = '';
@@ -24,6 +27,7 @@ export class AsistenciaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log(this.usuario_logueado, 'idCliente=>',this.id_cliente, this.id_candidato)
   }
 
 // GUARDAR COORDENADAS

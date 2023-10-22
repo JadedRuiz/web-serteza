@@ -225,8 +225,7 @@ guardarJustificacion(){
     fecha: this.justi.fecha
   }
 
-  console.log('Guardar justi=>',this.justificacion.motivo);
-  console.log('Guardar justi=>',json);
+  // console.log('Guardar justi=>',json);
   this.just_service.guardarJustificacion(json).subscribe((resp)=>{
     if (resp.ok){
       Swal.fire(

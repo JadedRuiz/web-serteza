@@ -7,7 +7,7 @@
     <div class="col-lg-12 col-sm-12">
       <div class="card">
         <div class="card-header">
-          <h4 class="card-title">REVISAR RECIBOS</h4>
+          <h4 class="card-title">RECIBOS</h4>
           <div class="card-body">
             <div class="container-fluid">
               <!-- BUSCADORES -->
@@ -60,9 +60,9 @@
                 <div class="col-md-6">
 
                   <mat-form-field>
-                    <input matInput [matDatepicker]="picker1" placeholder="Fecha Final" [formControl]="dateFinal">
-                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                    <mat-datepicker #picker1></mat-datepicker>
+                    <input matInput [matDatepicker]="picker2" placeholder="Fecha Final" [formControl]="dateFinal">
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
                   </mat-form-field>
                 </div>
               </div>
@@ -123,8 +123,10 @@
                     <ng-container matColumnDef="acciones">
                       <th mat-header-cell *matHeaderCellDef>Acciones</th>
                       <td mat-cell *matCellDef="let row">
-                        <button class="btn btn-primary btn-sm">REVISAR</button>
-                        <button class="btn btn-success" [routerLink]="['/contabilidad/edit-trab']" [queryParams]="{ id_boveda: row.id_boveda }" >Editar</button>
+                        <button class="btn btn-primary btn-sm"
+                        [routerLink]="['/sistema_reclutamiento/recibosTrab']"
+                        [queryParams]="{ id_boveda: row.id_boveda }"
+                        >REVISAR</button>
                       </td>
                     </ng-container>
 

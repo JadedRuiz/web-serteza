@@ -112,15 +112,21 @@ export class SidebarComponent implements OnInit {
     }
     //EMPLEADO
     if(this.perfil == 7){
-      catalogos.push(
-      );
-      procesos.push(
-        {path: 'proced_vacaciones', title: 'Vacaciones', icon: 'ni-calendar-grid-58'}
-      );
-    }
+      this.menuItems = [
+         { path: 'asistencia', title: 'Asistencia',  icon: 'fa fa-users text-green', id:"asistencia_header", band: false, tipo : "", bg : "red"},
+         { path: 'proced_xml', title: 'Recibos',  icon: 'fa fa-users text-green', id:"asistencia_header", band: false, tipo : "", bg : "red"},
+         { path: 'bitacora-insidencias', title: 'Bitacora',  icon: 'fa fa-users text-green', id:"asistencia_header", band: false, tipo : "", bg : "red"},
+        ];
+      // catalogos.push(
+      // );
+      // procesos.push(
+      //   {path: 'proced_vacaciones', title: 'Vacaciones', icon: 'ni-calendar-grid-58'}
+      // );
+    } else {
+
     this.menuItems = [
       { path: 'dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-yellow', id:"dashboard_header", band: false, tipo : "", bg : "red"},
-      { path: 'asistencia', title: 'Asistencia',  icon: 'fa fa-users text-green', id:"asistencia_header", band: false, tipo : "", bg : "red"},
+       { path: 'asistencia', title: 'Asistencia',  icon: 'fa fa-users text-green', id:"asistencia_header", band: false, tipo : "", bg : "red"},
       { path: '#', title: 'Catálogos',  icon:'ni-collection text-orange', id:"rh_header", band: true, tipo : "collapse",
         submenu : catalogos, bg : "orange"
       },
@@ -134,6 +140,8 @@ export class SidebarComponent implements OnInit {
         ], bg : "green"
     }
     ];
+  }
+
   }
   mostrarLogo(){
     if(window.sessionStorage.getItem("cliente") != null){

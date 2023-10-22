@@ -45,6 +45,7 @@ import { CalcularIncidenciasComponent } from './calcular-incidencias/calcular-in
 import { ReporteIncidenciasComponent } from './reporte-incidencias/reporte-incidencias.component';
 import { UsuariosComponent } from './usuarios/usuarios.component';
 import { ProcedAsignarTurnoComponent } from './proced-asignar-turno/proced-asignar-turno.component';
+import { ProcedRecibosComponent } from './proced-recibos/proced-recibos.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +69,8 @@ import { ProcedAsignarTurnoComponent } from './proced-asignar-turno/proced-asign
     CalcularIncidenciasComponent,
     ReporteIncidenciasComponent,
     UsuariosComponent,
-    ProcedAsignarTurnoComponent
+    ProcedAsignarTurnoComponent,
+    ProcedRecibosComponent
   ],
   imports: [
     CompartidoModule,

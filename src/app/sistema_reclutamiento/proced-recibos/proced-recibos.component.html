@@ -1,0 +1,177 @@
+<div class="header" style="height: 250px;"></div>
+
+<div #paraPDF class="container-fluid mt--9">
+<h2 class="text-center col mb-1">{{nomina[0].empresa}}</h2>
+
+
+  <!-- HEADER-->
+<div class="row">
+  <div class="d-flex align-items-center justify-content-center  col-6">
+    <img style="width: 300px; height: 100px;" [src]="nomina[0].fotografia" alt="Logo de la empresa">
+  </div>
+ <div class="col-6 mt-4">
+  <h4 class="text-center" style="background-color: rgba(0, 38, 255, 0.116);">Fecha timbrado</h4>
+<table class="table">
+  <tr class="text-center">
+    <th class="text-lg">{{ getfecha() | date: 'dd/MM/yyyy' }}</th>
+  </tr>
+  <tr>
+</table>
+</div>
+</div>
+<mat-divider></mat-divider>
+<h3 class="text-center col mb-1 mt-2">Recibo de nómina de: <u>{{nomina[0].nombre}}</u></h3>
+
+<!-- DATOS -->
+  <div class="row mt-3">
+  <!-- DATOS DEL RECEPTOR -->
+  <div class="col-6">
+    <h4 class="text-center"
+    style="background-color: rgba(0, 38, 255, 0.116);">RECEPTOR</h4>
+  <table id="receptor" class="table ">
+    <tr class="p" >
+      <th>RFC:</th>
+      <td>{{ nomina[0].rfc }}</td>
+    </tr>
+    <tr>
+      <th>Número de empleado:</th>
+      <td>{{ nomina[0].num_empleado}}</td>
+    </tr>
+    <tr>
+      <th>Departamento</th>
+      <td>{{ nomina[0].departamento}}</td>
+    </tr>
+    <tr>
+      <th>Númeo de SS</th>
+      <td>{{ nomina[0].num_seguro}}</td>
+    </tr>
+    <tr>
+      <th>Fecha pago:</th>
+      <td>{{ nomina[0].fecha_pago}}</td>
+    </tr>
+    <tr>
+      <th>Periocidad:</th>
+      <td>{{ nomina[0].periodicidad_pago}}</td>
+    </tr>
+    <tr>
+      <th>Salario base cot:</th>
+      <td>{{ nomina[0].salario_base}}</td>
+    </tr>
+    <tr>
+      <th>Salario diario:</th>
+      <td>{{ nomina[0].salario_diario}}</td>
+    </tr>
+    <tr>
+      <th>Fecha inicial:</th>
+      <td>{{ nomina[0].fecha_ingreso}}</td>
+    </tr>
+    <tr>
+      <th>Fecha final:</th>
+      <td>{{ nomina[0].fecha_final_pago}}</td>
+    </tr>
+  </table>
+</div>
+
+  <!-- EDITABLES -->
+  <div class="col-6">
+    <h4 class="text-center" style="background-color: rgba(0, 38, 255, 0.116);">EDITABLES</h4>
+
+  <table class="table">
+    <tr>
+      <th class="text-lg">Registro patronal:</th>
+      <td class="text-lg" >{{ nomina[0].registro_patronal}}</td>
+    </tr>
+    <tr>
+      <td>
+        <mat-form-field appearance="fill" class="">
+          <mat-label>Periodo</mat-label>
+          <input class="text-lg" matInput [(ngModel)]="nomina[0].periodo" name="periodo" />
+        </mat-form-field>
+      </td>
+      <td>
+        <mat-form-field appearance="fill">
+          <mat-label class="text-md">Ejercicio</mat-label>
+          <input class="text-lg"  matInput [(ngModel)]="nomina[0].ejercicio" name="ejercicio" />
+        </mat-form-field>
+      </td>
+    </tr>
+  </table>
+  <div class="col text-center">
+    <span class="text-center text-md"><b>{{ nomina[0].descrip_periodo}}</b></span>
+  </div>
+    <h4 class="neto text-center">Neto: {{this.neto | currency:'MXN':'symbol-narrow':'1.2-2' }}</h4>
+ <!-- Boton exportar a PDF-->
+ <div  class="col text-center mt-2">
+  <button (click)="exportarAPDF()" class="btn btn-outline-info"
+  title="Descarga segura">Descargar PDF <i class="fa fa-download "
+    aria-hidden="true"></i></button>
+   <button class="btn btn-danger"
+  title="Regresar"
+  (click)="goBack()"
+  >Regresar <i class="fa fa-chevron-right"
+    aria-hidden="true"></i></button>
+</div>
+</div>
+</div>
+<mat-divider></mat-divider>
+
+
+<!-- TABS -->
+<mat-tab-group>
+  <!-- TAB-1 -->
+  <mat-tab label="Percepciones">
+    <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort>
+      <!-- Definir las columnas -->
+      <ng-container *ngFor="let col of displayedColumns" [matColumnDef]="col">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ col }}</th>
+        <td mat-cell *matCellDef="let element" [ngClass]="{'num-right': columnasFormateadas[col]}" >
+          <span *ngIf="!columnasFormateadas[col]">{{ element[col] }}</span>
+          <span *ngIf="columnasFormateadas[col]">{{ element[col] | currency:'MXN':'symbol-narrow':'1.2-2' }}</span>
+        </td>
+      </ng-container>
+
+      <!-- Definir la fila de encabezado -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <!-- Definir las filas de datos -->
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</mat-tab>
+<!-- TAB-2 -->
+  <mat-tab label="Deduciones">
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource2" matSort>
+        <!-- Definir las columnas -->
+        <ng-container *ngFor="let col of displayedColumns2" [matColumnDef]="col">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <!-- Cambia el nombre del encabezado-->
+            <span *ngIf="col === 'tipo'"><b>Tipo</b></span>
+            <span *ngIf="col === 'clave'"><b>Clave</b></span>
+            <span *ngIf="col === 'concepto'"><b>Concepto</b></span>
+            <span *ngIf="col === 'importe'"><b>Importe</b></span>
+          </th>
+          <!-- <td mat-cell *matCellDef="let element">{{ element[col] }}</td> -->
+          <td mat-cell *matCellDef="let element">
+            <!-- Aplica el filtro currency para formatear el importe -->
+            <span *ngIf="col !== 'importe'">{{ element[col] }}</span>
+            <span *ngIf="col === 'importe'">{{ element[col] | currency:'' }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Definir la fila de encabezado -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
+        <!-- Definir las filas de datos -->
+        <tr mat-row *matRowDef="let row; columns: displayedColumns2;"></tr>
+
+      </table>
+    </div>
+  </mat-tab>
+</mat-tab-group>
+
+</div>
+
+
+
+
+
