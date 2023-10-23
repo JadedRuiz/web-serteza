@@ -141,6 +141,8 @@ autocomplete(palabra : string){
     this.candidato_service.autoCompleteCandidato(json)
     .subscribe((object : any) => {
       if(object.ok){
+  console.log('o 3 :>> ');
+
         this.objEmpleados = object.data;
         this.id_empleado = this.objEmpleados[0].id_candidato
         // console.log('objEmpleados', this.id_empleado);

@@ -19,7 +19,7 @@ export class JustificacionService {
         return resp;
       }),
       catchError((err) => {
-        Swal.fire('Ha ocurrido un error', err.error.message, 'error');
+        // Swal.fire('Ha ocurrido un error', err.error.message, 'error');
         return throwError(err);
       })
     );

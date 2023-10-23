@@ -7,6 +7,7 @@ import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
 import { TurnosService } from 'src/app/services/turnos/turnos.service';
 import { NuevoUsuario } from 'src/app/models/NuevoUsuario';
 import { Perfil } from 'src/app/models/Perfil';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'app-proced-asignar-turno',
@@ -20,6 +21,8 @@ export class ProcedAsignarTurnoComponent implements OnInit {
   color = COLOR
   turnos : any
   turnoSelect: any
+  idCandi:any;
+  idTurno:any;
   constructor(
     private usuarioService: UsuarioService,
     private turnoService: TurnosService,
@@ -81,8 +84,9 @@ buscarUsuario(){
 
 optionUsuario(value : any){
   console.log(value.option.id);
-
+  this.idCandi = value.option.id;
 }
+
 
 
 // TURNOS
@@ -125,5 +129,27 @@ consultarTurnos(){
 }
 
 
+// ASIGNAR TURNO
+optionTurno(event: MatSelectChange) {
+  const selectedValue = event.value;
+  console.log(selectedValue);
+  this.idTurno = selectedValue;
+}
+asignar(){
+  let json = {
+    id_candidato_datos: 0,
+    id_candidato: this.idCandi,
+    id_candidato_jefe: 0,
+    id_turno: this.idTurno,
+    codigo_nomina: "",
+    id_reloj: 0
+  }
+  console.log('asignar :>> ', json);
+  this.turnoService.asignarTurno(json).subscribe(resp => {
+    if(resp.ok){
+      Swal.fire('Exito', 'Turno asignado correctamente', 'success');
+    }
+  })
+}
 
 }

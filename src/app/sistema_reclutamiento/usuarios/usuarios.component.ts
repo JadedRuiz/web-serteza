@@ -10,6 +10,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Fotografia } from 'src/app/models/Fotografia';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
+
 
 
 
@@ -25,15 +27,23 @@ export class UsuariosComponent implements OnInit {
   public perfilStock : any =
     'https://th.bing.com/th/id/R.20836a4a6bf6d8ee3031d28e133a9eb7?rik=gG%2bcRJRZ4jd0Cw&riu=http%3a%2f%2fconstantcontinuity.com%2fconstantcontinuity%2fimages%2fbig1.png&ehk=TtGb2WLFcbckjNT98147tFsMNaunQxrZpJ2JeMw0i84%3d&risl=&pid=ImgRaw&r=0';
   public color = COLOR;
+  // BUSCAR CANDIDATOS
+  public status = -1;
+  filterControlEmpleados = new FormControl();
   filterControl = new FormControl();
-
+  candidatos : any;
+  candidatos_busqueda : any;
+  objEmpleados: any;
+  idCandi: any;
+  palabra = "";
+  // <=
   datastorage: any = JSON.parse(localStorage.getItem('dataPage')!);
   miComprador = 1;
   miToken = 'VzNobUpiVm03SityMXRyN3ZROGEyaU0wWXVnYXowRjlkQzMxN0s2NjRDcz0=';
   miPerfil = 'ADMINISTRADOR';
   miUsuario = 1;
   camposActivos = false; //Sólo se utiliza actualmente para el botón de añadir foto de usuario por alguna razón
-  status: boolean = false;
+  // status: boolean = false;
   usuarios_busqueda : any;
   usuarios : any;
   formUsuario = false;
@@ -74,6 +84,8 @@ export class UsuariosComponent implements OnInit {
       private usuarioService: UsuarioService,
       private sanitizer: DomSanitizer,
       private modalService: NgbModal,
+    private candidato_service: CandidatoService,
+
     ) {}
 
   ngOnInit(): void {
@@ -85,6 +97,57 @@ export class UsuariosComponent implements OnInit {
       this.isCameraExist = mediaDevices && mediaDevices.length > 0;
     });
   }
+
+
+// BARRA DE BUSQUEDA
+mostrarCandidatos(){
+  let json = {
+    palabra : this.palabra.toUpperCase(),
+    status : this.status,
+    id_cliente : this.id_cliente,
+    tipo : 1
+  };
+  this.candidatos = [];
+  this.candidato_service.obtenerCandidatos(json)
+  .subscribe( (object : any) =>{
+      if(object.ok){
+       this.candidatos_busqueda= object.data;
+       this.objEmpleados = object.data
+      }
+  });
+}
+buscarCandidato(){
+  this.palabra = this.filterControl.value;
+  if(this.filterControl.value.length < 1){
+    this.mostrarCandidatos();
+  }
+  if(this.filterControl.value.length > 2){
+    this.autocomplete(this.filterControl.value);
+  }
+}
+autocomplete(palabra : string){
+
+ this.objEmpleados = [];
+  if(palabra.length > 2){
+    let json = {
+      nombre_candidato : this.palabra.toUpperCase(),
+      status : this.status,
+      id_cliente : this.id_cliente
+    };
+    this.candidato_service.autoCompleteCandidato(json)
+    .subscribe((object : any) => {
+      if(object.ok){
+        this.objEmpleados = object.data;
+      //  this.candidatos_busqueda = object.data;
+         this.idCandi = this.objEmpleados[0].id_candidato
+         console.log('objEmpleados', this.idCandi);
+      }
+    })
+  }
+}
+
+
+
 
   // Obtener USUARIOS
   obtenerUsuarios() {
@@ -107,10 +170,10 @@ export class UsuariosComponent implements OnInit {
   // Guardar Usuario
   guardarUsuario() {
     let json = {
-      id_usuario: 0,
+      id_usuario: 1,
       id_cliente: 5,
       id_sistema: 2,
-      id_candidato: 0,
+      id_candidato: this.idCandi,
       token: '012354SDSDS01',
       nombre: this.nuevoUsuario.nombre,
       usuario: this.nuevoUsuario.usuario,

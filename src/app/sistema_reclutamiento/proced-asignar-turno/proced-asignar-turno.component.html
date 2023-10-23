@@ -21,7 +21,7 @@
                           [matAutocomplete]="auto"
                           style="text-transform: uppercase;">
                   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionUsuario($event)">
-                      <mat-option *ngFor="let usuario of usuarios_busqueda" [value]="usuario.nombre" [id]="usuario">
+                      <mat-option *ngFor="let usuario of usuarios_busqueda" [value]="usuario.nombre" [id]="usuario.id_candidato">
                           {{usuario.nombre}}
                       </mat-option>
                   </mat-autocomplete>
@@ -35,7 +35,7 @@
               <div class="col-5 text-center">
                 <mat-form-field>
                   <mat-label>Turnos</mat-label>
-                  <mat-select>
+                  <mat-select  (selectionChange)="optionTurno($event)">
                     <mat-option *ngFor="let turno of turnoSelect" [value]="turno.id_turno">
                       {{turno.turno}}
                     </mat-option>
@@ -47,7 +47,7 @@
               </mat-form-field>
               <div class="col-1"></div> <!-- Columna vacía para empujar hacia la derecha -->
               <div class="col-auto">
-                <button class="btn btn-primary">ASIGNAR TURNO</button>
+                <button  (click)="asignar()" class="btn btn-primary">ASIGNAR TURNO</button>
               </div>
             </div>
 
