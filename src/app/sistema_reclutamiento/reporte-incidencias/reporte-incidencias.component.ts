@@ -11,6 +11,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import html2canvas from 'html2canvas';
 import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
+import { IncidenciaService } from 'src/app/services/incidencias/incidencia.service';
 import { Candidato } from 'src/app/models/Candidato';
 import { Direccion } from 'src/app/models/Direccion';
 import { Fotografia } from 'src/app/models/Fotografia';
@@ -168,6 +169,7 @@ export class ReporteIncidenciasComponent implements OnInit {
 
 
       constructor(
+        private incidencias_service:IncidenciaService,
         private empresa_service: EmpresaService,
         private calcularService: CalculoService,
         private cacheService: CacheTrabService,
@@ -482,14 +484,14 @@ exportExel(){
     id_departamento: 0,
     id_puesto: 0,
     solo_incidencias: 0,
-    fecha_incial: fechaInicialFormateada,
+    fecha_inicial: fechaInicialFormateada,
     fecha_final: fechaFinalFormateada,
     exportarExel: 1,
     token: '012354SDSDS01',
   };
   console.log('json exel :>> ', json);
 
-this.calcularService.exportarExcel(json).subscribe((object:any)=>{
+this.incidencias_service.calcularIncidencias(json).subscribe((object:any)=>{
   if(object.ok){
     Swal.fire({
       title: 'Generando reporte',
