@@ -14,6 +14,7 @@ import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
 import { Candidato } from 'src/app/models/Candidato';
 import { Direccion } from 'src/app/models/Direccion';
 import { Fotografia } from 'src/app/models/Fotografia';
+import { formatDate } from '@angular/common';
 @Component({
   selector: 'app-reporte-incidencias',
   templateUrl: './reporte-incidencias.component.html',
@@ -189,10 +190,6 @@ export class ReporteIncidenciasComponent implements OnInit {
       if (cachedData) {
         this.loading = true;
 
-        // this.empleados = cachedData;
-        // Configura el paginador y la tabla
-        // this.dataSource.data = cachedData;
-        // Después de obtener los datos, configura el paginador
         this.paginator.pageSize = 10;
         this.paginator.pageIndex = 0;
         this.paginator.length = this.empleados.length; // Total de registros
@@ -466,43 +463,58 @@ this.calcularService.variables(json).subscribe((object:any)=>{
 
 
 // EXPORTAR EXCEL
+ // FORMATEAR
+ formatearFechaParaGuardar(fecha: any) {
+  return formatDate(fecha, 'yyyy-MM-dd', 'en-US');
+}
+
 exportExel(){
+  const fechaInicialFormateada = this.formatearFechaParaGuardar(this.dateInicio);
+    const fechaFinalFormateada = this.formatearFechaParaGuardar(this.dateFinal);
+
   let json = {
+    id_incidencias: 0,
+    id_cliente: this.id_cliente,
+    id_candidato: 0,
     id_empresa: this.id_empresa,
-      rfc: '' || this.rfcTrabajador,
-      bimestre: 0 || this.biMesActual,
-      ejercicio: this.ejercicioActual,
-      registro_patronal: '' ,
-      exportar: 1
+    id_sucursal: 0,
+    id_departamento: 0,
+    id_puesto: 0,
+    solo_incidencias: 0,
+    fecha_incial: fechaInicialFormateada,
+    fecha_final: fechaFinalFormateada,
+    exportarExel: 1,
+    token: '012354SDSDS01',
   };
+  console.log('json exel :>> ', json);
 
-this.calcularService.exportarExcel(json).subscribe((object:any)=>{
-  if(object.ok){
-    Swal.fire({
-      title: 'Generando reporte',
-      text: 'Por favor, espere...',
-      icon: 'info',
-      allowOutsideClick: false,
-      showConfirmButton: false,
-      onBeforeOpen: () => {
-        Swal.showLoading();
-      },
-    });
-    setTimeout( ()=> {
-  var arrayBuffer = this.base64ToArrayBuffer(object.data);
-    var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
-    var data = window.URL.createObjectURL(newBlob);
-    let link  = document.createElement('a');
-    link.href = data;
-    link.download = "ReporteIntegrado.xlsx";
-    link.click();
-    Swal.close();
-    },500)
+// this.calcularService.exportarExcel(json).subscribe((object:any)=>{
+//   if(object.ok){
+//     Swal.fire({
+//       title: 'Generando reporte',
+//       text: 'Por favor, espere...',
+//       icon: 'info',
+//       allowOutsideClick: false,
+//       showConfirmButton: false,
+//       onBeforeOpen: () => {
+//         Swal.showLoading();
+//       },
+//     });
+//     setTimeout( ()=> {
+//   var arrayBuffer = this.base64ToArrayBuffer(object.data);
+//     var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
+//     var data = window.URL.createObjectURL(newBlob);
+//     let link  = document.createElement('a');
+//     link.href = data;
+//     link.download = "ReporteIntegrado.xlsx";
+//     link.click();
+//     Swal.close();
+//     },500)
 
 
 
-  }
-})
+//   }
+// })
 }
 
 
