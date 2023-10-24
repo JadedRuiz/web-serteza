@@ -15,13 +15,14 @@ import { Candidato } from 'src/app/models/Candidato';
 import { Direccion } from 'src/app/models/Direccion';
 import { Fotografia } from 'src/app/models/Fotografia';
 import { formatDate } from '@angular/common';
+import { Fechas } from 'src/app/models/fechas';
 @Component({
   selector: 'app-reporte-incidencias',
   templateUrl: './reporte-incidencias.component.html',
   styleUrls: ['./reporte-incidencias.component.css']
 })
 export class ReporteIncidenciasComponent implements OnInit {
-
+  fecha = new Fechas('','');
 
     dateInicio = new FormControl(new Date());
     dateFinal = new FormControl(new Date());
@@ -469,8 +470,8 @@ this.calcularService.variables(json).subscribe((object:any)=>{
 }
 
 exportExel(){
-  const fechaInicialFormateada = this.formatearFechaParaGuardar(this.dateInicio);
-    const fechaFinalFormateada = this.formatearFechaParaGuardar(this.dateFinal);
+  const fechaInicialFormateada = this.formatearFechaParaGuardar(this.fecha.fechaInicial);
+    const fechaFinalFormateada = this.formatearFechaParaGuardar(this.fecha.fechaFinal);
 
   let json = {
     id_incidencias: 0,
@@ -488,33 +489,33 @@ exportExel(){
   };
   console.log('json exel :>> ', json);
 
-// this.calcularService.exportarExcel(json).subscribe((object:any)=>{
-//   if(object.ok){
-//     Swal.fire({
-//       title: 'Generando reporte',
-//       text: 'Por favor, espere...',
-//       icon: 'info',
-//       allowOutsideClick: false,
-//       showConfirmButton: false,
-//       onBeforeOpen: () => {
-//         Swal.showLoading();
-//       },
-//     });
-//     setTimeout( ()=> {
-//   var arrayBuffer = this.base64ToArrayBuffer(object.data);
-//     var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
-//     var data = window.URL.createObjectURL(newBlob);
-//     let link  = document.createElement('a');
-//     link.href = data;
-//     link.download = "ReporteIntegrado.xlsx";
-//     link.click();
-//     Swal.close();
-//     },500)
+this.calcularService.exportarExcel(json).subscribe((object:any)=>{
+  if(object.ok){
+    Swal.fire({
+      title: 'Generando reporte',
+      text: 'Por favor, espere...',
+      icon: 'info',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      onBeforeOpen: () => {
+        Swal.showLoading();
+      },
+    });
+    setTimeout( ()=> {
+  var arrayBuffer = this.base64ToArrayBuffer(object.data);
+    var newBlob = new Blob([arrayBuffer], { type: "application/octet-stream" });
+    var data = window.URL.createObjectURL(newBlob);
+    let link  = document.createElement('a');
+    link.href = data;
+    link.download = "Reporte-Inciencias.xlsx";
+    link.click();
+    Swal.close();
+    },500)
 
 
 
-//   }
-// })
+  }
+})
 }
 
 

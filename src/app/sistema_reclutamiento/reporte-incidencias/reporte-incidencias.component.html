@@ -52,7 +52,7 @@
               <div class="row">
                 <div class="col-md-6">
                   <mat-form-field>
-                    <input matInput [matDatepicker]="picker1" placeholder="Fecha Inicial" [formControl]="dateInicio">
+                    <input matInput [matDatepicker]="picker1" placeholder="Fecha Inicial" [(ngModel)]="fecha.fechaInicial">
                     <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                     <mat-datepicker #picker1></mat-datepicker>
                   </mat-form-field>
@@ -60,7 +60,7 @@
                 <div class="col-md-6">
 
                   <mat-form-field>
-                    <input matInput [matDatepicker]="picker2" placeholder="Fecha Final" [formControl]="dateFinal">
+                    <input matInput [matDatepicker]="picker2" placeholder="Fecha Final" [(ngModel)]="fecha.fechaFinal">
                     <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                     <mat-datepicker #picker2></mat-datepicker>
                   </mat-form-field>
