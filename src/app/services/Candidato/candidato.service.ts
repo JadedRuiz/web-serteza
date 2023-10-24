@@ -84,6 +84,8 @@ export class CandidatoService {
 
 
 
+// PARA REGISTRAR ASISTENCIAS
+
   guardarChecada(json : any){
     let url = CHECK_API;
     return this.http.post( url, json )

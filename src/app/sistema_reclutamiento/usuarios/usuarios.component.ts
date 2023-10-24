@@ -170,7 +170,7 @@ autocomplete(palabra : string){
   // Guardar Usuario
   guardarUsuario() {
     let json = {
-      id_usuario: 1,
+      id_usuario: 0,
       id_cliente: 5,
       id_sistema: 2,
       id_candidato: this.idCandi,

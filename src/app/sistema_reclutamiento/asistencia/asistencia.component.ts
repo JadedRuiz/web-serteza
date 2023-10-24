@@ -34,11 +34,21 @@ export class AsistenciaComponent implements OnInit {
 
   registrar(){
     this.ubicacion()
+    Swal.fire({
+      title: 'Registrando',
+      text: 'Por favor espere...',
+      willOpen: () => {
+        Swal.showLoading();
+      },
+      allowOutsideClick: false,  // Evita que el usuario cierre el Swal haciendo clic fuera de él
+      allowEscapeKey: false,
+      showConfirmButton: false,     // Evita que el usuario cierre el Swal con la tecla Esc
+    });
   }
 
   ubicacion() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
+            navigator.geolocation.getCurrentPosition((position) => {
         this.longitud = position.coords.longitude;
         this.latitud = position.coords.latitude;
         console.log('Lat Long', this.latitud, this.longitud);
@@ -46,16 +56,17 @@ export class AsistenciaComponent implements OnInit {
       }, (error) => {
       });
     } else {
-      console.error('El navegador no admite geolocalización.');
+      console.error('El dispositivo no admite geolocalización.');
     }
 
   }
 
 
 check(){
+
   let json = {
-    id_candidato: 1249,
-    id_cliente: 5,
+    id_candidato: this.id_candidato,
+    id_cliente: this.id_cliente,
     fecha: "",
     hora: "",
     id_reloj: 0,
@@ -63,11 +74,18 @@ check(){
     longitud: this.latitud,
     latitud: this.longitud,
   }
+  console.error('El',json);
+
   this.candidato_service.guardarChecada(json).subscribe((resp)=>{
+    Swal.close();
     if(resp.ok){
       Swal.fire(
-        'Exito',resp.message,'success'
+        'Exito',resp.mensaje,'success'
       )
+    }else {
+      Swal.fire(
+        'Error',resp.mensaje,'error'
+      );
     }
   })
 }

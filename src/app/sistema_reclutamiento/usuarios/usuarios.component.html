@@ -60,7 +60,7 @@
                           [matAutocomplete]="auto" style="text-transform: uppercase;"
                           >
                           <mat-autocomplete #auto="matAutocomplete">
-                            <mat-option *ngFor="let empleado of objEmpleados" [value]="empleado.nombre"
+                            <mat-option *ngFor="let empleado of objEmpleados" [value]="empleado.nombre_completo"
                               [id]="empleado.id_empleado">
                               {{empleado.nombre}}
                             </mat-option>
