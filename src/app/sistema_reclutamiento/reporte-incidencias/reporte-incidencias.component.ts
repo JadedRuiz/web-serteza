@@ -484,14 +484,15 @@ exportExel(){
     id_departamento: 0,
     id_puesto: 0,
     solo_incidencias: 0,
-    fecha_inicial: fechaInicialFormateada,
+    fecha_inicial:  fechaInicialFormateada,
     fecha_final: fechaFinalFormateada,
-    exportarExel: 1,
+    exportar_excel: 1,
     token: '012354SDSDS01',
   };
-  console.log('json exel :>> ', json);
 
-this.incidencias_service.calcularIncidencias(json).subscribe((object:any)=>{
+  console.log('json exel :>> ', json);
+  this.incidencias_service.consultarIncidencias(json).subscribe((object:any)=>{
+    console.log('object exel :>> ', object);
   if(object.ok){
     Swal.fire({
       title: 'Generando reporte',
