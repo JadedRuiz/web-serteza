@@ -27,7 +27,10 @@ export class AsistenciaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.usuario_logueado, 'idCliente=>',this.id_cliente, this.id_candidato)
+    console.log(
+     'idusuario=>',this.usuario_logueado,
+     'idCliente=>',this.id_cliente,
+     'idCandidato=>', this.id_candidato)
   }
 
 // GUARDAR COORDENADAS
@@ -84,7 +87,7 @@ check(){
       )
     }else {
       Swal.fire(
-        'Error',resp.mensaje,'error'
+        'Error',resp.message,'error'
       );
     }
   })

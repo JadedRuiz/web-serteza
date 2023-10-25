@@ -19,6 +19,9 @@ export class CatalogoTurnosComponent implements OnInit {
   public turno = new Turno(0, 5, '', '', 0, 0, 0, 0, 0, '', 1, 0, [
     this.detalle,
   ]);
+  public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
+  public id_perfil = parseInt(window.sessionStorage.getItem('perfil') + '');
+  public id_candidato = parseInt(window.sessionStorage.getItem("candidato")+"");
   public isChecked: any;
   public editando = false;
   public displayedColumns: string[] = ['clave', 'turno'];
@@ -40,13 +43,13 @@ export class CatalogoTurnosComponent implements OnInit {
   obtenerTurnos() {
     let json = {
       id_turno: 0,
-      id_cliente: 5,
+      id_cliente: this.id_cliente,
       turno: '',
       solo_activos: 1,
       token: '012354SDSDS01',
     };
+     console.log('TurnosJson :>> ', json);
     this.turnosService.obtenerTurnos(json).subscribe((resp) => {
-      // console.log('Turnos :>> ', resp.data);
       // Agrupar los datos por id_turno
       this.turnos = this.groupTurnos(resp.data);
     });

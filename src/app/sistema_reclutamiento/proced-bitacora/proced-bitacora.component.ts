@@ -23,6 +23,8 @@ export class ProcedBitacoraComponent implements OnInit {
   public direccion : Direccion = new Direccion(0,"","","","","","","","","","","");
   public fotografia = new Fotografia(0,"","","");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
+  public id_perfil = parseInt(window.sessionStorage.getItem('perfil') + '');
+  public id_candidato = parseInt(window.sessionStorage.getItem("candidato")+"");
   public candidato = new Candidato(0,this.id_cliente,6,"","","","","","","","",0,"","","","","",0,this.direccion,this.fotografia);
   public candidatos : any;
   showModal = false;
@@ -34,7 +36,6 @@ export class ProcedBitacoraComponent implements OnInit {
   filterControl = new FormControl();
   candidatos_busqueda : any;
 
-  public id_perfil = parseInt(window.sessionStorage.getItem('perfil') + '');
   filterControlEmpleados = new FormControl();
   objEmpleados: any;
   empleadosIns : any = ''
@@ -73,7 +74,9 @@ consulta = false;
     // this.dataSource.data ='';
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // this.consultarIncidencias()
+  }
 
   buscarEmpleado() {}
 
@@ -162,8 +165,8 @@ consultarIncidencias(){
 this.consulta = true;
   let json = {
       id_incidencias: 0,
-      id_cliente: 5,
-      id_candidato: this.id_empleado,
+      id_cliente: this.id_cliente,
+      id_candidato: this.id_candidato || this.id_empleado,
       id_empresa: 0,
       id_sucursal: 0,
       id_departamento: 0,
@@ -173,6 +176,7 @@ this.consulta = true;
       fecha_final: "",
       token: "012354SDSDS01"
   }
+  console.log('jsonCInciden :>> ', json);
   this.incidencia_service.obternerIncidencias(json).subscribe((resp)=>{
     if (resp.ok){
       this.dataSource.data = resp.data;

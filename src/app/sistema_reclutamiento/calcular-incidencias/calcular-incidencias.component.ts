@@ -341,7 +341,7 @@ export class CalcularIncidenciasComponent implements OnInit {
       // Realiza la solicitud para el candidato actual
       this.incidencia_service.calcularIncidencias(json).subscribe((resp) => {
         if (resp) {
-           console.log('respIncidencias', resp);
+          //  console.log('respIncidencias', resp);
         if (progreso === this.calcularCandidatos.length) {
           // Agrega un retraso de 1 segundo antes de cerrar la alerta
           setTimeout(() => {

@@ -46,6 +46,8 @@ import { ReporteIncidenciasComponent } from './reporte-incidencias/reporte-incid
 import { UsuariosComponent } from './usuarios/usuarios.component';
 import { ProcedAsignarTurnoComponent } from './proced-asignar-turno/proced-asignar-turno.component';
 import { ProcedRecibosComponent } from './proced-recibos/proced-recibos.component';
+import { ProcedAutJustificacionesComponent } from './proced-aut-justificaciones/proced-aut-justificaciones.component';
+import { CatalogoPuntosAccesoComponent } from './catalogo-puntos-acceso/catalogo-puntos-acceso.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +72,9 @@ import { ProcedRecibosComponent } from './proced-recibos/proced-recibos.componen
     ReporteIncidenciasComponent,
     UsuariosComponent,
     ProcedAsignarTurnoComponent,
-    ProcedRecibosComponent
+    ProcedRecibosComponent,
+    ProcedAutJustificacionesComponent,
+    CatalogoPuntosAccesoComponent
   ],
   imports: [
     CompartidoModule,

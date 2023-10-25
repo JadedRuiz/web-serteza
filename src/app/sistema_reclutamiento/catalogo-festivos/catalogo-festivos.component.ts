@@ -17,8 +17,7 @@ export class CatalogoFestivosComponent implements OnInit {
   public color = COLOR;
   public festivo = new Festivos(0, 0, 0, '', '', '', 1, 0, 1);
   public id_perfil = parseInt(window.sessionStorage.getItem('perfil') + '');
-  filterControlEmpleados = new FormControl();
-  objEmpleados: any;
+  public id_cliente = parseInt(window.sessionStorage.getItem('cliente') + '');
   // VARIABLES TABLA
   displayedColumns: string[] = ['fecha', 'descripcion'];
   dataSource = new MatTableDataSource();
@@ -44,12 +43,11 @@ export class CatalogoFestivosComponent implements OnInit {
     this.obtenerfestivos();
   }
 
-  buscarEmpleado() {}
 
   obtenerfestivos() {
     let json = {
       id_dia_festivo: 0,
-      id_cliente: 5,
+      id_cliente: this.id_cliente,
       ejercicio: 2023,
       descripcion: '',
       solo_activos: 1,
@@ -103,14 +101,18 @@ export class CatalogoFestivosComponent implements OnInit {
         this.obtenerfestivos();
       }
     });
-   // console.log('guardarFest=>', json);
+    // console.log('guardarFest=>', json);
+
+    document.getElementById('cerrar1')!.click();
   }
 
 
   // MODAL
   openEditarModal(rowData: any) {
+    this.festivo = rowData;
     this.selectedRowData = rowData; // Asigna los datos de la fila a la variable selectedRowData
-    this.modalActivo = true; // Abre el modal de edición
+    this.modalActivo = true;
+    console.log(rowData);
   }
 
   editarfestivos() {
@@ -122,7 +124,7 @@ export class CatalogoFestivosComponent implements OnInit {
 
       let json = {
         id_dia_festivo: this.festivo.id_dia_festivo,
-        id_cliente: 5,
+        id_cliente: this.id_cliente,
         ejercicio: 2023,
         descripcion: this.festivo.descripcion,
         fecha: this.festivo.fecha,
@@ -136,45 +138,20 @@ export class CatalogoFestivosComponent implements OnInit {
         if (resp.ok) {
           Swal.fire('Festivo editado', resp.data.mensaje, 'success');
           this.festivo.fecha = '';
-          this.festivo.descripcion = ''; 
+          this.festivo.descripcion = '';
           this.obtenerfestivos();
         }
       });
 
       // Cierra el modal de edición
+      document.getElementById('cerrar')!.click();
       this.modalActivo = false;
     }
   }
-
-  // editarfestivos() {
-  //   this.formatFecha();
-  //    this.festivo.id_dia_festivo = this.selectedRowData.id_dia_festivo
-  //   let json = {
-  //     id_dia_festivo: this.festivo.id_dia_festivo,
-  //     id_cliente: 5,
-  //     ejercicio: 2023,
-  //     descripcion: this.festivo.descripcion,
-  //     fecha: this.festivo.fecha,
-  //     token: '012354SDSDS01',
-  //     activo: 1,
-  //     id_usuario: 1,
-  //   };
-  //   console.log('editarFest=>', json);
-
-    // this.festivosService.guardarFestivos(json).subscribe((resp) => {
-    //   if(resp.ok){
-    //     Swal.fire(
-    //       'Éxito',
-    //       resp.data.mensaje,
-    //       'success'
-    //     )
-
-    //     this.festivo.fecha = ''; // Limpia la fecha
-    //     this.festivo.descripcion = ''; // Limpia la descripción
-    //     this.obtenerfestivos();
-    //   }
-    // });
+  nuevo(){
+   this.festivo = new Festivos(0, 0, 0, '', '', '', 1, 0, 1);
   }
+}
 
 
 

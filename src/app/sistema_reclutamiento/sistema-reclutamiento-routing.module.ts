@@ -22,6 +22,8 @@ import { ReporteIncidenciasComponent } from './reporte-incidencias/reporte-incid
 import { UsuariosComponent } from './usuarios/usuarios.component';
 import { ProcedAsignarTurnoComponent } from './proced-asignar-turno/proced-asignar-turno.component';
 import { ProcedRecibosComponent } from './proced-recibos/proced-recibos.component';
+import { CatalogoPuntosAccesoComponent } from './catalogo-puntos-acceso/catalogo-puntos-acceso.component';
+import { ProcedAutJustificacionesComponent } from './proced-aut-justificaciones/proced-aut-justificaciones.component';
 
 const routes: Routes = [
   {
@@ -49,6 +51,9 @@ const routes: Routes = [
         { path : "reporte_incidencia", component : ReporteIncidenciasComponent},
         { path : "asignar_turno", component : ProcedAsignarTurnoComponent},
         { path : "recibosTrab", component : ProcedRecibosComponent},
+        { path : "puntos_Acceso", component : CatalogoPuntosAccesoComponent},
+        { path : "aut_justificaciones", component : ProcedAutJustificacionesComponent},
+        { path : "user", component : UsuariosComponent},
         // { path : "catalogo_cliente/:id", component : CatalogoClienteComponent},
     ]
   }
