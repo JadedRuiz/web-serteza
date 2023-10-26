@@ -102,7 +102,7 @@ incapacidades:any=''
   }
 
   ngOnInit(): void {
-    this.obternerIncapacidades();
+    // this.obternerIncapacidades();
 
   }
 
@@ -124,12 +124,17 @@ incapacidades:any=''
   }
 
   // MODAL
+  editar = false;
   openModal(rowData: any) {
+    this.editar = true;
+    this.vaciarModelo();
     this.modal = this.modalService.open(this.modal_mov, {
       size: 'md',
       centered: true,
     });
     this.selectedRowData = rowData;
+    this.incapacidad = rowData;
+    console.log(this.incapacidad);
   }
 
   closeModal() {
@@ -147,9 +152,6 @@ incapacidades:any=''
     this.candidatos = [];
     this.candidato_service.obtenerCandidatos(json).subscribe((object: any) => {
       if (object.ok) {
-        // this.dataSource.data = object.data;
-        // this.dataSource.paginator = this.paginator;
-        // this.candidatos_busqueda = object.data;
         this.objEmpleados = object.data;
       }
     });
@@ -179,9 +181,6 @@ incapacidades:any=''
           if (object.ok) {
             this.objEmpleados = object.data;
             this.candidatos_busqueda = object.data;
-            //  console.log('=>>this.candidatos',this.candidatos_busqueda[0].id_candidato)
-            // this.dataSource.data = object.data;
-            // this.dataSource.paginator = this.paginator;
           }
         });
     }
@@ -190,12 +189,21 @@ incapacidades:any=''
   // INCAPACIDADES
 
   // OBTENER
+  usuarioSeleccionado= {
+    'id_candidato' :''
+  }
+  optionUsuario(value : any){
+    this.usuarioSeleccionado = value.option.id;
+    console.log(this.usuarioSeleccionado);
+    console.log(this.usuarioSeleccionado.id_candidato);
+    this.obternerIncapacidades()
+  }
 
   obternerIncapacidades() {
     let json = {
       id_incapacidad: 0,
-      id_cliente: 5,
-      id_candidato: 1,
+      id_cliente: this.id_cliente,
+      id_candidato: this.usuarioSeleccionado.id_candidato,
       fecha_incial: '',
       fecha_final: '',
       solo_activos: 1,
@@ -216,7 +224,7 @@ incapacidades:any=''
 
   // FORMATEAR
   formatearFechaParaGuardar(fecha: any) {
-    return formatDate(fecha, 'yyyy-MM-dd', 'en-US'); 
+    return formatDate(fecha, 'yyyy-MM-dd', 'en-US');
   }
 
   // CALCULAR
@@ -241,7 +249,7 @@ incapacidades:any=''
 
     let json = {
       id_incapacidad: 0,
-      id_cliente: 5,
+      id_cliente: this.id_cliente,
       id_candidato: this.candidatos_busqueda[0].id_candidato,
       folio: this.incapacidad.folio,
       dias_incapacidad: diasIncapacidad,
@@ -264,8 +272,16 @@ incapacidades:any=''
 
 
   openModal2(){
+    this.editar = false;
+
+    this.vaciarModelo();
       this.modal = this.modalService.open(this.modal_mov,{
          size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+  }
+
+  vaciarModelo(){
+  this.incapacidad = new Incapacidad(0,0,0,'',0,'','',0,'',0)
+
   }
 
 }

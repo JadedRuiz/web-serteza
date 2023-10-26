@@ -13,6 +13,9 @@ import { Fotografia } from 'src/app/models/Fotografia';
 import Swal from 'sweetalert2';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { formatDate } from '@angular/common';
+import { JustificacionService } from 'src/app/services/justificaciones/justificacion.service';
+import { Justificacion } from 'src/app/models/Justificaciones';
+import { globalAgent } from 'http';
 @Component({
   selector: 'app-proced-aut-justificaciones',
   templateUrl: './proced-aut-justificaciones.component.html',
@@ -20,6 +23,7 @@ import { formatDate } from '@angular/common';
 })
 export class ProcedAutJustificacionesComponent implements OnInit {
     fotoIncapacidad ='https://th.bing.com/th/id/R.218d63aed1c5e714180a6b190913fb4f?rik=OiNmcrpCohbNsQ&pid=ImgRaw&r=0&sres=1&sresct=1'
+
     public direccion: Direccion = new Direccion(
         0,
         '',
@@ -59,6 +63,7 @@ export class ProcedAutJustificacionesComponent implements OnInit {
         this.fotografia
       );
       incapacidad = new Incapacidad(0,0,0,'',0,'','',0,'',0)
+       justi = new Justificacion(0,0,'','','','',0,0,'','',0,'',0,'',0,'',0,'',0,'')
       public candidatos: any;
       public color = COLOR;
       public status = -1; //Status default
@@ -92,7 +97,8 @@ export class ProcedAutJustificacionesComponent implements OnInit {
       constructor(
         private modalService: NgbModal,
         private candidato_service: CandidatoService,
-        private incapacidadService: IncapacidadService
+        private incapacidadService: IncapacidadService,
+        private justiService: JustificacionService,
       ) {
         // Genera datos de prueba
         this.objEmpleados = '';
@@ -100,39 +106,9 @@ export class ProcedAutJustificacionesComponent implements OnInit {
       }
 
       ngOnInit(): void {
-        this.obternerIncapacidades();
-
+        this.obtenerJustificaciones();
       }
 
-      private generateTableData(): any[] {
-        const tableData = [];
-        for (let i = 1; i <= 3; i++) {
-          tableData.push({
-            fecha: `2023-10-${i}`,
-            entrada: `Entrada ${i}`,
-            salida: `Salida ${i}`,
-            tipoF: 'A',
-            tipoD: 'M',
-            tipoV: 'B',
-            tipoR: 'A',
-            descripcion: `Descripción ${i}`,
-          });
-        }
-        return tableData;
-      }
-
-      // MODAL
-      openModal(rowData: any) {
-        this.modal = this.modalService.open(this.modal_mov, {
-          size: 'md',
-          centered: true,
-        });
-        this.selectedRowData = rowData;
-      }
-
-      closeModal() {
-        this.modal.close();
-      }
 
       // BARRA DE BUSQUEDA
       mostrarCandidatos() {
@@ -184,6 +160,95 @@ export class ProcedAutJustificacionesComponent implements OnInit {
             });
         }
       }
+
+      public IdCandidato = 0
+      optionUsuario(value : any){
+        // console.log(value.option.id.id_candidato);
+        this.IdCandidato = value.option.id.id_candidato;
+        this.obtenerJustificaciones()
+      }
+
+
+
+
+      // PARA JUSTIFICACIONES
+      justificaciones:any
+
+      obtenerJustificaciones(){
+        this.justificaciones = [];
+        let json = {
+          id_justificacion: 0,
+          id_cliente: this.id_cliente,
+          id_candidato: this.IdCandidato,
+          id_empresa: 0,
+          id_sucursal: 0,
+          id_departamento: 0,
+          id_puesto: 0,
+          sin_autorizar: 1,
+          fecha_inicial: '',
+          fecha_final: '',
+          token: '012354SDSDS01',
+        };
+        this.justiService.obternerJustificaciones(json).subscribe(resp => {
+          if(resp.ok){
+            this.justificaciones = resp.data
+            console.log(this.justificaciones);
+            // console.log(this.justificaciones);
+          }
+        })
+      }
+
+
+      // AUTORIZAR
+      autorizar(id :any){
+        Swal.fire({
+          title: '¿Autorizar justificación?',
+          showDenyButton: true,
+          showCancelButton: false,
+          confirmButtonText: 'Confirmar',
+          denyButtonText: `Cancelar`,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            let json = {
+              id_justificacion: id,
+              token: '012354SDSDS01',
+              id_usuario: 1,
+            };
+
+            this.justiService.autorizarJustificacion(json).subscribe(resp => {
+              if(resp.ok){
+                console.log(resp);
+                Swal.fire(resp.data.mensaje, '', 'success')
+              }
+            })
+
+
+          }
+        })
+
+      }
+
+
+         // MODAL
+         openModal(rowData: any) {
+          this.modal = this.modalService.open(this.modal_mov, {
+            size: 'md',
+            centered: true,
+          });
+          this.selectedRowData = rowData;
+        }
+
+        closeModal() {
+          this.modal.close();
+        }
+
+        openModal2(){
+          this.modal = this.modalService.open(this.modal_mov,{
+             size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
+      }
+
+
+
 
       // INCAPACIDADES
 
@@ -261,9 +326,6 @@ export class ProcedAutJustificacionesComponent implements OnInit {
       }
 
 
-      openModal2(){
-          this.modal = this.modalService.open(this.modal_mov,{
-             size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
-      }
+
 
     }

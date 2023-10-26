@@ -19,7 +19,7 @@ import Swal from 'sweetalert2';
 })
 export class ProcedBitacoraComponent implements OnInit {
   public color = COLOR;
-  public justificacion = new Justificacion(0,0,0,'','');
+  public justificacion = new Justificacion(0,0,'','','','',0,0,'','',0,'',0,'',0,'',0,'',0,'');
   public direccion : Direccion = new Direccion(0,"","","","","","","","","","","");
   public fotografia = new Fotografia(0,"","","");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
@@ -82,7 +82,7 @@ consulta = false;
 
 // MODAL
  openModal(rowData: any) {
-
+  // this.vaciarModelo();
    if(rowData){
      this.selectedRowData = rowData;
      this.justi = this.selectedRowData;
@@ -205,7 +205,7 @@ consultarjusticaciones(){
   let json = {
     id_justificacion: 0,
     id_cliente: this.justificacion.id_cliente,
-    id_candidato: this.justificacion.id_candidato,
+    id_candidato: this.candidato.id_candidato,
     id_empresa: 0,
     id_sucursal: 0,
     id_departamento: 0,
@@ -233,12 +233,12 @@ guardarJustificacion(){
   let json = {
     id_justificacion: this.justificacion.id_justificacion,
     id_cliente: this.id_cliente,
-    id_candidato: this.justi.id_candidato,
+    id_candidato: this.candidato.id_candidato,
     motivo: motivoEdit,
     fecha: this.justi.fecha
   }
 
-  // console.log('Guardar justi=>',json);
+   console.log('Guardar justi=>',json);
   this.just_service.guardarJustificacion(json).subscribe((resp)=>{
     if (resp.ok){
       Swal.fire(

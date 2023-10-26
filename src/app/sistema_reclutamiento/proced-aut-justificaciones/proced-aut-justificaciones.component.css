@@ -1,10 +1,12 @@
 
 .custom-card:hover {
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.322);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.507);
+  border-radius: 7px;
 }
 
 .card-label {
   /* font-weight: bold; */
+  margin: 0px 0px ;
 }
 
 .custom-card {
@@ -17,7 +19,7 @@
 }
 
 .nomobre{
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 700;
   font-family: 'Times New Roman', Times, serif;
   padding: 0px;
@@ -26,11 +28,35 @@
   /* Estilo de la imagen */
   .card-image {
     width: 112%; /* Ajusta la imagen al ancho de su contenedor */
-    height: 83%;
+    height: 91%;
     object-fit: cover;
+    border-radius: 7px;
 
   }
 
   .text_info{
     text-align: left;
+  }
+
+  .fecha{
+    font-size: 20px;
+  }
+  .motivo {
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px; /* Ajusta el ancho máximo según tus necesidades */
+    display: inline-block; /* Asegura que el motivo se muestre en una sola línea */
+  }
+
+
+  .fa-times{
+    color: red;
+    font-size: 18px;
+  }
+
+  .ni-check-bold {
+    color: green;
+    font-size:18px;
   }

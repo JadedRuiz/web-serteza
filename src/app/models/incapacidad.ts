@@ -10,5 +10,6 @@ export class Incapacidad {
     public activo : number,
     public token : string,
     public id_usuario : number,
+    public nombre_completo?: string,
 ) { }
 }

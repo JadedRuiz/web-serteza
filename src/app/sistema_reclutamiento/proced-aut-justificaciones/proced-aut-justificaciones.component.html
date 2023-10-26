@@ -17,9 +17,9 @@
                       class="fa fa-search" aria-hidden="true"></i></mat-label>
                   <input type="text" placeholder="NOMBRE o RFC" aria-label="Number" matInput (keyup)="buscarCandidato()"
                     [formControl]="filterControl" [matAutocomplete]="auto" style="text-transform: uppercase;">
-                  <mat-autocomplete #auto="matAutocomplete">
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionUsuario($event)">
                     <mat-option *ngFor="let empleado of objEmpleados" [value]="empleado.nombre"
-                      [id]="empleado.id_empleado">
+                      [id]="empleado">
                       {{empleado.nombre}}
                     </mat-option>
                   </mat-autocomplete>
@@ -35,28 +35,26 @@
         <!-- CARDS -->
         <div class="card-body">
           <div class="row">
-            <div class="col-md-4 mb-3" *ngFor="let incapacidad of incapacidades">
-              <mat-card class="custom-card" (click)="openModal(incapacidad)">
+            <div class="col-md-4 mb-3" *ngFor="let justificacion of justificaciones">
+              <mat-card class="custom-card" (click)="autorizar(justificacion.id_justificacion)">
                 <mat-card-content>
                   <div class="row">
                     <div class="col">
-                   <img [src]=fotoIncapacidad alt="Imagen" class="card-image border ">
+                   <img [src]="justificacion.fotografia"  alt="Imagen" class="card-image border ">
                  </div>
                  <div class="col text_info">
-                      <p class="nomobre">{{incapacidad.nombre_completo}}</p>
-                      <p class="card-label"><strong>Folio:</strong>{{incapacidad.folio}}</p>
-                      <p class="card-label"><strong>Dias:</strong> {{incapacidad.dias_incapacidad}}</p>
+                      <h4 class="nomobre">{{justificacion.nombre_completo}}</h4>
+                      <p class="card-label"><strong>Folio:</strong>{{justificacion.folio}}</p>
+                      <p class="card-label"><strong>Motivo:</strong> <br>
+                        <span class="motivo">{{justificacion.motivo}}</span>
+                      </p>
+                      <p class="card-label"><strong>Puesto:</strong> {{justificacion.puesto}}</p>
                     </div>
-                    <!-- <div class="col">
-                    </div> -->
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <p class="card-label">Fecha Inicio: <br> <strong>{{incapacidad.fecha_inicial}}</strong></p>
-                    </div>
-                    <div class="col">
-                      <p class="card-label">Fecha Final: <br> <strong>{{incapacidad.fecha_final}}</strong> </p>
-                    </div>
+                 </div>
+                  <div class=" col-12 text-center">
+                      <h4 class= " fecha card-label"><strong>{{justificacion.fecha}}</strong> - {{justificacion.dia_descrip}}</h4>
+                      <h4>Autorizado: <i [ngClass]="{'fa fa-times': justificacion.autorizado == 0, 'ni ni-check-bold': justificacion.autorizado == 1}"></i></h4>
+
                   </div>
 
 
@@ -71,15 +69,14 @@
 </div>
 
 
-<!-- MODAL AGREGAR INCAPACIODAD -->
-<ng-template #content let-c="close" let-d="dismiss">
+<!-- MODAL -->
+<!-- <ng-template #content let-c="close" let-d="dismiss">
   <div class="">
     <div class="modal-content">
       <div class="modal-header">
         <h1>Agregar Incapacidad</h1>
       </div>
       <form class="container">
-          <!-- BUSCADOR -->
           <div class="card-category">
             <div class="row">
               <div class="col-md-6 col-sm-12 d-flex align-items-center">
@@ -129,32 +126,8 @@
       </form>
     </div>
   </div>
-</ng-template>
+</ng-template> -->
 
-<!-- MODAL -->
-<ng-template #content let-c="close" let-d="dismiss">
-  <div class="modal-body" style="overflow-x: hidden;">
-    <div class="modal-content">
-      <div class="col text-center">
-        <h2>Nombre del trabajador</h2>
-      </div>
-      <div class="col">
-        <h3>Fecha: {{ selectedRowData.fecha }}</h3>
-        <form class="mt-2 example-form">
-          <mat-form-field class="col-10 offset-1">
-            <mat-label>Justificación</mat-label>
-            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="7"></textarea>
-          </mat-form-field>
-        </form>
-      </div>
 
-      <!-- Botón para cerrar el modal -->
-      <div class="col d-flex justify-content-end m-2">
-        <button class="btn btn-success" (click)="closeModal()">Guardar</button>
-        <button class="btn btn-danger" (click)="closeModal()">Cerrar</button>
-      </div>
-    </div>
-  </div>
-</ng-template>
 
 
