@@ -205,7 +205,9 @@ this.consulta = true;
       this.nombreEmpleado= this.empleadosIns[0].nombre_completo;
       // this.fechaEmpleado= this.empleadosIns[0].fecha;
       this.diaEmpleado= this.empleadosIns[0].dia_descrip;
-
+      this.candidato.fotografia= this.empleadosIns[0].fotografia;
+      this.candidato.nombre= this.empleadosIns[0].nombre_completo;
+      console.log('resp :>> ', resp);
       // console.log('incidencia.data :>> ', this.empleadosIns );
     }
   })
