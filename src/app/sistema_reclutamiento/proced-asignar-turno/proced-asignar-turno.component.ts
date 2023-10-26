@@ -8,6 +8,7 @@ import { TurnosService } from 'src/app/services/turnos/turnos.service';
 import { NuevoUsuario } from 'src/app/models/NuevoUsuario';
 import { Perfil } from 'src/app/models/Perfil';
 import { MatSelectChange } from '@angular/material/select';
+import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
 
 
 @Component({
@@ -17,10 +18,16 @@ import { MatSelectChange } from '@angular/material/select';
 })
 export class ProcedAsignarTurnoComponent implements OnInit {
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
-
-  usuarios_busqueda : any;
-  usuarios : any;
+  public status = -1; //Status default
+  public palabra = "";
+  public candidatos : any;
+  candidatos_busqueda : any;
+  id_empleado:any;
   filterControl = new FormControl();
+
+  filterControlEmpleados = new FormControl();
+  objEmpleados: any;
+  empleadosIns : any = ''
   color = COLOR
   turnos : any
   turnoSelect: any
@@ -29,67 +36,70 @@ export class ProcedAsignarTurnoComponent implements OnInit {
   constructor(
     private usuarioService: UsuarioService,
     private turnoService: TurnosService,
+    private candidato_service: CandidatoService,
+
   ) { }
 
   ngOnInit(): void {
     this.consultarTurnos();
-  this.mostrarUsuarios();
 
   }
 
 
 // BARRA DE BUSQUEDA
-mostrarUsuarios(){
+mostrarCandidatos(){
   let json = {
-    id_usuario: 0,
-    id_cliente: this.id_cliente,
-    id_sistema: 2,
-    usuario: '',
-    solo_activos: 1,
-    id_usuario_consulta: 0,
-    token: '012354SDSDS01',
+    palabra : this.palabra.toUpperCase(),
+    status : this.status,
+    id_cliente : this.id_cliente,
+    tipo : 1
   };
-  this.usuarioService.consultarUsuarios(json).subscribe((resp) => {
-    if (resp.ok) {
-      // console.log('Usuarios :>> ', resp.data);
-      this.usuarios = resp.data;
-      this.usuarios_busqueda = resp.data;
-      console.log(this.usuarios);
-    }
-  });
-
-}
-
-buscarUsuario(){
-
-  if(this.filterControl.value.length > 1){
-  this.usuarios_busqueda = [];
-  this.usuarios.forEach((element : any) => {
-    this.usuarios_busqueda.push({
-      "nombre" : element.nombre,
-      "id_usuario" : element.id_usuario
-    });
-  });
-}
-  if(this.filterControl.value.length > 2){
-    this.usuarios_busqueda = [];
-    this.usuarios.forEach((element : any) => {
-      if(element.nombre.includes(this.filterControl.value)){
-        this.usuarios_busqueda.push({
-          "nombre" : element.nombre,
-          "id_usuario" : element.id_usuario
-        })
+  this.candidatos = [];
+  this.candidato_service.obtenerCandidatos(json)
+  .subscribe( (object : any) =>{
+      if(object.ok){
+        // this.dataSource.data = object.data;
+        // this.dataSource.paginator = this.paginator;
+       this.candidatos_busqueda= object.data;
+       this.objEmpleados = object.data
       }
-    });
-    console.log('userBusqueda=>',this.usuarios_busqueda);
+  });
+}
+buscarCandidato(){
+  this.palabra = this.filterControl.value;
+  if(this.filterControl.value.length < 1){
+    this.mostrarCandidatos();
+  }
+  if(this.filterControl.value.length > 2){
+    this.autocomplete(this.filterControl.value);
+  }
+
+}
+autocomplete(palabra : string){
+ // this.candidatos_busqueda = [];
+  if(palabra.length > 2){
+    let json = {
+      nombre_candidato : this.palabra.toUpperCase(),
+      status : this.status,
+      id_cliente : this.id_cliente
+    };
+    this.candidato_service.autoCompleteCandidato(json)
+    .subscribe((object : any) => {
+      if(object.ok){
+  console.log('o 3 :>> ');
+
+        this.objEmpleados = object.data;
+        this.id_empleado = this.objEmpleados[0].id_candidato
+        // console.log('objEmpleados', this.id_empleado);
+      }
+    })
   }
 }
-
 optionUsuario(value : any){
   console.log(value.option.id);
-  this.idCandi = value.option.id;
+  this.idCandi = value.option.id.id_candidato;
+  console.log(this.idCandi);
 }
-
 
 
 // TURNOS
@@ -151,12 +161,12 @@ asignar(){
   this.turnoService.asignarTurno(json).subscribe(resp => {
     if(resp.ok){
       Swal.fire('Exito',
-       resp.message,
+       resp.mensaje,
         'success');
     }
     if(!resp.ok){
       console.log(resp);
-      Swal.fire(resp.message,
+      Swal.fire(resp.mensaje,
       '',
        'warning');
     }
