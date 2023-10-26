@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { COLOR } from 'src/config/config';
 import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
-
+import { ClienteService } from 'src/app/services/Cliente/cliente.service';
+import { interval } from 'rxjs';
 import Swal from 'sweetalert2';
 
 
@@ -15,23 +16,67 @@ export class AsistenciaComponent implements OnInit {
   public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
   public id_candidato = parseInt(window.sessionStorage.getItem("candidato")+"");
+  public perfil = parseInt(window.sessionStorage.getItem("perfil")+"");
   public color = COLOR;
   longitud:any = '';
   latitud:any = '';
+  fecha:string = ''
+  public foto_empresa : any //
 
   constructor(
     private router: Router,
     private candidato_service: CandidatoService,
+    private cliente_service : ClienteService,
+
 
 
   ) { }
 
   ngOnInit(): void {
+    this.mostrarLogo()
+    interval(1000).subscribe(() => {
+      this.actualizarFechaYHora();
+    });
     console.log(
      'idusuario=>',this.usuario_logueado,
      'idCliente=>',this.id_cliente,
+     'Perfil=>',this.perfil,
      'idCandidato=>', this.id_candidato)
   }
+
+
+
+  actualizarFechaYHora() {
+    const now = new Date();
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    };
+
+    this.fecha = now.toLocaleDateString('es-ES', options);
+  }
+
+  // PARA IMAGEN
+  mostrarLogo(){
+    if(window.sessionStorage.getItem("cliente") != null){
+      let id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
+      this.cliente_service.obtenerClientesPorId(id_cliente)
+      .subscribe( (object : any) => {
+        if(object.ok){
+          this.foto_empresa = ""+object.data[0].fotografia+"";
+        }
+      });
+    }else{
+      this.foto_empresa = "./assets/img/defaults/imagen-empresa-default.png";
+    }
+  }
+
+
 
 // GUARDAR COORDENADAS
 
@@ -87,7 +132,7 @@ check(){
       )
     }else {
       Swal.fire(
-        'Error',resp.message,'error'
+        'Error',resp.mensaje,'error'
       );
     }
   })

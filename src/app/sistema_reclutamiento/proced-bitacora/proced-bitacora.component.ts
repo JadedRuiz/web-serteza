@@ -75,13 +75,26 @@ consulta = false;
   }
 
   ngOnInit(): void {
-    // this.consultarIncidencias()
+    this.bitacoraTrab();
   }
+
+
+// PARA TRABAJADORES
+trabajador = true
+bitacoraTrab(){
+  if(this.id_perfil===7){
+    this.trabajador = false;
+    this.consultarIncidencias()
+  }
+}
 
 
 
 // MODAL
  openModal(rowData: any) {
+  if(this.trabajador==false){
+    return
+  }
   // this.vaciarModelo();
    if(rowData){
      this.selectedRowData = rowData;

@@ -44,6 +44,7 @@ export class SidebarComponent implements OnInit {
     }
 
   ngOnInit() {
+    console.log(this.perfil)
     this.pintarMenu();
     this.mostrarLogo();
     // this.validarClientes();
@@ -88,13 +89,36 @@ export class SidebarComponent implements OnInit {
     );
     }
     //JEFE INMEDIATO
-    if(this.perfil == 2){
+    if(this.perfil == 3){
       catalogos.push(
-        {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'}
-      );
+        {path: 'catalogo_empresa', title: 'Empresas', icon: 'far fa-building'},
+        {path: 'catalogo_sucursal', title: 'Sucursales', icon: 'fa fa-bookmark'},
+        {path: 'catalogo_departamento', title: 'Departamentos', icon: 'ni-archive-2'},
+        {path: 'usuarios', title: 'Usuarios', icon: 'ni-circle-08'},
+        {path: 'catalogo_turnos', title: 'Turnos', icon: 'fa fa-users'},
+        {path: 'catalogo_festivos', title: 'Festivos', icon: 'fa fa-bookmark'},
+        {path: 'puntos_Acceso', title: 'Puntos de acceso', icon: 'ni  ni-time-alarm'},
+        );
+        procesos.push(
+          {path: 'catalogo_candidato', title: 'Candidatos', icon: 'ni-badge'},
+         {path: 'procedimiento_contratacion', title: 'Contrataciones', icon: 'ni-folder-17'},
+         {path: 'procedimiento_modificacion', title: 'Modificaciones', icon: 'ni-curved-next'},
+         {path: 'procedimiento_baja', title: 'Bajas', icon: 'ni-fat-remove'},
+         );
+         asistencias.push(
+         {path: 'bitacora-insidencias', title: 'Bitacora', icon: 'fa fa-calendar-check'},
+         {path: 'asignar_turno', title: 'Asignar turnos', icon: 'fa fa-id-badge'},
+         {path: 'proced_vacaciones', title: 'Vacaciones', icon: 'ni-calendar-grid-58'},
+         {path: 'proced_incapacidades', title: 'Incapacidades', icon: 'fa fa-medkit'},
+         {path: 'calcular_incidencia', title: 'Calcular Incidencias', icon: 'ni-archive-2 text-white'},
+         {path: 'proced_xml', title: 'Recibos', icon: 'ni ni-single-copy-04'},
+         {path: 'asistencia', title: 'Asistencia',  icon: 'fa fa-check-square'},
+        //  {path: 'user', title: 'Usuarios', icon: 'fa fa-users'},
+         {path: 'aut_justificaciones', title: 'Justificaciones', icon: 'fa fa-file-archive'},
+    );
     }
     //RECURSOS HUMANOS
-    if(this.perfil == 3){
+    if(this.perfil == 2){
       catalogos.push(
         {path: 'catalogo_empresa', title: 'Empresas', icon: 'far fa-building'},
         {path: 'catalogo_sucursal', title: 'Sucursales', icon: 'fa fa-bookmark'},
@@ -125,9 +149,9 @@ export class SidebarComponent implements OnInit {
     //EMPLEADO
     if(this.perfil == 7){
       this.menuItems = [
-         { path: 'asistencia', title: 'Asistencia',  icon: 'fa fa-id-badge text-green', id:"asistencia_header", band: false, tipo : "", bg : "red"},
-         { path: 'proced_xml', title: 'Recibos',  icon: 'ni-archive-2 text-green', id:"asistencia_header", band: false, tipo : "", bg : "red"},
-         { path: 'bitacora-insidencias', title: 'Bitacora',  icon: 'ni-calendar-grid-58 text-green', id:"asistencia_header", band: false, tipo : "", bg : "red"},
+         { path: 'asistencia', title: 'Asistencia',  icon: 'fa fa-id-badge text-blue', id:"asistencia_header", band: false, tipo : "", bg : "red"},
+         { path: 'proced_xml', title: 'Recibos',  icon: 'ni-archive-2 text-blue', id:"asistencia_header", band: false, tipo : "", bg : "red"},
+         { path: 'bitacora-insidencias', title: 'Bitacora',  icon: 'ni-calendar-grid-58 text-blue', id:"asistencia_header", band: false, tipo : "", bg : "red"},
         ];
       // catalogos.push(
       // );

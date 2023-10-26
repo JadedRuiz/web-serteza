@@ -7,27 +7,22 @@
     <div class="col-lg-12 col-sm-12">
       <div class="card">
         <div class="card-header">
-          <h4 class="card-title">BIENVENIDO</h4>
+          <h3 class="title">BIENVENIDO</h3>
         </div>
-
-        <div style="height: 100px;"></div>
-        <div class="row">
-
-        <div class="col">
-          <div class="cardo">
-            <h4 class="cardo-header">MENU</h4>
-            <div class="cardo-body">
-              <button (click)="registrar()" class="btn btn-primary">REGISTRAR ASISTENCIA</button>
-              <button (click)="recibos()" class="btn mt-3 mb-3 btn-primary">RECIBOS DE PAGO</button>
-              <a (click)="entradasSalidas()" class="btn btn-primary">ENTRADAS Y SALIDAS</a>
+        <div class="row justify-content-center">
+          <div class="col-12 mt-3 pt-3 col-md-4">
+            <img src="{{foto_empresa}}" alt="Empresa Logo" class="ml-2 card-img">
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="card-body">
+              <h3 class="fecha"><span>{{ fecha }}</span></h3>
+              <div class="col text-center">
+                <button (click)="registrar()" class=" btn-block btn btn-primary">Registrar</button>
+              </div>
             </div>
           </div>
         </div>
 
-
-      </div>
-
-        <div style="height: 100px;"></div>
       </div>
     </div>
   </div>
