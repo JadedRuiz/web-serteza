@@ -16,12 +16,14 @@ export class CatalogoTurnosComponent implements OnInit {
   public color = COLOR;
   public turnos: { [key: string]: any } | undefined;
   public detalle = new DetalleTurno(0, 0, '', '', 0);
-  public turno = new Turno(0, 5, '', '', 0, 0, 0, 0, 0, '', 1, 0, [
-    this.detalle,
-  ]);
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
   public id_perfil = parseInt(window.sessionStorage.getItem('perfil') + '');
   public id_candidato = parseInt(window.sessionStorage.getItem("candidato")+"");
+  public turno = new Turno(0, this.id_cliente, '', '', 0, 0, 0, 0, 0, '', 1, 0, [
+    this.detalle,
+  ]);
+
+  @ViewChild('cerrarModal', { static: true }) cerrarModal?: ElementRef;
   public isChecked: any;
   public editando = false;
   public displayedColumns: string[] = ['clave', 'turno'];
@@ -73,10 +75,25 @@ export class CatalogoTurnosComponent implements OnInit {
   updateTraslapa() {
     if (this.turnoSeleccionado) {
       this.turnoSeleccionado.traslapa_turno = 1;
-      this.turnoSeleccionado.rota_turno = 1;
     } else {
       this.turnoSeleccionado.traslapa_turno = 0;
+    }
+  }
+
+  updateRota(){
+    if(this.turnoSeleccionado){
+      this.turnoSeleccionado.rota_turno= 1;
+    }else{
       this.turnoSeleccionado.rota_turno = 0;
+    }
+
+  }
+
+  updateDescanso(){
+    if(this.turnoSeleccionado){
+      this.turnoSeleccionado.detalle.dia.descanso == 1
+    }else {
+      this.turnoSeleccionado.detalle.dia.descanso == 0
     }
   }
 
@@ -93,7 +110,7 @@ export class CatalogoTurnosComponent implements OnInit {
 
     this.turnoSeleccionado = new Turno(
       0,
-      5,
+      this.id_cliente,
       '',
       '',
       0,
@@ -109,6 +126,7 @@ export class CatalogoTurnosComponent implements OnInit {
      this.editando = false;
     this.newTurno = true;
   }
+
 
   editarTurno(turnoSeleccionado: any) {
      this.editando = true;
@@ -154,7 +172,8 @@ export class CatalogoTurnosComponent implements OnInit {
       }
 
       this.guardar();
-      this.newTurno = false;
+
+
     } else {
 
       // this.editando = true;
@@ -162,7 +181,7 @@ export class CatalogoTurnosComponent implements OnInit {
   }
 
   turnoEditado(){
-    this.turno = new Turno(0, 5, '', '', 0, 0, 0, 0, 0, '', 1, 0, [
+    this.turno = new Turno(0, this.id_cliente, '', '', 0, 0, 0, 0, 0, '', 1, 0, [
       this.detalle,
     ]);
     this.editando=true
@@ -200,11 +219,15 @@ export class CatalogoTurnosComponent implements OnInit {
 
     this.turnosService.agregarTurnos(json).subscribe((resp) => {
       if (resp.ok) {
-        Swal.fire('Exito', 'turno guardado', 'success');
+        Swal.fire(resp.data.mensaje, '', 'success');
+        console.log('resp :>> ', resp);
         this.obtenerTurnos();
       }
     });
     console.log('Guardar ->', json);
+    if (this.cerrarModal && this.cerrarModal.nativeElement) {
+      this.cerrarModal.nativeElement.click();
+    }
   }
 
   activar(turnoSeleccionado: any) {

@@ -87,7 +87,7 @@
       <!-- HEADER -->
       <div class="modal-header">
         <h2 class="modal-title">{{ editando ? 'Editar turno' : 'Nuevo turno' }}</h2>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button #cerrarModal type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -107,13 +107,13 @@
             </h3>
           </div>
         </div>
-        <!-- TOLERANCIA COMIDA -->
+        <!-- TOLERANCIA  -->
         <div class="row">
           <div class="col">
-            <h3>Tolerancia: <span *ngIf="!editando"> {{ turnoSeleccionado.torelanciaa }} min</span>
-              <input type="number" *ngIf="editando" [(ngModel)]="turnoSeleccionado.tolerancia" name="tolerancia">
-              <input type="number" *ngIf="newTurno" [(ngModel)]="turnoSeleccionado.tolerancia" name="tolerancia">
-            </h3>
+            <h3>Tolerancia: <span *ngIf="!editando"> {{ turnoSeleccionado.torelanciaa }} </span>
+              <input placeholder="minutos"  *ngIf="editando" [(ngModel)]="turnoSeleccionado.tolerancia" name="tolerancia">
+              <input placeholder="minutos"  *ngIf="newTurno" [(ngModel)]="turnoSeleccionado.tolerancia" name="tolerancia">
+               min </h3>
           </div>
           <!-- <div class="col">
             <h3>Comida: <span *ngIf="!editando"> {{ turnoSeleccionado.tiempo_comidaa }} min</span>
@@ -125,19 +125,20 @@
         <!-- CHECK BOXs -->
         <div class="row">
           <div class="col">
-            <h3>Traslapa turno: <span style="color: rgb(84, 84, 230);" *ngIf="!editando">{{ turnoSeleccionado.traslapa_turno ? 'SI' : 'NO' }}</span>
+            <h3>Traslapa turno: <span style="color: rgb(84, 84, 230);" *ngIf="editando">{{ turnoSeleccionado.traslapa_turno ? 'SI' : 'NO' }}</span>
               <mat-checkbox class="mt-1 ml-2" *ngIf="editando" [(ngModel)]="turnoSeleccionado.traslapa_turno"
                 (change)="updateTraslapa()"></mat-checkbox>
+
               <mat-checkbox class="mt-1 ml-2" *ngIf="newTurno" [(ngModel)]="turnoSeleccionado.traslapa_turno"
                 (change)="updateTraslapa()"></mat-checkbox>
-            </h3>
+              </h3>
           </div>
           <div class="col">
-            <h3>Rota turno: <span style="color: rgb(84, 84, 230);" *ngIf="!editando">{{ turnoSeleccionado.rota_turno ? 'SI' : 'NO' }}</span>
+            <h3>Rota turno: <span style="color: rgb(84, 84, 230);" *ngIf="editando">{{ turnoSeleccionado.rota_turno ? 'SI' : 'NO' }}</span>
               <mat-checkbox class="mt-1 ml-2" *ngIf="editando" [(ngModel)]="turnoSeleccionado.rota_turno"
-                (change)="updateTraslapa()"></mat-checkbox>
+                (change)="updateRota()"></mat-checkbox>
               <mat-checkbox class="mt-1 ml-2" *ngIf="newTurno" [(ngModel)]="turnoSeleccionado.rota_turno"
-                (change)="updateTraslapa()"></mat-checkbox>
+                (change)="updateRota()"></mat-checkbox>
             </h3>
           </div>
         </div>
@@ -157,21 +158,23 @@
             <tr *ngFor="let dia of turnoSeleccionado.detalle">
               <td>{{ dia.dia_descrip }}</td>
               <td>
-                <span *ngIf="!editando">{{ dia.hr_entrada }}</span>
+                <span *ngIf="editando">{{ dia.hr_entrada }}</span>
                 <input type="time" *ngIf="editando" [(ngModel)]="dia.hr_entrada" class="form-control">
                 <input type="time" *ngIf="newTurno" [(ngModel)]="dia.hr_entrada" class="form-control">
               </td>
               <td>
-                <span *ngIf="!editando">{{ dia.hr_salida }}</span>
+                <span *ngIf="editando">{{ dia.hr_salida }}</span>
                 <input type="time" *ngIf="editando" [(ngModel)]="dia.hr_salida" class="form-control">
                 <input type="time" *ngIf="newTurno" [(ngModel)]="dia.hr_salida" class="form-control">
               </td>
               <td>
                 <mat-checkbox class="mt-2" *ngIf="editando"
                 [(ngModel)]="dia.descanso"
+                (change)="updateDescanso()"
                 ></mat-checkbox>
                 <mat-checkbox class="mt-2" *ngIf="newTurno"
                 [(ngModel)]="dia.descanso"
+                (change)="updateDescanso()"
                 ></mat-checkbox>
                 <i *ngIf="dia.descanso == '1' && editando == false" class="fa fa-circle text-danger"></i>
               </td>
@@ -182,7 +185,7 @@
       <!-- BOTONES -->
       <div class="row text-center">
         <div class="col m-1 mb-3">
-          <button class="close px-4" data-dismiss="modal" class="btn  btn-outline-danger"
+          <button  class="close px-4" data-dismiss="modal" class="btn  btn-outline-danger"
           >Cancelar</button>
         </div>
         <div *ngIf="editando" class="col m-1 mb-3">
