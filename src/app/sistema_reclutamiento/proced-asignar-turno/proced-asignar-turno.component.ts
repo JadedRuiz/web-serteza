@@ -9,12 +9,15 @@ import { NuevoUsuario } from 'src/app/models/NuevoUsuario';
 import { Perfil } from 'src/app/models/Perfil';
 import { MatSelectChange } from '@angular/material/select';
 
+
 @Component({
   selector: 'app-proced-asignar-turno',
   templateUrl: './proced-asignar-turno.component.html',
   styleUrls: ['./proced-asignar-turno.component.css']
 })
 export class ProcedAsignarTurnoComponent implements OnInit {
+  public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
+
   usuarios_busqueda : any;
   usuarios : any;
   filterControl = new FormControl();
@@ -39,7 +42,7 @@ export class ProcedAsignarTurnoComponent implements OnInit {
 mostrarUsuarios(){
   let json = {
     id_usuario: 0,
-    id_cliente: 5,
+    id_cliente: this.id_cliente,
     id_sistema: 2,
     usuario: '',
     solo_activos: 1,
@@ -94,7 +97,7 @@ optionUsuario(value : any){
 consultarTurnos(){
   let json = {
     id_turno: 0,
-    id_cliente: 5,
+    id_cliente: this.id_cliente,
     turno: "",
     solo_activos: 1,
     token: "012354SDSDS01"
@@ -147,7 +150,15 @@ asignar(){
   console.log('asignar :>> ', json);
   this.turnoService.asignarTurno(json).subscribe(resp => {
     if(resp.ok){
-      Swal.fire('Exito', 'Turno asignado correctamente', 'success');
+      Swal.fire('Exito',
+       resp.message,
+        'success');
+    }
+    if(!resp.ok){
+      console.log(resp);
+      Swal.fire(resp.message,
+      '',
+       'warning');
     }
   })
 }

@@ -11,6 +11,7 @@ declare interface RouteInfo {
   title: string;
   icon: string;
   class: string;
+  id: any;
 }
 @Component({
   selector: 'app-sidebar-rc',
@@ -224,4 +225,20 @@ export class SidebarComponent implements OnInit {
   closeModal(){
     this.modal.close();
   }
+
+
+  elementoAbierto = false; // Variable para el elemento actualmente abierto
+
+  abrirElemento() {
+    if(!this.elementoAbierto == true){
+      this.elementoAbierto = false;
+    }else{
+
+    }
+
+  }
+
+
+
+
 }

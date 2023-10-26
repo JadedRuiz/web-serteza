@@ -8,6 +8,7 @@ import { FestivosService } from 'src/app/services/festivos/festivos.service';
 import { Festivos } from 'src/app/models/festivos';
 import Swal from 'sweetalert2';
 
+
 @Component({
   selector: 'app-catalogo-festivos',
   templateUrl: './catalogo-festivos.component.html',
@@ -35,7 +36,7 @@ export class CatalogoFestivosComponent implements OnInit {
     private modalService: NgbModal,
     private festivosService: FestivosService
   ) {
-    // Genera datos de prueba
+    // Genera año
     this.selectedYear = new Date().getFullYear();
   }
 
@@ -48,7 +49,7 @@ export class CatalogoFestivosComponent implements OnInit {
     let json = {
       id_dia_festivo: 0,
       id_cliente: this.id_cliente,
-      ejercicio: 2023,
+      ejercicio: this.selectedYear,
       descripcion: '',
       solo_activos: 1,
       token: '012354SDSDS01',
@@ -79,8 +80,8 @@ export class CatalogoFestivosComponent implements OnInit {
     this.formatFecha();
     let json = {
       id_dia_festivo: 0,
-      id_cliente: 5,
-      ejercicio: 2023,
+      id_cliente: this.id_cliente,
+      ejercicio: this.selectedYear,
       descripcion: this.festivo.descripcion,
       fecha: this.festivo.fecha,
       token: '012354SDSDS01',

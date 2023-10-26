@@ -39,10 +39,9 @@
             <div class="row">
                 <!-- FOTO -->
                 <div class="col col-md-4 ms-4 mt-4 d-flex flex-column offset-1" style="width: 100px">
-                  <img
-                  [src]="perfilStock" alt="Perfil de Stock" *ngIf="mainImage == ''" class="img-thumbnail mt-4 mb-2" />
-                  <img [src]="mainImage" class="img-thumbnail mt-4 mb-2" alt="imagen principal"
-                    *ngIf="mainImage !== ''" />
+                  <img [src]="perfilStock" alt="Perfil de Stock" *ngIf="mainImage == '' && fotoUsuario == ''" class="img-thumbnail mt-4 mb-2" />
+                  <img [src]="mainImage"  alt="imagen principal" *ngIf="mainImage !== ''" class="img-thumbnail mt-4 mb-2" />
+                  <img [src]="fotoUsuario"  alt="imagen principal" *ngIf="mainImage == ''" class="img-thumbnail mt-4 mb-2" />
 
                 </div>
 
@@ -165,8 +164,8 @@
         *ngIf="mainImage !== ''"
         />
       </div>
+      <!-- BOTÓN PARA AÑADIR FOTO -->
       <div class="upload-buttons">
-        <!-- BOTÓN PARA AÑADIR FOTO -->
         <button class="btn btn-outline-info" (click)="subirImagen()">
           Subir imagen
         </button>
@@ -174,18 +173,7 @@
         <!-- BOTÓN PARA TOMAR FOTO -->
         <button  class="btn btn-outline-primary" (click)="openModalCamera()">Tomar foto</button>
       </div>
-
     </div>
-
-    <!-- SECCIÓN DE BOTONES -->
-    <!-- <div class="usuario-modal__buttons">
-      <button class="danger-btn" (click)="togglePhotosModal()">
-        Cancelar
-      </button>
-      <button class="search-btn" (click)="togglePhotosModal()">
-        Guardar
-      </button>
-    </div> -->
   </div>
 </div>
 

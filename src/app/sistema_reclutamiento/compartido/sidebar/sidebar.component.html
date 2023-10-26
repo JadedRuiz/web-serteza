@@ -68,8 +68,15 @@
         </div>
         <!-- Menu -->
         <ul class="navbar-nav">
-            <li *ngFor="let menuItem of menuItems" class="nav-item">
-                <a *ngIf="menuItem.band == true" [attr.data-target]="'#' + menuItem.id" class="nav-link collapse.hide" [attr.data-toggle]="menuItem.tipo"  [attr.aria-expanded]="false"  [attr.aria-controls]="menuItem.id" style="cursor: pointer;" >
+            <li *ngFor="let menuItem of menuItems;" class="nav-item">
+                <a
+                *ngIf="menuItem.band == true"
+                 [attr.data-target]="'#' + menuItem.id"
+                 class="nav-link collapse.hide"
+                  [attr.data-toggle]="menuItem.tipo"
+                  [attr.aria-expanded]="false"
+                   [attr.aria-controls]="menuItem.id"
+                   style="cursor: pointer;" >
                     <i class="ni {{menuItem.icon}}"></i>
                     {{menuItem.title}}
                 </a>
@@ -123,4 +130,3 @@
       <button type="button" class="btn btn-warning" aria-label="Close" (click)="d('Cross click')">Cancelar</button>
     </div>
   </ng-template>
-  

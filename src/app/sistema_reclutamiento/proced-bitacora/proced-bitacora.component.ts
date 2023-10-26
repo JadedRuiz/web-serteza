@@ -25,7 +25,7 @@ export class ProcedBitacoraComponent implements OnInit {
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
   public id_perfil = parseInt(window.sessionStorage.getItem('perfil') + '');
   public id_candidato = parseInt(window.sessionStorage.getItem("candidato")+"");
-  public candidato = new Candidato(0,this.id_cliente,6,"","","","","","","","",0,"","","","","",0,this.direccion,this.fotografia);
+  public candidato = new Candidato(0,this.id_cliente,0,"","","","","","","","",0,"","","","","",0,this.direccion,this.fotografia);
   public candidatos : any;
   showModal = false;
   selectedRowData: any;
@@ -78,7 +78,6 @@ consulta = false;
     // this.consultarIncidencias()
   }
 
-  buscarEmpleado() {}
 
 
 // MODAL
@@ -132,6 +131,7 @@ buscarCandidato(){
   if(this.filterControl.value.length > 2){
     this.autocomplete(this.filterControl.value);
   }
+
 }
 autocomplete(palabra : string){
  // this.candidatos_busqueda = [];
@@ -152,9 +152,16 @@ autocomplete(palabra : string){
       }
     })
   }
-  this.consultarIncidencias();
 }
+optionUsuario(value : any){
+  this.vaciarModelo();
+  console.log(value.option.id);
+  this.candidato = value.option.id;
+  console.log(this.candidato);
+  this.fotoEmpleado= this.candidato.fotografia;
+  this.consultarIncidencias();
 
+}
 
 // INCIDENCIAS
 // Consultar
@@ -181,7 +188,7 @@ this.consulta = true;
     if (resp.ok){
       this.dataSource.data = resp.data;
       this.empleadosIns = resp.data;
-      this.fotoEmpleado= this.empleadosIns[0].fotografia;
+      // this.fotoEmpleado= this.empleadosIns[0].fotografia;
       this.nombreEmpleado= this.empleadosIns[0].nombre_completo;
       // this.fechaEmpleado= this.empleadosIns[0].fecha;
       this.diaEmpleado= this.empleadosIns[0].dia_descrip;
@@ -225,7 +232,7 @@ guardarJustificacion(){
   const motivoEdit = this.justi.motivo;
   let json = {
     id_justificacion: this.justificacion.id_justificacion,
-    id_cliente: 5,
+    id_cliente: this.id_cliente,
     id_candidato: this.justi.id_candidato,
     motivo: motivoEdit,
     fecha: this.justi.fecha
@@ -245,5 +252,10 @@ guardarJustificacion(){
 
 }
 
+
+vaciarModelo(){
+  this.candidato = new Candidato(0,this.id_cliente,0,"","","","","","","","",0,"","","","","",0,this.direccion,this.fotografia);
+
+}
 
 }

@@ -11,6 +11,7 @@ import { Fotografia } from 'src/app/models/Fotografia';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 
 
@@ -74,6 +75,7 @@ export class UsuariosComponent implements OnInit {
     0,
     0,
     '',
+    '',
     ''
   );
 
@@ -89,7 +91,6 @@ export class UsuariosComponent implements OnInit {
     ) {}
 
   ngOnInit(): void {
-    this.obtenerUsuarios();
     this.consultarPerfiles();
     this.mostrarUsuarios();
     WebcamUtil.getAvailableVideoInputs()
@@ -150,28 +151,28 @@ autocomplete(palabra : string){
 
 
   // Obtener USUARIOS
-  obtenerUsuarios() {
-    let json = {
-      id_usuario: 0,
-      id_cliente: 5,
-      id_sistema: 2,
-      usuario: '',
-      solo_activos: 1,
-      id_usuario_consulta: 0,
-      token: '012354SDSDS01',
-    };
-    this.usuarioService.consultarUsuarios(json).subscribe((resp) => {
-      if (resp.ok) {
-        console.log('Usuarios :>> ', resp.data);
-      }
-    });
-  }
+  // obtenerUsuarios() {
+  //   let json = {
+  //     id_usuario: 0,
+  //     id_cliente: this.id_cliente,
+  //     id_sistema: 2,
+  //     usuario: '',
+  //     solo_activos: 1,
+  //     id_usuario_consulta: 0,
+  //     token: '012354SDSDS01',
+  //   };
+  //   this.usuarioService.consultarUsuarios(json).subscribe((resp) => {
+  //     if (resp.ok) {
+  //       console.log('Usuarios :>> ', resp.data);
+  //     }
+  //   });
+  // }
 
   // Guardar Usuario
   guardarUsuario() {
     let json = {
       id_usuario: 0,
-      id_cliente: 5,
+      id_cliente: this.id_cliente,
       id_sistema: 2,
       id_candidato: this.idCandi,
       token: '012354SDSDS01',
@@ -192,9 +193,17 @@ autocomplete(palabra : string){
           'Exito',
           resp.data.mensaje,
           'success'
-        )
-        // console.log('resp.mensaje :>> ', resp.data.mensaje);
-      }
+          )
+          this.formUsuario= false;
+
+        }else {
+          Swal.fire(
+            '',
+            resp.data.message,
+            'info',
+          )
+        }
+         console.log('resp.mensaje :>> ', resp);
     });
 
     this.nuevoUsuario = new NuevoUsuario(
@@ -211,9 +220,11 @@ autocomplete(palabra : string){
       0,
       0,
       '',
+      '',
       ''
     );
-    this.formUsuario= false;
+    this.mostrarUsuarios();
+
   }
 
   // Activar/Desactivar Usuario =>
@@ -244,6 +255,7 @@ autocomplete(palabra : string){
       0,
       0,
       0,
+      '',
       '',
       ''
     );
@@ -278,7 +290,7 @@ consultarPerfiles(){
 mostrarUsuarios(){
   let json = {
     id_usuario: 0,
-    id_cliente: 5,
+    id_cliente: this.id_cliente,
     id_sistema: 2,
     usuario: '',
     solo_activos: 1,
@@ -317,11 +329,13 @@ buscarUsuario(){
     });
   }
 }
-
+fotoUsuario :any = ''
 optionUsuario(value : any){
   console.log(value.option.id);
   this.nuevoUsuario = value.option.id;
   this.formUsuario= true;
+  this.fotoUsuario = this.nuevoUsuario.fotografia;
+  console.log(this.nuevoUsuario.fotografia);
 
 }
 
@@ -371,6 +385,7 @@ optionUsuario(value : any){
           this.fotografia.docB64 = respuesta+"";
           this.fotografia.extension = extension;
           console.log('oio>',this.foto_user);
+          this.togglePhotosModal()
         });
       }else{
         Swal.fire("Ha ocurrido un error","Tipo de imagen no permitida","error");
@@ -423,6 +438,7 @@ optionUsuario(value : any){
     this.fotografia.extension = "jpeg";
     this.fotografia.nombre = "foto_user";
     this.cerrarModalCamera();
+    this.togglePhotosModal();
     // console.log(webcamImage.imageAsDataUrl)
   }
 

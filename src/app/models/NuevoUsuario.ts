@@ -12,6 +12,7 @@ export class NuevoUsuario {
     public activo: number,
     public id_usuario_guardar: number,
     public id_fotografia: number,
+    public fotografia: string,
     public extencion: string,
     public foto_base64: string
   ) { }
