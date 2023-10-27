@@ -16,7 +16,7 @@ latitud:any = '';
   constructor() { }
 
   ngOnInit(): void {
-    this.registrar();
+    // this.registrar();
   }
 
   buscarCandidato(){ }

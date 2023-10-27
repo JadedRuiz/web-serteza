@@ -168,9 +168,9 @@ autocomplete(palabra : string){
 }
 optionUsuario(value : any){
   this.vaciarModelo();
-  console.log(value.option.id);
+  // console.log(value.option.id);
   this.candidato = value.option.id;
-  console.log(this.candidato);
+  // console.log(this.candidato);
   this.fotoEmpleado= this.candidato.fotografia;
   this.consultarIncidencias();
 
@@ -207,7 +207,7 @@ this.consulta = true;
       this.diaEmpleado= this.empleadosIns[0].dia_descrip;
       this.candidato.fotografia= this.empleadosIns[0].fotografia;
       this.candidato.nombre= this.empleadosIns[0].nombre_completo;
-      console.log('resp :>> ', resp);
+      // console.log('resp :>> ', resp);
       // console.log('incidencia.data :>> ', this.empleadosIns );
     }
   })
