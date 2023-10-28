@@ -482,7 +482,7 @@ export class ReporteIncidenciasComponent implements OnInit {
   formatearFechaParaGuardar(fecha: any) {
     return formatDate(fecha, 'yyyy-MM-dd', 'en-US');
   }
-
+  checked = false;
   exportExel() {
     const fechaInicialFormateada = this.formatearFechaParaGuardar(
       this.fecha.fechaInicial
@@ -499,7 +499,7 @@ export class ReporteIncidenciasComponent implements OnInit {
       id_sucursal: 0,
       id_departamento: 0,
       id_puesto: 0,
-      solo_incidencias: 0,
+      solo_incidencias: this.checked? 1 : 0 ,
       fecha_inicial: fechaInicialFormateada,
       fecha_final: fechaFinalFormateada,
       exportar_excel: 1,
@@ -534,6 +534,13 @@ export class ReporteIncidenciasComponent implements OnInit {
             link.click();
             Swal.close();
           }, 500);
+        }else {
+          Swal.fire(
+            '',
+            object.mensaje,
+            'info'
+          )
+            console.log(object)
         }
       });
   }

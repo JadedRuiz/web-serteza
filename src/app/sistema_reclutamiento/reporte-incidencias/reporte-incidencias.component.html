@@ -50,20 +50,23 @@
               </div>
               <!-- FECHAS -->
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <mat-form-field>
                     <input matInput [matDatepicker]="picker1" placeholder="Fecha Inicial" [(ngModel)]="fecha.fechaInicial">
                     <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                     <mat-datepicker #picker1></mat-datepicker>
                   </mat-form-field>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
 
                   <mat-form-field>
                     <input matInput [matDatepicker]="picker2" placeholder="Fecha Final" [(ngModel)]="fecha.fechaFinal">
                     <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                     <mat-datepicker #picker2></mat-datepicker>
                   </mat-form-field>
+                </div>
+                <div class="col-4 text-center">
+                  <mat-checkbox class="mt-4" [(ngModel)]="checked">Solo Inicidencias </mat-checkbox>
                 </div>
               </div>
               <!-- BOTONES -->

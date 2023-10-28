@@ -167,6 +167,9 @@ export class CalcularIncidenciasComponent implements OnInit {
   }
   optionEmpresa(value: any) {
     this.id_empresa = value.option.id;
+    console.log(this.id_empresa);
+    console.log(value.option);
+
   }
 
   //PARA EL NOMBRE DE LA EMPRESA SELECIONADA
@@ -174,68 +177,68 @@ export class CalcularIncidenciasComponent implements OnInit {
     this.nomSel = event.option.value;
   }
 
-  // PARA EL RFC DEL TRABAJDOR
-  onRFCChange() {
-    console.log('Nuevo valor de RFC:', this.rfcTrabajador);
-  }
+  // // PARA EL RFC DEL TRABAJDOR
+  // onRFCChange() {
+  //   console.log('Nuevo valor de RFC:', this.rfcTrabajador);
+  // }
 
-  // EXPORTAR PDF
-  exportarAPDF() {
-    //AGREGA CLASE DE CSS
-    const columnasAcciones = document.querySelectorAll('.mat-column-acciones');
-    columnasAcciones.forEach((columna) => {
-      columna.classList.add('hide-actions-column');
-    });
+  // // EXPORTAR PDF
+  // exportarAPDF() {
+  //   //AGREGA CLASE DE CSS
+  //   const columnasAcciones = document.querySelectorAll('.mat-column-acciones');
+  //   columnasAcciones.forEach((columna) => {
+  //     columna.classList.add('hide-actions-column');
+  //   });
 
-    const content: HTMLElement = this.tablaParaPDF.nativeElement;
-    const pdf = new jsPDF('landscape', 'mm', 'a4'); // Cambia 'landscape' para orientación horizontal
-    const pdfOptions = {
-      margin: 10,
-      filename: 'trabajadores-XML.pdf',
-    };
+  //   const content: HTMLElement = this.tablaParaPDF.nativeElement;
+  //   const pdf = new jsPDF('landscape', 'mm', 'a4'); // Cambia 'landscape' para orientación horizontal
+  //   const pdfOptions = {
+  //     margin: 10,
+  //     filename: 'trabajadores-XML.pdf',
+  //   };
 
-    // Muestra la alerta de progreso
-    Swal.fire({
-      title: 'Generando PDF',
-      text: 'Por favor, espere...',
-      icon: 'info',
-      allowOutsideClick: false,
-      showConfirmButton: false,
-      onBeforeOpen: () => {
-        Swal.showLoading();
-      },
-    });
+  //   // Muestra la alerta de progreso
+  //   Swal.fire({
+  //     title: 'Generando PDF',
+  //     text: 'Por favor, espere...',
+  //     icon: 'info',
+  //     allowOutsideClick: false,
+  //     showConfirmButton: false,
+  //     onBeforeOpen: () => {
+  //       Swal.showLoading();
+  //     },
+  //   });
 
-    // Genera el PDF después de un breve retraso para permitir que se muestre la alerta
-    setTimeout(() => {
-      html2canvas(content, { scale: 2 }).then((canvas) => {
-        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+  //   // Genera el PDF después de un breve retraso para permitir que se muestre la alerta
+  //   setTimeout(() => {
+  //     html2canvas(content, { scale: 2 }).then((canvas) => {
+  //       const imgData = canvas.toDataURL('image/jpeg', 1.0);
 
-        // Calcula la altura del contenido y ajusta el tamaño de la página en función de la altura
-        const contentHeight =
-          canvas.height * (pdf.internal.pageSize.width / canvas.width);
-        pdf.internal.pageSize.height = contentHeight;
+  //       // Calcula la altura del contenido y ajusta el tamaño de la página en función de la altura
+  //       const contentHeight =
+  //         canvas.height * (pdf.internal.pageSize.width / canvas.width);
+  //       pdf.internal.pageSize.height = contentHeight;
 
-        // Agrega la imagen al PDF
-        pdf.addImage(
-          imgData,
-          'JPEG',
-          0,
-          0,
-          pdf.internal.pageSize.width,
-          contentHeight
-        );
-        // Elimina la clase CSS que oculta la columna de acciones
-        columnasAcciones.forEach((columna) => {
-          columna.classList.remove('hide-actions-column');
-        });
+  //       // Agrega la imagen al PDF
+  //       pdf.addImage(
+  //         imgData,
+  //         'JPEG',
+  //         0,
+  //         0,
+  //         pdf.internal.pageSize.width,
+  //         contentHeight
+  //       );
+  //       // Elimina la clase CSS que oculta la columna de acciones
+  //       columnasAcciones.forEach((columna) => {
+  //         columna.classList.remove('hide-actions-column');
+  //       });
 
-        pdf.save(pdfOptions.filename);
+  //       pdf.save(pdfOptions.filename);
 
-        Swal.close();
-      });
-    }, 500);
-  }
+  //       Swal.close();
+  //     });
+  //   }, 500);
+  // }
 
   // BARRA DE BUSQUEDA
   mostrarCandidatos() {
