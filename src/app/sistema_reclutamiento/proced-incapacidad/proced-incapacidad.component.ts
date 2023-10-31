@@ -102,7 +102,7 @@ incapacidades:any=''
   }
 
   ngOnInit(): void {
-    // this.obternerIncapacidades();
+     this.obternerIncapacidades();
 
   }
 
@@ -203,7 +203,7 @@ incapacidades:any=''
     let json = {
       id_incapacidad: 0,
       id_cliente: this.id_cliente,
-      id_candidato: this.usuarioSeleccionado.id_candidato,
+      id_candidato: 0 || this.usuarioSeleccionado.id_candidato,
       fecha_incial: '',
       fecha_final: '',
       solo_activos: 1,
@@ -266,8 +266,8 @@ incapacidades:any=''
       }
     });
     this.closeModal();
+    this.vaciarModelo();
     this.obternerIncapacidades();
-
   }
 
 

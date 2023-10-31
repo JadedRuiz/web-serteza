@@ -478,7 +478,6 @@ export class ReporteIncidenciasComponent implements OnInit {
   }
 
   // EXPORTAR EXCEL
-  // FORMATEAR
   formatearFechaParaGuardar(fecha: any) {
     return formatDate(fecha, 'yyyy-MM-dd', 'en-US');
   }
