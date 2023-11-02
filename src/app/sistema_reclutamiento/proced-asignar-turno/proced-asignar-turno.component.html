@@ -33,21 +33,57 @@
 
           </div>
           <div class="card-body">
-            <div class="row offset-1">
-              <div class="col-5 text-center">
-                <mat-form-field>
+            <div class="row">
+              <div class="col-3">
+                <mat-form-field *ngIf="turnoOk == true" >
+                  <input
+                  title="¿EDITAR?"
+                  (click)="editarAsignados()"
+                  style="cursor: pointer;"
+                   matInput placeholder="Turno"
+                   value={{tSel.tAsignado}}>
+                </mat-form-field>
+                <mat-form-field *ngIf="turnoOk == false">
                   <mat-label>Turnos</mat-label>
-                  <mat-select  (selectionChange)="optionTurno($event)">
+                  <mat-select  (selectionChange)="optionTurno($event) ">
                     <mat-option *ngFor="let turno of turnoSelect" [value]="turno.id_turno">
                       {{turno.turno}}
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
-              <mat-form-field class="example-full-width">
-                <input matInput placeholder="Jefe directo" value="Jefe directo">
-              </mat-form-field>
-              <div class="col-1"></div> <!-- Columna vacía para empujar hacia la derecha -->
+              <div class="col-md-4 col-sm-12 d-flex align-items-center">
+                <mat-form-field
+                class="w-100 px-1"
+                *ngIf="turnoOk2 == true" >
+                  <input
+                  title="¿EDITAR?"
+                  (click)="editarAsignados2()"
+                  style="cursor: pointer;"
+                   matInput placeholder="Jefe Directo"
+                   value={{tSel.jAsignado}}>
+                </mat-form-field>
+
+                <mat-form-field
+                *ngIf="turnoOk2 == false"
+                class="w-100 px-1">
+                  <mat-label class="d-flex justify-content-between align-items-center" >Jefe directo <i class="fa fa-search" aria-hidden="true"></i></mat-label>
+                  <input type="text"
+                   placeholder="NOMBRE o RFC"
+                   aria-label="Number"
+                   matInput
+                   (keyup)="buscarCandidato()"
+                   [formControl]="filterControl"
+                  [matAutocomplete]="auto" style="text-transform: uppercase;"
+                  >
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionUsuario2($event)">
+                    <mat-option *ngFor="let empleado of objEmpleados" [value]="empleado.nombre"
+                      [id]="empleado">
+                      {{empleado.nombre}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
               <div class="col-auto">
                 <button  (click)="asignar()" class="btn btn-primary">ASIGNAR TURNO</button>
               </div>

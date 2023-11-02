@@ -27,7 +27,7 @@
                 <!-- <button class="btn btn-sm btn-success"><i class="fa fa-search" aria-hidden="true"></i></button> -->
               </div>
               <div class="col">
-                <button (click)="openModal2()" class="btn btn-outline-danger">Agregar incapacidad</button>
+                <button (click)="openModal2()" class="btn btn-outline-primary">Agregar incapacidad</button>
               </div>
             </div>
           </div>
@@ -44,19 +44,21 @@
                  </div>
                  <div class="col text_info">
                       <p class="nomobre">{{incapacidad.nombre_completo}}</p>
-                      <p class="card-label"><strong>Folio:</strong>{{incapacidad.folio}}</p>
-                      <p class="card-label"><strong>Dias:</strong> {{incapacidad.dias_incapacidad}}</p>
+                      <p class=" mb-0 badge badge-success">Autorizado</p>
+                      <p class="card-label mb-0"><strong>Folio:</strong>{{incapacidad.folio}}</p>
+                      <p class=" mb-0 card-label"><strong>Dias:</strong> {{incapacidad.dias_incapacidad}}</p>
                     </div>
-                    <!-- <div class="col">
-                    </div> -->
                   </div>
                   <div class="row">
                     <div class="col">
-                      <p class="card-label">Fecha Inicio: <br> <strong>{{incapacidad.fecha_inicial}}</strong></p>
+                      <p class="card-label">Fecha Inicio: <br> <strong>{{incapacidad.fecha_inicial | date: 'dd/MM/yyyy' }}</strong></p>
                     </div>
                     <div class="col">
-                      <p class="card-label">Fecha Final: <br> <strong>{{incapacidad.fecha_final}}</strong> </p>
+                      <p class="card-label">Fecha Final: <br> <strong>{{incapacidad.fecha_final | date: 'dd/MM/yyyy'}}</strong></p>
                     </div>
+                  </div>
+                  <div class="col">
+                    <button class="btn btn-sm btn-info" >Comprobante</button>
                   </div>
 
 

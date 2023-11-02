@@ -1,0 +1,33 @@
+
+.custom-card:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.322);
+}
+
+
+.custom-card {
+  border: 1px solid #ccc;
+  /* padding: 15px; */
+  /* margin: 10px; */
+  background-color: #f9f9f9c3;
+  text-align: center;
+  cursor: pointer;
+}
+
+.nomobre{
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Times New Roman', Times, serif;
+  padding: 0px;
+}
+
+  /* Estilo de la imagen */
+  .card-image {
+    width: 112%; /* Ajusta la imagen al ancho de su contenedor */
+    height: 93%;
+    object-fit: cover;
+
+  }
+
+  .text_info{
+    text-align: left;
+  }

@@ -44,16 +44,18 @@
                  </div>
                  <div class="col text_info">
                       <h4 class="nomobre">{{justificacion.nombre_completo}}</h4>
+                      <p *ngIf="justificacion.autorizado == 0" class=" mb-0 badge badge-warning">NO autorizado</p>
+                      <p *ngIf="justificacion.autorizado == 1" class=" mb-0 badge badge-success">Autorizado</p>
                       <p class="card-label"><strong>Folio:</strong>{{justificacion.folio}}</p>
-                      <p class="card-label"><strong>Motivo:</strong> <br>
-                        <span class="motivo">{{justificacion.motivo}}</span>
-                      </p>
                       <p class="card-label"><strong>Puesto:</strong> {{justificacion.puesto}}</p>
+                      <p class= " fecha card-label"><strong>{{justificacion.fecha | date: 'dd/MM/yyyy' }}</strong></p>
+                      <!-- <p>Autorizado: <i [ngClass]="{'badge badge-warning': justificacion.autorizado == 0, 'ni ni-check-bold': justificacion.autorizado == 1}"></i></p> -->
                     </div>
                  </div>
-                  <div class=" col-12 text-center">
-                      <h4 class= " fecha card-label"><strong>{{justificacion.fecha}}</strong> - {{justificacion.dia_descrip}}</h4>
-                      <h4>Autorizado: <i [ngClass]="{'fa fa-times': justificacion.autorizado == 0, 'ni ni-check-bold': justificacion.autorizado == 1}"></i></h4>
+                  <div class="row ml-3 ">
+                    <p class="card-label"><strong>Motivo:</strong> <br>
+                      <span class="motivo">{{justificacion.motivo}}</span>
+                    </p>
 
                   </div>
 

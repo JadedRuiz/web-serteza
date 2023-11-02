@@ -27,6 +27,7 @@ export class ProcedVacacionesComponent implements OnInit {
   public palabra = "";
   filterControl = new FormControl();
   candidatos_busqueda : any;
+  fotoVacaciones ='https://th.bing.com/th/id/R.5c02d8fdec86674d130b3a8f31fee1d4?rik=e%2fTs2ddf7yEj9g&pid=ImgRaw&r=0'
 
   public id_perfil = parseInt(window.sessionStorage.getItem('perfil') + '');
   filterControlEmpleados = new FormControl();
@@ -85,8 +86,10 @@ export class ProcedVacacionesComponent implements OnInit {
     //     this.arraySolicitudes = resp.data;
     //   }
     // });
-    this.arraySolicitudes = [1,2,3,4];
+    this.arraySolicitudes = [1,2,3];
   }
+
+openModal(){}
 
   getEjercicios(){
     let año = parseInt((new Date()).getFullYear()+"");

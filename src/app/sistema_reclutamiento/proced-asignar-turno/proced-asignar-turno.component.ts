@@ -33,6 +33,14 @@ export class ProcedAsignarTurnoComponent implements OnInit {
   turnoSelect: any
   idCandi:any;
   idTurno:any;
+  turnoOk = false
+  turnoOk2 = false
+  tSel = {
+    tAsignado : '',
+    jAsignado : '',
+    tID: 0,
+    tJF: 0
+  }
   constructor(
     private usuarioService: UsuarioService,
     private turnoService: TurnosService,
@@ -58,8 +66,6 @@ mostrarCandidatos(){
   this.candidato_service.obtenerCandidatos(json)
   .subscribe( (object : any) =>{
       if(object.ok){
-        // this.dataSource.data = object.data;
-        // this.dataSource.paginator = this.paginator;
        this.candidatos_busqueda= object.data;
        this.objEmpleados = object.data
       }
@@ -99,6 +105,47 @@ optionUsuario(value : any){
   console.log(value.option.id);
   this.idCandi = value.option.id.id_candidato;
   console.log(this.idCandi);
+  this.turnoAsignado();
+}
+
+//TRAER TURNO DEL USUARIO SELECCINADO
+
+editarAsignados2(){
+  this.turnoOk2 = false
+}
+editarAsignados(){
+  this.turnoOk = false
+}
+
+turnoAsignado(){
+  let json = {
+    id_candidato_datos: 0,
+    id_candidato: this.idCandi,
+    token: '012354SDSDS01',
+  };
+this.candidato_service.obtenerTurnoCandidato(json).subscribe(resp =>{
+  if(resp.ok){
+    console.log(resp);
+    this.tSel.tAsignado = resp.data[0].turno
+    this.tSel.jAsignado = resp.data[0].jefe_inmediato
+    this.tSel.tID = resp.data[0].id_turno
+    this.tSel.tJF = resp.data[0].id_candidato_jefe
+    console.log(this.tSel.tAsignado);
+    this.turnoOk = true
+    this.turnoOk2 = true
+  }else {
+    return
+  }
+})
+
+}
+
+
+idJefe = '';
+optionUsuario2(value : any){
+  console.log(value.option.id);
+  this.idJefe = value.option.id.id_candidato
+  this.tSel.tJF = value.option.id.id_candidato
 }
 
 
@@ -152,8 +199,8 @@ asignar(){
   let json = {
     id_candidato_datos: 0,
     id_candidato: this.idCandi,
-    id_candidato_jefe: 0,
-    id_turno: this.idTurno,
+    id_candidato_jefe: this.tSel.tJF || this.idJefe,
+    id_turno: this.tSel.tID || this.idTurno,
     codigo_nomina: "",
     id_reloj: 0
   }
@@ -161,12 +208,12 @@ asignar(){
   this.turnoService.asignarTurno(json).subscribe(resp => {
     if(resp.ok){
       Swal.fire('Exito',
-       resp.mensaje,
+       resp.data.mensaje,
         'success');
     }
     if(!resp.ok){
       console.log(resp);
-      Swal.fire(resp.mensaje,
+      Swal.fire(resp.data.mensaje,
       '',
        'warning');
     }

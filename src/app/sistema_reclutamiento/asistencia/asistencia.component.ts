@@ -90,7 +90,7 @@ export class AsistenciaComponent implements OnInit {
       },
       allowOutsideClick: false,  // Evita que el usuario cierre el Swal haciendo clic fuera de él
       allowEscapeKey: false,
-      showConfirmButton: false,     // Evita que el usuario cierre el Swal con la tecla Esc
+      showConfirmButton: false,
     });
   }
 
@@ -111,7 +111,7 @@ export class AsistenciaComponent implements OnInit {
 
 
 check(){
-
+  Swal.close();
   let json = {
     id_candidato: this.id_candidato,
     id_cliente: this.id_cliente,
@@ -125,14 +125,14 @@ check(){
   console.error('El',json);
 
   this.candidato_service.guardarChecada(json).subscribe((resp)=>{
-    Swal.close();
     if(resp.ok){
+
       Swal.fire(
-        'Exito',resp.mensaje,'success'
+        'Exito',resp.menssage,'success'
       )
     }else {
       Swal.fire(
-        'Error',resp.mensaje,'error'
+        'Error',resp.message,'error'
       );
     }
   })

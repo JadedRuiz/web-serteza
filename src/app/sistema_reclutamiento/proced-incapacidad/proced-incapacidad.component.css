@@ -3,9 +3,6 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.322);
 }
 
-.card-label {
-  /* font-weight: bold; */
-}
 
 .custom-card {
   border: 1px solid #ccc;
@@ -26,7 +23,7 @@
   /* Estilo de la imagen */
   .card-image {
     width: 112%; /* Ajusta la imagen al ancho de su contenedor */
-    height: 83%;
+    height: 93%;
     object-fit: cover;
 
   }
