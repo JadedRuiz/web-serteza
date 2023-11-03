@@ -96,6 +96,7 @@ export class UsuariosComponent implements OnInit {
   ngOnInit(): void {
     this.consultarPerfiles();
     this.mostrarUsuarios();
+    this.mostrarCandidatos();
     WebcamUtil.getAvailableVideoInputs()
     .then((mediaDevices: MediaDeviceInfo[]) => {
       this.isCameraExist = mediaDevices && mediaDevices.length > 0;
@@ -197,15 +198,15 @@ autocomplete(palabra : string){
           resp.data.mensaje,
           'success'
           )
-          this.formUsuario= false;
 
         }else {
           Swal.fire(
             '',
             resp.data.message,
             'info',
-          )
-        }
+            )
+          }
+          this.formUsuario= false;
          console.log('resp.mensaje :>> ', resp);
     });
     this.vaciarModelo()
@@ -340,6 +341,7 @@ buscarUsuario(){
           "id_usuario" : element.id_usuario
         })
       }
+      console.log(this.usuarios)
     });
   }
 }

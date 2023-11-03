@@ -20,7 +20,7 @@
                   [matAutocomplete]="auto" style="text-transform: uppercase;">
                   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionUsuario($event)">
                       <mat-option *ngFor="let usuario of usuarios_busqueda" [value]="usuario.nombre_completo" [id]="usuario">
-                          {{usuario.nombre}}
+                          {{usuario.nombre_completo}}
                       </mat-option>
                   </mat-autocomplete>
               </mat-form-field>
@@ -133,7 +133,7 @@
                     <button *ngIf="nomAsi==false" class="px-3 btn btn-primary text-center" type="submit" data-toggle="tooltip" title="Guardar">
                       Guardar
                     </button>
-                    <button *ngIf="nomAsi==true" class="px-3 btn btn-primary text-center" (click)="actualizarUsuario()" data-toggle="tooltip" title="Actualizar">
+                    <button *ngIf="nomAsi==true" class="px-3 btn btn-primary text-center" type="submit"   data-toggle="tooltip" title="Actualizar">
                       Actualizar
                     </button>
                   </div>
