@@ -48,6 +48,7 @@ import { ProcedAsignarTurnoComponent } from './proced-asignar-turno/proced-asign
 import { ProcedRecibosComponent } from './proced-recibos/proced-recibos.component';
 import { ProcedAutJustificacionesComponent } from './proced-aut-justificaciones/proced-aut-justificaciones.component';
 import { CatalogoPuntosAccesoComponent } from './catalogo-puntos-acceso/catalogo-puntos-acceso.component';
+import { SubirXMLComponent } from './subir-xml/subir-xml.component';
 
 @NgModule({
   declarations: [
@@ -74,7 +75,8 @@ import { CatalogoPuntosAccesoComponent } from './catalogo-puntos-acceso/catalogo
     ProcedAsignarTurnoComponent,
     ProcedRecibosComponent,
     ProcedAutJustificacionesComponent,
-    CatalogoPuntosAccesoComponent
+    CatalogoPuntosAccesoComponent,
+    SubirXMLComponent
   ],
   imports: [
     CompartidoModule,

@@ -14,14 +14,12 @@
                   <mat-label>Buscar usuario</mat-label>
                   <input type="text"
                           placeholder="Ingrese el nombre o id del usuario"
-                          aria-label="Number"
                           matInput
                           (keyup)="buscarUsuario()"
                           [formControl]="filterControl"
-                          [matAutocomplete]="auto"
-                          style="text-transform: uppercase;">
+                  [matAutocomplete]="auto" style="text-transform: uppercase;">
                   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionUsuario($event)">
-                      <mat-option *ngFor="let usuario of usuarios_busqueda" [value]="usuario.usuario" [id]="usuario">
+                      <mat-option *ngFor="let usuario of usuarios_busqueda" [value]="usuario.nombre_completo" [id]="usuario">
                           {{usuario.nombre}}
                       </mat-option>
                   </mat-autocomplete>
@@ -39,15 +37,28 @@
             <div class="row">
                 <!-- FOTO -->
                 <div class="col col-md-4 ms-4 mt-4 d-flex flex-column offset-1" style="width: 100px">
-                  <img [src]="perfilStock" alt="Perfil de Stock" *ngIf="mainImage == '' && fotoUsuario == ''" class="img-thumbnail mt-4 mb-2" />
+                  <img [src]="perfilStock" alt="Perfil de Stock"  class="img-thumbnail mt-4 mb-2" />
+                  <!-- <img [src]="perfilStock" alt="Perfil de Stock" *ngIf="mainImage == '' && fotoUsuario == ''" class="img-thumbnail mt-4 mb-2" />
                   <img [src]="mainImage"  alt="imagen principal" *ngIf="mainImage !== ''" class="img-thumbnail mt-4 mb-2" />
-                  <img [src]="fotoUsuario"  alt="imagen principal" *ngIf="mainImage == ''" class="img-thumbnail mt-4 mb-2" />
+                  <img [src]="fotoUsuario"  alt="imagen" *ngIf="mainImage == ''" class="img-thumbnail mt-4 mb-2" /> -->
 
                 </div>
 
                 <!-- INPUTS -->
                 <div class="usuario__data-form__section1 mt-3 col-12 col-md-5">
-                  <div class=" mt-2">
+
+                  <div *ngIf="nomAsi==true" class="mt-2">
+                    <mat-form-field  class="w-100 px-1">
+                      <input
+                      (click)="editarnombre()"
+                      title="¿EDITAR?"
+                      style="cursor: pointer;"
+                   matInput placeholder="Nombre"
+                   value={{nuevoUsuario.nombre}}>
+                    </mat-form-field>
+                  </div>
+
+                  <div *ngIf="nomAsi==false" class=" mt-2">
                         <mat-form-field class="w-100 px-1">
                           <mat-label class="d-flex justify-content-between align-items-center" >Buscar empleado <i class="fa fa-search" aria-hidden="true"></i></mat-label>
                           <input type="text"
@@ -68,10 +79,9 @@
                         <!-- <button class="btn btn-sm btn-danger"><i class="fa fa-search" aria-hidden="true"></i></button> -->
 
                   </div>
+
                   <div class="mt-2">
-                    <label class="label-label" for="inputPerfil"
-                      >Seleccionar perfil:</label
-                    >
+                    <label class="label-label" for="inputPerfil">Seleccionar perfil:</label>
                     <select
                       type="text"
                       class="form-control"
@@ -98,10 +108,21 @@
                     <input class="form-control" autocomplete="off" type="email" name="usuario" required
                       #inputProvForm [(ngModel)]="nuevoUsuario.usuario" />
                   </div>
+
+                  <div *ngIf="pass == true" class="form-label mt-2">
+                    <label for="correo">Contraseña</label>
+                    <input class="form-control" autocomplete="on" type="password" name="password " required
+                      #inputProvForm [(ngModel)]="nuevoUsuario.password"/>
+                  </div>
                   <div class="form-label mt-2">
-                    <label for="contraseña">Contraseña</label>
-                    <input class="form-control" autocomplete="off" type="password" name="password" required
-                      #inputProvForm [(ngModel)]="nuevoUsuario.password" />
+                    <!-- <mat-form-field  style="width: 100%;" >
+                      <input [(ngModel)]="nuevoUsuario.password" matInput placeholder="Introduce tu contraseña" [type]="hide ? 'password' : 'text'" >
+                      <mat-icon style="cursor: pointer;" class="i" matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </mat-form-field> -->
+                    <!-- <mat-form-field class="ml-3">
+                      <input matInput placeholder="Confirma tu contraseña" [type]="hide ? 'password' : 'text'" [(ngModel)]="nuevoUsuario.password"  >
+                      <mat-icon class="i" matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </mat-form-field> -->
                   </div>
 
                   <div class=" row form-label justify-content-between  mt-2">
@@ -109,8 +130,11 @@
                     data-mdb-ripple-color="dark">
                     Añadir foto
                   </button>
-                    <button class="px-3 btn btn-primary text-center" type="submit" data-toggle="tooltip" title="Guardar">
+                    <button *ngIf="nomAsi==false" class="px-3 btn btn-primary text-center" type="submit" data-toggle="tooltip" title="Guardar">
                       Guardar
+                    </button>
+                    <button *ngIf="nomAsi==true" class="px-3 btn btn-primary text-center" (click)="actualizarUsuario()" data-toggle="tooltip" title="Actualizar">
+                      Actualizar
                     </button>
                   </div>
                 </div>

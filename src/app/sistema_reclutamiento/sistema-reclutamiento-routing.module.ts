@@ -24,6 +24,7 @@ import { ProcedAsignarTurnoComponent } from './proced-asignar-turno/proced-asign
 import { ProcedRecibosComponent } from './proced-recibos/proced-recibos.component';
 import { CatalogoPuntosAccesoComponent } from './catalogo-puntos-acceso/catalogo-puntos-acceso.component';
 import { ProcedAutJustificacionesComponent } from './proced-aut-justificaciones/proced-aut-justificaciones.component';
+import { SubirXMLComponent } from './subir-xml/subir-xml.component';
 
 const routes: Routes = [
   {
@@ -54,6 +55,7 @@ const routes: Routes = [
         { path : "puntos_Acceso", component : CatalogoPuntosAccesoComponent},
         { path : "aut_justificaciones", component : ProcedAutJustificacionesComponent},
         { path : "user", component : UsuariosComponent},
+        { path : "subirXML", component : SubirXMLComponent},
         // { path : "catalogo_cliente/:id", component : CatalogoClienteComponent},
     ]
   }

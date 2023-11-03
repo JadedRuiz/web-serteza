@@ -86,6 +86,8 @@ export class SidebarComponent implements OnInit {
          {path: 'asistencia', title: 'Asistencia',  icon: 'fa fa-check-square'},
         //  {path: 'user', title: 'Usuarios', icon: 'fa fa-users'},
          {path: 'aut_justificaciones', title: 'Justificaciones', icon: 'fa fa-file-archive'},
+         {path: 'subirXML', title: 'subirXML', icon: 'ni-badge'},
+
     );
     }
     //JEFE INMEDIATO
@@ -115,6 +117,7 @@ export class SidebarComponent implements OnInit {
          {path: 'asistencia', title: 'Asistencia',  icon: 'fa fa-check-square'},
         //  {path: 'user', title: 'Usuarios', icon: 'fa fa-users'},
          {path: 'aut_justificaciones', title: 'Justificaciones', icon: 'fa fa-file-archive'},
+         {path: 'subirXML', title: 'subirXML', icon: 'ni-badge'},
     );
     }
     //RECURSOS HUMANOS

@@ -58,6 +58,9 @@ export class UsuariosComponent implements OnInit {
   public fotografia = new Fotografia(0,"","","");
   public foto_user : any;
   public docB64 = "";
+  hide = true;
+  nomAsi = false;
+  pass = false;
   @ViewChild('file_input', {read: ElementRef}) foto : any;
   @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
 
@@ -205,24 +208,48 @@ autocomplete(palabra : string){
         }
          console.log('resp.mensaje :>> ', resp);
     });
+    this.vaciarModelo()
 
-    this.nuevoUsuario = new NuevoUsuario(
-      0,
-      0,
-      0,
-      0,
-      '',
-      '',
-      '',
-      '',
-      0,
-      0,
-      0,
-      0,
-      '',
-      '',
-      ''
-    );
+    this.mostrarUsuarios();
+
+  }
+  actualizarUsuario() {
+    let json = {
+      id_usuario: 0,
+      id_cliente: this.id_cliente,
+      id_sistema: 2,
+      id_candidato: this.idCandi,
+      token: '012354SDSDS01',
+      nombre: this.nuevoUsuario.nombre,
+      usuario: this.nuevoUsuario.usuario,
+      id_perfil: this.nuevoUsuario.id_perfil,
+      activo: 1,
+      id_usuario_guardar: 1,
+      id_fotografia: 0,
+      extencion: this.fotografia.extension,
+      foto_base64: this.fotografia.docB64,
+    };
+    console.log('jsonGuardar :>> ', json);
+    this.usuarioService.guardarUsuario(json).subscribe((resp) => {
+      if (resp.ok) {
+        Swal.fire(
+          'Exito',
+          resp.data.mensaje,
+          'success'
+          )
+          this.formUsuario= false;
+
+        }else {
+          Swal.fire(
+            '',
+            resp.data.message,
+            'info',
+          )
+        }
+         console.log('resp.mensaje :>> ', resp);
+    });
+    this.vaciarModelo()
+
     this.mostrarUsuarios();
 
   }
@@ -240,27 +267,14 @@ autocomplete(palabra : string){
       }
     })
   }
-
   agregarUsuario(){
-    this.nuevoUsuario = new NuevoUsuario(
-      0,
-      0,
-      0,
-      0,
-      '',
-      '',
-      '',
-      '',
-      0,
-      0,
-      0,
-      0,
-      '',
-      '',
-      ''
-    );
+  this.filterControl = new FormControl();
+    this.perfilStock =  'https://th.bing.com/th/id/R.20836a4a6bf6d8ee3031d28e133a9eb7?rik=gG%2bcRJRZ4jd0Cw&riu=http%3a%2f%2fconstantcontinuity.com%2fconstantcontinuity%2fimages%2fbig1.png&ehk=TtGb2WLFcbckjNT98147tFsMNaunQxrZpJ2JeMw0i84%3d&risl=&pid=ImgRaw&r=0';
+  this.vaciarModelo();
+ this.objEmpleados = [];
     this.formUsuario= true;
-
+    this.pass = true;
+    this.nomAsi=false;
   }
 
 
@@ -331,16 +345,19 @@ buscarUsuario(){
 }
 fotoUsuario :any = ''
 optionUsuario(value : any){
+  this.nomAsi= true;
   console.log(value.option.id);
   this.nuevoUsuario = value.option.id;
   this.formUsuario= true;
-  this.fotoUsuario = this.nuevoUsuario.fotografia;
+  this.perfilStock = this.nuevoUsuario.fotografia;
   console.log(this.nuevoUsuario.fotografia);
 
 }
 
-
-
+// EDITAR NOMBRE
+  editarnombre(){
+    this.nomAsi= false;
+  }
 
 
 
@@ -449,5 +466,28 @@ optionUsuario(value : any){
   get nextWebcamObservable(): Observable<boolean | string> {
     return this.nextWebcam.asObservable();
   }
+
+// VACIAR MODELO
+vaciarModelo(){
+
+  this.nuevoUsuario = new NuevoUsuario(
+    0,
+    0,
+    0,
+    0,
+    '',
+    '',
+    '',
+    '',
+    0,
+    0,
+    0,
+    0,
+    '',
+    '',
+    ''
+  );
+}
+
 
 }
