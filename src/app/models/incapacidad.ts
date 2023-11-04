@@ -6,7 +6,7 @@ export class Incapacidad {
     public folio : string,
     public dias_incapacidad : number,
     public fecha_inicial : string,
-    public fecha_final : string,
+    public fecha_final : any,
     public activo : number,
     public token : string,
     public id_usuario : number,

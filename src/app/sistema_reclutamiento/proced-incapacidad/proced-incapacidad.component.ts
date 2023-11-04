@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Component, ElementRef, QueryList, ViewChildren, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { FormControl, NgForm } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { COLOR } from 'src/config/config';
@@ -13,6 +13,9 @@ import { Fotografia } from 'src/app/models/Fotografia';
 import Swal from 'sweetalert2';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { formatDate } from '@angular/common';
+import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
+import { Observable, Subject } from 'rxjs';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 @Component({
@@ -22,6 +25,7 @@ import { formatDate } from '@angular/common';
 })
 export class ProcedIncapacidadComponent implements OnInit {
 fotoIncapacidad ='https://th.bing.com/th/id/R.218d63aed1c5e714180a6b190913fb4f?rik=OiNmcrpCohbNsQ&pid=ImgRaw&r=0&sres=1&sresct=1'
+public perfilStock : any = ''
 public direccion: Direccion = new Direccion(
     0,
     '',
@@ -84,6 +88,10 @@ public direccion: Direccion = new Direccion(
   // incapacidades = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: any;
   @ViewChild('content', { static: false }) modal_mov: any;
+  @ViewChild('file_input', {read: ElementRef}) foto : any;
+  @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
+  @ViewChildren('inputProvForm') provInputs!: QueryList<ElementRef>;
+
   fechaInicio = new FormControl(new Date());
   fechaFinal = new FormControl(new Date());
   serializedDate = new FormControl((new Date()).toISOString());
@@ -91,8 +99,20 @@ public direccion: Direccion = new Direccion(
   selectedRowData: any;
   modal: any;
 incapacidades:any=''
+// PARA FOTO DE COMPROBANTE
+ // webcam snapshot trigger
+ private trigger: Subject<void> = new Subject<void>();
+ private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
+ @Output() getPicture = new EventEmitter<WebcamImage>();
+ showWebcam = true;
+ isCameraExist = true;
+ errors: WebcamInitError[] = [];
+public foto_user : any;
+public docB64 = "";
   constructor(
     private modalService: NgbModal,
+    private sanitizer: DomSanitizer,
+
     private candidato_service: CandidatoService,
     private incapacidadService: IncapacidadService
   ) {
@@ -102,6 +122,10 @@ incapacidades:any=''
   }
 
   ngOnInit(): void {
+    WebcamUtil.getAvailableVideoInputs()
+    .then((mediaDevices: MediaDeviceInfo[]) => {
+      this.isCameraExist = mediaDevices && mediaDevices.length > 0;
+    });
      this.obternerIncapacidades();
 
   }
@@ -129,7 +153,7 @@ incapacidades:any=''
     this.editar = true;
     this.vaciarModelo();
     this.modal = this.modalService.open(this.modal_mov, {
-      size: 'md',
+      size: 'lg',
       centered: true,
     });
     this.selectedRowData = rowData;
@@ -217,7 +241,23 @@ incapacidades:any=''
     });
   }
 
+  inca = {
+    fecha_inicial: '',
+    fecha_final: '',
+    dias: ''
+  };
 
+// MOSTRAR DIAS INCAPACIDAD|
+calcularFechaFinal() {
+  console.log('entro :>> ');
+  if (this.inca.fecha_inicial && this.inca.dias) {
+    const fechaInicial = new Date(this.inca.fecha_inicial);
+    const dias = parseInt(this.inca.dias, 10);
+    const fechaFinal = new Date(fechaInicial);
+    fechaFinal.setDate(fechaFinal.getDate() + dias);
+    this.incapacidad.fecha_final = fechaFinal;
+  }
+}
 
 
   // GUARDAR
@@ -228,6 +268,7 @@ incapacidades:any=''
   }
 
   // CALCULAR
+
   calcularDiasIncapacidad() {
     const fechaInicial = new Date(this.incapacidad.fecha_inicial);
     const fechaFinal = new Date(this.incapacidad.fecha_final);
@@ -248,9 +289,9 @@ incapacidades:any=''
     const diasIncapacidad = this.calcularDiasIncapacidad();
 
     let json = {
-      id_incapacidad: 0,
+      id_incapacidad: 0 || this.incapacidad.id_incapacidad,
       id_cliente: this.id_cliente,
-      id_candidato: this.candidatos_busqueda[0].id_candidato,
+      id_candidato: this.incapacidad.id_candidato || this.candidatos_busqueda[0].id_candidato,
       folio: this.incapacidad.folio,
       dias_incapacidad: diasIncapacidad,
       fecha_inicial: fechaInicialFormateada,
@@ -262,7 +303,7 @@ incapacidades:any=''
     console.log('json :>> ', json);
     this.incapacidadService.guardarIncapacidad(json).subscribe((resp) => {
       if (resp.ok) {
-        Swal.fire('Incapacidad Guardada', '', 'success');
+        Swal.fire('Exito', resp.data.mensaje, 'success');
       }
     });
     this.closeModal();
@@ -283,5 +324,112 @@ incapacidades:any=''
   this.incapacidad = new Incapacidad(0,0,0,'',0,'','',0,'',0)
 
   }
+
+
+  //MODAL PARA AÑADIR FOTOS AL USUARIO
+  extraModal: boolean = false;
+  ubicacionVendedor: any;
+  imageCount: number = 0;
+  imageAfterResize: any;
+  mainImage: string = '';
+  takingPhoto: boolean = false;
+  // public triggerObservable: Observable<void> = this.trigger.asObservable();
+  public modal_camera : any;
+
+
+  subirImagen(){
+    document.getElementById("foto_user")?.click();
+  }
+
+  convertirImagenAB64(fileInput : any){
+    return new Promise(function(resolve, reject) {
+      let b64 = "";
+      const reader = new FileReader();
+      reader.readAsDataURL(fileInput);
+      reader.onload = (e: any) => {
+          b64 = e.target.result.split("base64,")[1];
+          resolve(b64);
+      };
+    });
+  }
+
+  cambiarImagen(event: any){
+    if (event.target.files && event.target.files[0]) {
+      let archivos = event.target.files[0];
+      let extension = archivos.name.split(".")[1];
+      this.fotografia.extension = extension;
+      if(extension == "jpg" || extension == "png"){
+        this.convertirImagenAB64(archivos).then( respuesta => {
+          let img = "data:image/"+extension+";base64, "+respuesta;
+          this.perfilStock = this.sanitizer.bypassSecurityTrustResourceUrl(img);
+          this.fotoIncapacidad = this.perfilStock
+          this.docB64 = respuesta+"";
+          this.fotografia.docB64 = respuesta+"";
+          this.fotografia.extension = extension;
+          console.log('oio>',this.foto_user);
+          this.togglePhotosModal()
+        });
+      }else{
+        Swal.fire("Ha ocurrido un error","Tipo de imagen no permitida","error");
+      }
+    }
+  }
+
+
+
+
+
+  //FUNCIÓN PARA ABRIR MODAL PARA AÑADIR FOTOS AL CLIENTE
+  togglePhotosModal() {
+    this.extraModal = !this.extraModal;
+    this.takingPhoto = false;
+  }
+
+  openModalCamera(){
+    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop', backdrop: 'static', keyboard: false});
+    // this.showWebcam = true;
+  }
+
+  cerrarModalCamera(){
+    this.modal_camera.close();
+  }
+
+  takeSnapshot(): void {
+    let foto = this.trigger.next();
+  }
+
+  onOffWebCame() {
+    this.showWebcam = !this.showWebcam;
+  }
+
+  handleInitError(error: WebcamInitError) {
+    this.errors.push(error);
+  }
+
+  changeWebCame(directionOrDeviceId: boolean | string) {
+    this.nextWebcam.next(directionOrDeviceId);
+  }
+
+  handleImage(webcamImage: WebcamImage) {
+    this.getPicture.emit(webcamImage);
+    this.foto_user = webcamImage.imageAsDataUrl;
+    this.fotoIncapacidad = webcamImage.imageAsDataUrl;
+    let docB64 = this.foto_user.split(",");
+    this.fotografia.docB64 = docB64[1];
+    this.fotografia.extension = "jpeg";
+    this.fotografia.nombre = "foto_user";
+    this.cerrarModalCamera();
+    this.togglePhotosModal();
+    // console.log(webcamImage.imageAsDataUrl)
+  }
+
+  get triggerObservable(): Observable<void> {
+    return this.trigger.asObservable();
+  }
+
+  get nextWebcamObservable(): Observable<boolean | string> {
+    return this.nextWebcam.asObservable();
+  }
+
 
 }

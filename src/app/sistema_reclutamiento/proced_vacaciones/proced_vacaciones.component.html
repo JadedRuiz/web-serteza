@@ -152,7 +152,7 @@
                                       <div class="col">
                                      <img [src]=fotoVacaciones alt="Imagen" class="card-image border ">
                                    </div>
-                                   <div class="col text_info">
+                                   <div (click)="modalEditar()" style="cursor: pointer;" title="¿EDITAR?" class="col text_info">
                                         <p class="nomobre">Nombre Completo</p>
                                         <p class=" mb-0 badge badge-success">Autorizado</p>
                                         <p class="card-label mb-0"><strong>Folio:</strong>Y234</p>
@@ -168,9 +168,11 @@
                                       </div>
                                     </div>
                                     <div class="row justify-content-center">
-                                      <a  href="" class="btn-sm btn btn-primary" title="Subir Imagen"><i class="fa fa-upload" aria-hidden="true"></i></a>
-                                      <a  href="" class="btn-sm  btn btn-primary" title="Imprimir"><i class="fa fa-print" aria-hidden="true"></i></a>
-                                      <button class="btn btn-sm btn-info" >Comprobante</button>
+                                      <a   class="btn-sm btn btn-primary" title="Subir Imagen"><i class="fa fa-upload" aria-hidden="true"></i></a>
+                                      <a   class="btn-sm  btn btn-primary" title="Imprimir"><i class="fa fa-print" aria-hidden="true"></i></a>
+                                      <button
+                                      title="comprobante" (click)="togglePhotosModal()" type="button"
+                                       class="btn btn-sm btn-info" >Comprobante</button>
                                     </div>
 
 
@@ -197,7 +199,7 @@
                         </div>
                         <div class="col-lg-3 col-sm-12">
                             <div class="card w-100 my-1">
-                              <mat-card class="custom-card" (click)="openModal()">
+                              <mat-card class="custom-card">
                                 <mat-card-content>
                                   <div class="row">
                                     <div class="col">
@@ -288,6 +290,7 @@
         <button type="button" class="btn btn-warning" (click)="modal_vac.close('Save click')">Cerrar</button>
     </div>
 </ng-template>
+
   <!-- MODAL SOLICITAR VACACIONES -->
 <ng-template #modal_sol let-modal_sol>
     <div class="modal-header">
@@ -347,4 +350,81 @@
         <button type="button" class="btn btn-primary" (click)="enviarSolicitud()">Solicitar</button>
         <button type="button" class="btn btn-warning" (click)="modal_sol.close('Save click')">Cerrar</button>
     </div>
+</ng-template>
+
+<!-- MODAL PARA SUBIR FOTOS DEL USUARIO -->
+<div class="usuario-modal" *ngIf="extraModal">
+  <div class="usuario-modal__extra">
+    <!-- <button class="usuario-modal__close icon-btn" (click)="togglePhotosModal()">
+      <i i class="fa fa-times"></i>
+    </button> -->
+    <!-- TÍTULO -->
+    <h3 class="extras-title title">Comprobante Incapacidad</h3>
+
+    <!-- CUERPO DEL MODAL -->
+    <div class=" row usuario-modal__extra-container mt-3">
+      <!-- IMAGEN PRINCIPAL -->
+      <div class=" col-6 usuario-modal__extra-image">
+        <img
+        [src]=fotoVacaciones
+          alt="placeholder"
+          *ngIf="mainImage == ''"
+        />
+        <img
+        [src]="mainImage"
+        alt="imagen principal"
+        *ngIf="mainImage !== ''"
+        />
+      </div>
+      <!-- BOTÓN PARA AÑADIR FOTO -->
+      <div class=" upload-buttons">
+        <button class="btn btn-outline-info" (click)="subirImagen()">
+          Subir imagen
+        </button>
+        <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
+        <!-- BOTÓN PARA TOMAR FOTO -->
+        <button  class="btn btn-outline-primary" (click)="openModalCamera()">Tomar foto</button>
+        <button class="btn btn-outline-danger" (click)="togglePhotosModal()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #modal_camera let-c="close" let-d="dismiss">
+  <div class="modal-header">
+      <h2 class="modal-title" id="tituloModal">Tomar fotografia</h2>
+  </div>
+  <div class="modal-body">
+      <div class="container">
+          <div class="row">
+              <div *ngIf="isCameraExist; else noCameraExist" class="col-12">
+                  <div class="border border-success rounded text-center" style="width: 100%;height: 265px;">
+                      <webcam [height]="450" [width]="350" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
+                          *ngIf="showWebcam" [switchCamera]="nextWebcamObservable"></webcam>
+                  </div>
+
+                  <div *ngIf="errors.length > 0">
+                      <h4>Error Messages:</h4>
+                      <ul *ngFor="let error of errors">
+                          <li>{{ error | json }}</li>
+                      </ul>
+                  </div>
+              </div>
+
+              <ng-template #noCameraExist>
+                  <div class="border border-danger rounded text-center"
+                  style="display: flex;justify-content: center;align-items: center;width: 450px;height: 350px;">
+                      Este dispositivo no cuenta con una camara disponible
+                  </div>
+              </ng-template>
+          </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="cerrarModalCamera()">Cerrar</button>
+      <button *ngIf="isCameraExist" type="button" class="btn btn-primary" (click)="takeSnapshot()">Tomar foto</button>
+  </div>
 </ng-template>

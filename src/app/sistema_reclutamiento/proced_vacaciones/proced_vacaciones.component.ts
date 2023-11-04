@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, QueryList, ViewChildren, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { VacacionesService } from 'src/app/services/Reclutamiento/Vacaciones.service';
@@ -8,6 +8,10 @@ import { Candidato } from 'src/app/models/Candidato';
 import { Direccion } from 'src/app/models/Direccion';
 import { Fotografia } from 'src/app/models/Fotografia';
 import Swal from 'sweetalert2';
+import { formatDate } from '@angular/common';
+import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
+import { Observable, Subject } from 'rxjs';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-proced-vacaciones',
@@ -64,9 +68,28 @@ export class ProcedVacacionesComponent implements OnInit {
     @ViewChild("modal_vac",{static: false}) content : any;
     @ViewChild("modal_sol",{static: false}) content_two : any;
     arraySolicitudes = Array();
+     // webcam snapshot trigger
+     @ViewChild('content', { static: false }) modal_mov: any;
+     @ViewChild('file_input', {read: ElementRef}) foto : any;
+     @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
+     @ViewChildren('inputProvForm') provInputs!: QueryList<ElementRef>;
+
+     fechaInicio = new FormControl(new Date());
+     fechaFinal = new FormControl(new Date());
+     serializedDate = new FormControl((new Date()).toISOString());
+ private trigger: Subject<void> = new Subject<void>();
+ private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
+ @Output() getPicture = new EventEmitter<WebcamImage>();
+ showWebcam = true;
+ isCameraExist = true;
+ errors: WebcamInitError[] = [];
+public foto_user : any;
+public docB64 = "";
+public perfilStock : any = ''
 
   constructor(
     private modalService: NgbModal,
+    private sanitizer: DomSanitizer,
     private candidato_service: CandidatoService,
     private serv_vacaciones : VacacionesService) { }
 
@@ -156,8 +179,6 @@ mostrarCandidatos(){
   });
 }
 
-
-
 buscarCandidato(){
   this.palabra = this.filterControl.value;
   if(this.filterControl.value.length < 1){
@@ -167,8 +188,6 @@ buscarCandidato(){
     this.autocomplete(this.filterControl.value);
   }
 }
-
-
 
 autocomplete(palabra : string){
  // this.candidatos_busqueda = [];
@@ -187,6 +206,120 @@ autocomplete(palabra : string){
       }
     })
   }
+}
+
+ //MODAL PARA AÑADIR FOTOS AL USUARIO
+ extraModal: boolean = false;
+ ubicacionVendedor: any;
+ imageCount: number = 0;
+ imageAfterResize: any;
+ mainImage: string = '';
+ takingPhoto: boolean = false;
+ // public triggerObservable: Observable<void> = this.trigger.asObservable();
+ public modal_camera : any;
+
+
+ subirImagen(){
+   document.getElementById("foto_user")?.click();
+ }
+
+ convertirImagenAB64(fileInput : any){
+   return new Promise(function(resolve, reject) {
+     let b64 = "";
+     const reader = new FileReader();
+     reader.readAsDataURL(fileInput);
+     reader.onload = (e: any) => {
+         b64 = e.target.result.split("base64,")[1];
+         resolve(b64);
+     };
+   });
+ }
+
+ cambiarImagen(event: any){
+   if (event.target.files && event.target.files[0]) {
+     let archivos = event.target.files[0];
+     let extension = archivos.name.split(".")[1];
+     this.fotografia.extension = extension;
+     if(extension == "jpg" || extension == "png"){
+       this.convertirImagenAB64(archivos).then( respuesta => {
+         let img = "data:image/"+extension+";base64, "+respuesta;
+         this.perfilStock = this.sanitizer.bypassSecurityTrustResourceUrl(img);
+         this.fotoVacaciones = this.perfilStock;
+         this.docB64 = respuesta+"";
+         this.fotografia.docB64 = respuesta+"";
+         this.fotografia.extension = extension;
+         console.log('oio>',this.foto_user);
+         this.togglePhotosModal()
+       });
+     }else{
+       Swal.fire("Ha ocurrido un error","Tipo de imagen no permitida","error");
+     }
+   }
+ }
+
+
+
+
+
+ //FUNCIÓN PARA ABRIR MODAL PARA AÑADIR FOTOS AL CLIENTE
+ togglePhotosModal() {
+   this.extraModal = !this.extraModal;
+   this.takingPhoto = false;
+ }
+
+ openModalCamera(){
+   this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop', backdrop: 'static', keyboard: false});
+   // this.showWebcam = true;
+ }
+
+ cerrarModalCamera(){
+   this.modal_camera.close();
+ }
+
+ takeSnapshot(): void {
+   let foto = this.trigger.next();
+ }
+
+ onOffWebCame() {
+   this.showWebcam = !this.showWebcam;
+ }
+
+ handleInitError(error: WebcamInitError) {
+   this.errors.push(error);
+ }
+
+ changeWebCame(directionOrDeviceId: boolean | string) {
+   this.nextWebcam.next(directionOrDeviceId);
+ }
+
+ handleImage(webcamImage: WebcamImage) {
+   this.getPicture.emit(webcamImage);
+   this.foto_user = webcamImage.imageAsDataUrl;
+   this.fotoVacaciones = webcamImage.imageAsDataUrl;
+   let docB64 = this.foto_user.split(",");
+   this.fotografia.docB64 = docB64[1];
+   this.fotografia.extension = "jpeg";
+   this.fotografia.nombre = "foto_user";
+   this.cerrarModalCamera();
+   this.togglePhotosModal();
+   // console.log(webcamImage.imageAsDataUrl)
+ }
+
+ get triggerObservable(): Observable<void> {
+   return this.trigger.asObservable();
+ }
+
+ get nextWebcamObservable(): Observable<boolean | string> {
+   return this.nextWebcam.asObservable();
+ }
+
+
+//  MODAL EDITAR
+editar = false;
+modalEditar(){
+  this.editar = true;
+    this.modal = this.modalService.open(this.modal_mov,{
+       size: 'lg', centered : true, backdropClass : 'light-blue-backdrop'});
 }
 
 

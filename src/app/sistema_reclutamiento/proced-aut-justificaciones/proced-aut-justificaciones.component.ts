@@ -94,6 +94,7 @@ export class ProcedAutJustificacionesComponent implements OnInit {
       selectedRowData: any;
       modal: any;
     incapacidades:any=''
+    checked: any = false;
       constructor(
         private modalService: NgbModal,
         private candidato_service: CandidatoService,
@@ -109,6 +110,11 @@ export class ProcedAutJustificacionesComponent implements OnInit {
         this.obtenerJustificaciones();
       }
 
+
+      // PARA CHECKED
+      checkOn(event:any){
+         this.obtenerJustificaciones();
+      }
 
       // BARRA DE BUSQUEDA
       mostrarCandidatos() {
@@ -184,11 +190,12 @@ export class ProcedAutJustificacionesComponent implements OnInit {
           id_sucursal: 0,
           id_departamento: 0,
           id_puesto: 0,
-          sin_autorizar: 1,
+          sin_autorizar: this.checked ?  0 : 1,
           fecha_inicial: '',
           fecha_final: '',
           token: '012354SDSDS01',
         };
+        console.log('olo',json);
         this.justiService.obternerJustificaciones(json).subscribe(resp => {
           if(resp.ok){
             this.justificaciones = resp.data
@@ -219,9 +226,11 @@ export class ProcedAutJustificacionesComponent implements OnInit {
               if(resp.ok){
                 console.log(resp);
                 Swal.fire(resp.data.mensaje, '', 'success')
+              }else{
+                Swal.fire(resp.data.mensaje, '', 'error')
               }
             })
-
+          this.obtenerJustificaciones()
 
           }
         })
