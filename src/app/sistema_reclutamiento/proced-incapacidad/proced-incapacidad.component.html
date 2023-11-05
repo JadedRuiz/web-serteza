@@ -108,21 +108,23 @@
           </div>
         <div class="row">
 
-          <div class="col">
+
+
+          <div class="col-md-4">
             <mat-form-field>
-              <input  [(ngModel)]="incapacidad.fecha_inicial" name="fecha_inicial"  matInput [matDatepicker]="picker" placeholder="Fecha Inicio">
+              <input  [(ngModel)]="incapacidad.fecha_inicial " name="fecha_inicial"  matInput [matDatepicker]="picker" placeholder="Fecha Inicio" (ngModelChange)="formatearFecha()">
               <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
           </div>
-          <div class="col">
+          <div class="col-md-4">
             <mat-form-field>
-              <input [(ngModel)]="incapacidad.dias_incapacidad" name="dias_incapacidad" matInput placeholder="Incapacidad" type="number" class="example-right-align" (input)="calcularFechaFinal()">
+              <input [(ngModel)]="incapacidad.dias_incapacidad" name="dias_incapacidad" matInput placeholder="Incapacidad" type="number" class="example-right-align" (input)="calcularFF()">
               <!-- <span matPrefix>$&nbsp;</span> -->
               <span matSuffix>Días</span>
             </mat-form-field>
           </div>
-          <div class="col">
+          <div class="col-md-4">
             <mat-form-field>
               <input   [(ngModel)]="incapacidad.fecha_final" name="fecha_final" matInput [matDatepicker]="picker2" placeholder="Fecha Final">
               <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>

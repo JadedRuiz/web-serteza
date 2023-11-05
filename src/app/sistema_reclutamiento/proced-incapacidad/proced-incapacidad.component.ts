@@ -16,7 +16,7 @@ import { formatDate } from '@angular/common';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import { Observable, Subject } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
-
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-proced-incapacidad',
@@ -112,7 +112,7 @@ public docB64 = "";
   constructor(
     private modalService: NgbModal,
     private sanitizer: DomSanitizer,
-
+    public datepipe : DatePipe,
     private candidato_service: CandidatoService,
     private incapacidadService: IncapacidadService
   ) {
@@ -130,23 +130,20 @@ public docB64 = "";
 
   }
 
-  private generateTableData(): any[] {
-    const tableData = [];
-    for (let i = 1; i <= 3; i++) {
-      tableData.push({
-        fecha: `2023-10-${i}`,
-        entrada: `Entrada ${i}`,
-        salida: `Salida ${i}`,
-        tipoF: 'A',
-        tipoD: 'M',
-        tipoV: 'B',
-        tipoR: 'A',
-        descripcion: `Descripción ${i}`,
-      });
-    }
-    return tableData;
-  }
+  // PARA LA FECHA FINAL
+  fechaFor :any
+  calcularFF() { // Obtener la fecha inicial como un objeto Date
+    let fechaInicial = new Date(this.incapacidad.fecha_inicial); // Obtener los días como un número
+     let dias = Number(this.incapacidad.dias_incapacidad); // Calcular la fecha final en milisegundos
+      let fechaFinal = fechaInicial.getTime() + dias * 86400000; // Crear un nuevo objeto Date con la fecha fnal
+      this.incapacidad.fecha_final = new Date(fechaFinal);
 
+    }
+    formatearFecha() {
+      // let fechaFormateada = this.datepipe.transform(this.incapacidad.fecha_inicial, 'dd/MM/yyyy');
+      // this.incapacidad.fecha_inicial = fechaFormateada!;
+
+     }
   // MODAL
   editar = false;
   openModal(rowData: any) {
@@ -246,18 +243,6 @@ public docB64 = "";
     fecha_final: '',
     dias: ''
   };
-
-// MOSTRAR DIAS INCAPACIDAD|
-calcularFechaFinal() {
-  console.log('entro :>> ');
-  if (this.inca.fecha_inicial && this.inca.dias) {
-    const fechaInicial = new Date(this.inca.fecha_inicial);
-    const dias = parseInt(this.inca.dias, 10);
-    const fechaFinal = new Date(fechaInicial);
-    fechaFinal.setDate(fechaFinal.getDate() + dias);
-    this.incapacidad.fecha_final = fechaFinal;
-  }
-}
 
 
   // GUARDAR
