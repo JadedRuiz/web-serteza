@@ -8,10 +8,10 @@
       <div class="card">
         <div class="card-header">
           <h2 class="card-title">USUARIOS</h2>
-          <div class="row offset-1">
+          <div  class="row offset-1">
             <div class="col-5 ">
-              <mat-form-field class="w-100">
-                  <mat-label>Buscar usuario</mat-label>
+              <mat-form-field *ngIf="!ocultar" class="w-100">
+                  <mat-label class="d-flex justify-content-between align-items-center" >Buscar usuario <i class="fa fa-search" aria-hidden="true"></i></mat-label>
                   <input type="text"
                           placeholder="Ingrese el nombre o id del usuario"
                           matInput
@@ -20,13 +20,14 @@
                   [matAutocomplete]="auto" style="text-transform: uppercase;">
                   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionUsuario($event)">
                       <mat-option *ngFor="let usuario of usuarios_busqueda" [value]="usuario.nombre_completo" [id]="usuario">
-                          {{usuario.nombre_completo}}
+                          {{usuario.nombre}}
                       </mat-option>
                   </mat-autocomplete>
               </mat-form-field>
           </div>
           <div class="col-5  text-center ">
-            <button (click)="agregarUsuario()" class=" btn btn-primary" >AGREGAR USUARIO</button>
+            <button *ngIf="!ocultar" (click)="agregarUsuario()" class=" btn btn-primary" >AGREGAR USUARIO</button>
+
           </div>
 
           </div>
@@ -41,36 +42,41 @@
                   <!-- <img [src]="perfilStock" alt="Perfil de Stock" *ngIf="mainImage == '' && fotoUsuario == ''" class="img-thumbnail mt-4 mb-2" />
                   <img [src]="mainImage"  alt="imagen principal" *ngIf="mainImage !== ''" class="img-thumbnail mt-4 mb-2" />
                   <img [src]="fotoUsuario"  alt="imagen" *ngIf="mainImage == ''" class="img-thumbnail mt-4 mb-2" /> -->
-
+                  <button  (click)="togglePhotosModal()" type="button" class="btn btn-outline-info px-4"
+                  data-mdb-ripple-color="dark">
+                  Añadir foto
+                </button>
                 </div>
 
                 <!-- INPUTS -->
                 <div class="usuario__data-form__section1 mt-3 col-12 col-md-5">
 
-                  <div *ngIf="nomAsi==true" class="mt-2">
+                  <!-- <div *ngIf="!isEditMode" class="mt-2">
                     <mat-form-field  class="w-100 px-1">
                       <input
+                      disabled
                       (click)="editarnombre()"
                       title="¿EDITAR?"
                       style="cursor: pointer;"
                    matInput placeholder="Nombre"
                    value={{nuevoUsuario.nombre}}>
                     </mat-form-field>
-                  </div>
+                  </div> -->
 
-                  <div *ngIf="nomAsi==false" class=" mt-2">
-                        <mat-form-field class="w-100 px-1">
-                          <mat-label class="d-flex justify-content-between align-items-center" >Buscar empleado <i class="fa fa-search" aria-hidden="true"></i></mat-label>
+                  <div  class=" mt-2">
+                        <mat-form-field   class="w-100 px-1">
+                          <mat-label  class="d-flex justify-content-between align-items-center" >Buscar empleado <i class="fa fa-search" aria-hidden="true"></i></mat-label>
                           <input type="text"
                            placeholder="NOMBRE o RFC"
                            aria-label="Number"
                            matInput
                            (keyup)="buscarCandidato()"
                            [formControl]="filterControl"
-                          [matAutocomplete]="auto" style="text-transform: uppercase;"
+                           [matAutocomplete]="auto" style="text-transform: uppercase;"
                           >
-                          <mat-autocomplete #auto="matAutocomplete">
-                            <mat-option *ngFor="let empleado of objEmpleados" [value]="empleado.nombre_completo"
+                          <mat-autocomplete  #auto="matAutocomplete">
+
+                            <mat-option  *ngFor="let empleado of objEmpleados" [value]="empleado.nombre_completo"
                               [id]="empleado.id_empleado">
                               {{empleado.nombre}}
                             </mat-option>
@@ -100,19 +106,19 @@
                   </div>
                   <div class="form-label mt-2">
                     <label for="nombre">Nombre</label>
-                    <input class="form-control" autocomplete="off" type="text" name="nombre" required #inputProvForm
-                    [(ngModel)]="nuevoUsuario.nombre" />
+                    <input style="text-transform: uppercase;" class="form-control" autocomplete="off" type="text" name="nombre" required #inputProvForm
+                    [(ngModel)]="nuevoUsuario.nombre"  />
                   </div>
                   <div class="form-label mt-2">
                     <label for="correo">Correo</label>
                     <input class="form-control" autocomplete="off" type="email" name="usuario" required
-                      #inputProvForm [(ngModel)]="nuevoUsuario.usuario" />
+                      #inputProvForm [(ngModel)]="nuevoUsuario.usuario"  />
                   </div>
 
-                  <div *ngIf="pass == true" class="form-label mt-2">
+                  <div class="form-label mt-2">
                     <label for="correo">Contraseña</label>
                     <input class="form-control" autocomplete="on" type="password" name="password " required
-                      #inputProvForm [(ngModel)]="nuevoUsuario.password"/>
+                      #inputProvForm [(ngModel)]="nuevoUsuario.password" />
                   </div>
                   <div class="form-label mt-2">
                     <!-- <mat-form-field  style="width: 100%;" >
@@ -125,17 +131,20 @@
                     </mat-form-field> -->
                   </div>
 
-                  <div class=" row form-label justify-content-between  mt-2">
-                    <button (click)="togglePhotosModal()" type="button" class="btn btn-outline-primary px-5"
-                    data-mdb-ripple-color="dark">
-                    Añadir foto
-                  </button>
-                    <button *ngIf="nomAsi==false" class="px-3 btn btn-primary text-center" type="submit" data-toggle="tooltip" title="Guardar">
+                  <div class="  mx-2 row form-label justify-content-between  mt-2">
+
+
+                    <button  class="px-4 btn btn-primary " type="submit"  data-toggle="tooltip" title="Guardar">
                       Guardar
                     </button>
-                    <button *ngIf="nomAsi==true" class="px-3 btn btn-primary text-center" type="submit"   data-toggle="tooltip" title="Actualizar">
-                      Actualizar
-                    </button>
+
+                    <button *ngIf="ocultar" (click)="cancelar()"  class=" btn btn-danger" >CANCELAR</button>
+
+                    <button *ngIf="!ocultar" (click)="Edit()"  class=" btn btn-outline-danger" >CANCELAR</button>
+
+                    <!-- <button *ngIf="ocultar == false" (click)="Edit()" type="button" class="btn px-4"  [ngClass]="{'btn-outline-primary': !isEditMode, 'btn-outline-danger': isEditMode}" data-mdb-ripple-color="dark">
+                      {{ isEditMode ? 'Cancelar' : 'Editar' }}
+                    </button> -->
                   </div>
                 </div>
 

@@ -24,6 +24,8 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 export class UsuariosComponent implements OnInit {
   public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
   public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
+  // public token = parseInt(window.sessionStorage.getItem("token")+"");
+  public token = 'token';
 
   public perfilStock : any =
     'https://th.bing.com/th/id/R.20836a4a6bf6d8ee3031d28e133a9eb7?rik=gG%2bcRJRZ4jd0Cw&riu=http%3a%2f%2fconstantcontinuity.com%2fconstantcontinuity%2fimages%2fbig1.png&ehk=TtGb2WLFcbckjNT98147tFsMNaunQxrZpJ2JeMw0i84%3d&risl=&pid=ImgRaw&r=0';
@@ -61,6 +63,8 @@ export class UsuariosComponent implements OnInit {
   hide = true;
   nomAsi = false;
   pass = false;
+  isEditMode = false;
+  ocultar = false;
   @ViewChild('file_input', {read: ElementRef}) foto : any;
   @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
 
@@ -144,76 +148,184 @@ autocomplete(palabra : string){
       if(object.ok){
         this.objEmpleados = object.data;
       //  this.candidatos_busqueda = object.data;
-         this.idCandi = this.objEmpleados[0].id_candidato
-         console.log('objEmpleados', this.idCandi);
+        //  this.idCandi = this.objEmpleados[0].id_candidato
       }
     })
   }
 }
 
 
+  // Obtener PERFILES
+  perfiles: Perfil[] = [];
 
+consultarPerfiles(){
+  let json = {
+    id_perfil: 0,
+    id_sistema: 2,
+    perfil: "",
+    solo_activos: 1,
+    token: "012354SDSDS01"
+  }
+  this.usuarioService.consultarPerfiles(json).subscribe((resp)=>{
+    if(resp.ok){
+      this.perfiles = resp.data;
+      console.log('Perfiles :>> ', resp.data);
+    }
+  })
+}
 
-  // Obtener USUARIOS
-  // obtenerUsuarios() {
-  //   let json = {
-  //     id_usuario: 0,
-  //     id_cliente: this.id_cliente,
-  //     id_sistema: 2,
-  //     usuario: '',
-  //     solo_activos: 1,
-  //     id_usuario_consulta: 0,
-  //     token: '012354SDSDS01',
-  //   };
-  //   this.usuarioService.consultarUsuarios(json).subscribe((resp) => {
-  //     if (resp.ok) {
-  //       console.log('Usuarios :>> ', resp.data);
+// BARRA DE BUSQUEDA
+mostrarUsuarios(){
+  let json = {
+    id_usuario: 0,
+    id_cliente: this.id_cliente,
+    id_sistema: 2,
+    usuario: '',
+    solo_activos: 1,
+    id_usuario_consulta: 0,
+    token: '012354SDSDS01',
+  };
+  this.usuarioService.consultarUsuarios(json).subscribe((resp) => {
+    if (resp.ok) {
+      console.log('Usuarios :>> ', resp.data);
+      this.usuarios = resp.data;
+      this.usuarios_busqueda = resp.data
+      // this.usuarios_busqueda = resp.data.map((usuario:any) => usuario.nombre);
+    }
+  });
+
+}
+
+buscarUsuario(){
+  // this.mostrarUsuarios();
+  // const filterValue = this.filterControl.value.toUpperCase
+  // this.usuarios_busqueda = [];
+
+  // if(filterValue.length > 2){
+  //   this.usuarios.forEach((user:any)=>
+  //   {
+  //     if(user.nombre_completo.toUpperCase().includes(filterValue)){
+  //       this.usuarios_busqueda.push({
+  //         "nombre_completo": user.nombre_completo,
+  //         "id_candidato": user.id_candidato
+  //       })
   //     }
-  //   });
+  //   })
   // }
+
+  console.log(this.usuarios_busqueda)
+  if(this.filterControl.value.length > 1){
+    this.usuarios_busqueda = [];
+    this.usuarios.forEach((element : any) => {
+      this.usuarios_busqueda.push({
+        "nombre_completo" : element.nombre_completo,
+        "id_candidato" : element.id_usuario
+      });
+      console.log(this.usuarios_busqueda)
+  });
+}
+  if(this.filterControl.value.length > 2){
+     this.usuarios_busqueda = [];
+    this.usuarios.forEach((element : any) => {
+      if(element.nombre_completo.includes(this.filterControl.value.toUpperCase())){
+        this.usuarios_busqueda.push({
+          "nombre_completo" : element.nombre_completo,
+          "id_candidato" : element.id_usuario
+        })
+      }
+      console.log(this.usuarios)
+    });
+  }
+}
+
+
+
+fotoUsuario :any = ''
+json: any = ''
+optionUsuario(value : any){
+  this.isEditMode = true;
+  this.vaciarModelo();
+  this.nuevoUsuario = value.option.id;
+  this.formUsuario= true;
+    if(this.nuevoUsuario.id_fotografia < 1){
+      console.log('entro');
+      this.perfilStock =  'https://th.bing.com/th/id/R.20836a4a6bf6d8ee3031d28e133a9eb7?rik=gG%2bcRJRZ4jd0Cw&riu=http%3a%2f%2fconstantcontinuity.com%2fconstantcontinuity%2fimages%2fbig1.png&ehk=TtGb2WLFcbckjNT98147tFsMNaunQxrZpJ2JeMw0i84%3d&risl=&pid=ImgRaw&r=0';
+    }else {
+      this.perfilStock = this.nuevoUsuario.fotografia
+    }
+
+  console.log(this.nuevoUsuario.id_candidato);
+
+}
+
 
   // Guardar Usuario
   guardarUsuario() {
-    let json = {
-      id_usuario: 0,
-      id_cliente: this.id_cliente,
-      id_sistema: 2,
-      id_candidato: this.idCandi,
-      token: '012354SDSDS01',
-      nombre: this.nuevoUsuario.nombre,
-      usuario: this.nuevoUsuario.usuario,
-      password: this.nuevoUsuario.password,
-      id_perfil: this.nuevoUsuario.id_perfil,
-      activo: 1,
-      id_usuario_guardar: 1,
-      id_fotografia: 0,
-      extencion: this.fotografia.extension,
-      foto_base64: this.fotografia.docB64,
-    };
-    console.log('jsonGuardar :>> ', json);
-    this.usuarioService.guardarUsuario(json).subscribe((resp) => {
-      if (resp.ok) {
-        Swal.fire(
-          'Exito',
-          resp.data.mensaje,
-          'success'
-          )
+    if(this.isEditMode){
+      console.log('editado? >> ' );
+      let json = {
+        id_usuario: 0,
+        id_cliente: this.id_cliente,
+        id_sistema: 2,
+        id_candidato: this.nuevoUsuario.id_candidato,
+        token: this.token,
+        nombre: this.nuevoUsuario.nombre,
+        usuario: this.nuevoUsuario.usuario,
+        password: this.nuevoUsuario.password,
+        id_perfil: this.nuevoUsuario.id_perfil,
+        activo: 1,
+        id_usuario_guardar: 1,
+        id_fotografia: 0,
+        extencion: this.fotografia.extension,
+        foto_base64: this.fotografia.docB64,
+          };
+      this.json = json
+    }else {
+       console.log('nuevo? >> ' );
+      let json = {
+        id_usuario: 0,
+        id_cliente: this.id_cliente,
+        id_sistema: 2,
+        id_candidato: 0,
+        token: this.token,
+        nombre: this.nuevoUsuario.nombre,
+        usuario: this.nuevoUsuario.usuario,
+        password: this.nuevoUsuario.password,
+        id_perfil: this.nuevoUsuario.id_perfil,
+        activo: 1,
+        id_usuario_guardar: 1,
+        id_fotografia: 0,
+        extencion: this.fotografia.extension,
+        foto_base64: this.fotografia.docB64,
+      };
+      this.json = json
+    }
 
-        }else {
-          Swal.fire(
-            '',
-            resp.data.message,
-            'info',
-            )
-          }
-          this.formUsuario= false;
-         console.log('resp.mensaje :>> ', resp);
-    });
+    console.log('jsonGuardar :>> ', this.json);
+    // this.usuarioService.guardarUsuario(jsoon).subscribe((resp) => {
+    //   if (resp.ok) {
+    //     Swal.fire(
+    //       'Exito',
+    //       resp.data.mensaje,
+    //       'success'
+    //       )
+
+    //     }else {
+    //       Swal.fire(
+    //         '',
+    //         resp.data.message,
+    //         'info',
+    //         )
+    //       }
+    //      console.log('resp.mensaje :>> ', resp);
+    // });
+    this.cancelar();
     this.vaciarModelo()
-
     this.mostrarUsuarios();
 
   }
+
+
   actualizarUsuario() {
     let json = {
       id_usuario: 0,
@@ -268,99 +380,38 @@ autocomplete(palabra : string){
       }
     })
   }
+
+
   agregarUsuario(){
   this.filterControl = new FormControl();
     this.perfilStock =  'https://th.bing.com/th/id/R.20836a4a6bf6d8ee3031d28e133a9eb7?rik=gG%2bcRJRZ4jd0Cw&riu=http%3a%2f%2fconstantcontinuity.com%2fconstantcontinuity%2fimages%2fbig1.png&ehk=TtGb2WLFcbckjNT98147tFsMNaunQxrZpJ2JeMw0i84%3d&risl=&pid=ImgRaw&r=0';
   this.vaciarModelo();
  this.objEmpleados = [];
     this.formUsuario= true;
-    this.pass = true;
-    this.nomAsi=false;
+    this.ocultar = true
+    this.isEditMode = false;
+  }
+
+  cancelar(){
+    this.formUsuario= false;
+    this.ocultar = false
   }
 
 
-  // Obtener PERFILES
-  perfiles: Perfil[] = [];
 
-consultarPerfiles(){
-  let json = {
-    id_perfil: 0,
-    id_sistema: 2,
-    perfil: "",
-    solo_activos: 1,
-    token: "012354SDSDS01"
-  }
-  this.usuarioService.consultarPerfiles(json).subscribe((resp)=>{
-    if(resp.ok){
-      this.perfiles = resp.data;
-      console.log('Perfiles :>> ', resp.data);
-    }
-  })
-}
-
-
-
-
-// BARRA DE BUSQUEDA
-mostrarUsuarios(){
-  let json = {
-    id_usuario: 0,
-    id_cliente: this.id_cliente,
-    id_sistema: 2,
-    usuario: '',
-    solo_activos: 1,
-    id_usuario_consulta: 0,
-    token: '012354SDSDS01',
-  };
-  this.usuarioService.consultarUsuarios(json).subscribe((resp) => {
-    if (resp.ok) {
-      console.log('Usuarios :>> ', resp.data);
-      this.usuarios = resp.data;
-      this.usuarios_busqueda = resp.data;
-    }
-  });
-
-}
-
-buscarUsuario(){
-  if(this.filterControl.value.length > 1){
-  this.usuarios_busqueda = [];
-  this.usuarios.forEach((element : any) => {
-    this.usuarios_busqueda.push({
-      "nombre" : element.nombre,
-      "id_usuario" : element.id_usuario
-    });
-  });
-}
-  if(this.filterControl.value.length > 2){
-    this.usuarios_busqueda = [];
-    this.usuarios.forEach((element : any) => {
-      if(element.nombre.includes(this.filterControl.value.toUpperCase())){
-        this.usuarios_busqueda.push({
-          "nombre" : element.nombre,
-          "id_usuario" : element.id_usuario
-        })
-      }
-      console.log(this.usuarios)
-    });
-  }
-}
-fotoUsuario :any = ''
-optionUsuario(value : any){
-  this.nomAsi= true;
-  console.log(value.option.id);
-  this.nuevoUsuario = value.option.id;
-  this.formUsuario= true;
-  this.perfilStock = this.nuevoUsuario.fotografia;
-  console.log(this.nuevoUsuario.fotografia);
-
-}
 
 // EDITAR NOMBRE
   editarnombre(){
     this.nomAsi= false;
   }
 
+  Edit() {
+    this.isEditMode = !this.isEditMode;
+    if (!this.isEditMode) {
+      // Restaura los valores originales del formulario si se cancela la edición.
+      // Por ejemplo, puedes cargar los valores desde tu modelo de datos nuevamente.
+    }
+  }
 
 
 
