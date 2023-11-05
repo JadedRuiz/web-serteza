@@ -204,7 +204,7 @@ asignar(){
     codigo_nomina: "",
     id_reloj: 0
   }
-  console.log('asignar :>> ', json);
+  // console.log('asignar :>> ', json);
   this.turnoService.asignarTurno(json).subscribe(resp => {
     if(resp.ok){
       Swal.fire('Exito',
@@ -218,6 +218,14 @@ asignar(){
        'warning');
     }
   })
+  this.tSel = {
+    tAsignado : '',
+    jAsignado : '',
+    tID: 0,
+    tJF: 0
+  }
+  this.filterControl = new FormControl();
+
 }
 
 }

@@ -22,23 +22,25 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
   styleUrls: ['./usuarios.component.css'],
 })
 export class UsuariosComponent implements OnInit {
-  public usuario_logueado = parseInt(window.sessionStorage.getItem("user")+"");
-  public id_cliente = parseInt(window.sessionStorage.getItem("cliente")+"");
+  public usuario_logueado = parseInt(
+    window.sessionStorage.getItem('user') + ''
+  );
+  public id_cliente = parseInt(window.sessionStorage.getItem('cliente') + '');
   // public token = parseInt(window.sessionStorage.getItem("token")+"");
   public token = 'token';
 
-  public perfilStock : any =
+  public perfilStock: any =
     'https://th.bing.com/th/id/R.20836a4a6bf6d8ee3031d28e133a9eb7?rik=gG%2bcRJRZ4jd0Cw&riu=http%3a%2f%2fconstantcontinuity.com%2fconstantcontinuity%2fimages%2fbig1.png&ehk=TtGb2WLFcbckjNT98147tFsMNaunQxrZpJ2JeMw0i84%3d&risl=&pid=ImgRaw&r=0';
   public color = COLOR;
   // BUSCAR CANDIDATOS
   public status = -1;
   filterControlEmpleados = new FormControl();
   filterControl = new FormControl();
-  candidatos : any;
-  candidatos_busqueda : any;
+  candidatos: any;
+  candidatos_busqueda: any;
   objEmpleados: any;
   idCandi: any;
-  palabra = "";
+  palabra = '';
   // <=
   datastorage: any = JSON.parse(localStorage.getItem('dataPage')!);
   miComprador = 1;
@@ -47,26 +49,28 @@ export class UsuariosComponent implements OnInit {
   miUsuario = 1;
   camposActivos = false; //Sólo se utiliza actualmente para el botón de añadir foto de usuario por alguna razón
   // status: boolean = false;
-  usuarios_busqueda : any;
-  usuarios : any;
+  usuarios_busqueda: any;
+  usuarios: any;
   formUsuario = false;
-   // webcam snapshot trigger
-   private trigger: Subject<void> = new Subject<void>();
-   private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
-   @Output() getPicture = new EventEmitter<WebcamImage>();
-   showWebcam = true;
-   isCameraExist = true;
-   errors: WebcamInitError[] = [];
-  public fotografia = new Fotografia(0,"","","");
-  public foto_user : any;
-  public docB64 = "";
+  // webcam snapshot trigger
+  private trigger: Subject<void> = new Subject<void>();
+  private nextWebcam: Subject<boolean | string> = new Subject<
+    boolean | string
+  >();
+  @Output() getPicture = new EventEmitter<WebcamImage>();
+  showWebcam = true;
+  isCameraExist = true;
+  errors: WebcamInitError[] = [];
+  public fotografia = new Fotografia(0, '', '', '');
+  public foto_user: any;
+  public docB64 = '';
   hide = true;
   nomAsi = false;
   pass = false;
   isEditMode = false;
   ocultar = false;
-  @ViewChild('file_input', {read: ElementRef}) foto : any;
-  @ViewChild('modal_camera', {static: false}) contenidoDelModalCamera : any;
+  @ViewChild('file_input', { read: ElementRef }) foto: any;
+  @ViewChild('modal_camera', { static: false }) contenidoDelModalCamera: any;
 
   nuevoUsuario = new NuevoUsuario(
     0,
@@ -88,181 +92,209 @@ export class UsuariosComponent implements OnInit {
 
   @ViewChildren('inputProvForm') provInputs!: QueryList<ElementRef>;
 
-
-    constructor(
-      private usuarioService: UsuarioService,
-      private sanitizer: DomSanitizer,
-      private modalService: NgbModal,
+  constructor(
+    private usuarioService: UsuarioService,
+    private sanitizer: DomSanitizer,
+    private modalService: NgbModal,
     private candidato_service: CandidatoService,
-
-    ) {}
+      ) {}
 
   ngOnInit(): void {
     this.consultarPerfiles();
     this.mostrarUsuarios();
     this.mostrarCandidatos();
-    WebcamUtil.getAvailableVideoInputs()
-    .then((mediaDevices: MediaDeviceInfo[]) => {
-      this.isCameraExist = mediaDevices && mediaDevices.length > 0;
+    WebcamUtil.getAvailableVideoInputs().then(
+      (mediaDevices: MediaDeviceInfo[]) => {
+        this.isCameraExist = mediaDevices && mediaDevices.length > 0;
+      }
+    );
+  }
+
+  // BARRA DE BUSQUEDA
+  mostrarCandidatos() {
+    let json = {
+      palabra: this.palabra.toUpperCase(),
+      status: this.status,
+      id_cliente: this.id_cliente,
+      tipo: 1,
+    };
+    this.candidatos = [];
+    this.candidato_service.obtenerCandidatos(json).subscribe((object: any) => {
+      if (object.ok) {
+        this.candidatos_busqueda = object.data;
+        this.objEmpleados = object.data;
+      }
     });
   }
-
-
-// BARRA DE BUSQUEDA
-mostrarCandidatos(){
-  let json = {
-    palabra : this.palabra.toUpperCase(),
-    status : this.status,
-    id_cliente : this.id_cliente,
-    tipo : 1
-  };
-  this.candidatos = [];
-  this.candidato_service.obtenerCandidatos(json)
-  .subscribe( (object : any) =>{
-      if(object.ok){
-       this.candidatos_busqueda= object.data;
-       this.objEmpleados = object.data
-      }
-  });
-}
-buscarCandidato(){
-  this.palabra = this.filterControl.value;
-  if(this.filterControl.value.length < 1){
-    this.mostrarCandidatos();
+  buscarCandidato() {
+    this.palabra = this.filterControl.value;
+    if (this.filterControl.value.length < 1) {
+      this.mostrarCandidatos();
+    }
+    if (this.filterControl.value.length > 2) {
+      this.autocomplete(this.filterControl.value);
+    }
   }
-  if(this.filterControl.value.length > 2){
-    this.autocomplete(this.filterControl.value);
+  autocomplete(palabra: string) {
+    this.objEmpleados = [];
+    if (palabra.length > 2) {
+      let json = {
+        nombre_candidato: this.palabra.toUpperCase(),
+        status: this.status,
+        id_cliente: this.id_cliente,
+      };
+      this.candidato_service
+        .autoCompleteCandidato(json)
+        .subscribe((object: any) => {
+          if (object.ok) {
+            this.objEmpleados = object.data;
+            //  this.candidatos_busqueda = object.data;
+            //  this.idCandi = this.objEmpleados[0].id_candidato
+          }
+        });
+    }
   }
-}
-autocomplete(palabra : string){
-
- this.objEmpleados = [];
-  if(palabra.length > 2){
-    let json = {
-      nombre_candidato : this.palabra.toUpperCase(),
-      status : this.status,
-      id_cliente : this.id_cliente
-    };
-    this.candidato_service.autoCompleteCandidato(json)
-    .subscribe((object : any) => {
-      if(object.ok){
-        this.objEmpleados = object.data;
-      //  this.candidatos_busqueda = object.data;
-        //  this.idCandi = this.objEmpleados[0].id_candidato
-      }
-    })
-  }
-}
-
 
   // Obtener PERFILES
   perfiles: Perfil[] = [];
 
-consultarPerfiles(){
-  let json = {
-    id_perfil: 0,
-    id_sistema: 2,
-    perfil: "",
-    solo_activos: 1,
-    token: "012354SDSDS01"
-  }
-  this.usuarioService.consultarPerfiles(json).subscribe((resp)=>{
-    if(resp.ok){
-      this.perfiles = resp.data;
-      console.log('Perfiles :>> ', resp.data);
-    }
-  })
-}
-
-// BARRA DE BUSQUEDA
-mostrarUsuarios(){
-  let json = {
-    id_usuario: 0,
-    id_cliente: this.id_cliente,
-    id_sistema: 2,
-    usuario: '',
-    solo_activos: 1,
-    id_usuario_consulta: 0,
-    token: '012354SDSDS01',
-  };
-  this.usuarioService.consultarUsuarios(json).subscribe((resp) => {
-    if (resp.ok) {
-      console.log('Usuarios :>> ', resp.data);
-      this.usuarios = resp.data;
-      this.usuarios_busqueda = resp.data
-      // this.usuarios_busqueda = resp.data.map((usuario:any) => usuario.nombre);
-    }
-  });
-
-}
-
-buscarUsuario(){
-  // this.mostrarUsuarios();
-  // const filterValue = this.filterControl.value.toUpperCase
-  // this.usuarios_busqueda = [];
-
-  // if(filterValue.length > 2){
-  //   this.usuarios.forEach((user:any)=>
-  //   {
-  //     if(user.nombre_completo.toUpperCase().includes(filterValue)){
-  //       this.usuarios_busqueda.push({
-  //         "nombre_completo": user.nombre_completo,
-  //         "id_candidato": user.id_candidato
-  //       })
-  //     }
-  //   })
-  // }
-
-  console.log(this.usuarios_busqueda)
-  if(this.filterControl.value.length > 1){
-    this.usuarios_busqueda = [];
-    this.usuarios.forEach((element : any) => {
-      this.usuarios_busqueda.push({
-        "nombre_completo" : element.nombre_completo,
-        "id_candidato" : element.id_usuario
-      });
-      console.log(this.usuarios_busqueda)
-  });
-}
-  if(this.filterControl.value.length > 2){
-     this.usuarios_busqueda = [];
-    this.usuarios.forEach((element : any) => {
-      if(element.nombre_completo.includes(this.filterControl.value.toUpperCase())){
-        this.usuarios_busqueda.push({
-          "nombre_completo" : element.nombre_completo,
-          "id_candidato" : element.id_usuario
-        })
+  consultarPerfiles() {
+    let json = {
+      id_perfil: 0,
+      id_sistema: 2,
+      perfil: '',
+      solo_activos: 1,
+      token: '012354SDSDS01',
+    };
+    this.usuarioService.consultarPerfiles(json).subscribe((resp) => {
+      if (resp.ok) {
+        this.perfiles = resp.data;
+        console.log('Perfiles :>> ', resp.data);
       }
-      console.log(this.usuarios)
     });
   }
-}
 
+  // BARRA DE BUSQUEDA
+  mostrarUsuarios() {
+    let json = {
+      id_usuario: 0,
+      id_cliente: this.id_cliente,
+      id_sistema: 2,
+      usuario: '',
+      solo_activos: 1,
+      id_usuario_consulta: 0,
+      token: '012354SDSDS01',
+    };
+    this.usuarioService.consultarUsuarios(json).subscribe((resp) => {
+      if (resp.ok) {
+        console.log('Usuarios :>> ', resp.data);
+        this.usuarios = resp.data;
+        this.usuarios_busqueda = resp.data;
+        // this.usuarios_busqueda = resp.data.map((usuario:any) => usuario.nombre);
+      }
+    });
+  }
 
+  buscarUsuario() {
+    // this.mostrarUsuarios();
+    // const filterValue = this.filterControl.value.toUpperCase
+    // this.usuarios_busqueda = [];
 
-fotoUsuario :any = ''
-json: any = ''
-optionUsuario(value : any){
-  this.isEditMode = true;
-  this.vaciarModelo();
-  this.nuevoUsuario = value.option.id;
-  this.formUsuario= true;
-    if(this.nuevoUsuario.id_fotografia < 1){
+    // if(filterValue.length > 2){
+    //   this.usuarios.forEach((user:any)=>
+    //   {
+    //     if(user.nombre_completo.toUpperCase().includes(filterValue)){
+    //       this.usuarios_busqueda.push({
+    //         "nombre_completo": user.nombre_completo,
+    //         "id_candidato": user.id_candidato
+    //       })
+    //     }
+    //   })
+    // }
+
+    console.log(this.usuarios_busqueda);
+    if (this.filterControl.value.length > 1) {
+      this.usuarios_busqueda = [];
+      this.usuarios.forEach((element: any) => {
+        this.usuarios_busqueda.push({
+          nombre_completo: element.nombre_completo,
+          id_candidato: element.id_usuario,
+        });
+        console.log(this.usuarios_busqueda);
+      });
+    }
+    if (this.filterControl.value.length > 2) {
+      this.usuarios_busqueda = [];
+      this.usuarios.forEach((element: any) => {
+        if (
+          element.nombre_completo.includes(
+            this.filterControl.value.toUpperCase()
+          )
+        ) {
+          this.usuarios_busqueda.push({
+            nombre_completo: element.nombre_completo,
+            id_candidato: element.id_usuario,
+          });
+        }
+        console.log(this.usuarios);
+      });
+    }
+  }
+
+  fotoUsuario: any = '';
+  json: any = '';
+  optionUsuario(value: any) {
+    this.isEditMode = true;
+    this.vaciarModelo();
+    this.nuevoUsuario = value.option.id;
+    this.formUsuario = true;
+    if (this.nuevoUsuario.id_fotografia < 0) {
       console.log('entro');
-      this.perfilStock =  'https://th.bing.com/th/id/R.20836a4a6bf6d8ee3031d28e133a9eb7?rik=gG%2bcRJRZ4jd0Cw&riu=http%3a%2f%2fconstantcontinuity.com%2fconstantcontinuity%2fimages%2fbig1.png&ehk=TtGb2WLFcbckjNT98147tFsMNaunQxrZpJ2JeMw0i84%3d&risl=&pid=ImgRaw&r=0';
-    }else {
-      this.perfilStock = this.nuevoUsuario.fotografia
+      this.perfilStock =
+        'https://th.bing.com/th/id/R.20836a4a6bf6d8ee3031d28e133a9eb7?rik=gG%2bcRJRZ4jd0Cw&riu=http%3a%2f%2fconstantcontinuity.com%2fconstantcontinuity%2fimages%2fbig1.png&ehk=TtGb2WLFcbckjNT98147tFsMNaunQxrZpJ2JeMw0i84%3d&risl=&pid=ImgRaw&r=0';
+    } else {
+      this.perfilStock = this.nuevoUsuario.fotografia;
     }
 
-  console.log(this.nuevoUsuario.id_candidato);
-
-}
-
+    console.log(this.nuevoUsuario.id_candidato);
+  }
+  optionUsuario2(value: any) {
+    this.nuevoUsuario = value.option.id;
+    this.nuevoUsuario.id_candidato = this.nuevoUsuario.id_candidato;
+    // console.log('<',value.option.id);
+  }
 
   // Guardar Usuario
+  ediFoto = false;
   guardarUsuario() {
-    if(this.isEditMode){
-      console.log('editado? >> ' );
+    if (this.isEditMode) {
+      console.log('editado? >> ');
+      let json = {
+        id_usuario: 0,
+        id_cliente: this.id_cliente,
+        id_sistema: 2,
+        id_candidato: this.nuevoUsuario.id_candidato,
+        token: this.token,
+        nombre: this.nuevoUsuario.nombre,
+        usuario: this.nuevoUsuario.usuario,
+        password: this.nuevoUsuario.password,
+        id_perfil: this.nuevoUsuario.id_perfil,
+        activo: 1,
+        id_usuario_guardar: 1,
+        id_fotografia: this.nuevoUsuario.id_fotografia,
+        extencion: this.fotografia.extension,
+        foto_base64: this.fotografia.docB64,
+      };
+      this.usuarioService.guardarUsuario(json).subscribe((resp) => {
+        if (resp.ok) {
+          Swal.fire('Exito', resp.data.mensaje, 'success');
+        } else {
+          Swal.fire('', resp.message, 'info');
+        }
+        console.log('resp:>> ', resp);
+      });
+    } else {
+      console.log('nuevo? >> ');
       let json = {
         id_usuario: 0,
         id_cliente: this.id_cliente,
@@ -278,53 +310,23 @@ optionUsuario(value : any){
         id_fotografia: 0,
         extencion: this.fotografia.extension,
         foto_base64: this.fotografia.docB64,
-          };
-      this.json = json
-    }else {
-       console.log('nuevo? >> ' );
-      let json = {
-        id_usuario: 0,
-        id_cliente: this.id_cliente,
-        id_sistema: 2,
-        id_candidato: 0,
-        token: this.token,
-        nombre: this.nuevoUsuario.nombre,
-        usuario: this.nuevoUsuario.usuario,
-        password: this.nuevoUsuario.password,
-        id_perfil: this.nuevoUsuario.id_perfil,
-        activo: 1,
-        id_usuario_guardar: 1,
-        id_fotografia: 0,
-        extencion: this.fotografia.extension,
-        foto_base64: this.fotografia.docB64,
       };
-      this.json = json
+      this.usuarioService.guardarUsuario(json).subscribe((resp) => {
+        if (resp.ok) {
+          Swal.fire('Exito', resp.data.mensaje, 'success');
+        } else {
+          Swal.fire('', resp.message, 'info');
+        }
+        console.log('resp:>> ', resp);
+      });
     }
 
-    console.log('jsonGuardar :>> ', this.json);
-    // this.usuarioService.guardarUsuario(jsoon).subscribe((resp) => {
-    //   if (resp.ok) {
-    //     Swal.fire(
-    //       'Exito',
-    //       resp.data.mensaje,
-    //       'success'
-    //       )
+    // console.log('jsonGuardar :>> ', this.json);
 
-    //     }else {
-    //       Swal.fire(
-    //         '',
-    //         resp.data.message,
-    //         'info',
-    //         )
-    //       }
-    //      console.log('resp.mensaje :>> ', resp);
-    // });
     this.cancelar();
-    this.vaciarModelo()
+    this.vaciarModelo();
     this.mostrarUsuarios();
-
   }
-
 
   actualizarUsuario() {
     let json = {
@@ -345,64 +347,52 @@ optionUsuario(value : any){
     console.log('jsonGuardar :>> ', json);
     this.usuarioService.guardarUsuario(json).subscribe((resp) => {
       if (resp.ok) {
-        Swal.fire(
-          'Exito',
-          resp.data.mensaje,
-          'success'
-          )
-          this.formUsuario= false;
-
-        }else {
-          Swal.fire(
-            '',
-            resp.data.message,
-            'info',
-          )
-        }
-         console.log('resp.mensaje :>> ', resp);
+        Swal.fire('Exito', resp.data.mensaje, 'success');
+        this.formUsuario = false;
+      } else {
+        Swal.fire('', resp.data.message, 'info');
+      }
+      console.log('resp.mensaje :>> ', resp);
     });
-    this.vaciarModelo()
+    this.vaciarModelo();
 
     this.mostrarUsuarios();
-
   }
 
   // Activar/Desactivar Usuario =>
   activarUsuario() {
-    let json ={
+    let json = {
       id_usuario: 0,
       token: 'token',
-      id_usuario_modif: 1
-    }
+      id_usuario_modif: 1,
+    };
     this.usuarioService.activarUsuario(json).subscribe((resp) => {
-      if(resp.ok){
-
+      if (resp.ok) {
       }
-    })
+    });
   }
 
-
-  agregarUsuario(){
-  this.filterControl = new FormControl();
-    this.perfilStock =  'https://th.bing.com/th/id/R.20836a4a6bf6d8ee3031d28e133a9eb7?rik=gG%2bcRJRZ4jd0Cw&riu=http%3a%2f%2fconstantcontinuity.com%2fconstantcontinuity%2fimages%2fbig1.png&ehk=TtGb2WLFcbckjNT98147tFsMNaunQxrZpJ2JeMw0i84%3d&risl=&pid=ImgRaw&r=0';
-  this.vaciarModelo();
- this.objEmpleados = [];
-    this.formUsuario= true;
-    this.ocultar = true
+  agregarUsuario() {
+    this.filterControl = new FormControl();
+    this.perfilStock =
+      'https://th.bing.com/th/id/R.20836a4a6bf6d8ee3031d28e133a9eb7?rik=gG%2bcRJRZ4jd0Cw&riu=http%3a%2f%2fconstantcontinuity.com%2fconstantcontinuity%2fimages%2fbig1.png&ehk=TtGb2WLFcbckjNT98147tFsMNaunQxrZpJ2JeMw0i84%3d&risl=&pid=ImgRaw&r=0';
+    this.vaciarModelo();
+    this.objEmpleados = [];
+    this.formUsuario = true;
+    this.ocultar = true;
     this.isEditMode = false;
   }
 
-  cancelar(){
-    this.formUsuario= false;
-    this.ocultar = false
+  cancelar() {
+    this.formUsuario = false;
+    this.ocultar = false;
+    this.filterControl = new FormControl();
+
   }
 
-
-
-
-// EDITAR NOMBRE
-  editarnombre(){
-    this.nomAsi= false;
+  // EDITAR NOMBRE
+  editarnombre() {
+    this.nomAsi = false;
   }
 
   Edit() {
@@ -413,8 +403,6 @@ optionUsuario(value : any){
     }
   }
 
-
-
   //MODAL PARA AÑADIR FOTOS AL USUARIO
   extraModal: boolean = false;
   ubicacionVendedor: any;
@@ -423,49 +411,48 @@ optionUsuario(value : any){
   mainImage: string = '';
   takingPhoto: boolean = false;
   // public triggerObservable: Observable<void> = this.trigger.asObservable();
-  public modal_camera : any;
+  public modal_camera: any;
 
-
-  subirImagen(){
-    document.getElementById("foto_user")?.click();
+  subirImagen() {
+    document.getElementById('foto_user')?.click();
   }
 
-  convertirImagenAB64(fileInput : any){
-    return new Promise(function(resolve, reject) {
-      let b64 = "";
+  convertirImagenAB64(fileInput: any) {
+    return new Promise(function (resolve, reject) {
+      let b64 = '';
       const reader = new FileReader();
       reader.readAsDataURL(fileInput);
       reader.onload = (e: any) => {
-          b64 = e.target.result.split("base64,")[1];
-          resolve(b64);
+        b64 = e.target.result.split('base64,')[1];
+        resolve(b64);
       };
     });
   }
 
-  cambiarImagen(event: any){
+  cambiarImagen(event: any) {
     if (event.target.files && event.target.files[0]) {
       let archivos = event.target.files[0];
-      let extension = archivos.name.split(".")[1];
+      let extension = archivos.name.split('.')[1];
       this.fotografia.extension = extension;
-      if(extension == "jpg" || extension == "png"){
-        this.convertirImagenAB64(archivos).then( respuesta => {
-          let img = "data:image/"+extension+";base64, "+respuesta;
+      if (extension == 'jpg' || extension == 'png') {
+        this.convertirImagenAB64(archivos).then((respuesta) => {
+          let img = 'data:image/' + extension + ';base64, ' + respuesta;
           this.perfilStock = this.sanitizer.bypassSecurityTrustResourceUrl(img);
-          this.docB64 = respuesta+"";
-          this.fotografia.docB64 = respuesta+"";
+          this.docB64 = respuesta + '';
+          this.fotografia.docB64 = respuesta + '';
           this.fotografia.extension = extension;
-          console.log('oio>',this.foto_user);
-          this.togglePhotosModal()
+          console.log('oio>', this.foto_user);
+          this.togglePhotosModal();
         });
-      }else{
-        Swal.fire("Ha ocurrido un error","Tipo de imagen no permitida","error");
+      } else {
+        Swal.fire(
+          'Ha ocurrido un error',
+          'Tipo de imagen no permitida',
+          'error'
+        );
       }
     }
   }
-
-
-
-
 
   //FUNCIÓN PARA ABRIR MODAL PARA AÑADIR FOTOS AL CLIENTE
   togglePhotosModal() {
@@ -474,12 +461,18 @@ optionUsuario(value : any){
     console.log(this.extraModal);
   }
 
-  openModalCamera(){
-    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera,{ size: 'md', centered : true, backdropClass : 'light-blue-backdrop', backdrop: 'static', keyboard: false});
+  openModalCamera() {
+    this.modal_camera = this.modalService.open(this.contenidoDelModalCamera, {
+      size: 'md',
+      centered: true,
+      backdropClass: 'light-blue-backdrop',
+      backdrop: 'static',
+      keyboard: false,
+    });
     // this.showWebcam = true;
   }
 
-  cerrarModalCamera(){
+  cerrarModalCamera() {
     this.modal_camera.close();
   }
 
@@ -503,10 +496,10 @@ optionUsuario(value : any){
     this.getPicture.emit(webcamImage);
     this.foto_user = webcamImage.imageAsDataUrl;
     this.perfilStock = webcamImage.imageAsDataUrl;
-    let docB64 = this.foto_user.split(",");
+    let docB64 = this.foto_user.split(',');
     this.fotografia.docB64 = docB64[1];
-    this.fotografia.extension = "jpeg";
-    this.fotografia.nombre = "foto_user";
+    this.fotografia.extension = 'jpeg';
+    this.fotografia.nombre = 'foto_user';
     this.cerrarModalCamera();
     this.togglePhotosModal();
     // console.log(webcamImage.imageAsDataUrl)
@@ -520,27 +513,24 @@ optionUsuario(value : any){
     return this.nextWebcam.asObservable();
   }
 
-// VACIAR MODELO
-vaciarModelo(){
-
-  this.nuevoUsuario = new NuevoUsuario(
-    0,
-    0,
-    0,
-    0,
-    '',
-    '',
-    '',
-    '',
-    0,
-    0,
-    0,
-    0,
-    '',
-    '',
-    ''
-  );
-}
-
-
+  // VACIAR MODELO
+  vaciarModelo() {
+    this.nuevoUsuario = new NuevoUsuario(
+      0,
+      0,
+      0,
+      0,
+      '',
+      '',
+      '',
+      '',
+      0,
+      0,
+      0,
+      0,
+      '',
+      '',
+      ''
+    );
+  }
 }
