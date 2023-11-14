@@ -7,16 +7,16 @@
         <!-- <div class="card-header">
           <h2 class="card-title">PUNTOS DE ACCESO</h2>
         </div> -->
-        <mat-tab-group>
+        <mat-tab-group #tabGroup>
           <mat-tab label="Puntos de acceso">
             <div class="col-10 my-3 mx-auto " *ngFor="let acceso of accesos"  >
-              <mat-card (click)="autorizar(acceso)" class="car">
+              <mat-card  class="car">
                 <!-- <mat-card-title>
                   {{acceso.ubicacion}}
                 </mat-card-title> -->
                 <mat-card-content>
                   <div class="row">
-                    <div class="col">
+                    <div (click)="autorizar(acceso)" class="col-6">
                       <label for="">Ubicacion</label>
                       <h3>{{acceso.ubicacion}}</h3>
                     </div>
@@ -24,9 +24,14 @@
                       <label for="">Distancia</label>
                       <h3>{{acceso.distancia_km}}</h3>
                     </div>
-                    <div class="col">
+                    <div (click)="autorizar(acceso)" class="col">
                       <p style="font-size: 16px;" class="badge badge-success mt-3">Autorizado</p>
                     </div>
+                    <div style="cursor: default;" class="col-1 text-center">
+                      <a type="button" title="¿Editar?" (click)="editar(acceso)" >
+                        <i style="font-size: 18px; color: blue;" class="fa fa-edit mt-3" aria-hidden="true"></i>
+                      </a>
+                     </div>
                   </div>
                 </mat-card-content>
               </mat-card>
@@ -41,7 +46,7 @@
               <form class="usuario__form" #usuarioForm="ngForm" (ngSubmit)="guardar()">
                 <div class="row">
                     <!-- MAPA -->
-                    <div class="col col-md-6 ms-4 mt-4 d-flex flex-column offset-1" style="width: 100px">
+                    <div class="col col-md-6 mt-4 d-flex flex-column">
                       <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d238217.47526880837!2d-89.86481465440576!3d21.106662892806675!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f55ddd31322e2c5%3A0xfb7e2d392d94a3e3!2sPETROSERVICIOS%20YUCATAN!5e0!3m2!1ses-419!2smx!4v1698274797583!5m2!1ses-419!2smx"
 
                       width="600" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
