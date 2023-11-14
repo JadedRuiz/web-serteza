@@ -1,3 +1,14 @@
 .row{
   justify-content: space-around;
 }
+
+.car {
+  cursor: pointer;
+  transition: transform 0.4s ease;
+}
+.car:hover{
+  box-shadow: inset;
+  border-radius: 7px;
+  transform: scale(1.1);
+}
+

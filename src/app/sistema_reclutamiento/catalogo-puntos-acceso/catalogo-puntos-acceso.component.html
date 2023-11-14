@@ -1,6 +1,4 @@
 <div class="header {{color}}" style="height: 250px;">
-  <div class="container-fluid">
-  </div>
 </div>
 <div class="container-fluid mt--9">
   <div class="row">
@@ -11,24 +9,29 @@
         </div> -->
         <mat-tab-group>
           <mat-tab label="Puntos de acceso">
-            <mat-card>
-              <mat-card-title>
-                Punto de acceso
-              </mat-card-title>
-              <mat-card-content>
-                <div class="row">
-                  <div class="col">
-                    <h3>titulo</h3>
+            <div class="col-10 my-3 mx-auto " *ngFor="let acceso of accesos"  >
+              <mat-card (click)="autorizar(acceso)" class="car">
+                <!-- <mat-card-title>
+                  {{acceso.ubicacion}}
+                </mat-card-title> -->
+                <mat-card-content>
+                  <div class="row">
+                    <div class="col">
+                      <label for="">Ubicacion</label>
+                      <h3>{{acceso.ubicacion}}</h3>
+                    </div>
+                    <div class="col">
+                      <label for="">Distancia</label>
+                      <h3>{{acceso.distancia_km}}</h3>
+                    </div>
+                    <div class="col">
+                      <p style="font-size: 16px;" class="badge badge-success mt-3">Autorizado</p>
+                    </div>
                   </div>
-                  <div class="col">
-                    <h3>nombre</h3>
-                  </div>
-                  <div class="col">
-                    <h3>Activo</h3>
-                  </div>
-                </div>
-              </mat-card-content>
-            </mat-card>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
 
           </mat-tab>
 

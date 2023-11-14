@@ -17,8 +17,9 @@ export class CatalogoPuntosAccesoComponent implements OnInit {
   public sistema = parseInt(window.sessionStorage.getItem("sistema")+"");
 
 
-  public punto_acceso = new PAcceso(0,0,'','','','',0,'',0)
+public punto_acceso = new PAcceso(0,0,'','','','',0,'',0)
 public color = COLOR;
+public accesos:any;
 longitud:any = '';
 latitud:any = '';
   constructor(
@@ -27,8 +28,25 @@ latitud:any = '';
 
   ngOnInit(): void {
      this.ubicacion();
+     this.obtenerAccesos();
   }
 
+
+obtenerAccesos(){
+  let json = {
+    id_reloj: 0,
+    id_cliente: this.cliente,
+    ubicacion: "",
+    solo_activos: 1,
+    token: "012354SDSDS01"
+  }
+  this.accesos_service.consultarAccesos(json).subscribe(res => {
+    if(res.ok){
+      this.accesos = res.data
+      console.log(res.data);
+    }
+  })
+}
 
   // CORDENADAS
   registrar(){
@@ -88,10 +106,25 @@ latitud:any = '';
       }else {
         Swal.close();
         Swal.fire('error',res.message,'error');
-        console.log('json :>> ', json);
-        console.log('json :>> ', res);
       }
     })
+  }
+
+  autorizar(a:any){
+    console.log('a :>> ', a);
+    Swal.fire({
+      title: `¿Editar ${a.ubicacion}?`,
+      text: '',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, editar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log('Ubicación editada');
+      } else {
+        console.log('Edición cancelada');
+      }
+    });
   }
 
 }
