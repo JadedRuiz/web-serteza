@@ -23,13 +23,13 @@ import { CompartidoService } from 'src/app/services/Compartido/Compartido.servic
 export class CatalogoUsuarioComponent implements OnInit {
 
   public color = COLOR;
-  public cliente_seleccionado = window.sessionStorage.getItem("cliente");
   displayedColumns: string[] = ['id', 'fotografia', 'nombre', 'usuario', "estatus", "accion"];
   dataSource  = new MatTableDataSource();
   public band = true;
   public show = false;
   public band_persiana = true;
   public foto_user : any;
+  public cliente_seleccionado = window.sessionStorage.getItem("cliente");
   public usuario_creacion = parseInt(window.sessionStorage.getItem("user")+"");
   public sistema_seleccionado = parseInt(window.sessionStorage.getItem("sistema")+"");
   public modal : any;
