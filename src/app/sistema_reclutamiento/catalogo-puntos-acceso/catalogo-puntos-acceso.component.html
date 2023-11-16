@@ -40,7 +40,7 @@
 
           </mat-tab>
 
-          <mat-tab label="Nuevo punto de acceso">
+          <mat-tab  label="Nuevo punto de acceso">
             <div class="usuarios-container">
               <!-- FORMULARIO -->
               <form class="usuario__form" #usuarioForm="ngForm" (ngSubmit)="guardar()">
@@ -85,10 +85,12 @@
                       </div>
 
 
-                      <div class=" row form-label justify-content-between  mt-2">
-                        <button  type="submit" class="btn btn-outline-primary px-5"
-                        >
+                      <div class=" row mt-2">
+                        <button *ngIf="this.punto_acceso.id_reloj == 0" type="submit" class="btn btn-block btn-outline-primary">
                         GUARDAR
+                      </button>
+                        <button (click)="actualizar()"  *ngIf="this.punto_acceso.id_reloj !== 0" class="btn btn-block btn-outline-primary">
+                        Acctualizar
                       </button>
 
                       </div>

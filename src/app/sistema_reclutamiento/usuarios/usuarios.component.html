@@ -8,27 +8,26 @@
       <div class="card">
         <div class="card-header">
           <h2 class="card-title">USUARIOS</h2>
-          <div  class="row offset-1">
+          <div class="row offset-1">
             <div class="col-5 ">
-              <mat-form-field *ngIf="!ocultar" class="w-100">
-                  <mat-label class="d-flex justify-content-between align-items-center" >Buscar usuario <i class="fa fa-search" aria-hidden="true"></i></mat-label>
-                  <input type="text"
-                          placeholder="Ingrese el nombre o id del usuario"
-                          matInput
-                          (keyup)="buscarUsuario()"
-                          [formControl]="filterControl"
-                  [matAutocomplete]="auto" style="text-transform: uppercase;">
-                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionUsuario($event)">
-                      <mat-option *ngFor="let usuario of usuarios_busqueda" [value]="usuario.nombre_completo" [id]="usuario">
-                          {{usuario.nombre}}
-                      </mat-option>
-                  </mat-autocomplete>
-              </mat-form-field>
-          </div>
-          <div class="col-5  text-center ">
-            <button *ngIf="!ocultar" (click)="agregarUsuario()" class=" btn btn-primary" >AGREGAR USUARIO</button>
 
-          </div>
+              <mat-form-field *ngIf="!ocultar" class="w-100">
+                <mat-label class="d-flex justify-content-between align-items-center">Buscar usuario <i
+                    class="fa fa-search" aria-hidden="true"></i></mat-label>
+                <input type="text" placeholder="Ingrese el nombre o id del usuario" matInput (keyup)="buscarUsuario()"
+                  [formControl]="filterControl" [matAutocomplete]="auto" style="text-transform: uppercase;">
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionUsuario($event)">
+                  <mat-option *ngFor="let usuario of usuarios_busqueda" [value]="usuario.nombre_completo"
+                    [id]="usuario">
+                    {{usuario.nombre_completo}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+            <div class="col-5  text-center ">
+              <button *ngIf="!ocultar" (click)="agregarUsuario()" class=" btn btn-primary">AGREGAR USUARIO</button>
+
+            </div>
 
           </div>
         </div>
@@ -36,109 +35,93 @@
           <!-- FORMULARIO -->
           <form class="usuario__form" #usuarioForm="ngForm" (ngSubmit)="guardarUsuario()" novalidate>
             <div class="row">
-                <!-- FOTO -->
-                <div class="col col-md-4 ms-4 mt-4 d-flex flex-column offset-1" style="width: 100px">
-                  <img [src]="perfilStock" alt="Perfil de Stock"  class="img-thumbnail mt-4 mb-2" />
-                  <button  (click)="togglePhotosModal()" type="button" class="btn btn-outline-info px-4"
+              <!-- FOTO -->
+              <div class="col col-md-4 ms-4 mt-4 d-flex flex-column offset-1" style="width: 100px">
+                <img [src]="perfilStock" alt="Perfil de Stock" class="img-thumbnail mt-4 mb-2" />
+                <button (click)="togglePhotosModal()" type="button" class="btn btn-outline-info px-4"
                   data-mdb-ripple-color="dark">
                   Añadir foto
                 </button>
+              </div>
+
+              <!-- INPUTS -->
+              <div class="usuario__data-form__section1 mt-3 col-12 col-md-5">
+
+                <div class=" mt-2">
+                  <mat-form-field class="w-100 px-1">
+                    <mat-label class="d-flex justify-content-between align-items-center">Buscar empleado <i
+                        class="fa fa-search" aria-hidden="true"></i></mat-label>
+                    <input type="text" placeholder="NOMBRE o RFC" aria-label="Number" matInput
+                      (keyup)="buscarCandidato()" [formControl]="filterControl" [matAutocomplete]="auto"
+                      style="text-transform: uppercase;">
+                    <mat-autocomplete (optionSelected)="optionUsuario2($event)" #auto="matAutocomplete">
+
+                      <mat-option *ngFor="let empleado of objEmpleados" [value]="empleado.nombre_completo"
+                        [id]="empleado">
+                        {{empleado.nombre}}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                  <!-- <button class="btn btn-sm btn-danger"><i class="fa fa-search" aria-hidden="true"></i></button> -->
+
                 </div>
 
-                <!-- INPUTS -->
-                <div class="usuario__data-form__section1 mt-3 col-12 col-md-5">
+                <div class="mt-2">
+                  <label class="label-label" for="inputPerfil">Seleccionar perfil:</label>
+                  <select type="text" class="form-control" title="perfil" name="perfil" placeholder="..."
+                    [(ngModel)]="nuevoUsuario.id_perfil" #inputProvForm>
+                    <option name="perfil" value="{{ perfil.id_perfil }}" *ngFor="let perfil of perfiles">
+                      {{ perfil.perfil }}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-label mt-2">
+                  <label for="nombre">Nombre</label>
+                  <input style="text-transform: uppercase;" class="form-control" autocomplete="off" type="text"
+                    name="nombre" required #inputProvForm [(ngModel)]="nuevoUsuario.nombre" />
+                </div>
 
-                  <div  class=" mt-2">
-                        <mat-form-field   class="w-100 px-1">
-                          <mat-label  class="d-flex justify-content-between align-items-center" >Buscar empleado <i class="fa fa-search" aria-hidden="true"></i></mat-label>
-                          <input type="text"
-                           placeholder="NOMBRE o RFC"
-                           aria-label="Number"
-                           matInput
-                           (keyup)="buscarCandidato()"
-                           [formControl]="filterControl"
-                           [matAutocomplete]="auto" style="text-transform: uppercase;"
-                          >
-                          <mat-autocomplete
-                          (optionSelected)="optionUsuario2($event)"
-                          #auto="matAutocomplete">
+                <div class="form-label mt-2">
+                  <label for="correo">Correo</label>
+                  <input class="form-control" autocomplete="off" type="email" name="usuario" required #inputProvForm
+                    [(ngModel)]="nuevoUsuario.usuario" />
+                </div>
 
-                            <mat-option  *ngFor="let empleado of objEmpleados" [value]="empleado.nombre_completo"
-                              [id]="empleado">
-                              {{empleado.nombre}}
-                            </mat-option>
-                          </mat-autocomplete>
-                        </mat-form-field>
-                        <!-- <button class="btn btn-sm btn-danger"><i class="fa fa-search" aria-hidden="true"></i></button> -->
-
-                  </div>
-
-                  <div class="mt-2">
-                    <label class="label-label" for="inputPerfil">Seleccionar perfil:</label>
-                    <select
-                      type="text"
-                      class="form-control"
-                      title="perfil"
-                      name="perfil"
-                      placeholder="..."
-                      [(ngModel)]="nuevoUsuario.id_perfil"
-                      #inputProvForm >
-                      <option
-
-                        name="perfil"
-                        value="{{ perfil.id_perfil }}"
-                        *ngFor="let perfil of perfiles">
-                        {{ perfil.perfil }}
-                      </option>
-                    </select>
-                  </div>
-                  <div class="form-label mt-2">
-                    <label for="nombre">Nombre</label>
-                    <input style="text-transform: uppercase;" class="form-control" autocomplete="off" type="text" name="nombre" required #inputProvForm
-                    [(ngModel)]="nuevoUsuario.nombre"  />
-                  </div>
-
-                  <div class="form-label mt-2">
-                    <label for="correo">Correo</label>
-                    <input class="form-control" autocomplete="off" type="email" name="usuario" required
-                      #inputProvForm [(ngModel)]="nuevoUsuario.usuario"  />
-                  </div>
-
-                  <div class="form-label mt-2">
-                    <label for="correo">Contraseña</label>
-                    <input required class="form-control" autocomplete="on" type="password" name="password "
-                      #inputProvForm [(ngModel)]="nuevoUsuario.password" />
-                  </div>
-                  <div class="form-label mt-2">
-                    <!-- <mat-form-field  style="width: 100%;" >
+                <div class="form-label mt-2">
+                  <label for="correo">Contraseña</label>
+                  <input required class="form-control" autocomplete="on" type="password" name="password " #inputProvForm
+                    [(ngModel)]="nuevoUsuario.password" />
+                </div>
+                <div class="form-label mt-2">
+                  <!-- <mat-form-field  style="width: 100%;" >
                       <input [(ngModel)]="nuevoUsuario.password" matInput placeholder="Introduce tu contraseña" [type]="hide ? 'password' : 'text'" >
                       <mat-icon style="cursor: pointer;" class="i" matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                     </mat-form-field> -->
-                    <!-- <mat-form-field class="ml-3">
+                  <!-- <mat-form-field class="ml-3">
                       <input matInput placeholder="Confirma tu contraseña" [type]="hide ? 'password' : 'text'" [(ngModel)]="nuevoUsuario.password"  >
                       <mat-icon class="i" matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                     </mat-form-field> -->
-                  </div>
-
-                  <div class="  mx-2 row form-label justify-content-between  mt-2">
-
-
-                    <button  class="px-4 btn btn-primary " type="submit"  data-toggle="tooltip" title="Guardar">
-                      Guardar
-                    </button>
-
-                    <button  (click)="cancelar()"  class=" btn btn-danger" >CANCELAR</button>
-
-                    <!-- <button *ngIf="!ocultar" (click)="Edit()"  class=" btn btn-outline-danger" >CANCELAR</button> -->
-
-                    <!-- <button *ngIf="ocultar == false" (click)="Edit()" type="button" class="btn px-4"  [ngClass]="{'btn-outline-primary': !isEditMode, 'btn-outline-danger': isEditMode}" data-mdb-ripple-color="dark">
-                      {{ isEditMode ? 'Cancelar' : 'Editar' }}
-                    </button> -->
-                  </div>
                 </div>
 
-                <!-- BOTONES FOOTER -->
-                <!-- <footer class="row tab-footer">
+                <div class="  mx-2 row form-label justify-content-between  mt-2">
+
+
+                  <button class="px-4 btn btn-primary " type="submit" data-toggle="tooltip" title="Guardar">
+                    Guardar
+                  </button>
+
+                  <button (click)="cancelar()" class=" btn btn-danger">CANCELAR</button>
+
+                  <!-- <button *ngIf="!ocultar" (click)="Edit()"  class=" btn btn-outline-danger" >CANCELAR</button> -->
+
+                  <!-- <button *ngIf="ocultar == false" (click)="Edit()" type="button" class="btn px-4"  [ngClass]="{'btn-outline-primary': !isEditMode, 'btn-outline-danger': isEditMode}" data-mdb-ripple-color="dark">
+                      {{ isEditMode ? 'Cancelar' : 'Editar' }}
+                    </button> -->
+                </div>
+              </div>
+
+              <!-- BOTONES FOOTER -->
+              <!-- <footer class="row tab-footer">
                   <div class=" footer-buttons">
                     <button class="general-btn mr-2" type="button" data-toggle="tooltip"
                       title="Editar">
@@ -175,25 +158,18 @@
     <div class="usuario-modal__extra-container mt-3">
       <!-- IMAGEN PRINCIPAL -->
       <div class="usuario-modal__extra-image">
-        <img
-        [src]="perfilStock"
-          alt="placeholder"
-          *ngIf="mainImage == ''"
-        />
-        <img
-        [src]="mainImage"
-        alt="imagen principal"
-        *ngIf="mainImage !== ''"
-        />
+        <img [src]="perfilStock" alt="placeholder" *ngIf="mainImage == ''" />
+        <img [src]="mainImage" alt="imagen principal" *ngIf="mainImage !== ''" />
       </div>
       <!-- BOTÓN PARA AÑADIR FOTO -->
       <div class="upload-buttons">
         <button class="btn btn-outline-info" (click)="subirImagen()">
           Subir imagen
         </button>
-        <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg" (change)="cambiarImagen($event)">
+        <input type="file" #file_input id="foto_user" style="display: none;" accept=".png,.jpg"
+          (change)="cambiarImagen($event)">
         <!-- BOTÓN PARA TOMAR FOTO -->
-        <button  class="btn btn-outline-primary" (click)="openModalCamera()">Tomar foto</button>
+        <button class="btn btn-outline-primary" (click)="openModalCamera()">Tomar foto</button>
       </div>
     </div>
   </div>
@@ -202,36 +178,36 @@
 
 <ng-template #modal_camera let-c="close" let-d="dismiss">
   <div class="modal-header">
-      <h2 class="modal-title" id="tituloModal">Tomar fotografia</h2>
+    <h2 class="modal-title" id="tituloModal">Tomar fotografia</h2>
   </div>
   <div class="modal-body">
-      <div class="container">
-          <div class="row">
-              <div *ngIf="isCameraExist; else noCameraExist" class="col-12">
-                  <div class="border border-success rounded text-center" style="width: 100%;height: 265px;">
-                      <webcam [height]="450" [width]="350" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
-                          *ngIf="showWebcam" [switchCamera]="nextWebcamObservable"></webcam>
-                  </div>
-
-                  <div *ngIf="errors.length > 0">
-                      <h4>Error Messages:</h4>
-                      <ul *ngFor="let error of errors">
-                          <li>{{ error | json }}</li>
-                      </ul>
-                  </div>
-              </div>
-
-              <ng-template #noCameraExist>
-                  <div class="border border-danger rounded text-center"
-                  style="display: flex;justify-content: center;align-items: center;width: 450px;height: 350px;">
-                      Este dispositivo no cuenta con una camara disponible
-                  </div>
-              </ng-template>
+    <div class="container">
+      <div class="row">
+        <div *ngIf="isCameraExist; else noCameraExist" class="col-12">
+          <div class="border border-success rounded text-center" style="width: 100%;height: 265px;">
+            <webcam [height]="450" [width]="350" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
+              *ngIf="showWebcam" [switchCamera]="nextWebcamObservable"></webcam>
           </div>
+
+          <div *ngIf="errors.length > 0">
+            <h4>Error Messages:</h4>
+            <ul *ngFor="let error of errors">
+              <li>{{ error | json }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <ng-template #noCameraExist>
+          <div class="border border-danger rounded text-center"
+            style="display: flex;justify-content: center;align-items: center;width: 450px;height: 350px;">
+            Este dispositivo no cuenta con una camara disponible
+          </div>
+        </ng-template>
       </div>
+    </div>
   </div>
   <div class="modal-footer">
-      <button type="button" class="btn btn-warning" (click)="cerrarModalCamera()">Cerrar</button>
-      <button *ngIf="isCameraExist" type="button" class="btn btn-success" (click)="takeSnapshot()">Tomar foto</button>
+    <button type="button" class="btn btn-warning" (click)="cerrarModalCamera()">Cerrar</button>
+    <button *ngIf="isCameraExist" type="button" class="btn btn-success" (click)="takeSnapshot()">Tomar foto</button>
   </div>
 </ng-template>

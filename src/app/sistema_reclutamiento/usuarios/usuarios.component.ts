@@ -12,6 +12,7 @@ import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import {map, startWith} from 'rxjs/operators';
 
 
 
@@ -71,7 +72,6 @@ export class UsuariosComponent implements OnInit {
   ocultar = false;
   @ViewChild('file_input', { read: ElementRef }) foto: any;
   @ViewChild('modal_camera', { static: false }) contenidoDelModalCamera: any;
-
   nuevoUsuario = new NuevoUsuario(
     0,
     0,
@@ -87,19 +87,25 @@ export class UsuariosComponent implements OnInit {
     0,
     '',
     '',
+    '',
     ''
   );
 
   @ViewChildren('inputProvForm') provInputs!: QueryList<ElementRef>;
-
   constructor(
     private usuarioService: UsuarioService,
     private sanitizer: DomSanitizer,
     private modalService: NgbModal,
     private candidato_service: CandidatoService,
-      ) {}
+      ) {
+
+      }
 
   ngOnInit(): void {
+
+
+
+
     this.consultarPerfiles();
     this.mostrarUsuarios();
     this.mostrarCandidatos();
@@ -108,9 +114,14 @@ export class UsuariosComponent implements OnInit {
         this.isCameraExist = mediaDevices && mediaDevices.length > 0;
       }
     );
+
+
   }
 
-  // BARRA DE BUSQUEDA
+
+
+
+  // BARRA DE BUSQUEDA CANDIDATOS
   mostrarCandidatos() {
     let json = {
       palabra: this.palabra.toUpperCase(),
@@ -174,7 +185,7 @@ export class UsuariosComponent implements OnInit {
     });
   }
 
-  // BARRA DE BUSQUEDA
+  // BARRA DE BUSQUEDA USUARIOS
   mostrarUsuarios() {
     let json = {
       id_usuario: 0,
@@ -189,61 +200,39 @@ export class UsuariosComponent implements OnInit {
       if (resp.ok) {
         console.log('Usuarios :>> ', resp.data);
         this.usuarios = resp.data;
-        this.usuarios_busqueda = resp.data;
+         this.usuarios_busqueda = resp.data;
         // this.usuarios_busqueda = resp.data.map((usuario:any) => usuario.nombre);
       }
     });
   }
 
   buscarUsuario() {
-    // this.mostrarUsuarios();
-    // const filterValue = this.filterControl.value.toUpperCase
-    // this.usuarios_busqueda = [];
+    const searchTerm = this.filterControl.value.toUpperCase();
+    this.usuarios_busqueda = [];
+    console.log(this.filterControl.value)
 
-    // if(filterValue.length > 2){
-    //   this.usuarios.forEach((user:any)=>
-    //   {
-    //     if(user.nombre_completo.toUpperCase().includes(filterValue)){
-    //       this.usuarios_busqueda.push({
-    //         "nombre_completo": user.nombre_completo,
-    //         "id_candidato": user.id_candidato
-    //       })
-    //     }
-    //   })
-    // }
+    if (searchTerm.length >= 2) {
+      console.log(this.usuarios)
 
-    console.log(this.usuarios_busqueda);
-    if (this.filterControl.value.length > 1) {
-      this.usuarios_busqueda = [];
       this.usuarios.forEach((element: any) => {
-        this.usuarios_busqueda.push({
-          nombre_completo: element.nombre_completo,
-          id_candidato: element.id_usuario,
-        });
-        console.log(this.usuarios_busqueda);
-      });
-    }
-    if (this.filterControl.value.length > 2) {
-      this.usuarios_busqueda = [];
-      this.usuarios.forEach((element: any) => {
-        if (
-          element.nombre_completo.includes(
-            this.filterControl.value.toUpperCase()
-          )
-        ) {
+        if (element.nombre.toUpperCase().includes(searchTerm)) {
           this.usuarios_busqueda.push({
             nombre_completo: element.nombre_completo,
             id_candidato: element.id_usuario,
           });
         }
-        console.log(this.usuarios);
       });
+      console.log(this.usuarios)
+      console.log(this.usuarios_busqueda)
     }
   }
+
+
 
   fotoUsuario: any = '';
   json: any = '';
   optionUsuario(value: any) {
+    this.ocultar = true;
     this.isEditMode = true;
     this.vaciarModelo();
     this.nuevoUsuario = value.option.id;
@@ -387,6 +376,7 @@ export class UsuariosComponent implements OnInit {
     this.formUsuario = false;
     this.ocultar = false;
     this.filterControl = new FormControl();
+    this.vaciarModelo();
 
   }
 

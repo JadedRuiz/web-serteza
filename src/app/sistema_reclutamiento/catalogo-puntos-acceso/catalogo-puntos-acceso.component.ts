@@ -156,38 +156,49 @@ obtenerAccesos(){
    this.latitud = a.latitud
    this.punto_acceso.direccion_ip = a.direccion_ip
    this.punto_acceso.distancia_km = a.distancia_km
+   this.punto_acceso.id_reloj = a.id_reloj
    this.cambiartab(1);
-   let json = {
-    id_reloj:a.id_reloj,
-    id_cliente:this.cliente,
-    ubicacion:this.punto_acceso.ubicacion,
-    latitud:this.latitud,
-    longitud:this.latitud,
-    direccion_ip:this.punto_acceso.direccion_ip,
-    distancia_km:this.punto_acceso.distancia_km,
-    token:'token',
-    id_usuario:0
-    }
-    // this.accesos_service.guardarAccesos(json).subscribe(res =>{
-    //   if(res.ok){
-    //     Swal.fire(
-    //       'Exito',
-    //       res.data.mensaje,
-    //       'success'
-    //     )
-    //     this.punto_acceso = new PAcceso(0,0,'','','','',0,'',0)
-    //    this.obtenerAccesos();
-    //    Swal.close();
-    //    console.log('json :>> ', res);
 
-    //   }else {
-    //    this.obtenerAccesos();
-    //     Swal.fire('error',res.message,'error');
-    //   }
-    // })
-    console.log(json);
+    console.log(a);
   }
 
+  actualizar(){
+    let json = {
+      id_reloj:this.punto_acceso.id_reloj,
+      id_cliente:this.cliente,
+      ubicacion:this.punto_acceso.ubicacion,
+      latitud:this.latitud,
+      longitud:this.latitud,
+      direccion_ip:this.punto_acceso.direccion_ip,
+      distancia_km:this.punto_acceso.distancia_km,
+      token:'token',
+      id_usuario:0
+      }
+      console.log('json :>> ', json);
+      // this.accesos_service.guardarAccesos(json).subscribe(res =>{
+      //   if(res.ok){
+      //     Swal.fire(
+      //       'Exito',
+      //       res.data.mensaje,
+      //       'success'
+      //     )
+      //     this.punto_acceso = new PAcceso(0,0,'','','','',0,'',0)
+      //    this.obtenerAccesos();
+      //    Swal.close();
+      //    console.log('json :>> ', res);
+
+      //   }else {
+      //    this.obtenerAccesos();
+      //     Swal.fire('error',res.message,'error');
+      //   }
+      // })
+  }
+
+
+
+  nuevo(){
+   console.log('nuevo')
+  }
   cambiartab(nuevoIndice: number) {
     this.tabGroup.selectedIndex = nuevoIndice;
   }

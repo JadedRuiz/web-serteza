@@ -14,6 +14,7 @@ export class NuevoUsuario {
     public id_fotografia: number,
     public fotografia: string,
     public extencion: string,
-    public foto_base64: string
+    public foto_base64: string,
+    public nombre_completo?: string
   ) { }
 }
