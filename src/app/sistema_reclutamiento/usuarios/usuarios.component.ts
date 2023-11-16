@@ -13,6 +13,7 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CandidatoService } from 'src/app/services/Candidato/candidato.service';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import {map, startWith} from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 
 
@@ -93,6 +94,7 @@ export class UsuariosComponent implements OnInit {
 
   @ViewChildren('inputProvForm') provInputs!: QueryList<ElementRef>;
   constructor(
+    private http: HttpClient,
     private usuarioService: UsuarioService,
     private sanitizer: DomSanitizer,
     private modalService: NgbModal,
@@ -102,10 +104,6 @@ export class UsuariosComponent implements OnInit {
       }
 
   ngOnInit(): void {
-
-
-
-
     this.consultarPerfiles();
     this.mostrarUsuarios();
     this.mostrarCandidatos();
@@ -209,16 +207,24 @@ export class UsuariosComponent implements OnInit {
   buscarUsuario() {
     const searchTerm = this.filterControl.value.toUpperCase();
     this.usuarios_busqueda = [];
-    console.log(this.filterControl.value)
+    // console.log(this.filterControl.value)
 
     if (searchTerm.length >= 2) {
-      console.log(this.usuarios)
+      // console.log(this.usuarios)
 
       this.usuarios.forEach((element: any) => {
         if (element.nombre.toUpperCase().includes(searchTerm)) {
           this.usuarios_busqueda.push({
+            id_usuario: element.id_usuario,
+            id_cliente: element.id_cliente,
+            id_perfil: element.id_perfil,
+            usuario: element.usuario,
+            nombre: element.nombre,
+            password: element.password,
+            fotografia: element.fotografia,
+            id_fotografia: element.id_fotografia,
             nombre_completo: element.nombre_completo,
-            id_candidato: element.id_usuario,
+            id_candidato: element.id_candidato,
           });
         }
       });
@@ -232,21 +238,22 @@ export class UsuariosComponent implements OnInit {
   fotoUsuario: any = '';
   json: any = '';
   optionUsuario(value: any) {
+    console.log(value.option.id);
     this.ocultar = true;
     this.isEditMode = true;
     this.vaciarModelo();
     this.nuevoUsuario = value.option.id;
     this.formUsuario = true;
-    if (this.nuevoUsuario.id_fotografia < 0) {
+    if (this.nuevoUsuario.id_fotografia == 0 ) {
       console.log('entro');
       this.perfilStock =
         'https://th.bing.com/th/id/R.20836a4a6bf6d8ee3031d28e133a9eb7?rik=gG%2bcRJRZ4jd0Cw&riu=http%3a%2f%2fconstantcontinuity.com%2fconstantcontinuity%2fimages%2fbig1.png&ehk=TtGb2WLFcbckjNT98147tFsMNaunQxrZpJ2JeMw0i84%3d&risl=&pid=ImgRaw&r=0';
     } else {
-      this.perfilStock = this.nuevoUsuario.fotografia;
+      this.perfilStock= this.nuevoUsuario.fotografia
     }
-
-    console.log(this.nuevoUsuario.id_candidato);
   }
+
+
   optionUsuario2(value: any) {
     this.nuevoUsuario = value.option.id;
     this.nuevoUsuario.id_candidato = this.nuevoUsuario.id_candidato;
@@ -259,7 +266,7 @@ export class UsuariosComponent implements OnInit {
     if (this.isEditMode) {
       console.log('editado? >> ');
       let json = {
-        id_usuario: 0,
+        id_usuario: this.nuevoUsuario.id_usuario,
         id_cliente: this.id_cliente,
         id_sistema: 2,
         id_candidato: this.nuevoUsuario.id_candidato,
@@ -270,18 +277,30 @@ export class UsuariosComponent implements OnInit {
         id_perfil: this.nuevoUsuario.id_perfil,
         activo: 1,
         id_usuario_guardar: 1,
-        id_fotografia: this.nuevoUsuario.id_fotografia,
+        id_fotografia: 0,
         extencion: this.fotografia.extension,
         foto_base64: this.fotografia.docB64,
       };
-      this.usuarioService.guardarUsuario(json).subscribe((resp) => {
-        if (resp.ok) {
-          Swal.fire('Exito', resp.data.mensaje, 'success');
-        } else {
-          Swal.fire('', resp.message, 'info');
+      Swal.fire({
+        title: "¿Desea guardar los cambios",
+        showCancelButton: true,
+        confirmButtonText: "Guardar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.usuarioService.guardarUsuario(json).subscribe((resp) => {
+            if (resp.ok) {
+              Swal.fire('Exito', resp.data.mensaje, 'success');
+              this.cancelar();
+              this.vaciarModelo();
+              this.mostrarUsuarios();
+            } else {
+              Swal.fire('', resp.message, 'info');
+            }
+          });
         }
-        console.log('resp:>> ', resp);
-      });
+            });
+
+       console.log('jsonEditar:>> ', json);
     } else {
       console.log('nuevo? >> ');
       let json = {
@@ -300,55 +319,30 @@ export class UsuariosComponent implements OnInit {
         extencion: this.fotografia.extension,
         foto_base64: this.fotografia.docB64,
       };
-      this.usuarioService.guardarUsuario(json).subscribe((resp) => {
-        if (resp.ok) {
-          Swal.fire('Exito', resp.data.mensaje, 'success');
-        } else {
-          Swal.fire('', resp.message, 'info');
+      Swal.fire({
+        title: "¿Crear nuevo usuario?",
+        showCancelButton: true,
+        confirmButtonText: "Guardar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.usuarioService.guardarUsuario(json).subscribe((resp) => {
+            if (resp.ok) {
+              Swal.fire('Exito', resp.data.mensaje, 'success');
+              this.cancelar();
+              this.vaciarModelo();
+              this.mostrarUsuarios();
+            } else {
+              Swal.fire('', resp.message, 'info');
+            }
+          });
         }
-        console.log('resp:>> ', resp);
-      });
+            });
+         console.log('resp:>> ', json);
     }
 
-    // console.log('jsonGuardar :>> ', this.json);
-
-    this.cancelar();
-    this.vaciarModelo();
-    this.mostrarUsuarios();
   }
 
-  actualizarUsuario() {
-    let json = {
-      id_usuario: 0,
-      id_cliente: this.id_cliente,
-      id_sistema: 2,
-      id_candidato: this.idCandi,
-      token: '012354SDSDS01',
-      nombre: this.nuevoUsuario.nombre,
-      usuario: this.nuevoUsuario.usuario,
-      id_perfil: this.nuevoUsuario.id_perfil,
-      activo: 1,
-      id_usuario_guardar: 1,
-      id_fotografia: 0,
-      extencion: this.fotografia.extension,
-      foto_base64: this.fotografia.docB64,
-    };
-    console.log('jsonGuardar :>> ', json);
-    this.usuarioService.guardarUsuario(json).subscribe((resp) => {
-      if (resp.ok) {
-        Swal.fire('Exito', resp.data.mensaje, 'success');
-        this.formUsuario = false;
-      } else {
-        Swal.fire('', resp.data.message, 'info');
-      }
-      console.log('resp.mensaje :>> ', resp);
-    });
-    this.vaciarModelo();
-
-    this.mostrarUsuarios();
-  }
-
-  // Activar/Desactivar Usuario =>
+   // Activar/Desactivar Usuario =>
   activarUsuario() {
     let json = {
       id_usuario: 0,
@@ -377,7 +371,6 @@ export class UsuariosComponent implements OnInit {
     this.ocultar = false;
     this.filterControl = new FormControl();
     this.vaciarModelo();
-
   }
 
   // EDITAR NOMBRE
@@ -431,7 +424,6 @@ export class UsuariosComponent implements OnInit {
           this.docB64 = respuesta + '';
           this.fotografia.docB64 = respuesta + '';
           this.fotografia.extension = extension;
-          console.log('oio>', this.foto_user);
           this.togglePhotosModal();
         });
       } else {
@@ -442,6 +434,7 @@ export class UsuariosComponent implements OnInit {
         );
       }
     }
+
   }
 
   //FUNCIÓN PARA ABRIR MODAL PARA AÑADIR FOTOS AL CLIENTE

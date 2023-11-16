@@ -34,16 +34,18 @@
                 </div>
               </div>
             </div>
+
+
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-12 col-sm-12" style="overflow-x: scroll;">
                         <table mat-table [dataSource]="dataSource" class="w-100">
-                            
+
                             <ng-container matColumnDef="id">
                                 <th mat-header-cell *matHeaderCellDef> Id </th>
                                 <td mat-cell *matCellDef="let element"> {{element.id_usuario}} </td>
                             </ng-container>
-                            
+
                             <ng-container matColumnDef="fotografia">
                                 <th mat-header-cell *matHeaderCellDef> Fotografía </th>
                                 <td mat-cell *matCellDef="let element">
@@ -56,13 +58,13 @@
                               <th mat-header-cell *matHeaderCellDef> Nombre </th>
                               <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
                             </ng-container>
-                          
+
                             <!-- Name Column -->
                             <ng-container matColumnDef="usuario">
                               <th mat-header-cell *matHeaderCellDef> Usuario </th>
                               <td mat-cell *matCellDef="let element"> {{element.usuario}} </td>
                             </ng-container>
-                            
+
                             <ng-container matColumnDef="estatus">
                                 <th mat-header-cell *matHeaderCellDef> Estatus </th>
                                 <td mat-cell *matCellDef="let element"> {{element.estatus}} </td>
@@ -70,7 +72,7 @@
 
                             <ng-container matColumnDef="accion">
                                 <th mat-header-cell *matHeaderCellDef> Acción </th>
-                                <td mat-cell *matCellDef="let element">  
+                                <td mat-cell *matCellDef="let element">
                                     <button [matMenuTriggerFor]="menu" class="btn btn-info btn-sm"><i class="fas fa-ellipsis-v"></i></button>
                                     <mat-menu #menu="matMenu">
                                     <button mat-menu-item (click)="editar(element.id_usuario)">
@@ -88,13 +90,13 @@
                                     </mat-menu>
                                 </td>
                             </ng-container>
-    
+
                             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                         </table>
-                        <mat-paginator 
+                        <mat-paginator
                             [pageSizeOptions]="[5, 10, 20]"
-                            showFirstLastButtons 
+                            showFirstLastButtons
                             aria-label="Select page of periodic elements">
                         </mat-paginator>
                     </div>
@@ -104,6 +106,9 @@
     </div>
   </div>
 </div>
+
+
+<!-- MODALES PARA FOTOGRAFIA -->
 <ng-template #content let-c="close" let-d="dismiss" class="modal-lg">
     <div class="modal-header">
         <h2 *ngIf="tipo_modal == 1" class="modal-title" id="tituloModal">Nuevo usuario</h2>
@@ -118,7 +123,7 @@
                             <div [class]="band_persiana ? 'persiana' : 'persiana_mostrar'">
                                 <div class="container">
                                     <div class="row mt-5 text-center justify-content-center">
-                                        <a style="cursor: pointer;" class="text-info tomar_foto" (click)="openModal(2)">Tomar fotografía</a>  
+                                        <a style="cursor: pointer;" class="text-info tomar_foto" (click)="openModal(2)">Tomar fotografía</a>
                                     </div>
                                     <div class="row mt-3 justify-content-center">
                                         <a class="text-info">ó</a>
@@ -146,7 +151,7 @@
                                 <mat-form-field appearance="fill">
                                     <mat-label>Perfil</mat-label>
                                     <mat-select [(ngModel)]="id_perfil" name="prueba">
-                                        <mat-option [value]="0" disabled>SELECCIONA EL PERFIL</mat-option>
+                                        <mat-option disabled>SELECCIONA EL PERFIL</mat-option>
                                         <mat-option *ngFor="let perfil of perfiles" [value]="perfil.id_perfil">
                                             {{perfil.perfil}}
                                         </mat-option>
@@ -199,7 +204,7 @@
                         <webcam [height]="450" [width]="350" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
                             *ngIf="showWebcam" [switchCamera]="nextWebcamObservable"></webcam>
                     </div>
-                
+
                     <div *ngIf="errors.length > 0">
                         <h4>Error Messages:</h4>
                         <ul *ngFor="let error of errors">
@@ -207,7 +212,7 @@
                         </ul>
                     </div>
                 </div>
-                
+
                 <ng-template #noCameraExist>
                     <div class="border border-danger rounded text-center" style="display: flex;justify-content: center;align-items: center;width: 450px;height: 350px;">
                         Este dispositivo no cuenta con una camara disponible

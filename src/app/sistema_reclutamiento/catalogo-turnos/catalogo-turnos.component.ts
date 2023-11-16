@@ -101,13 +101,13 @@ export class CatalogoTurnosComponent implements OnInit {
   // Creamos turno seleccionado
   nuevoturno() {
     let detTurno = new Array<DetalleTurno>();
-    detTurno.push(new DetalleTurno(0, 0, '', '', 0, 'Lunes'));
-    detTurno.push(new DetalleTurno(0, 1, '', '', 0, 'Martes'));
-    detTurno.push(new DetalleTurno(0, 2, '', '', 0, 'Miercoles'));
-    detTurno.push(new DetalleTurno(0, 3, '', '', 0, 'Jueves'));
-    detTurno.push(new DetalleTurno(0, 4, '', '', 0, 'Viernes'));
-    detTurno.push(new DetalleTurno(0, 5, '', '', 0, 'Sabado'));
-    detTurno.push(new DetalleTurno(0, 6, '', '', 0, 'Domingo'));
+    detTurno.push(new DetalleTurno(0, 1, '', '', 0, 'Lunes'));
+    detTurno.push(new DetalleTurno(0, 2, '', '', 0, 'Martes'));
+    detTurno.push(new DetalleTurno(0, 3, '', '', 0, 'Miercoles'));
+    detTurno.push(new DetalleTurno(0, 4, '', '', 0, 'Jueves'));
+    detTurno.push(new DetalleTurno(0, 5, '', '', 0, 'Viernes'));
+    detTurno.push(new DetalleTurno(0, 6, '', '', 0, 'Sabado'));
+    detTurno.push(new DetalleTurno(0, 0, '', '', 0, 'Domingo'));
 
     this.turnoSeleccionado = new Turno(
       0,

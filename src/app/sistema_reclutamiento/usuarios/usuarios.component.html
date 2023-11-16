@@ -1,7 +1,4 @@
-<div class="header {{color}}" style="height: 250px;">
-  <div class="container-fluid">
-  </div>
-</div>
+<div class="header {{color}}" style="height: 250px;"></div>
 <div class="container-fluid mt--9">
   <div class="row">
     <div class="col-lg-12 col-sm-12">
@@ -62,8 +59,6 @@
                       </mat-option>
                     </mat-autocomplete>
                   </mat-form-field>
-                  <!-- <button class="btn btn-sm btn-danger"><i class="fa fa-search" aria-hidden="true"></i></button> -->
-
                 </div>
 
                 <div class="mt-2">
@@ -92,46 +87,19 @@
                   <input required class="form-control" autocomplete="on" type="password" name="password " #inputProvForm
                     [(ngModel)]="nuevoUsuario.password" />
                 </div>
-                <div class="form-label mt-2">
-                  <!-- <mat-form-field  style="width: 100%;" >
-                      <input [(ngModel)]="nuevoUsuario.password" matInput placeholder="Introduce tu contraseña" [type]="hide ? 'password' : 'text'" >
-                      <mat-icon style="cursor: pointer;" class="i" matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                    </mat-form-field> -->
-                  <!-- <mat-form-field class="ml-3">
-                      <input matInput placeholder="Confirma tu contraseña" [type]="hide ? 'password' : 'text'" [(ngModel)]="nuevoUsuario.password"  >
-                      <mat-icon class="i" matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                    </mat-form-field> -->
-                </div>
 
                 <div class="  mx-2 row form-label justify-content-between  mt-2">
 
+                  <button (click)="cancelar()" class=" btn btn-danger">CANCELAR</button>
 
-                  <button class="px-4 btn btn-primary " type="submit" data-toggle="tooltip" title="Guardar">
+                  <button class="px-5 btn btn-primary " type="submit" data-toggle="tooltip" title="Guardar">
                     Guardar
                   </button>
 
-                  <button (click)="cancelar()" class=" btn btn-danger">CANCELAR</button>
 
-                  <!-- <button *ngIf="!ocultar" (click)="Edit()"  class=" btn btn-outline-danger" >CANCELAR</button> -->
 
-                  <!-- <button *ngIf="ocultar == false" (click)="Edit()" type="button" class="btn px-4"  [ngClass]="{'btn-outline-primary': !isEditMode, 'btn-outline-danger': isEditMode}" data-mdb-ripple-color="dark">
-                      {{ isEditMode ? 'Cancelar' : 'Editar' }}
-                    </button> -->
                 </div>
               </div>
-
-              <!-- BOTONES FOOTER -->
-              <!-- <footer class="row tab-footer">
-                  <div class=" footer-buttons">
-                    <button class="general-btn mr-2" type="button" data-toggle="tooltip"
-                      title="Editar">
-                      Editar
-                    </button>
-                    <button class="search-btn text-center" type="submit" data-toggle="tooltip" title="Guardar">
-                      Guardar
-                    </button>
-                  </div>
-                </footer> -->
             </div>
           </form>
         </div>
