@@ -6,6 +6,7 @@ import { DetalleTurno } from 'src/app/models/DetalleTurno';
 import { MatTableDataSource } from '@angular/material/table';
 import Swal from 'sweetalert2';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-catalogo-turnos',
@@ -31,7 +32,7 @@ export class CatalogoTurnosComponent implements OnInit {
   public horaEntrada: any = '';
   public turnoSeleccionado: any = '';
   public editTurno : boolean = false;
-  public newTurno : boolean = false;
+  public newTurno : boolean =true;
   constructor(
     private turnosService: TurnosService,
     private modalService: NgbModal
@@ -50,10 +51,10 @@ export class CatalogoTurnosComponent implements OnInit {
       solo_activos: 1,
       token: '012354SDSDS01',
     };
-     console.log('TurnosJson :>> ', json);
     this.turnosService.obtenerTurnos(json).subscribe((resp) => {
       // Agrupar los datos por id_turno
       this.turnos = this.groupTurnos(resp.data);
+      // console.log('TurnosJson :>> ', this.dataSource);
     });
   }
 
@@ -125,25 +126,46 @@ export class CatalogoTurnosComponent implements OnInit {
     );
      this.editando = false;
     this.newTurno = true;
+    console.log('0',this.turnoSeleccionado)
   }
 
 
-  editarTurno(turnoSeleccionado: any) {
-     this.editando = true;
+  editar(turno:any){
     this.newTurno = false;
+    let detTurno = new Array<DetalleTurno>();
+    detTurno.push(new DetalleTurno(0, 0, turno.value[0].hr_entrada, turno.value[0].hr_salida, Number(turno.value[0].descanso), turno.value[0].dia_descrip));
+    detTurno.push(new DetalleTurno(0, 1, turno.value[1].hr_entrada, turno.value[1].hr_salida, Number(turno.value[1].descanso), turno.value[1].dia_descrip));
+    detTurno.push(new DetalleTurno(0, 2, turno.value[2].hr_entrada, turno.value[2].hr_salida, Number(turno.value[2].descanso), turno.value[2].dia_descrip));
+    detTurno.push(new DetalleTurno(0, 3, turno.value[3].hr_entrada, turno.value[3].hr_salida, Number(turno.value[3].descanso), turno.value[3].dia_descrip));
+    detTurno.push(new DetalleTurno(0, 4, turno.value[4].hr_entrada, turno.value[4].hr_salida, Number(turno.value[4].descanso), turno.value[4].dia_descrip));
+    detTurno.push(new DetalleTurno(0, 5, turno.value[5].hr_entrada, turno.value[5].hr_salida, Number(turno.value[5].descanso), turno.value[5].dia_descrip));
+    detTurno.push(new DetalleTurno(0, 6, turno.value[6].hr_entrada, turno.value[6].hr_salida, Number(turno.value[6].descanso), turno.value[6].dia_descrip));
 
-    this.turnoSeleccionado = {
-      clave: turnoSeleccionado.value[0].clave,
-      turno: turnoSeleccionado.value[0].turno,
-      torelancia: turnoSeleccionado.value[0].tolerancia,
-      tiempo_comidaa: turnoSeleccionado.value[0].tiempo_comida,
-      turno_id: turnoSeleccionado.value[0].id_turno,
-      traslapa_turno: turnoSeleccionado.value[0].traslapa_turno,
-      rota_turno: turnoSeleccionado.value[0].rota_turno,
-      detalle: turnoSeleccionado.value,
-    };
-     console.log('Turno Selecionado=>>', this.turnoSeleccionado);
+    this.turnoSeleccionado = new Turno(
+      turno.value[0].id_turno,
+      this.id_cliente,
+      turno.value[0].clave,
+      turno.value[0].turno,
+      Number(turno.value[0].traslapa_turno),
+      Number(turno.value[0].rota_turno),
+      Number(turno.value[0].id_turno_rota),
+      Number(turno.value[0].tolerancia),
+      Number(turno.value[0].tiempo_comida),
+      'Token',
+      1,
+      1,
+      detTurno
+    );
+    console.log('0',this.turnoSeleccionado)
+    console.log('-*',turno.value)
   }
+
+  actualizar(){
+    let json = this.turnoSeleccionado
+    console.log('json :>> ', json);
+
+  }
+
 
   guardarNuevo() {
     if (this.newTurno) {
@@ -154,10 +176,13 @@ export class CatalogoTurnosComponent implements OnInit {
       this.turno.rota_turno = this.turnoSeleccionado.rota_turno;
       this.turno.detalle = this.turnoSeleccionado.detalle;
       this.turno.turno = this.turnoSeleccionado.turno;
+      this.turno.tiempo_comida = this.turnoSeleccionado.tiempo_comida;
+      this.turno.id_turno_rota = this.turnoSeleccionado.id_turno_rota;
 
       this.turno.token = 'token';
       this.turno.id_turno = 0;
       this.turno.activo = 1;
+      this.turno.id_usuario = 1;
       //  console.log("DetalleTurno=>>",this.turno.detalle)
 
       for (const dia of this.turno.detalle) {
@@ -171,48 +196,13 @@ export class CatalogoTurnosComponent implements OnInit {
         }
       }
 
-      this.guardar();
+      // this.guardar();
+      console.log('this.turno :>> ', this.turno);
 
-
-    } else {
-
-      // this.editando = true;
     }
+
   }
 
-  turnoEditado(){
-    this.turno = new Turno(0, this.id_cliente, '', '', 0, 0, 0, 0, 0, '', 1, 0, [
-      this.detalle,
-    ]);
-    this.editando=true
-    this.newTurno = false;
-    this.turno.clave = this.turnoSeleccionado.clave;
-    this.turno.tiempo_comida = this.turnoSeleccionado.tiempo_comida;
-    this.turno.tolerancia = this.turnoSeleccionado.tolerancia;
-    this.turno.traslapa_turno = this.turnoSeleccionado.traslapa_turno;
-    this.turno.rota_turno = this.turnoSeleccionado.rota_turno;
-    this.turno.detalle = this.turnoSeleccionado.detalle;
-    this.turno.turno = this.turnoSeleccionado.turno
-
-    this.turno.token = 'token';
-    this.turno.id_turno = this.turnoSeleccionado.turno_id;
-    this.turno.activo = 1;
-    // console.log("DetalleTurno=>>",this.turno.detalle)
-
-    for (const dia of this.turno.detalle) {
-      const diaSeleccionado = this.turnoSeleccionado.detalle.find(
-        (d: any) => d.dia === dia.dia
-      );
-      if (diaSeleccionado) {
-        dia.hr_entrada = diaSeleccionado.hr_entrada;
-        dia.hr_salida = diaSeleccionado.hr_salida;
-        dia.descanso = diaSeleccionado.descanso ? 1 : 0;
-      }
-    }
-    console.log('edit?', this.turnoSeleccionado);
-    //  this.guardar();
-    // Activa el modo de edición.
-  }
 
   guardar() {
     let json = this.turno;

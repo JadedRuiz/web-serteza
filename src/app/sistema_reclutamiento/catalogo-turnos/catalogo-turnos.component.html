@@ -13,11 +13,11 @@
              (click)="nuevoturno()"
             class="btn btn-primary"
             data-toggle="modal"
-            data-target="#turnoModal2"
+            data-target="#editar"
             >Agregar Turno</button>
           </div>
-          <div data-toggle="modal" data-target="#turnoModal2"
-           (click)="editarTurno(turno)" class="cardo mb-3"
+          <div data-toggle="modal" data-target="#editar"
+           (click)="editar(turno)" class="cardo mb-3"
             *ngFor="let turno of turnos | keyvalue">
 
             <div class="cardo-header">
@@ -80,6 +80,122 @@
   </div>
 </div>
 
+<!-- MODAL EDITAR -->
+<div class="modal" id="editar"  role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- HEADER -->
+      <div class="modal-header">
+        <h2 class="modal-title">EN ESTE</h2>
+        <button #cerrarModal type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="card-body">
+        <!-- TURNO -->
+        <div class="row">
+          <div class="col">
+            <h3>Clave:
+              <input [(ngModel)]="turnoSeleccionado.clave" class="form-control">
+            </h3>
+          </div>
+          <div class="col">
+            <h3>Turno:
+              <input  [(ngModel)]="turnoSeleccionado.turno" class="form-control">
+            </h3>
+          </div>
+        </div>
+        <!-- TOLERANCIA  -->
+        <div class="row">
+          <div class="col-6 mb-2">
+            <h3>Tolerancia:
+            </h3>
+            <input type="number" value=turnoSeleccionado.tolerancia class="form-control"  placeholder="minutos" [(ngModel)]="turnoSeleccionado.tolerancia" name="tolerancia">
+          </div>
+          <div class="col-6 mb-2">
+            <h3>Tiempo comida:
+            </h3>
+            <input type="number" value=turnoSeleccionado.tiempo_comida class="form-control"  placeholder="minutos" [(ngModel)]="turnoSeleccionado.tiempo_comida" name="tiempo_comida">
+          </div>
+
+        </div>
+        <!-- CHECK BOXs -->
+        <div class="row">
+          <div class="col">
+            <h3>Traslapa turno:
+              <mat-checkbox class="mt-1 ml-2" [(ngModel)]="turnoSeleccionado.traslapa_turno" name="traslapa_turno"
+                (change)="updateTraslapa()"></mat-checkbox>
+              </h3>
+          </div>
+          <div class="col">
+              <mat-form-field>
+                <mat-select  placeholder="Selecciona un turno" [(ngModel)]="turnoSeleccionado.id_turno_rota" name="id_turno_rota">
+                  <mat-option *ngFor="let turno of turnos | keyvalue"  [value]="turno.key">{{turno.value[0].turno}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+          </div>
+          <div class="col">
+            <h3>Rota turno:
+              <mat-checkbox class="mt-1 ml-2" [(ngModel)]="turnoSeleccionado.rota_turno"
+                (change)="updateRota()"></mat-checkbox>
+            </h3>
+          </div>
+        </div>
+      </div>
+      <!-- TABLA -->
+      <div class="col">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Día</th>
+              <th>Entrada</th>
+              <th>Salida</th>
+              <th>Descanso</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let dia of turnoSeleccionado.detalle">
+              <td>{{ dia.dia_descrip }}</td>
+              <td>
+                <input type="time" [(ngModel)]="dia.hr_entrada" class="form-control">
+              </td>
+              <td>
+                <input type="time"  [(ngModel)]="dia.hr_salida" class="form-control">
+              </td>
+              <td>
+                <mat-checkbox class="mt-2"
+                [checked]="dia.descanso === 1"
+                [(ngModel)]="dia.descanso"
+                (change)="updateDescanso()"
+                ></mat-checkbox>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- BOTONES -->
+      <div class="row text-center">
+        <div class="col m-1 mb-3">
+          <button  class="close px-4" data-dismiss="modal" class="btn  btn-outline-danger"
+          >Cancelar</button>
+        </div>
+        <div *ngIf="!newTurno" class="col m-1 mb-3">
+          <button (click)="actualizar()"
+           class="btn btn-primary px-6"
+           >Actualizar</button>
+        </div>
+        <div *ngIf="newTurno" class="col m-1 mb-3">
+          <button  (click)="guardarNuevo()"
+          class="btn btn-primary px-6">
+          Guardar</button>
+        </div>
+
+
+      </div>
+
+    </div>
+  </div>
+</div>
 <!-- MODAL PRINCIPAL -->
 <div class="modal" id="turnoModal2"  role="dialog">
   <div class="modal-dialog">
@@ -111,8 +227,8 @@
         <div class="row">
           <div class="col">
             <h3>Tolerancia: <span *ngIf="!editando"> {{ turnoSeleccionado.torelanciaa }} </span>
-              <input placeholder="minutos"  *ngIf="editando" [(ngModel)]="turnoSeleccionado.tolerancia" name="tolerancia">
-              <input placeholder="minutos"  *ngIf="newTurno" [(ngModel)]="turnoSeleccionado.tolerancia" name="tolerancia">
+              <input type="number"  placeholder="minutos"  *ngIf="editando" [(ngModel)]="turnoSeleccionado.tolerancia" name="tolerancia">
+              <input type="number"  placeholder="minutos"  *ngIf="newTurno" [(ngModel)]="turnoSeleccionado.tolerancia" name="tolerancia">
                min </h3>
           </div>
           <!-- <div class="col">
@@ -188,11 +304,7 @@
           <button  class="close px-4" data-dismiss="modal" class="btn  btn-outline-danger"
           >Cancelar</button>
         </div>
-        <div *ngIf="editando" class="col m-1 mb-3">
-          <button (click)="turnoEditado()"
-           class="btn btn-primary px-6"
-           >Actualizar</button>
-        </div>
+
         <div *ngIf="newTurno" class="col m-1 mb-3">
           <button  (click)="guardarNuevo()"
           class="btn btn-primary px-6">
